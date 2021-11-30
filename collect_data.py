@@ -26,6 +26,7 @@ A script designed to make it easier to exctract data from output files
             -  Excitation energies
             -  Oscillator strengths
             -  Frequencies
+            -  Partition functions at a given temperature
 
 Though not all data types have been implemented for all of the output formats
 
@@ -41,6 +42,7 @@ The following is not implemented for DALTON
  -  Entropies
  -  Gibbs Free energies
  -  Frequencies
+ -  Partition functions with symmetry
 
 The following is not implemented for GAUSSIAN
  -  Entropies
@@ -56,12 +58,16 @@ The following is not implemented for LSDALTON
  -  Dipole moments
  -  Polarizabilities
  -  Excitation energies
- -  Oscialltor strengths
+ -  Oscillator strengths
  -  Frequencies
+ -  Partition functions
 
 For help contact
   Theo Juncker von Buchwald
-  fnc970@alumni.ku.dk''')
+  fnc970@alumni.ku.dk
+
+  Magnus Bukhave Johansen
+  qhw298@alumni.ku.dk''')
 
 parser.add_argument('infile', type=str, nargs='+', help='The file(s) to exctract data from', metavar='File')
 
@@ -78,6 +84,7 @@ parser.add_argument('-P', '--polar', action='store_true', help='Include to extra
 parser.add_argument('-X', '--exc', const=0, help='Include to exctract the Excitation Energies. Add a number to exctract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
 parser.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
 parser.add_argument('-F', '--freq', const=0, help='Include to exctract the Frequencies. Add a number to exctract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
+parser.add_argument('-Q', '--partfunc', const=298.15, help='Include to calculate partition functions. Add a temperature to calculate at.',nargs='?')
 
 
 args = parser.parse_args()
@@ -108,9 +115,14 @@ else:
     FREQUENCIES = True
     AMOUNT_FREQ = int(args.freq)
 
+if args.partfunc == None:
+   PARTITION_FUNC = False 
+else:
+   PARTITION_FUNC = True
+   TEMPERATURE = float(args.partfunc)
+
 silence = args.quiet
 suppressed = args.suppress
-
 
 #******************************* CLASSES ******************************
 
@@ -229,6 +241,50 @@ class gaus:
                 self.freq = ['NaN']
             else:
                 self.freq = ['NaN'] * num
+     
+    def _RotationalConsts(self):
+        self.rots = []
+        for i in range(len(self.lines)):
+            if "Rotational constant" in self.lines[i]:
+                    self.rots = np.array(list(map(float,set(self.lines[i].split()[3:]))))
+                    self.rots = self.rots[self.rots != 0.0]
+            elif "- Thermochemistry -" in self.lines[i]:
+                 break
+
+    def _Mass(self):
+         self.mass = 0.0
+         for i in range(len(self.lines)):
+             if "Molecular mass" in self.lines[i]:
+                 self.mass = float(self.lines[i].split()[2])
+                 break
+         if self.mass == 0.0 and suppressed == False:
+             print(f"No molecular mass found in {infile}")
+
+    def _SymmetryNumber(self):
+         self.symnum = 0
+         for i in range(len(self.lines)):
+             if "Rotational symmetry number" in self.lines[i]:
+                 self.symnum = int(self.lines[i].split()[-1].replace('.',''))
+                 break
+         if self.symnum == 0 and suppressed == False:
+             print(f"No rotational symmetry number found in {infile}")
+
+    def _PartitionFunctions(self,T):
+        if checkForOnlyNans(np.array(self.freq)) and suppressed == False:
+            print(f"No frequencies found in {infile}, skipping partition function calculation")
+            self.qTotal = 'NaN'
+        else:        
+            self.qT = trans_const_fac * self.mass ** (1.5) * T ** (2.5)
+            if len(self.rots) == 1:
+                self.qR = rot_lin_const * T / (self.symnum * self.rots[0])
+            else:
+                self.qR = rot_poly_const * T ** (1.5) / ( self.symnum * np.prod(np.array(self.rots)) ** (0.5))
+            self.realfreq = np.array([x for x in self.freq if x != 'NaN'])
+            self.realfreq = self.realfreq[self.realfreq > 0.0]
+            self.qV = np.prod(1 / (1 - np.exp( - vib_const * self.realfreq / T)))
+            self.qE = 1 #Good approximation for most closed-shell molecules 
+            self.qTotal = self.qT*self.qR*self.qV*self.qE
+
 
 
 
@@ -559,11 +615,21 @@ def resize(array):
         array[i] += ['NaN'] * (max_size - len(array[i]))
 
 
+def checkForOnlyNans(array):
+    for i in array:
+        if i != 'NaN':
+           return False
+    return True
+
 #******************************* CODE *********************************
 
 
 ev_to_au = 0.036749405469679
 inv_cm_to_au = 1/219474.63068
+trans_const_fac = 1.5625517342018425307E+22 #Molar value assuming 1 bar standard pressure
+rot_lin_const = 20.83661793 #Assuming rigid, linear rotor and T>>Rotational temperature and rotational constant in GHz
+rot_poly_const = 168.5837766 #Assuming rigid, polyatomic rotor and T>>Rotational temperature and rotational constant in GHz
+vib_const = 3.157750419E+05 #Assuming harmonic oscillator and frequency in au 
 Barrier = '\n**********************************************\n'
 count = 0
 for infile in input_file:
@@ -733,6 +799,22 @@ for infile in input_file:
                 temp_freq = file_text.freq + ['NaN']*excess
             else:
                 temp_freq = file_text.freq[0:AMOUNT_FREQ]
+        if PARTITION_FUNC == True:
+            try:
+                file_text._RotationalConsts()
+                file_text._Mass()
+                file_text._SymmetryNumber()
+                file_text._PartitionFunctions(TEMPERATURE)
+            except AttributeError:
+                if suppressed == False:
+                    print(f"Partition function calculation not implemented for {input_type}")
+                temp_partfunc = ['Not implemented']
+            else:
+                temp_partfunc = [file_text.qTotal]
+
+
+    if FREQUENCIES == False and PARTITION_FUNC == True and suppressed == False:
+        print('You cannot calculate partition functions without also extracting the vibrational frequencies')
 
 
 #   ----- CREATES ARRAY CONSISTING OF ALL THE VALUES -----
@@ -760,6 +842,8 @@ for infile in input_file:
                 array_osc = temp_osc
         if FREQUENCIES == True:
             array_freq = temp_freq
+            if PARTITION_FUNC == True:
+                array_part_func = temp_partfunc
     elif count == 2:
         array_input = [array_input, [input_no_ext]]
         if TOTAL_ENERGY == True:
@@ -782,6 +866,8 @@ for infile in input_file:
                 array_osc = [array_osc, temp_osc]
         if FREQUENCIES == True:
             array_freq = [array_freq, temp_freq]
+            if PARTITION_FUNC == True:
+                array_part_func = [array_part_func,temp_partfunc]
     else:
         array_input = [*array_input, [input_no_ext]]
         if TOTAL_ENERGY == True:
@@ -804,6 +890,8 @@ for infile in input_file:
                 array_osc = [*array_osc, temp_osc]
         if FREQUENCIES == True:
             array_freq = [*array_freq, temp_freq]
+            if PARTITION_FUNC == True:
+                array_part_func = [*array_part_func,temp_partfunc]
 
     del file_text.lines
 
@@ -851,6 +939,8 @@ if count == 1:
             header += [f'Osc. strength {i+1}' for i in range(len(array_osc))]
     if FREQUENCIES == True:
         header += [f'Frequency {i+1}' for i in range(len(array_freq))]
+        if PARTITION_FUNC == True:
+           header += ['Total molar partition function']
 else:
     if EXCITATION_ENERGIES == True:
         header += [f'Exc. energy {i+1}' for i in range(len(array_exc[0]))]
@@ -858,6 +948,8 @@ else:
             header += [f'Osc. strength {i+1}' for i in range(len(array_osc[0]))]
     if FREQUENCIES == True:
         header += [f'Frequencies {i+1}' for i in range(len(array_freq[0]))]
+        if PARTITION_FUNC == True:
+            header += ['Total molar partition function']
 
 #  CREATES AN ARRAY OF THE CORRECT SIZE FILLED WITH THE HEADER
 #                 USEFUL FOR TROUBLESHOOTING
@@ -906,11 +998,15 @@ if EXCITATION_ENERGIES == True:
             output_array[1:,col:col+len(np.array(array_osc)[0])] = np.array(array_osc) 
 if FREQUENCIES == True:
     if count == 1:
-        output_array[1:,col:col+len(np.array(aray_freq))] = np.array(array_freq)
+        output_array[1:,col:col+len(np.array(array_freq))] = np.array(array_freq)
         col += len(np.array(array_freq))
     else:
         output_array[1:,col:col+len(np.array(array_freq)[0])] = np.array(array_freq)
         col += len(np.array(array_freq[0]))
+    if PARTITION_FUNC == True:
+        output_array[1:,col] = np.array(array_part_func).T
+        col+=1
+
 
 #   ----- IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE -----
 #   --- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ---
