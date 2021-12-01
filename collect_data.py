@@ -134,7 +134,7 @@ class gaus:
         file.close
 
     def _Energy(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Sum of electronic and zero-point Energies=" in self.lines[i]:
                 self.tot_energy = float(self.lines[i].split()[-1]) - float(self.lines[i-4].split()[-2])
                 energy_test = True
@@ -148,7 +148,7 @@ class gaus:
             return
 
     def _ZPV(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Sum of electronic and zero-point Energies=" in self.lines[i]:
                 self.zpv_energy = float(self.lines[i].split()[-1])
                 zpv_test = True
@@ -162,7 +162,7 @@ class gaus:
             return
 
     def _Enthalpy(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Sum of electronic and thermal Enthalpies=" in self.lines[i]:
                 self.enthalpy = float(self.lines[i].split()[-1])
                 enthalpy_test = True
@@ -175,7 +175,7 @@ class gaus:
             return
 
     def _Gibbs(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Sum of electronic and thermal Free Energies=" in self.lines[i]:
                 self.gibbs = float(self.lines[i].split()[-1])
                 gibbs_test = True
@@ -189,7 +189,7 @@ class gaus:
             return
 
     def _Dipole_moments(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Electric dipole moment (input orientation):" in self.lines[i]:
                 dipole_test = True
                 self.dipolex, self.dipoley, self.dipolez, self.total_dipole = np.float(self.lines[i+4].split()[1].replace('D','E')), np.float(self.lines[i+5].split()[1].replace('D','E')), np.float(self.lines[i+6].split()[1].replace('D','E')), np.float(self.lines[i+3].split()[1].replace('D','E'))
@@ -202,7 +202,7 @@ class gaus:
             self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
     def _Polarizabilities(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Dipole polarizability, Alpha (input orientation)" in self.lines[i]:
                 start_polar = i+2
                 end = len(self.lines)
@@ -215,7 +215,7 @@ class gaus:
             self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
             return
         else:
-            for i in self.lines[start_polar: end]:
+            for i in self.lines[start_polar:end]:
                 if " iso " in i:
                     self.iso_polar = float(i.split()[1].replace('D','E'))
                 if " xx " in i:
@@ -296,7 +296,7 @@ class orca:
         file.close
 
     def _Energy(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Electronic energy" in self.lines[i]:
                 self.tot_energy = float(self.lines[i].split()[-2])
                 energy_test = True
@@ -310,7 +310,7 @@ class orca:
             return
 
     def _ZPV(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Electronic energy" in self.lines[i]:
                 self.zpv_energy = float(self.lines[i].split()[-2]) + float(self.lines[i+1].split()[-4])
                 zpv_test = True
@@ -324,7 +324,7 @@ class orca:
             return
 
     def _Enthalpy(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Total Enthalpy" in self.lines[i]:
                 self.enthalpy = float(self.lines[i].split()[-2])
                 enthalpy_test = True
@@ -338,7 +338,7 @@ class orca:
             return
 
     def _Gibbs(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Final Gibbs free energy" in self.lines[i]:
                 self.gibbs = float(self.lines[i].split()[-2])
                 gibbs_test = True
@@ -352,7 +352,7 @@ class orca:
             return
 
     def _Dipole_moments(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Total Dipole Moment" in self.lines[i]:
                 dipole_test = True
                 self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[i].split()[-3]), float(self.lines[i].split()[-2]), float(self.lines[i].split()[-1]), float(self.lines[i+2].split()[-1])
@@ -365,7 +365,7 @@ class orca:
             self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
     def _Polarizabilities(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "THE POLARIZABILITY TENSOR" in self.lines[i]:
                 start_polar = i
                 end = len(self.lines)
@@ -445,7 +445,7 @@ class dal:
         file.close
 
     def _Energy(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "@    Final DFT energy:" in self.lines[i]:
                 self.tot_energy = float(self.lines[i].split()[-1])
                 energy_test = True
@@ -453,16 +453,16 @@ class dal:
             if "@ Energy at final geometry is" in self.lines[i]:
                 self.tot_energy = float(self.lines[i].split()[-2])
                 energy_test = True
+                break
         try:
             energy_test
         except NameError:
             if suppressed == False:
                 print(f"No final energy in {infile}")
             self.tot_energy = 'NaN'
-            return
 
     def _Dipole_moments(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "Dipole moment" in self.lines[i]:
                 self.total_dipole = float(self.lines[i+4].split()[0])
                 start_dipole = i+4
@@ -491,16 +491,16 @@ class dal:
                     i = 'Nan'
 
     def _Polarizabilities(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "SECOND ORDER PROPERTIES" in self.lines[i]:
-                start_polar = i+2
+                start_polar = i
                 end = len(self.lines)
                 break
         try:
             start_polar
         except NameError:
             if suppressed == False:
-                print(f"No second order properties in {infile} and therefore no polarizability")
+                print(f"No polarizabilities in {infile}")
             self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
             return
         else:
@@ -583,7 +583,7 @@ class lsdal:
         file.close
 
     def _Energy(self):
-        for i in range(len(self.lines)):
+        for i in range(len(self.lines)-1,-1,-1):
             if "ENERGY SUMMARY" in self.lines[i]:
                 start_energy = i+3
                 end = len(self.lines)
