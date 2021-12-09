@@ -1,5 +1,6 @@
 
-import sys #For argv
+import sys
+from typing import Set #For argv
 import numpy as np
 import argparse
 from csv import writer
@@ -77,7 +78,7 @@ For help contact
 parser.add_argument('infile', type=str, nargs='+', help='The file(s) to exctract data from', metavar='File')
 
 parser.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
-parser.add_argument('-s', '--suppress', action='store_true', help='Include to supress all print statements (including errors) except the data output')
+parser.add_argument('-s', '--suppress', action='store_true', help='Include to suppress all print statements (including errors) except the data output')
 parser.add_argument('-csv', action='store_true', help='Include to write the found values in csv file(s)')
 parser.add_argument('-E', '--energy', action='store_true', help='Include to extract the Total Energy')
 parser.add_argument('-Z', '--zpv', action='store_true', help='Include to extract the Zero-Point Vibrational Energy')
@@ -90,6 +91,9 @@ parser.add_argument('-X', '--exc', const=-1, type=int, help='Include to exctract
 parser.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
 parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to exctract the Frequencies. Add a number to exctract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
 parser.add_argument('-Q', '--partfunc', const=298.15, type=float, help='Include to calculate partition functions. Add a temperature to calculate at.',nargs='?')
+
+
+#******************************* SETUP ********************************
 
 
 if __name__ == "__main__":
@@ -111,8 +115,57 @@ if __name__ == "__main__":
         '_PartitionFunctions' : args.partfunc
     }
 
+    Outputs = {
+        '_Energy' : ['tot_energy'],
+        '_ZPV' : ['zpv'],
+        '_Enthalpy' : ['enthalpy'],
+        '_Entropy' : ['entropy'],
+        '_Gibbs' : ['gibbs'],
+        '_Dipole_moments' : ['dipolex', 'dipoley', 'dipolez', 'total_dipole'],
+        '_Polarizabilities' : ['polx', 'poly', 'polz', 'iso_polar'],
+        '_Excitation_energies' : ['exc_energies'],
+        '_Oscillator_strengths' : ['osc_strengths'],
+        '_Frequencies' : ['freq'],
+        '_PartitionFunctions' : ['qTotal']
+    }
+
+    Header_text = {
+        'tot_energy' : 'Energy',
+        'zpv' : 'ZPV Energy',
+        'enthalpy' : 'Enthalpy',
+        'entropy' : 'Entropy',
+        'gibbs' : 'Gibbs Free Energy',
+        'dipolex' : 'Dipole x',
+        'dipoley' : 'Dipole y',
+        'dipolez' : 'Dipole z',
+        'total_dipole' : 'Total Dipole',
+        'polx' : 'Polarizability xx',
+        'poly' : 'Polarizability yy',
+        'polz' : 'Polarizability zz',
+        'iso_polar' : 'Isotropic Polarizability',
+        'exc_energies' : 'Exc. energy',
+        'osc_strengths' : 'Osc. strength',
+        'freq' : 'Frequency',
+        'qTotal' : 'Total molar partition function'
+    }
+
     silence = args.quiet
     suppressed = args.suppress
+
+    if Arguments['_Oscillator_strengths'] != False and Arguments['_Excitation_energies'] == None:
+        if suppressed == False:
+            print('Excitation energies will be found as well, since you are trying to extract oscillator strengths')
+        Arguments['_Excitation_energies'] = -1
+
+    if Arguments['_Oscillator_strengths'] == True:
+        Arguments['_Oscillator_strengths'] = Arguments['_Excitation_energies']
+
+    if Arguments['_PartitionFunctions'] != None and Arguments['_Frequencies'] == None:
+        if suppressed == False:
+            print('Frequencies will be found as well, since you are trying to extract partition functions')
+        Arguments['_Frequencies'] = -1
+
+    Variable_arrays = dict([item for item in Arguments.items() if type(item[1]) == int])
 
 
 #******************************* CLASSES ******************************
@@ -232,53 +285,53 @@ class gaus:
                 self.freq = ['NaN']
             else:
                 self.freq = ['NaN'] * Arguments['_Frequencies']
+
+    def _RotationalConsts(self):
+        self.rots = []
+        for i in range(len(self.lines)):
+            if "Rotational constant" in self.lines[i]:
+                self.rots = np.array(list(map(float,set(self.lines[i].split()[3:]))))
+                self.rots = self.rots[self.rots != 0.0]
+            elif "- Thermochemistry -" in self.lines[i]:
+                 break
+
+    def _Mass(self):
+        self.mass = 0.0
+        for i in range(len(self.lines)):
+            if "Molecular mass" in self.lines[i]:
+                self.mass = float(self.lines[i].split()[2])
+                break
+        if self.mass == 0.0 and suppressed == False:
+            print(f"No molecular mass found in {infile}")
+
+    def _SymmetryNumber(self):
+        self.symnum = 0
+        for i in range(len(self.lines)):
+            if "Rotational symmetry number" in self.lines[i]:
+                self.symnum = int(self.lines[i].split()[-1].replace('.',''))
+                break
+        if self.symnum == 0 and suppressed == False:
+            print(f"No rotational symmetry number found in {infile}")
+
      
     def _PartitionFunctions(self):
         if checkForOnlyNans(np.array(self.freq)) and suppressed == False:
             print(f"No frequencies found in {infile}, skipping partition function calculation")
             self.qTotal = 'NaN'
             return
-    # def _RotationalConsts(self):
-        rots = []
-        for i in range(len(self.lines)):
-            if "Rotational constant" in self.lines[i]:
-                rots = np.array(list(map(float,set(self.lines[i].split()[3:]))))
-                rots = rots[rots != 0.0]
-            elif "- Thermochemistry -" in self.lines[i]:
-                 break
-
-    # def _Mass(self):
-        mass = 0.0
-        for i in range(len(self.lines)):
-            if "Molecular mass" in self.lines[i]:
-                mass = float(self.lines[i].split()[2])
-                break
-        if mass == 0.0 and suppressed == False:
-            print(f"No molecular mass found in {infile}")
-
-    # def _SymmetryNumber(self):
-        symnum = 0
-        for i in range(len(self.lines)):
-            if "Rotational symmetry number" in self.lines[i]:
-                symnum = int(self.lines[i].split()[-1].replace('.',''))
-                break
-        if symnum == 0 and suppressed == False:
-            print(f"No rotational symmetry number found in {infile}")
-
-    # def _PartitionFunctions(self):
-        # self._RotationalConsts()
-        # self._Mass()
-        # self._SymmetryNumber()       
-        qT = trans_const_fac * mass ** (1.5) * Arguments['_PartitionFunctions'] ** (2.5)
-        if len(rots) == 1:
-            qR = rot_lin_const * Arguments['_PartitionFunctions'] / (symnum * rots[0])
+        self._RotationalConsts()
+        self._Mass()
+        self._SymmetryNumber()       
+        self.qT = trans_const_fac * self.mass ** (1.5) * Arguments['_PartitionFunctions'] ** (2.5)
+        if len(self.rots) == 1:
+            self.qR = rot_lin_const * Arguments['_PartitionFunctions'] / (self.symnum * self.rots[0])
         else:
-            qR = rot_poly_const * Arguments['_PartitionFunctions'] ** (1.5) / ( symnum * np.prod(np.array(rots)) ** (0.5))
+            self.qR = rot_poly_const * Arguments['_PartitionFunctions'] ** (1.5) / ( self.symnum * np.prod(np.array(self.rots)) ** (0.5))
         realfreq = np.array([x for x in self.freq if x != 'NaN'])
         realfreq = realfreq[realfreq > 0.0]
-        qV = np.prod(1 / (1 - np.exp( - vib_const * realfreq / Arguments['_PartitionFunctions'])))
-        qE = 1 #Good approximation for most closed-shell molecules 
-        self.qTotal = qT*qR*qV*qE
+        self.qV = np.prod(1 / (1 - np.exp( - vib_const * realfreq / Arguments['_PartitionFunctions'])))
+        self.qE = 1 #Good approximation for most closed-shell molecules 
+        self.qTotal = self.qT*self.qR*self.qV*self.qE
 
 
 
@@ -513,12 +566,12 @@ class dal:
             if "*** ABACUS - Excitation energies (.EXCITA) ***" in self.lines[i]:
                 start_exc = i+2
                 end = len(self.lines)
-                exc_type = '.EXCITA'
+                self.exc_type = '.EXCITA'
                 break
             if "--- EXCITATION ENERGIES AND TRANSITION MOMENT CALCULATION (MCTDHF) ---" in self.lines[i]:
                 start_exc = i+2
                 end = len(self.lines)
-                exc_type = 'MCTDHF'
+                self.exc_type = 'MCTDHF'
                 break
         try:
             start_exc
@@ -532,11 +585,11 @@ class dal:
             return
         else:  
             self.exc_energies = []
-            if exc_type == 'MCTDHF':
+            if self.exc_type == 'MCTDHF':
                 for i in self.lines[start_exc: end]:
                     if "@ Excitation energy" in i:
                         self.exc_energies.append(float(i.split()[-2]))
-            elif exc_type == '.EXCITA':
+            elif self.exc_type == '.EXCITA':
                 for i in range(start_exc,end):
                     if "@  Oscillator strengths are dimensionless." in self.lines[i]:
                         start_exc = i+5
@@ -548,20 +601,11 @@ class dal:
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
-        for i in range(len(self.lines)):
-            if "*** ABACUS - Excitation energies (.EXCITA) ***" in self.lines[i]:
-                end = len(self.lines)
-                exc_type = '.EXCITA'
-                break
-            if "--- EXCITATION ENERGIES AND TRANSITION MOMENT CALCULATION (MCTDHF) ---" in self.lines[i]:
-                end = len(self.lines)
-                exc_type = 'MCTDHF'
-                break
-        if exc_type == 'MCTDHF':
+        if self.exc_type == 'MCTDHF':
             for i in range(len(self.lines)):
                 if "@ Oscillator strength (LENGTH)" in self.lines[i]:
                     self.osc_strengths.append(float(self.lines[i].split()[5]))
-        if exc_type == '.EXCITA':
+        if self.exc_type == '.EXCITA':
             for i in range(len(self.lines)):
                 if "@  Oscillator strengths are dimensionless." in self.lines[i]:
                     start_osc = i+5
@@ -604,16 +648,6 @@ class lsdal:
             else:
                 break
 
-if Arguments['_Oscillator_strengths'] != False and Arguments['_Excitation_energies'] == None:
-    if suppressed == False:
-        print('Excitation energies will be found as well, since you are trying to extract oscillator strengths')
-    Arguments['_Excitation_energies'] = -1
-
-if Arguments['_PartitionFunctions'] != None and Arguments['_Frequencies'] == None:
-    if suppressed == False:
-        print('Frequencies will be found as well, since you are trying to extract partition functions')
-    Arguments['_Frequencies'] = -1
-
 
 #**************************** FUNCTIONS *******************************
 
@@ -642,7 +676,7 @@ def checkForOnlyNans(array):
 
 if __name__ == "__main__":
     Wanted_Values = [item[0] for item in Arguments.items() if not(item[1] == None or item[1] == False)]
-    Set_of_values = set()
+    Set_of_values = dict(item for item in Outputs.items() if item[0] in Wanted_Values)
     Extracted_values = dict()
     array_input = list()
 
@@ -653,20 +687,17 @@ if __name__ == "__main__":
     rot_poly_const = 168.5837766 #Assuming rigid, polyatomic rotor and T>>Rotational temperature and rotational constant in GHz
     vib_const = 3.157750419E+05 #Assuming harmonic oscillator and frequency in au 
     Barrier = '\n**********************************************\n'
-    count = 0
-    for infile in input_file:
-        count += 1
-
+    
     if silence == True:
         print('')
 
-    count = 0
+    count = len(input_file)
+
     for infile in input_file:
         array_input.append([infile])
-        if not(silence == False or suppressed == False) == False:
+        if not(silence == False or suppressed == False) == True:
             print(Barrier)
             print(f'Collecting data from {infile}')
-        count += 1
 
 #   --------- DEFINITION OF WHICH PROGRAM THE OUTPUT IS FROM ----------
 
@@ -699,30 +730,31 @@ if __name__ == "__main__":
                 method = getattr(type(file_text),i)
                 method(file_text)
             except AttributeError:
-                print(f'{infile}: {i} has not been implemented for {input_type}')
+                if suppressed == False:
+                    print(f'{infile}: {i} has not been implemented for {input_type}')
         
 #   -------------- COLLETING THE VALUES IN DICTIONARIES ---------------
 
-        lst = [*file_text.__dict__.keys()]
-        temp_dict = dict()
+        dict_keys = [*file_text.__dict__.keys()]
+        collection_dict = dict()
         
-        for i in lst[1:]:
-            Set_of_values.add(i)
-            temp_dict[i] = file_text.__dict__[i]
+        for i in dict_keys[1:]:
+            collection_dict[i] = file_text.__dict__[i]
 
-        Extracted_values[infile] = temp_dict
+        Extracted_values[infile] = collection_dict
 
-    if not(silence == False or suppressed == False) == False:
+    if not(silence == False or suppressed == False) == True:
         print(Barrier)
 
 #   ---------------- FINDING FUNCTIONS NOT IMPLEMENTED ----------------
 
     for infile in input_file:
         for key in Set_of_values:
-            try:
-                Extracted_values[infile][key]
-            except KeyError:
-                Extracted_values[infile][key] = ['Not implemented']
+            for val in Set_of_values[key]:
+                try:
+                    Extracted_values[infile][val]
+                except KeyError:
+                    Extracted_values[infile][val] = ['Not implemented']
 
 #   ------------------ TURNING EVERYTHING INTO LISTS ------------------
 
@@ -736,9 +768,10 @@ if __name__ == "__main__":
     Final_arrays = dict()
 
     for key in Set_of_values:
-        Final_arrays[key] = []
-        for infile in input_file:
-            Final_arrays[key].append(Extracted_values[infile][key])
+        for val in Set_of_values[key]:
+            Final_arrays[val] = []
+            for infile in input_file:
+                Final_arrays[val].append(Extracted_values[infile][val])
 
 #   -------------------------- RESIZES ARRAYS -------------------------
 
@@ -746,31 +779,25 @@ if __name__ == "__main__":
         if type(Final_arrays[key]) == list:
             resize(Final_arrays[key])
 
-#   --------------------- CREATES THE HEADER ROW ----------------------
+#   ------------------- FIXING VARIABLE SIZE ARRAYS -------------------
 
+    for item in Variable_arrays.items():
+        if item[1] > 0:
+            for val in Outputs[item[0]]:
+                for file in range(0,count):
+                    Final_arrays[val][file] = Final_arrays[val][file][0:item[1]]
+
+#   --------------------- CREATES THE HEADER ROW ----------------------
+    
     header = ['File']
-    if Arguments['_Energy'] == True:
-        header += ['Energy']
-    if Arguments['_ZPV'] == True:
-        header += ['ZPV Energy']
-    if Arguments['_Enthalpy'] == True:
-        header += ['Enthalpy']
-    if Arguments['_Entropy'] == True:
-        header += ['Entropy']
-    if Arguments['_Gibbs'] == True:
-        header += ['Gibbs Free energy']
-    if Arguments['_Dipole_moments'] == True:
-        header += ['Dipole x', 'Dipole y', 'Dipole z', 'Total dipole']
-    if Arguments['_Polarizabilities'] == True:
-        header += ['Polarizablity xx', 'Polarizability yy', 'Polarizability zz', 'Isotropic polarizability']
-    if Arguments['_Excitation_energies'] != None:
-        header += [f'Exc. energy {i+1}' for i in range(len(Final_arrays['exc_energies'][0]))]
-    if Arguments['_Oscillator_strengths'] == True:
-        header += [f'Osc. strength {i+1}' for i in range(len(Final_arrays['osc_strengths'][0]))]
-    if Arguments['_Frequencies'] != None:
-        header += [f'Frequency {i+1}' for i in range(len(Final_arrays['freq'][0]))]
-    if Arguments['_PartitionFunctions'] != None:
-        header += ['Total molar partition function']
+    temp = [val[1] for val in Header_text.items() if val[0] in Set_of_values]
+    for key in Set_of_values.keys():
+        for val in Set_of_values[key]:
+            if len(Final_arrays[val][0]) > 1:
+                for i in range(len(Final_arrays[val][0])):
+                    header.append(f'{Header_text[val]} {i+1}')
+            else:
+                header.append(Header_text[val])
 
 #  --- CREATES AN ARRAY OF THE CORRECT SIZE FILLED WITH THE HEADER ---
 #  ----------------- USEFUL FOR TROUBLESHOOTING ----------------------
@@ -785,41 +812,10 @@ if __name__ == "__main__":
         output_array[1:,0] = np.array(np.concatenate(array_input))
 
     col = 1
-    if Arguments['_Energy'] == True:
-        output_array[1:,col] = np.array(Final_arrays['tot_energy']).T
-        col += 1
-    if Arguments['_ZPV'] == True:
-        output_array[1:,col] = np.array(Final_arrays['zpv_energy']).T
-        col += 1
-    if Arguments['_Enthalpy'] == True:
-        output_array[1:,col] = np.array(Final_arrays['enthalpy']).T
-        col += 1
-    if Arguments['_Entropy'] == True:
-        output_array[1:,col] = np.array(Final_arrays['entropy']).T
-        col += 1
-    if Arguments['_Gibbs'] == True:
-        output_array[1:,col] = np.array(Final_arrays['gibbs']).T
-        col += 1
-    if Arguments['_Dipole_moments'] == True:
-        for i in ['dipolex','dipoley','dipolez','total_dipole']:
-            output_array[1:,col] = np.array(Final_arrays[i]).T
-            col += 1
-    if Arguments['_Polarizabilities'] == True:
-        for i in ['polx','poly','polz','iso_polar']:
-            output_array[1:,col] = np.array(Final_arrays[i]).T
-            col += 1
-    if Arguments['_Excitation_energies'] != None:
-        output_array[1:,col:col+len(Final_arrays['exc_energies'][0])] = np.array(Final_arrays['exc_energies'])
-        col += len(np.array(Final_arrays['exc_energies'][0]))
-    if Arguments['_Oscillator_strengths'] == True:
-        output_array[1:,col:col+len(Final_arrays['osc_strengths'][0])] = np.array(Final_arrays['osc_strengths'])
-        col += len(np.array(Final_arrays['osc_strengths'][0]))
-    if Arguments['_Frequencies'] != None:
-        output_array[1:,col:col+len(Final_arrays['freq'][0])] = np.array(Final_arrays['freq'])
-        col += len(Final_arrays['freq'][0])
-    if Arguments['_PartitionFunctions'] != None:
-        output_array[1:,col] = np.array(Final_arrays['qTotal']).T
-        col+=1
+    for key in Set_of_values.keys():
+        for val in Set_of_values[key]:
+            output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
+            col += len(np.array(Final_arrays[val][0]))
 
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
