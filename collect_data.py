@@ -11,7 +11,7 @@ import os
 
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''
-A script designed to make it easier to exctract data from output files
+A script designed to make it easier to extract data from output files
 
           Currently the output formats supported are
           ------------------------------------------
@@ -75,7 +75,7 @@ For help contact
   Magnus Bukhave Johansen
   qhw298@alumni.ku.dk''')
 
-parser.add_argument('infile', type=str, nargs='+', help='The file(s) to exctract data from', metavar='File')
+parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='File')
 
 parser.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
 parser.add_argument('-s', '--suppress', action='store_true', help='Include to suppress all print statements (including errors) except the data output')
@@ -87,9 +87,9 @@ parser.add_argument('-S', '--entropy', action='store_true', help='Include to ext
 parser.add_argument('-G', '--gibbs', action='store_true', help='Include to extract the Gibbs Free Energy')
 parser.add_argument('-D', '--dipole', action='store_true', help='Include to extract the Dipole Moment')
 parser.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
-parser.add_argument('-X', '--exc', const=-1, type=int, help='Include to exctract the Excitation Energies. Add a number to exctract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
+parser.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
 parser.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
-parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to exctract the Frequencies. Add a number to exctract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
+parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
 parser.add_argument('-Q', '--partfunc', const=298.15, type=float, help='Include to calculate partition functions. Add a temperature to calculate at.',nargs='?')
 
 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     input_file = args.infile
     CSV = args.csv
 
-    Arguments = {
+    Arguments = {   #These are all the possible arguments that extract data
         '_Energy' : args.energy,
         '_ZPV' : args.zpv,
         '_Enthalpy' : args.enthalpy,
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         '_PartitionFunctions' : args.partfunc
     }
 
-    Outputs = {
+    Outputs = {     #These are the datapoints that will be extracted per argument
         '_Energy' : ['tot_energy'],
         '_ZPV' : ['zpv'],
         '_Enthalpy' : ['enthalpy'],
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         '_PartitionFunctions' : ['qTotal']
     }
 
-    Header_text = {
+    Header_text = { #These are what will be written in the header for each datapoint
         'tot_energy' : 'Energy',
         'zpv' : 'ZPV Energy',
         'enthalpy' : 'Enthalpy',
@@ -149,23 +149,23 @@ if __name__ == "__main__":
         'qTotal' : 'Total molar partition function'
     }
 
-    silence = args.quiet
+    quiet = args.quiet
     suppressed = args.suppress
 
-    if Arguments['_Oscillator_strengths'] != False and Arguments['_Excitation_energies'] == None:
+    if Arguments['_Oscillator_strengths'] != False and Arguments['_Excitation_energies'] == None:   #Ensuring that excitation energies are calculated when oscillator strengths are
         if suppressed == False:
             print('Excitation energies will be found as well, since you are trying to extract oscillator strengths')
         Arguments['_Excitation_energies'] = -1
 
-    if Arguments['_Oscillator_strengths'] == True:
+    if Arguments['_Oscillator_strengths'] == True:  #Makes the amount of Oscillator strengths printed equal to that of excitation energies
         Arguments['_Oscillator_strengths'] = Arguments['_Excitation_energies']
 
-    if Arguments['_PartitionFunctions'] != None and Arguments['_Frequencies'] == None:
+    if Arguments['_PartitionFunctions'] != None and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
         if suppressed == False:
             print('Frequencies will be found as well, since you are trying to extract partition functions')
         Arguments['_Frequencies'] = -1
 
-    Variable_arrays = dict([item for item in Arguments.items() if type(item[1]) == int])
+    Variable_arrays = dict([item for item in Arguments.items() if type(item[1]) == int])    #Dictionary of data where the amount of values printed can be changed
 
 
 #******************************* CLASSES ******************************
@@ -312,11 +312,11 @@ class gaus:
                 break
         if self.symnum == 0 and suppressed == False:
             print(f"No rotational symmetry number found in {infile}")
-
      
     def _PartitionFunctions(self):
-        if checkForOnlyNans(np.array(self.freq)) and suppressed == False:
-            print(f"No frequencies found in {infile}, skipping partition function calculation")
+        if CheckForOnlyNans(np.array(self.freq)) == True:
+            if suppressed == False:
+                print(f"No frequencies found in {infile}, skipping partition function calculation")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -453,7 +453,6 @@ class orca:
             if suppressed == False:
                 print(f"No Oscillator strengths in {infile}")
             self.osc_strengths = ['NaN'] * len(self.exc_energies)
-
 
     def _Frequencies(self):
         for i in range(len(self.lines)):
@@ -652,7 +651,7 @@ class lsdal:
 #**************************** FUNCTIONS *******************************
 
 
-def resize(array):
+def Resize(array):
     max_size = 0
     for i in range(len(array[:])):
         if len(array[i]) > max_size:
@@ -664,15 +663,96 @@ def resize(array):
         else:
             array[i] += ['NaN'] * (max_size - len(array[i]))
 
-
-def checkForOnlyNans(array):
+def CheckForOnlyNans(array):
     for i in array:
         if i != 'NaN':
            return False
     return True
 
+def Find_output_type(infile):
+    with open(infile,'r') as read:
+        lines = read.readlines()[:10]
+    if '* O   R   C   A *' in lines[4]: #File type = ORCA
+        file_text = orca(infile)
+        input_type = 'ORCA'       
+    
+    if '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:  #File type = DALTON
+        file_text = dal(infile)
+        input_type = 'DALTON'
+
+    if 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:  #File type = GAUSSIAN
+        file_text = gaus(infile)
+        input_type = 'GAUSSIAN'
+
+    if '**********  LSDalton - An electronic structure program  **********' in lines[2]:    #File type = LSDALTON
+        file_text = lsdal(infile)
+        input_type = 'LSDALTON'
+
+    del lines
+    return file_text, input_type
+
+def Extract_data(suppressed, Wanted_Values, infile, file_text, input_type):
+    for i in Wanted_Values:
+        try:
+            method = getattr(type(file_text),i)
+            method(file_text)
+        except AttributeError:
+            if suppressed == False:
+                print(f'{infile}: {i} has not been implemented for {input_type}')
+
+def Check_if_Implemented(input_file, Set_of_values, Extracted_values):
+    for infile in input_file:
+        for key in Set_of_values:
+            for val in Set_of_values[key]:
+                try:
+                    Extracted_values[infile][val]
+                except KeyError:
+                    Extracted_values[infile][val] = ['Not implemented']
+
+def Collect_and_sort_data(input_file, Set_of_values, Extracted_values):
+    Final_arrays = dict()
+
+    for key in Set_of_values:
+        for val in Set_of_values[key]:
+            Final_arrays[val] = []
+            for infile in input_file:
+                Final_arrays[val].append(Extracted_values[infile][val])
+    return Final_arrays
+
+def Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays):
+    for item in Variable_arrays.items():
+        if item[1] > 0:
+            for val in Outputs[item[0]]:
+                for file in range(0,count):
+                    Final_arrays[val][file] = Final_arrays[val][file][0:item[1]]
+
+def Create_Header(Header_text, Set_of_values, Final_arrays):
+    header = ['File']
+    temp = [val[1] for val in Header_text.items() if val[0] in Set_of_values]
+    for key in Set_of_values.keys():
+        for val in Set_of_values[key]:
+            if len(Final_arrays[val][0]) > 1:
+                for i in range(len(Final_arrays[val][0])):
+                    header.append(f'{Header_text[val]} {i+1}')
+            else:
+                header.append(Header_text[val])
+    return header
+
+def Fill_output_array(Set_of_values, array_input, count, Final_arrays, output_array):
+    if count == 1:
+        output_array[1,0] = array_input[0][0]
+    else:
+        output_array[1:,0] = np.array(np.concatenate(array_input))
+
+    col = 1
+    for key in Set_of_values.keys():
+        for val in Set_of_values[key]:
+            output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
+            col += len(np.array(Final_arrays[val][0]))
+
 
 #******************************* CODE *********************************
+
 
 if __name__ == "__main__":
     Wanted_Values = [item[0] for item in Arguments.items() if not(item[1] == None or item[1] == False)]
@@ -688,134 +768,56 @@ if __name__ == "__main__":
     vib_const = 3.157750419E+05 #Assuming harmonic oscillator and frequency in au 
     Barrier = '\n**********************************************\n'
     
-    if silence == True:
+    if quiet == True:
         print('')
 
     count = len(input_file)
 
     for infile in input_file:
         array_input.append([infile])
-        if not(silence == False or suppressed == False) == True:
+        if not(quiet == False or suppressed == False) == True:
             print(Barrier)
             print(f'Collecting data from {infile}')
 
-#   --------- DEFINITION OF WHICH PROGRAM THE OUTPUT IS FROM ----------
-
-        with open(infile,'r') as read:
-            lines = read.readlines()[:10]
-        if '* O   R   C   A *' in lines[4]: 							#File type = ORCA
-            file_text = orca(infile)
-            input_type = 'ORCA'       
-    
-        if '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:	#File type = DALTON
-            file_text = dal(infile)
-            input_type = 'DALTON'
-
-        if 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:					#File type = GAUSSIAN
-            file_text = gaus(infile)
-            input_type = 'GAUSSIAN'
-
-        if '**********  LSDalton - An electronic structure program  **********' in lines[2]:	#File type = LSDALTON
-            file_text = lsdal(infile)
-            input_type = 'LSDALTON'
-
-        del lines
+        file_text, input_type = Find_output_type(infile)    #Determining data output type
 
         input_no_ext = infile.replace('.out','')
 
-#   ---------------- EXTRACTING THE APPROPIATE VALUES -----------------
-
-        for i in Wanted_Values:
-            try:
-                method = getattr(type(file_text),i)
-                method(file_text)
-            except AttributeError:
-                if suppressed == False:
-                    print(f'{infile}: {i} has not been implemented for {input_type}')
+        Extract_data(suppressed, Wanted_Values, infile, file_text, input_type)  #Extracting data
         
-#   -------------- COLLETING THE VALUES IN DICTIONARIES ---------------
-
         dict_keys = [*file_text.__dict__.keys()]
         collection_dict = dict()
         
-        for i in dict_keys[1:]:
+        for i in dict_keys[1:]: #Collecting the data in dictionaries
             collection_dict[i] = file_text.__dict__[i]
 
         Extracted_values[infile] = collection_dict
 
-    if not(silence == False or suppressed == False) == True:
+        del file_text #Removing the file text from memory
+
+    if not(quiet == False or suppressed == False) == True:
         print(Barrier)
 
-#   ---------------- FINDING FUNCTIONS NOT IMPLEMENTED ----------------
+    Check_if_Implemented(input_file, Set_of_values, Extracted_values)   #Finding functions not implemented
 
-    for infile in input_file:
-        for key in Set_of_values:
-            for val in Set_of_values[key]:
-                try:
-                    Extracted_values[infile][val]
-                except KeyError:
-                    Extracted_values[infile][val] = ['Not implemented']
-
-#   ------------------ TURNING EVERYTHING INTO LISTS ------------------
-
-    for key_outer in Extracted_values.keys():
+    for key_outer in Extracted_values.keys():   # Turn eveerything into lists
         for key_inner in Extracted_values[key_outer].keys():
             if type(Extracted_values[key_outer][key_inner]) != list:
                 Extracted_values[key_outer][key_inner] = [Extracted_values[key_outer][key_inner]]
 
-#   --------- COLLECTING ALL VALUES IN ARRAYS IN A DICTIONARY ---------
+    Final_arrays = Collect_and_sort_data(input_file, Set_of_values, Extracted_values)   #Collecting all values in arrays in a dictionary
 
-    Final_arrays = dict()
-
-    for key in Set_of_values:
-        for val in Set_of_values[key]:
-            Final_arrays[val] = []
-            for infile in input_file:
-                Final_arrays[val].append(Extracted_values[infile][val])
-
-#   -------------------------- RESIZES ARRAYS -------------------------
-
-    for key in Final_arrays.keys():
+    for key in Final_arrays.keys(): #Resizing arrays
         if type(Final_arrays[key]) == list:
-            resize(Final_arrays[key])
+            Resize(Final_arrays[key])
 
-#   ------------------- FIXING VARIABLE SIZE ARRAYS -------------------
+    Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)   #Fixing the size of variable size arrays
 
-    for item in Variable_arrays.items():
-        if item[1] > 0:
-            for val in Outputs[item[0]]:
-                for file in range(0,count):
-                    Final_arrays[val][file] = Final_arrays[val][file][0:item[1]]
+    header = Create_Header(Header_text, Set_of_values, Final_arrays)    #Creation of header row
 
-#   --------------------- CREATES THE HEADER ROW ----------------------
-    
-    header = ['File']
-    temp = [val[1] for val in Header_text.items() if val[0] in Set_of_values]
-    for key in Set_of_values.keys():
-        for val in Set_of_values[key]:
-            if len(Final_arrays[val][0]) > 1:
-                for i in range(len(Final_arrays[val][0])):
-                    header.append(f'{Header_text[val]} {i+1}')
-            else:
-                header.append(Header_text[val])
+    output_array = np.array([header] * (count + 1), dtype=object)   #Create output array from header row
 
-#  --- CREATES AN ARRAY OF THE CORRECT SIZE FILLED WITH THE HEADER ---
-#  ----------------- USEFUL FOR TROUBLESHOOTING ----------------------
-
-    output_array = np.array([header] * (count + 1), dtype=object)
-
-#   ------------ FILLS THE ARRAY WITH THE CORRECT VALUES -------------
-
-    if count == 1:
-        output_array[1,0] = array_input[0][0]
-    else:
-        output_array[1:,0] = np.array(np.concatenate(array_input))
-
-    col = 1
-    for key in Set_of_values.keys():
-        for val in Set_of_values[key]:
-            output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
-            col += len(np.array(Final_arrays[val][0]))
+    Fill_output_array(Set_of_values, array_input, count, Final_arrays, output_array)    #Filling the output array with the extracted data
 
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
