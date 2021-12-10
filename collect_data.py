@@ -1,10 +1,11 @@
 
-import sys
-from typing import Set #For argv
+import math
 import numpy as np
 import argparse
 from csv import writer
-import os
+import matplotlib.pyplot as plt
+from matplotlib import rc
+import subprocess as sp
 
 
 #*************************** INPUT PARSING ****************************
@@ -91,6 +92,7 @@ parser.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract 
 parser.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
 parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
 parser.add_argument('-Q', '--partfunc', const=298.15, type=float, help='Include to calculate partition functions. Add a temperature to calculate at.',nargs='?')
+parser.add_argument('--uvvis', action='store_true', help='Include to calculate a UV-VIS spectrum')
 
 
 #******************************* SETUP ********************************
@@ -100,6 +102,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     input_file = args.infile
     CSV = args.csv
+    UVVIS = args.uvvis
 
     Arguments = {   #These are all the possible arguments that extract data
         '_Energy' : args.energy,
@@ -151,6 +154,16 @@ if __name__ == "__main__":
 
     quiet = args.quiet
     suppressed = args.suppress
+
+    if UVVIS == True and Arguments['_Excitation_energies'] == None:
+        if suppressed == False:
+            print('Excitation energies will be found as well, since you are trying to generate a UV-VIS spectrum')
+        Arguments['_Excitation_energies'] = -1
+
+    if UVVIS == True and Arguments['_Oscillator_strengths'] != True:
+        if suppressed == False:
+            print('Oscillator_strengths will be found as well, since you are trying to generate a UV-VIS spectrum')
+        Arguments['_Oscillator_strengths'] = Arguments['_Excitation_energies']
 
     if Arguments['_Oscillator_strengths'] != False and Arguments['_Excitation_energies'] == None:   #Ensuring that excitation energies are calculated when oscillator strengths are
         if suppressed == False:
@@ -750,6 +763,62 @@ def Fill_output_array(Set_of_values, array_input, count, Final_arrays, output_ar
             output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
             col += len(np.array(Final_arrays[val][0]))
 
+def UVVIS_Spectrum(t, l, f, k, sigmacm):
+    lambda_tot = np.zeros(len(t))
+    for x in range(1,len(t)):
+        lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
+    return lambda_tot
+
+def Make_uvvis_spectrum(input_file, suppressed, UVVIS_Spectrum, inv_cm_to_au, count, Final_arrays):
+    # A LOT OF PLOT SETUP
+    rc('text', usetex=True)
+    xlabel_font = ylabel_font = title_font = 16
+    plt.rc('font', size=12) # x/y axis font size
+    N=1000 # number of calculated points in curve
+    NA=6.02214199*10**23 #avogadros number
+    c=299792458 #speed of light
+    e=1.60217662*10**(-19) #electron charge
+    me=9.10938*10**(-31) #electron mass
+    pi=math.pi
+    epsvac=8.8541878176*10**(-12)
+    sigmacm=0.4*8065.544
+    k=(NA*e**2)/(np.log(10)*2*me*c**2*epsvac)*np.sqrt(np.log(2)/pi)*10**(-1)
+        # PLOT SETUP DONE
+    for file in range(0,count):
+        filename = input_file[file].replace('.out','')
+        plotname = filename + '-uvvis.eps'
+        title = filename.replace("_"," ")
+
+        excitations = np.array([x for x in Final_arrays['exc_energies'][file] if x != 'NaN' and x != 'Not implemented'])
+        oscillations = np.array([x for x in Final_arrays['osc_strengths'][file] if x != 'NaN' and x != 'Not implemented'])
+        if len(excitations) == 0 and len(oscillations) == 0:
+            if suppressed == False:
+                print(f'Excitation energies and oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
+            continue
+        if len(excitations) == 0:
+            if suppressed == False:
+                print(f'Excitation energies have either not been implemented for this output type, or none were found in the file {filename}')
+            continue
+        if len(oscillations) == 0:
+            if suppressed == False:
+                print(f'Oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
+            continue
+
+        excitations = 1E7/(excitations/inv_cm_to_au)   #From cm^-1 to nm
+        uvvis_input = np.array([excitations,oscillations])
+        span = np.linspace(min(excitations)-20, max(excitations)+20, N, endpoint=True) # exctinction coefficient (wavelength range)
+            
+        graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
+        plt.title(title)
+        plt.plot(span, graph)
+        plt.ylim((0,max(graph)*1.2))
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        plt.xlabel('Wavelength $(nm)$', fontsize=xlabel_font)
+        plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=16)
+        plt.savefig(plotname, format='eps', dpi=600)
+
 
 #******************************* CODE *********************************
 
@@ -781,8 +850,6 @@ if __name__ == "__main__":
 
         file_text, input_type = Find_output_type(infile)    #Determining data output type
 
-        input_no_ext = infile.replace('.out','')
-
         Extract_data(suppressed, Wanted_Values, infile, file_text, input_type)  #Extracting data
         
         dict_keys = [*file_text.__dict__.keys()]
@@ -800,7 +867,7 @@ if __name__ == "__main__":
 
     Check_if_Implemented(input_file, Set_of_values, Extracted_values)   #Finding functions not implemented
 
-    for key_outer in Extracted_values.keys():   # Turn eveerything into lists
+    for key_outer in Extracted_values.keys():   # Turn everything into lists
         for key_inner in Extracted_values[key_outer].keys():
             if type(Extracted_values[key_outer][key_inner]) != list:
                 Extracted_values[key_outer][key_inner] = [Extracted_values[key_outer][key_inner]]
@@ -810,6 +877,9 @@ if __name__ == "__main__":
     for key in Final_arrays.keys(): #Resizing arrays
         if type(Final_arrays[key]) == list:
             Resize(Final_arrays[key])
+
+    if UVVIS == True:
+        Make_uvvis_spectrum(input_file, suppressed, UVVIS_Spectrum, inv_cm_to_au, count, Final_arrays)
 
     Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)   #Fixing the size of variable size arrays
 
@@ -827,8 +897,5 @@ if __name__ == "__main__":
         print('Data has been saved in data.csv')
     else:
         print(output_array)
-
-    #os.system("sed -i s/$(printf '\r')\$// data.csv") #Removes 
-    #(Carriage return) from the data.csv file
 
 #EOF
