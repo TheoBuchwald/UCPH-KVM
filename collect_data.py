@@ -1,11 +1,12 @@
 
 import math
+from types import FunctionType
 import numpy as np
 import argparse
 from csv import writer
 import matplotlib.pyplot as plt
 from matplotlib import rc
-import subprocess as sp
+import os
 
 
 #*************************** INPUT PARSING ****************************
@@ -189,142 +190,87 @@ class gaus:
         file = open(input, "r")
         self.lines = file.readlines()
         file.close
+        self.file = input
+        self.end = len(self.lines)
 
     def _Energy(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Sum of electronic and zero-point Energies=" in self.lines[i]:
-                self.tot_energy = float(self.lines[i].split()[-1]) - float(self.lines[i-4].split()[-2])
-                energy_test = True
-                break
-        try:
-            energy_test
-        except NameError:
-            if suppressed == False:
-                print(f"No Total energy in {infile}")
-            self.tot_energy = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Sum of electronic and zero-point Energies=', 'final energy')
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-1]) - float(self.lines[linenumber-4].split()[-2])
             return
+        self.tot_energy = 'NaN'
 
     def _ZPV(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Sum of electronic and zero-point Energies=" in self.lines[i]:
-                self.zpv_energy = float(self.lines[i].split()[-1])
-                zpv_test = True
-                break
-        try:
-            zpv_test
-        except NameError:
-            if suppressed == False:
-                print(f"No ZPV energy in {infile}")
-            self.zpv_energy = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Sum of electronic and zero-point Energies=', 'ZPV energy')
+        if type(linenumber) == int:
+            self.zpv = float(self.lines[linenumber].split()[-1])
             return
+        self.zpv = 'NaN'
 
     def _Enthalpy(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Sum of electronic and thermal Enthalpies=" in self.lines[i]:
-                self.enthalpy = float(self.lines[i].split()[-1])
-                enthalpy_test = True
-                break
-        try:
-            enthalpy_test
-        except NameError:
-            print(f"No Enthalpy in {infile}")
-            self.enthalpy = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Sum of electronic and thermal Enthalpies=', 'enthalpy')
+        if type(linenumber) == int:
+            self.enthalpy = float(self.lines[linenumber].split()[-1])
             return
+        self.enthalpy = 'NaN'
 
     def _Gibbs(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Sum of electronic and thermal Free Energies=" in self.lines[i]:
-                self.gibbs = float(self.lines[i].split()[-1])
-                gibbs_test = True
-                break
-        try:
-            gibbs_test
-        except NameError:
-            if suppressed == False:
-                print(f"No Gibbs energy in {infile}")
-            self.gibbs = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Sum of electronic and thermal Free Energies=', 'Gibbs free energy')
+        if type(linenumber) == int:
+            self.gibbs = float(self.lines[linenumber].split()[-1])
             return
+        self.gibbs = 'NaN'
 
     def _Dipole_moments(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Electric dipole moment (input orientation):" in self.lines[i]:
-                dipole_test = True
-                self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[i+4].split()[1].replace('D','E')), float(self.lines[i+5].split()[1].replace('D','E')), float(self.lines[i+6].split()[1].replace('D','E')), float(self.lines[i+3].split()[1].replace('D','E'))
-                break
-        try:
-            dipole_test
-        except NameError:
-            if suppressed == False:
-                print(f"No dipole moments in {infile}")
-            self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Electric dipole moment (input orientation):', 'dipole moments')
+        if type(linenumber) == int:
+            self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+4].split()[1].replace('D','E')), float(self.lines[linenumber+5].split()[1].replace('D','E')), float(self.lines[linenumber+6].split()[1].replace('D','E')), float(self.lines[linenumber+3].split()[1].replace('D','E'))
+            return
+        self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
+            
 
     def _Polarizabilities(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Dipole polarizability, Alpha (input orientation)" in self.lines[i]:
-                start_polar = i+2
-                end = len(self.lines)
-                break
-        try:
-            start_polar
-        except NameError:
-            if suppressed == False:
-                print(f"No polarizabilities in {infile}")
-            self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
+        linenumber = ['NaN', 'NaN', 'NaN', 'NaN']
+        searchwords = [' xx ', ' yy ', ' zz ', ' iso ']
+        for i in range(len(searchwords)):
+            linenumber[i] = Forward_search_after_last(self.file, 'Dipole polarizability, Alpha (input orientation).', searchwords[i], 15, 'polarizabilities')
+        if linenumber != ['NaN', 'NaN', 'NaN', 'NaN']:
+            self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber[0]].split()[1].replace('D','E')), float(self.lines[linenumber[1]].split()[1].replace('D','E')), float(self.lines[linenumber[2]].split()[1].replace('D','E')), float(self.lines[linenumber[3]].split()[1].replace('D','E'))
             return
-        else:
-            for i in self.lines[start_polar:end]:
-                if " iso " in i:
-                    self.iso_polar = float(i.split()[1].replace('D','E'))
-                if " xx " in i:
-                    self.polx = float(i.split()[1].replace('D','E'))
-                if " yy " in i:
-                    self.poly = float(i.split()[1].replace('D','E'))
-                if " zz " in i:
-                    self.polz = float(i.split()[1].replace('D','E'))
-                    break
+        self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
     def _Frequencies(self):
         self.freq = []
-        for i in range(len(self.lines)):
-            if "Frequencies --" in self.lines[i]:
-                for j in self.lines[i].split()[2:]:
-                    self.freq.append(float(j)*inv_cm_to_au)
-            elif "- Thermochemistry -" in self.lines[i]:
-                break
+        linenumbers = Forward_search_all(self.file, 'Frequencies --', 'frequencies')
+        for i in linenumbers:
+            for j in self.lines[i].split()[2:]:
+                self.freq.append(float(j)*inv_cm_to_au)
         if len(self.freq) == 0:
-            if suppressed == False:
-                print(f"No frequencies in {infile}")
             if Arguments['_Frequencies'] == -1:
                 self.freq = ['NaN']
             else:
                 self.freq = ['NaN'] * Arguments['_Frequencies']
+        if len(self.freq) < Arguments['_Frequencies']:
+            self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
 
     def _RotationalConsts(self):
         self.rots = []
-        for i in range(len(self.lines)):
-            if "Rotational constant" in self.lines[i]:
-                self.rots = np.array(list(map(float,set(self.lines[i].split()[3:]))))
-                self.rots = self.rots[self.rots != 0.0]
-            elif "- Thermochemistry -" in self.lines[i]:
-                 break
+        linenumbers = Forward_search_all(self.file, 'Rotational constants (GHZ):', 'rotational constants')
+        for i in self.lines[linenumbers[-2]].split()[3:]:
+            self.rots.append(float(i))
+        self.rots = self.rots[self.rots != 0.0]
 
     def _Mass(self):
         self.mass = 0.0
-        for i in range(len(self.lines)):
-            if "Molecular mass" in self.lines[i]:
-                self.mass = float(self.lines[i].split()[2])
-                break
-        if self.mass == 0.0 and suppressed == False:
-            print(f"No molecular mass found in {infile}")
+        linenumber = Forward_search_last(self.file, 'Molecular mass', 'molecular mass')
+        if type(linenumber) == int:
+            self.mass = float(self.lines[linenumber].split()[2])
 
     def _SymmetryNumber(self):
         self.symnum = 0
-        for i in range(len(self.lines)):
-            if "Rotational symmetry number" in self.lines[i]:
-                self.symnum = int(self.lines[i].split()[-1].replace('.',''))
-                break
-        if self.symnum == 0 and suppressed == False:
-            print(f"No rotational symmetry number found in {infile}")
+        linenumber = Forward_search_last(self.file, 'Rotational symmetry number', 'rotational symmetry number')
+        if type(linenumber) == int:
+            self.symnum = int(self.lines[linenumber].split()[-1].replace('.',''))
      
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
@@ -355,145 +301,103 @@ class orca:
         file = open(input, "r")
         self.lines = file.readlines()
         file.close
+        self.file = input
+        self.end = len(self.lines)
 
     def _Energy(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Electronic energy" in self.lines[i]:
-                self.tot_energy = float(self.lines[i].split()[-2])
-                energy_test = True
-                break
-        try:
-            energy_test
-        except NameError:
-            if suppressed == False:
-                print(f"No final energy in {infile}")
-            self.tot_energy = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Electronic energy', 'Final energy', err = False)
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
+        linenumber = Forward_search_last(self.file, 'FINAL SINGLE POINT ENERGY', 'Final energy')
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
+        self.tot_energy = 'NaN'
 
     def _ZPV(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Electronic energy" in self.lines[i]:
-                self.zpv_energy = float(self.lines[i].split()[-2]) + float(self.lines[i+1].split()[-4])
-                zpv_test = True
-                break
-        try:
-            zpv_test
-        except NameError:
-            if suppressed == False:
-                print(f"No ZPV energy in {infile}")
-            self.zpv_energy = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Electronic energy', 'ZPV energy')
+        if type(linenumber) == int:
+            self.zpv = float(self.lines[linenumber].split()[-2]) + float(self.lines[linenumber+1].split()[-4])
             return
-
+        self.zpv = 'NaN'
+        
     def _Enthalpy(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Total Enthalpy" in self.lines[i]:
-                self.enthalpy = float(self.lines[i].split()[-2])
-                enthalpy_test = True
-                break
-        try:
-            enthalpy_test
-        except NameError:
-            if suppressed == False:
-                print(f"No Enthalpy in {infile}")
-            self.enthalpy = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Total Enthalpy', 'enthalpy')
+        if type(linenumber) == int:
+            self.enthalpy = float(self.lines[linenumber].split()[-2])
             return
+        self.enthalpy = 'NaN'
 
     def _Gibbs(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Final Gibbs free energy" in self.lines[i]:
-                self.gibbs = float(self.lines[i].split()[-2])
-                gibbs_test = True
-                break
-        try:
-            gibbs_test
-        except NameError:
-            if suppressed == False:
-                print(f"No Gibbs Free energy in {infile}")
-            self.gibbs = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Final Gibbs free energy', 'Gibbs free energy')
+        if type(linenumber) == int:
+            self.gibbs = float(self.lines[linenumber].split()[-2])
             return
+        self.gibbs = 'NaN'
 
     def _Dipole_moments(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Total Dipole Moment" in self.lines[i]:
-                dipole_test = True
-                self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[i].split()[-3]), float(self.lines[i].split()[-2]), float(self.lines[i].split()[-1]), float(self.lines[i+2].split()[-1])
-                break
-        try:
-            dipole_test
-        except NameError:
-            if suppressed == False:
-                print(f"No dipole moments in {infile}")
-            self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Total Dipole Moment', 'dipole moment')
+        if type(linenumber) == int:
+            self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber].split()[-3]), float(self.lines[linenumber].split()[-2]), float(self.lines[linenumber].split()[-1]), float(self.lines[linenumber+2].split()[-1])
+            return
+        self.dipolex, self.dipoley, self.dipolez, self.total_dipole = 'NaN'
 
     def _Polarizabilities(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "THE POLARIZABILITY TENSOR" in self.lines[i]:
-                start_polar = i
-                end = len(self.lines)
-                break
-        try:
-            start_polar
-        except NameError:
-            if suppressed == False:
-                print(f"No polarizabilities in {infile}")
-            self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
+        linenumber = Forward_search_after_last(self.file, 'THE POLARIZABILITY TENSOR', "'diagonalized tensor:'", 10, 'polarizability')
+        if type(linenumber) == int:
+            self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber+1].split()[0]), float(self.lines[linenumber+1].split()[1]), float(self.lines[linenumber+1].split()[2]), float(self.lines[linenumber+7].split()[-1])
             return
-        for i in range(start_polar,end):
-            if "diagonalized tensor" in self.lines[i]:
-                self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[i+1].split()[0]), float(self.lines[i+1].split()[1]), float(self.lines[i+1].split()[2]), float(self.lines[i+7].split()[-1])
-                break
+        self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
     def _Excitation_energies(self):
         self.exc_energies = []
-        for i in self.lines:
-            if "STATE " in i:
-                self.exc_energies.append(float(i.split()[3]))
-        if len(self.exc_energies) == 0:
-            if suppressed == False:
-                print(f"No Excitation energies in {infile}")
-            if Arguments['_Excitation_energies'] == -1:
-                self.exc_energies = ['NaN']
-            else:
-                self.exc_energies = ['NaN'] * Arguments['_Excitation_energies']
+        linenumbers = Forward_search_all(self.file, 'STATE ', 'excitation energies')
+        if type(linenumbers) == list:
+            for i in linenumbers:
+                self.exc_energies.append(float(self.lines[i].split()[3]))
+            if len(self.exc_energies) < Arguments['_Excitation_energies']:
+                self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
+            return
+        if Arguments['_Excitation_energies'] == -1:
+            self.exc_energies = ['NaN']
+        else:
+            self.exc_energies = ['NaN'] * Arguments['_Excitation_energies']        
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
-        for i in range(len(self.lines)):
-            if "ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS" in self.lines[i]:
-                for j in range(len(self.exc_energies)):
-                    self.osc_strengths.append(float(self.lines[i+5+j].split()[3]))
+        linenumber = Forward_search_last(self.file, 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS', 'oscillator strengths')
+        if type(linenumber) == int:
+            for i in range(len(self.exc_energies)):
+                self.osc_strengths.append(float(self.lines[linenumber+5+i].split()[3]))
         if len(self.osc_strengths) == 0:
-            if suppressed == False:
-                print(f"No Oscillator strengths in {infile}")
-            self.osc_strengths = ['NaN'] * len(self.exc_energies)
+            if Arguments['_Excitation_energies'] == -1:
+                self.osc_strengths = ['NaN']
+            else:
+                self.osc_strengths = ['NaN'] * Arguments['_Excitation_energies']
+        if len(self.osc_strengths) < Arguments['_Excitation_energies']:
+            self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
 
     def _Frequencies(self):
-        for i in range(len(self.lines)):
-            if "VIBRATIONAL FREQUENCIES" in self.lines[i]:
-                start_freq = i
-                end = len(self.lines)
-                break
-        try:
-            start_freq
-        except NameError:
-            if suppressed == False:
-                print(f"No frequencies in {infile}")
+        self.freq = []
+        linenumber = Forward_search_last(self.file, "VIBRATIONAL FREQUENCIES", 'frequencies')
+        if type(linenumber) == int:
+            for j in self.lines[linenumber+7: self.end]:
+                if ": " and " 0.00 " in j:
+                    pass
+                elif ": " in j and not " 0.00 " in j:
+                    self.freq.append(float(j.split()[1])*inv_cm_to_au)
+                else:
+                    break
+            return
+        if len(self.freq) == 0:
             if Arguments['_Frequencies'] == -1:
                 self.freq = ['NaN']
             else:
                 self.freq = ['NaN'] * Arguments['_Frequencies']
-            return
-        else:
-            self.freq = []
-            for i in range(start_freq,end):
-                if "VIBRATIONAL FREQUENCIES" in self.lines[i]:
-                    for j in self.lines[i+7: end]:
-                        if ": " and " 0.00 " in j:
-                            pass
-                        elif ": " in j and not " 0.00 " in j:
-                            self.freq.append(float(j.split()[1])*inv_cm_to_au)
-                        else:
-                            break
+        if len(self.freq) < Arguments['_Frequencies']:
+            self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
+
 
 
 
@@ -503,134 +407,81 @@ class dal:
         file = open(input, "r")
         self.lines = file.readlines()
         file.close
+        self.file = input
+        self.end = len(self.lines)
 
     def _Energy(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "@    Final DFT energy:" in self.lines[i]:
-                self.tot_energy = float(self.lines[i].split()[-1])
-                energy_test = True
-                break
-            if "@ Energy at final geometry is" in self.lines[i]:
-                self.tot_energy = float(self.lines[i].split()[-2])
-                energy_test = True
-                break
-        try:
-            energy_test
-        except NameError:
-            if suppressed == False:
-                print(f"No final energy in {infile}")
-            self.tot_energy = 'NaN'
+        linenumber = Forward_search_last(self.file, '@    Final DFT energy:', 'final energy', err=False)
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
+        linenumber = Forward_search_last(self.file, '@ Energy at final geometry is', 'final energy')
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-2])
+            return
+        self.tot_energy = 'NaN'
 
     def _Dipole_moments(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "Dipole moment\n" in self.lines[i]:
-                self.total_dipole = float(self.lines[i+4].split()[0])
-                start_dipole = i+4
-                end = len(self.lines)
-                break
-        try:
-            start_dipole
-        except NameError:
-            if suppressed == False:
-                print(f"No dipole moments in {infile}")
-            self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
-        else:
-            for i in self.lines[start_dipole: end]:
-                if " x " in i:
-                    self.dipolex = float(i.split()[1])
-                if " y " in i:
-                    self.dipoley = float(i.split()[1])
-                if " z " in i:
-                    self.dipolez = float(i.split()[1])
-                    break
-            for i in (self.dipolex, self.dipoley, self.dipolez):
-                try:
-                    i
-                except NameError:
-                    i = 'NaN'
+        linenumber = Forward_search_last(self.file, 'Dipole moment components', 'dipole moment')
+        if type(linenumber) == int:
+            self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+5].split()[1]), float(self.lines[linenumber+6].split()[1]), float(self.lines[linenumber+7].split()[1]), float(self.lines[linenumber-3].split()[0])
+            return
+        self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
     def _Polarizabilities(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "SECOND ORDER PROPERTIES" in self.lines[i]:
-                start_polar = i
-                end = len(self.lines)
-                break
-        try:
-            start_polar
-        except NameError:
-            if suppressed == False:
-                print(f"No polarizabilities in {infile}")
-            self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
+        linenumber = Forward_search_last(self.file, 'SECOND ORDER PROPERTIES', 'polarizabilities')
+        if type(linenumber) == int:
+            self.polx, self.poly, self.polz = float(self.lines[linenumber+2].split()[-1]), float(self.lines[linenumber+5].split()[-1]), float(self.lines[linenumber+7].split()[-1])
+            self.iso_polar = (self.polx + self.poly + self.polz)/3.
             return
-        else:
-            for i in self.lines[start_polar: end]:
-                if "XDIPLEN  ; XDIPLEN" in i:
-                    self.polx = float(i.split()[-1])
-                if "YDIPLEN  ; YDIPLEN" in i:
-                    self.poly = float(i.split()[-1])
-                if "ZDIPLEN  ; ZDIPLEN" in i:
-                    self.polz = float(i.split()[-1])
-                    break
-            self.iso_polar = (self.polx+self.poly+self.polz)/3.
+        self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
     def _Excitation_energies(self):
-        for i in range(len(self.lines)):
-            if "*** ABACUS - Excitation energies (.EXCITA) ***" in self.lines[i]:
-                start_exc = i+2
-                end = len(self.lines)
-                self.exc_type = '.EXCITA'
-                break
-            if "--- EXCITATION ENERGIES AND TRANSITION MOMENT CALCULATION (MCTDHF) ---" in self.lines[i]:
-                start_exc = i+2
-                end = len(self.lines)
-                self.exc_type = 'MCTDHF'
-                break
-        try:
-            start_exc
-        except NameError:
-            if suppressed == False:
-                print(f"No excitation energies in {infile}")
-            if Arguments['_Excitation_energies'] == -1:
-                self.exc_energies = ['NaN']
-            else:
-                self.exc_energies = ['NaN'] * Arguments['_Excitation_energies']
+        self.exc_energies = []
+        linenumber = Forward_search_last(self.file, '@  Oscillator strengths are dimensionless.', 'excitation energies', err=False)
+        if type(linenumber) == int:
+            self.exc_type = '.EXCITA'
+            for i in self.lines[linenumber+5: self.end]:
+                if "@ "in i:
+                    self.exc_energies.append(float(i.split()[3])*ev_to_au)
+                else:
+                    break
+            if len(self.exc_energies) < Arguments['_Excitation_energies']:
+                self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
             return
-        else:  
-            self.exc_energies = []
-            if self.exc_type == 'MCTDHF':
-                for i in self.lines[start_exc: end]:
-                    if "@ Excitation energy" in i:
-                        self.exc_energies.append(float(i.split()[-2]))
-            elif self.exc_type == '.EXCITA':
-                for i in range(start_exc,end):
-                    if "@  Oscillator strengths are dimensionless." in self.lines[i]:
-                        start_exc = i+5
-                        for j in self.lines[i+5: end]:
-                            if "@ "in j:
-                                self.exc_energies.append(float(j.split()[3])*ev_to_au)
-                            else:
-                                break
+        linenumbers = Forward_search_all(self.file, '@ Excitation energy', 'excitation energies')
+        if type(linenumbers) == list:
+            self.exc_type = 'MCTDHF'
+            for i in linenumbers:
+                self.exc_energies.append(self.exc_energies.append(float(self.lines[i].split()[-2])))
+            if len(self.exc_energies) < Arguments['_Excitation_energies']:
+                self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
+            return
+        if Arguments['_Excitation_energies'] == -1:
+            self.exc_energies = ['NaN']
+        else:
+            self.exc_energies = ['NaN'] * Arguments['_Excitation_energies']
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
         if self.exc_type == 'MCTDHF':
-            for i in range(len(self.lines)):
-                if "@ Oscillator strength (LENGTH)" in self.lines[i]:
+            linenumbers = Forward_search_all(self.file, '@ Oscillator strength (LENGTH)', 'oscillator strengths')
+            if type(linenumbers) == list:
+                for i in linenumbers:
                     self.osc_strengths.append(float(self.lines[i].split()[5]))
         if self.exc_type == '.EXCITA':
-            for i in range(len(self.lines)):
-                if "@  Oscillator strengths are dimensionless." in self.lines[i]:
-                    start_osc = i+5
-                    end = len(self.lines)
-                    for j in self.lines[start_osc: end]:
-                        if "@ " in j:
-                            self.osc_strengths.append(float(j.split()[-1]))
-                        else:
-                            break
+            linenumber = Forward_search_last(self.file, '@  Oscillator strengths are dimensionless.', 'oscillator strengths')
+            if type(linenumber) == int:
+                for i in self.lines[linenumber+5: self.end]:
+                    if "@ " in i:
+                        self.osc_strengths.append(float(i.split()[-1]))
+                    else:
+                        break
         if len(self.osc_strengths) == 0:
-            if suppressed == False:
-                 print(f"No oscillator strengths in {infile}")
             self.osc_strengths = ['NaN'] * len(self.exc_energies)
+            return
+        if len(self.osc_strengths) < Arguments['_Excitation_energies']:
+            self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
 
 
 
@@ -640,31 +491,60 @@ class lsdal:
         file = open(input, "r")
         self.lines = file.readlines()
         file.close
+        self.file = input
+        self.end = len(self.lines)
 
     def _Energy(self):
-        for i in range(len(self.lines)-1,-1,-1):
-            if "ENERGY SUMMARY" in self.lines[i]:
-                start_energy = i+3
-                end = len(self.lines)
-                break
-        try:
-            start_energy
-        except NameError:
-            if suppressed == False:
-                print(f"No final energy could be found in {infile}")
-            self.tot_energy = 'NaN'
-            return
-        for i in self.lines[start_energy:end]:
-            if "E:" in i:
-                self.tot_energy = float(i.split()[-1])
-            else:
-                break
+        linenumber = Forward_search_last(self.file, 'ENERGY SUMMARY', 'final energy')
+        if type(linenumber) == int:
+            for i in self.lines[linenumber+3:self.end]:
+                if 'E: ' in i:
+                    self.tot_energy = float(i.split()[-1])
+                else:
+                    return
+        self.tot_energy = 'NaN'
 
 
 #**************************** FUNCTIONS *******************************
 
 
-def Resize(array):
+def Forward_search_last(file: str, text: str, error: str, err: bool =True):
+    res = os.popen(f"grep -nT '{text}' {file} | tail -n 1 | awk '{{print $1}}'").readlines()
+    if len(res) == 0:
+        if suppressed == False:
+            if err == True:
+                print(f'No {error} could be found in {infile}')
+        return 'NaN'
+    return int(res[0].replace(':\n','')) - 1
+
+def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, error: str, err: bool=True):
+    res = os.popen(f"grep -nTA{lines} '{text1}' {file} | tail -n {lines + 1} | grep {text2} | awk '{{print $1}}'").readlines()
+    if len(res) == 0:
+        if suppressed == False:
+            if err == True:
+                print(f'No {error} could be found in {infile}')
+        return 'NaN'
+    return int(res[0].replace('-\n','')) - 1
+
+def Forward_search_first(file: str, text: str, error: str, err: bool=True):
+    res = os.popen(f"grep -nTm1 '{text}' {file} | awk '{{print $1}}'").readlines()
+    if len(res) == 0:
+        if suppressed == False:
+            if err == True:
+                print(f'No {error} could be found in {infile}')
+        return 'NaN'
+    return int(res[0].replace(':\n','')) - 1
+
+def Forward_search_all(file: str, text: str, error: str, err: bool=True):
+    res  = os.popen(f"grep -nT '{text}' {file} | awk '{{print $1}}'").readlines()
+    if len(res) == 0:
+        if suppressed == False:
+            if err == True:
+                print(f'No {error} could be found in {infile}')
+        return 'NaN'
+    return [int(val.replace(':\n','')) - 1 for val in res]
+
+def Resize(array: list):
     max_size = 0
     for i in range(len(array[:])):
         if len(array[i]) > max_size:
@@ -676,13 +556,13 @@ def Resize(array):
         else:
             array[i] += ['NaN'] * (max_size - len(array[i]))
 
-def CheckForOnlyNans(array):
+def CheckForOnlyNans(array: list):
     for i in array:
         if i != 'NaN':
            return False
     return True
 
-def Find_output_type(infile):
+def Find_output_type(infile: str):
     with open(infile,'r') as read:
         lines = read.readlines()[:10]
     if '* O   R   C   A *' in lines[4]: #File type = ORCA
@@ -704,7 +584,7 @@ def Find_output_type(infile):
     del lines
     return file_text, input_type
 
-def Extract_data(suppressed, Wanted_Values, infile, file_text, input_type):
+def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: dict, input_type: str):
     for i in Wanted_Values:
         try:
             method = getattr(type(file_text),i)
@@ -713,7 +593,7 @@ def Extract_data(suppressed, Wanted_Values, infile, file_text, input_type):
             if suppressed == False:
                 print(f'{infile}: {i} has not been implemented for {input_type}')
 
-def Check_if_Implemented(input_file, Set_of_values, Extracted_values):
+def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values: dict):
     for infile in input_file:
         for key in Set_of_values:
             for val in Set_of_values[key]:
@@ -722,7 +602,7 @@ def Check_if_Implemented(input_file, Set_of_values, Extracted_values):
                 except KeyError:
                     Extracted_values[infile][val] = ['Not implemented']
 
-def Collect_and_sort_data(input_file, Set_of_values, Extracted_values):
+def Collect_and_sort_data(input_file: str, Set_of_values: dict, Extracted_values: dict):
     Final_arrays = dict()
 
     for key in Set_of_values:
@@ -732,14 +612,14 @@ def Collect_and_sort_data(input_file, Set_of_values, Extracted_values):
                 Final_arrays[val].append(Extracted_values[infile][val])
     return Final_arrays
 
-def Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays):
+def Downsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int, Final_arrays: dict):
     for item in Variable_arrays.items():
         if item[1] > 0:
             for val in Outputs[item[0]]:
                 for file in range(0,count):
                     Final_arrays[val][file] = Final_arrays[val][file][0:item[1]]
 
-def Create_Header(Header_text, Set_of_values, Final_arrays):
+def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict):
     header = ['File']
     temp = [val[1] for val in Header_text.items() if val[0] in Set_of_values]
     for key in Set_of_values.keys():
@@ -751,7 +631,7 @@ def Create_Header(Header_text, Set_of_values, Final_arrays):
                 header.append(Header_text[val])
     return header
 
-def Fill_output_array(Set_of_values, array_input, count, Final_arrays, output_array):
+def Fill_output_array(Set_of_values: dict, array_input: dict, count: int, Final_arrays: dict, output_array: list):
     if count == 1:
         output_array[1,0] = array_input[0][0]
     else:
@@ -763,13 +643,13 @@ def Fill_output_array(Set_of_values, array_input, count, Final_arrays, output_ar
             output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
             col += len(np.array(Final_arrays[val][0]))
 
-def UVVIS_Spectrum(t, l, f, k, sigmacm):
+def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
     lambda_tot = np.zeros(len(t))
     for x in range(1,len(t)):
         lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
     return lambda_tot
 
-def Make_uvvis_spectrum(input_file, suppressed, UVVIS_Spectrum, inv_cm_to_au, count, Final_arrays):
+def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, inv_cm_to_au: float, count: int, Final_arrays: dict):
     # A LOT OF PLOT SETUP
     rc('text', usetex=True)
     xlabel_font = ylabel_font = title_font = 16
@@ -805,7 +685,6 @@ def Make_uvvis_spectrum(input_file, suppressed, UVVIS_Spectrum, inv_cm_to_au, co
             continue
 
         excitations = 1E7/(excitations/inv_cm_to_au)   #From cm^-1 to nm
-        uvvis_input = np.array([excitations,oscillations])
         span = np.linspace(min(excitations)-20, max(excitations)+20, N, endpoint=True) # exctinction coefficient (wavelength range)
             
         graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
