@@ -25,11 +25,5 @@ This repository was created to collect all the scripts and programs developed an
   Some more advanced functions are:
   - UV/VIS Spectra
     - Requires excitation energies and oscillator strengths in the .out file
-  
-  For more information about this script you can contact
-  
-  Theo Juncker von Buchwald @ fnc970@alumni.ku.dk / theo.buchmail@gmail.com
-  
-  Magnus Bukhave Johansen @ qhw298@alumni.ku.dk
 </p>
 </details>
