@@ -1,50 +1,65 @@
 #Makes a molecule sandwiched between two hemispheres
 
-import sys #For argv
 import numpy as np
 from collections import Counter #For number of unique elements
-from ase.visualize.plot import plot_atoms
-from ase.lattice.cubic import FaceCenteredCubic
-from ase.visualize import view
 from ase.build import fcc111, bcc111, hcp0001, diamond100
-from ase.io import read, write
 from ase.spacegroup import crystal
 import argparse
 
 # ------------------------------------ INPUTS ------------------------------------
-#Inputs from command line
-#.xyzfile of molecule
-molfile = sys.argv[1]
 
-#choose between using line number (True) in xyz file or atom position (False) in list (e.g. molden)
-linenumber = False
+parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,description='''A script to make junction consisting of a molecule and nanoparticles
 
-#Line number of atoms in molxyz to lie on the connecting line of the NPs
-atom1 = int(sys.argv[2])
-atom2 = int(sys.argv[3])
+To use the follwoing must be given:
+      xyz-file   atom   atom   diameter''',epilog='''For help contact
+  Theo Juncker von Buchwald
+  fnc970@alumni.ku.dk''')
 
-#Basis
-basis = 'pc-1'
-RIbasis = 'pc-1-RI'
+parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
+parser.add_argument('atom1', type=int, nargs=1, help='Atom 1 that should be aligned between the nanoparticles')
+parser.add_argument('atom2', type=int, nargs=1, help='Atom 2 that should be aligned between the nanoparticles')
+parser.add_argument('diameter', type=float, nargs=1, help='Diameter of the nanoparticle')
 
-#Charge
-charge = int(sys.argv[4])
+parser.add_argument('-au', action='store_true', help='Include to make gold nanoparticles')
+parser.add_argument('-ag', action='store_true', help='Include to make silver nanoparticles')
+parser.add_argument('-cu', action='store_true', help='Include to make copper nanoparticles')
+parser.add_argument('-tio2', action='store_true', help='Include to make titanium dioxide nanoparticles')
+parser.add_argument('-nacl', action='store_true', help='Include to make salt nanoparticles')
+parser.add_argument('-pd', action='store_true', help='Include to make palladium nanoparticles')
+parser.add_argument('-pt', action='store_true', help='Include to make platinum nanoparticles')
+parser.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
+parser.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
+parser.add_argument('--returnxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
+parser.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
+parser.add_argument('--charge', default=0, nargs='?', type=int, help='Include to specify charge - 0 if not included')
+parser.add_argument('--basis', default='pc-1', nargs='?', type=str, help='Include to specify basis set - pc-1 if not included')
+parser.add_argument('--ribasis', default='pc-1-RI', nargs='?', type=str, help='Include to specify basis set - pc-1-RI if not included')
 
-#Diameter of nanoparticle
-diameter = 31.5
+if __name__ == '__main__':
+    args = parser.parse_args()
 
-#Crystal Structure (Au, Ag, Cu, TiO2, NaCl, CoSb3, Pt, Pd)
-crystal_structure = 'Au'
+    Arguments = {   #Only crystal structures
+        'Au' : args.au,
+        'Ag' : args.ag,
+        'Cu' : args.cu,
+        'Pt' : args.pt,
+        'Pd' : args.pd,
+        'TiO2' : args.tio2,
+        'NaCl' : args.nacl,
+        'CoSb3' : args.cosb3
+    }
 
-#Point both inwards or both outwards
-inwards = True
+    molfile = args.infile[0]
+    atom1 = args.atom1[0]
+    atom2 = args.atom2[0]
+    diameter = args.diameter[0]
 
-#Return .xyzfile of entire system
-returnxyz = True
-
-parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
-
-
+    inwards = args.outwards
+    charge = args.charge
+    basis = args.basis
+    RIbasis = args.ribasis
+    linenumber = args.linenumber
+    returnxyz = args.returnxyz
 
 # ------------------------------------ FUNCTIONS ------------------------------------
 
@@ -189,177 +204,180 @@ def rotate_point_new(point, rot_mat):
 
 # ------------------------------------ SETUP ------------------------------------
 
-atmtype = atm_type(crystal_structure)
+if __name__ == '__main__':
+    crystal_structures = [item[0] for item in Arguments.items() if item[1] == True]
+    for crystal_structure in crystal_structures:
+        atmtype = atm_type(crystal_structure)
 
-#Rescaling to get index in array
+        #Rescaling to get index in array
 
-if linenumber:
-    atom1 -=3
-    atom2 -=3
-else:
-    atom1 -=1
-    atom2 -=1
+        if linenumber:
+            atom1 -=3
+            atom2 -=3
+        else:
+            atom1 -=1
+            atom2 -=1
 
-namesmol = np.array([])
-molxyz = np.empty((0,3))
-rotxyz = np.empty((0,3))
+        namesmol = np.array([])
+        molxyz = np.empty((0,3))
+        rotxyz = np.empty((0,3))
 
-# ------------------------------------ ROTATING MOLECULE ------------------------------------
+        # ------------------------------------ ROTATING MOLECULE ------------------------------------
 
-lines_to_add = []
+        lines_to_add = []
 
-with open(molfile, "r") as f:
-    lines = f.readlines()
-    for i in range(2, len(lines)):
-       x = lines[i].split()
-       namesmol = np.append(namesmol,x[0])
-       molxyz = np.vstack([molxyz,np.array([float(x[1]),float(x[2]),float(x[3])])])
-#We get the axis between the two points to be parallel to the x-axis and then translate it such that it lies in the x-axis
-#Get normalized vector defining the axis
-v1 = molxyz[atom1,:] - molxyz[atom2,:]
-v1 *= 1 / np.sqrt(np.dot(v1,v1))
+        with open(molfile, "r") as f:
+            lines = f.readlines()
+            for i in range(2, len(lines)):
+                x = lines[i].split()
+                namesmol = np.append(namesmol,x[0])
+                molxyz = np.vstack([molxyz,np.array([float(x[1]),float(x[2]),float(x[3])])])
+        #We get the axis between the two points to be parallel to the x-axis and then translate it such that it lies in the x-axis
+        #Get normalized vector defining the axis
+        v1 = molxyz[atom1,:] - molxyz[atom2,:]
+        v1 *= 1 / np.sqrt(np.dot(v1,v1))
 
-#Calculate angle in order to be parallel to the x-axis
-theta = np.arccos(np.dot(v1,np.array([1,0,0])))
+        #Calculate angle in order to be parallel to the x-axis
+        theta = np.arccos(np.dot(v1,np.array([1,0,0])))
 
-#The direction vector for the rotation in orthogonal to both v1 and the x-axis. Note that the normalization is crucial.
-dir_vec = np.cross(v1,np.array([1,0,0]))
-dir_vec *= 1/np.sqrt(np.dot(dir_vec,dir_vec))
+        #The direction vector for the rotation in orthogonal to both v1 and the x-axis. Note that the normalization is crucial.
+        dir_vec = np.cross(v1,np.array([1,0,0]))
+        dir_vec *= 1/np.sqrt(np.dot(dir_vec,dir_vec))
 
-#Get elements of rotation matrix and keep using them to convert every point
-rot_mat_elems = get_rot_matrix(molxyz[atom1,:],dir_vec,theta)
+        #Get elements of rotation matrix and keep using them to convert every point
+        rot_mat_elems = get_rot_matrix(molxyz[atom1,:],dir_vec,theta)
 
-#Rotate all atoms
-for i in range(len(molxyz)):
-    p = rotate_point_new(molxyz[i,:],rot_mat_elems)
-    rotxyz = np.vstack([rotxyz,np.array([p[0],p[1],p[2]])])
+        #Rotate all atoms
+        for i in range(len(molxyz)):
+            p = rotate_point_new(molxyz[i,:],rot_mat_elems)
+            rotxyz = np.vstack([rotxyz,np.array([p[0],p[1],p[2]])])
 
-#Place atom1 in (0,0,0) and move the rest accordingly
-for i in range(3):
-    rotxyz[:,i] -= rotxyz[atom1,i]
+        #Place atom1 in (0,0,0) and move the rest accordingly
+        for i in range(3):
+            rotxyz[:,i] -= rotxyz[atom1,i]
 
-#Place furthest atom in (0,y,z) and move the rest accordingly
-rotxyz[:,0] -= np.amax(rotxyz[:,0])
+        #Place furthest atom in (0,y,z) and move the rest accordingly
+        rotxyz[:,0] -= np.amax(rotxyz[:,0])
 
-#Get length of molecule in the x-direction
-lengthmol = rotxyz[:,0].max() - rotxyz[:,0].min()
+        #Get length of molecule in the x-direction
+        lengthmol = rotxyz[:,0].max() - rotxyz[:,0].min()
 
-#Place molecule at correct x-position
-molxyz = rotxyz
+        #Place molecule at correct x-position
+        molxyz = rotxyz
 
-# ------------------------------------ CREATING NANOPARTICLES ------------------------------------
+        # ------------------------------------ CREATING NANOPARTICLES ------------------------------------
 
-mol_min = min(molxyz[:,0])
-mol_max = max(molxyz[:,0])
+        mol_min = min(molxyz[:,0])
+        mol_max = max(molxyz[:,0])
 
-index_min = np.argmin(molxyz[:,0])
-index_max = np.argmax(molxyz[:,0])
+        index_min = np.argmin(molxyz[:,0])
+        index_max = np.argmax(molxyz[:,0])
 
-radius = diameter*0.5
+        radius = diameter*0.5
 
 
-lat_length = lattice_length(crystal_structure)
-lat_type = lattice_type(crystal_structure)
+        lat_length = lattice_length(crystal_structure)
+        lat_type = lattice_type(crystal_structure)
 
-vdW_electrode = vdW_radius(crystal_structure)
-vdW_left = vdW_radius(namesmol[index_min])
-vdW_right = vdW_radius(namesmol[index_max])
+        vdW_electrode = vdW_radius(crystal_structure)
+        vdW_left = vdW_radius(namesmol[index_min])
+        vdW_right = vdW_radius(namesmol[index_max])
 
-vacuum_dist_left = vdW_left + vdW_electrode
-vacuum_dist_right = vdW_right + vdW_electrode
+        vacuum_dist_left = vdW_left + vdW_electrode
+        vacuum_dist_right = vdW_right + vdW_electrode
 
-if type(lat_length) == float:
-    dim = int(np.ceil(diameter/lat_length)) * 2
-else:
-    dim1 = int(np.ceil(diameter/lat_length[0]))
-    dim2 = int(np.ceil(diameter/lat_length[1]))
-        
-if lat_type == 'FCC':
-    atoms = fcc111(symbol=atmtype[0],size=(dim,dim,dim),a=lat_length,orthogonal=True)
-elif lat_type == 'BCC':
-    atoms = bcc111(symbol=atmtype[0],size=(dim,dim,4.5*dim),a=lat_length,orthogonal=True)
-elif lat_type == 'HCP':
-    atoms = hcp0001(symbol=atmtype[0],size=(dim,dim,3*dim),a=lat_length[0],c=lat_length[1],orthogonal=True)
-elif lat_type == 'Diamond':
-    atoms = diamond100(symbol=atmtype[0],size=(dim,dim,3*dim),a=lat_length,orthogonal=True)
-elif lat_type == 'Rutile':
-    a = lat_length[0]
-    c = lat_length[1]
-    atoms = crystal([atmtype[0], atmtype[1]], basis=[(0, 0, 0), (0.3, 0.3, 0.0)], spacegroup=136, cellpar=[a, a, c, 90, 90, 90],size=(2,dim1,dim2))
-elif lat_type == 'Rocksalt':
-    a = lat_length
-    atoms = crystal([atmtype[0], atmtype[1]], basis=[(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225, cellpar=[a, a, a, 90, 90, 90],size=(2,dim1,dim2))
-elif lat_type == 'Skutterudite':
-    a = 9.04
-    atoms = crystal([atmtype[0], atmtype[1]], basis=[(0.25, 0.25, 0.25), (0.0, 0.335, 0.158)], spacegroup=204, cellpar=[a, a, a, 90, 90, 90], size=(2,dim1,dim2))
-    
-atoms_symbol = atoms.get_chemical_symbols()
-atoms = atoms.get_positions()
+        if type(lat_length) == float:
+            dim = int(np.ceil(diameter/lat_length)) * 2
+        else:
+            dim1 = int(np.ceil(diameter/lat_length[0]))
+            dim2 = int(np.ceil(diameter/lat_length[1]))
+                
+        if lat_type == 'FCC':
+            atoms = fcc111(symbol=atmtype[0],size=(dim,dim,dim),a=lat_length,orthogonal=True)
+        elif lat_type == 'BCC':
+            atoms = bcc111(symbol=atmtype[0],size=(dim,dim,4.5*dim),a=lat_length,orthogonal=True)
+        elif lat_type == 'HCP':
+            atoms = hcp0001(symbol=atmtype[0],size=(dim,dim,3*dim),a=lat_length[0],c=lat_length[1],orthogonal=True)
+        elif lat_type == 'Diamond':
+            atoms = diamond100(symbol=atmtype[0],size=(dim,dim,3*dim),a=lat_length,orthogonal=True)
+        elif lat_type == 'Rutile':
+            a = lat_length[0]
+            c = lat_length[1]
+            atoms = crystal([atmtype[0], atmtype[1]], basis=[(0, 0, 0), (0.3, 0.3, 0.0)], spacegroup=136, cellpar=[a, a, c, 90, 90, 90],size=(2,dim1,dim2))
+        elif lat_type == 'Rocksalt':
+            a = lat_length
+            atoms = crystal([atmtype[0], atmtype[1]], basis=[(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225, cellpar=[a, a, a, 90, 90, 90],size=(2,dim1,dim2))
+        elif lat_type == 'Skutterudite':
+            a = 9.04
+            atoms = crystal([atmtype[0], atmtype[1]], basis=[(0.25, 0.25, 0.25), (0.0, 0.335, 0.158)], spacegroup=204, cellpar=[a, a, a, 90, 90, 90], size=(2,dim1,dim2))
+            
+        atoms_symbol = atoms.get_chemical_symbols()
+        atoms = atoms.get_positions()
 
-if type(lat_length) == float:
-    left, right, left_symbols, right_symbols = spherical(radius, mol_max, mol_min, inwards, vacuum_dist_left, vacuum_dist_right, atoms, atoms_symbol)
-else:
-    left, right, left_symbols, right_symbols = slab(mol_max, mol_min, lat_length, vacuum_dist_left, vacuum_dist_right, atoms, atoms_symbol)
+        if type(lat_length) == float:
+            left, right, left_symbols, right_symbols = spherical(radius, mol_max, mol_min, inwards, vacuum_dist_left, vacuum_dist_right, atoms, atoms_symbol)
+        else:
+            left, right, left_symbols, right_symbols = slab(mol_max, mol_min, lat_length, vacuum_dist_left, vacuum_dist_right, atoms, atoms_symbol)
 
-# ------------------------------------ CREATING OUTPUT FILES ------------------------------------
+        # ------------------------------------ CREATING OUTPUT FILES ------------------------------------
 
-if returnxyz:
-    #Build .xyz file
-    lines_to_add.append(str(left[:,0].size+right[:,0].size+molxyz[:,0].size)+'\n')
-    lines_to_add.append('\n')
-    for i in range(left[:,0].size):
-        lines_to_add.append(''.join([f"{atoms_symbol[i]}",' ',f"{left[i,0]:.6f}",' ', f"{left[i,1]:.6f}", ' ',f"{left[i,2]:.6f}" ,'\n']))
-    for i in range(right[:,0].size):
-        lines_to_add.append(''.join([f"{atoms_symbol[i]}",' ',f"{right[i,0]:.6f}",' ', f"{right[i,1]:.6f}", ' ',f"{right[i,2]:.6f}" ,'\n']))
+        if returnxyz:
+            #Build .xyz file
+            lines_to_add.append(str(left[:,0].size+right[:,0].size+molxyz[:,0].size)+'\n')
+            lines_to_add.append('\n')
+            for i in range(left[:,0].size):
+                lines_to_add.append(''.join([f"{atoms_symbol[i]}",' ',f"{left[i,0]:.6f}",' ', f"{left[i,1]:.6f}", ' ',f"{left[i,2]:.6f}" ,'\n']))
+            for i in range(right[:,0].size):
+                lines_to_add.append(''.join([f"{atoms_symbol[i]}",' ',f"{right[i,0]:.6f}",' ', f"{right[i,1]:.6f}", ' ',f"{right[i,2]:.6f}" ,'\n']))
 
-    for i in range(molxyz[:,0].size):
-       lines_to_add.append(''.join([namesmol[i],' ',f"{molxyz[i,0]:.6f}",' ', f"{molxyz[i,1]:.6f}", ' ',f"{molxyz[i,2]:.6f}" ,'\n']))
-    with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.xyz','w') as f:
-        f.writelines(lines_to_add)
+            for i in range(molxyz[:,0].size):
+                lines_to_add.append(''.join([namesmol[i],' ',f"{molxyz[i,0]:.6f}",' ', f"{molxyz[i,1]:.6f}", ' ',f"{molxyz[i,2]:.6f}" ,'\n']))
+            with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.xyz','w') as f:
+                f.writelines(lines_to_add)
 
-lines_mol =[]
+        lines_mol =[]
 
-lines_mol.append('ATOMBASIS\n')
-lines_mol.append('./'+molfile+'\n')
-lines_mol.append(f'Hej - The distance between NPs is {lengthmol + vacuum_dist_left + vacuum_dist_right:.4f} AA\n')
-lines_mol.append('Atomtypes='+str(len(set(namesmol)))+f' Charge={charge} NoSymmetry Angstrom\n')
+        lines_mol.append('ATOMBASIS\n')
+        lines_mol.append('./'+molfile+'\n')
+        lines_mol.append(f'Hej - The distance between NPs is {lengthmol + vacuum_dist_left + vacuum_dist_right:.4f} AA\n')
+        lines_mol.append('Atomtypes='+str(len(set(namesmol)))+f' Charge={charge} NoSymmetry Angstrom\n')
 
-unique_indices = list(Counter(namesmol).keys())
+        unique_indices = list(Counter(namesmol).keys())
 
-for i in unique_indices:
-    ind = unique_indices.index(i)
-    count = list(Counter(namesmol).values())[ind]
-    lines_mol.append(f'  {get_atm_number(i):.4f}     {count} Bas={basis} Aux={RIbasis}\n')
-    for j in range(len(namesmol)):
-        if namesmol[j] == i:
-            lines_mol.append(''.join([namesmol[j].ljust(2),' ',f"{molxyz[j,0]:.9f}".rjust(14),' ', f"{molxyz[j,1]:.9f}".rjust(19), ' ',f"{molxyz[j,2]:.9f}".rjust(19) ,'\n']))
+        for i in unique_indices:
+            ind = unique_indices.index(i)
+            count = list(Counter(namesmol).values())[ind]
+            lines_mol.append(f'  {get_atm_number(i):.4f}     {count} Bas={basis} Aux={RIbasis}\n')
+            for j in range(len(namesmol)):
+                if namesmol[j] == i:
+                    lines_mol.append(''.join([namesmol[j].ljust(2),' ',f"{molxyz[j,0]:.9f}".rjust(14),' ', f"{molxyz[j,1]:.9f}".rjust(19), ' ',f"{molxyz[j,2]:.9f}".rjust(19) ,'\n']))
 
-with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.mol','w') as f:
-    f.writelines(lines_mol)
+        with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.mol','w') as f:
+            f.writelines(lines_mol)
 
-#Build .pol file
-lines_pol = []
+        #Build .pol file
+        lines_pol = []
 
-#pol = polarizability(crystal_structure)
+        #pol = polarizability(crystal_structure)
 
-lines_pol.append('AA\n')
-lines_pol.append(str(left[:,0].size*2)+'   0 1 1\n')
+        lines_pol.append('AA\n')
+        lines_pol.append(str(left[:,0].size*2)+'   0 1 1\n')
 
-n = 1
+        n = 1
 
-for i in range(left[:,0].size):
-   lines_pol.append(''.join([str(n),f" {left[i,0]:.6f} ", f"{left[i,1]:.6f} ", f"{left[i,2]:.6f} ", "0.000000 ", f"{polarizability(left_symbols[i]):.6f}",'\n']))
-   n += 1
+        for i in range(left[:,0].size):
+            lines_pol.append(''.join([str(n),f" {left[i,0]:.6f} ", f"{left[i,1]:.6f} ", f"{left[i,2]:.6f} ", "0.000000 ", f"{polarizability(left_symbols[i]):.6f}",'\n']))
+        n += 1
 
-for i in range(right[:,0].size):
-   lines_pol.append(''.join([str(n),f" {right[i,0]:.6f} ", f"{right[i,1]:.6f} ", f"{right[i,2]:.6f} ", "0.000000 ", f"{polarizability(right_symbols[i]):.6f}",'\n']))
-   n += 1
+        for i in range(right[:,0].size):
+            lines_pol.append(''.join([str(n),f" {right[i,0]:.6f} ", f"{right[i,1]:.6f} ", f"{right[i,2]:.6f} ", "0.000000 ", f"{polarizability(right_symbols[i]):.6f}",'\n']))
+        n += 1
 
-with open(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot','w') as f:
-    f.writelines(lines_pol)
+        with open(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot','w') as f:
+            f.writelines(lines_pol)
 
-print("Outputs:")
-if returnxyz:
-    print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.xyz')
-print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot')
-print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.mol')
+        print("Outputs:")
+        if returnxyz:
+            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.xyz')
+        print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot')
+        print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.mol')
