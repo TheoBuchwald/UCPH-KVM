@@ -8,19 +8,19 @@ This repository was created to collect all the scripts and programs developed an
   
   Currently the following has been implemented:
   
-  | Data types | ORCA | GAUSSIAN | DALTON | LSDALTON |
-  |:---|:---:|:---:|:---:|:---:|
-  | Total energies | x | x | x | x|
-  | Zero-Point Vibrational energies | x | x |   |   |
-  | Enthalpies | x | x |   |   |
-  | Entropies |   |   |   |   |
-  | Gibbs Free energies | x | x |   |   |
-  | Dipole moments | x | x | x |   |
-  | Polarizabilities | x | x | x |   |
-  | Excitation energies | x |   | x |   |
-  | Oscillator strengths | x |   | x |   |
-  | Frequencies | x | x |   |   |
-  | Partition functions |   | x |   |   |
+  | Data types                      | ORCA | GAUSSIAN | DALTON | LSDALTON |
+  |:--------------------------------|:----:|:--------:|:------:|:--------:|
+  | Total energies                  |   x  |     x    |    x   |     x    |
+  | Zero-Point Vibrational energies |   x  |     x    |        |          |
+  | Enthalpies                      |   x  |     x    |        |          |
+  | Entropies                       |      |          |        |          |
+  | Gibbs Free energies             |   x  |     x    |        |          |
+  | Dipole moments                  |   x  |     x    |    x   |          |
+  | Polarizabilities                |   x  |     x    |    x   |          |
+  | Excitation energies             |   x  |          |    x   |          |
+  | Oscillator strengths            |   x  |          |    x   |          |
+  | Frequencies                     |   x  |     x    |        |          |
+  | Partition functions             |      |     x    |        |          |
   
   Some more advanced functions are:
   - UV/VIS Spectra
