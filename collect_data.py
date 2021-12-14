@@ -266,7 +266,9 @@ class gaus:
         
     def _Excitation_energies(self):
         self.exc_energies = []
+        linenumber = Forward_search_last(self.file, 'Excitation energies and oscillator strengths:', 'excitation energies')
         linenumbers = Forward_search_all(self.file, 'Excited State', 'excitation energies')
+        linenumbers = [i for i in linenumbers if i < linenumber]
         if type(linenumbers) == list:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[4])*ev_to_au)
