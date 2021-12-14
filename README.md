@@ -11,7 +11,7 @@ This repository was created to collect all the scripts and programs developed an
   | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
   | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
   | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Entropies                       |        :x:       |        :x:       |        :x:       |        :x:       |
+  | Entropies                       |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
   | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
   | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
   | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
