@@ -270,7 +270,7 @@ class gaus:
         linenumbers = Forward_search_all(self.file, 'Excited State', 'excitation energies')
         linenumbers = [i for i in linenumbers if i < linenumber]
         if type(linenumbers) == list:
-            for i in linenumbers:
+            for i in linenumbers > linenumber:
                 self.exc_energies.append(float(self.lines[i].split()[4])*ev_to_au)
         if len(self.exc_energies) == 0:
             if Arguments['_Excitation_energies'] == -1:
