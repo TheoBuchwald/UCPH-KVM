@@ -93,7 +93,10 @@ if __name__ == "__main__":
     parser.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
     parser.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
     parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
-    parser.add_argument('-Q', '--partfunc', const=298.15, type=float, help='Include to calculate partition functions. Add a temperature to calculate at.',nargs='?')
+    parser.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
+    parser.add_argument('-T', '--temp',default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
+    parser.add_argument('--hcalc', action='store_true', help='Calculate molar enthalpies (kJ/mol)')
+    parser.add_argument('--scalc', action='store_true', help='Calculate molar entropes (kJ/(mol*K)')
     parser.add_argument('--uvvis', action='store_true', help='Include to calculate a UV-VIS spectrum')
 
 
@@ -104,6 +107,7 @@ if __name__ == "__main__":
     input_file = args.infile
     CSV = args.csv
     UVVIS = args.uvvis
+    T = args.temp
 
     Arguments = {   #These are all the possible arguments that extract data
         '_Energy' : args.energy,
@@ -116,7 +120,9 @@ if __name__ == "__main__":
         '_Excitation_energies' : args.exc,
         '_Oscillator_strengths' : args.osc,
         '_Frequencies' : args.freq,
-        '_PartitionFunctions' : args.partfunc
+        '_PartitionFunctions' : args.partfunc,
+        '_Enthalpy_calc': args.hcalc,
+        '_Entropy_calc': args.scalc,
     }
 
     Outputs = {     #These are the datapoints that will be extracted per argument
@@ -130,7 +136,9 @@ if __name__ == "__main__":
         '_Excitation_energies' : ['exc_energies'],
         '_Oscillator_strengths' : ['osc_strengths'],
         '_Frequencies' : ['freq'],
-        '_PartitionFunctions' : ['qTotal']
+        '_PartitionFunctions' : ['qTotal'],
+        '_Enthalpy_calc' : ['hcalc'],
+        '_Entropy_calc' : ['scalc']
     }
 
     Header_text = { #These are what will be written in the header for each datapoint
@@ -150,7 +158,9 @@ if __name__ == "__main__":
         'exc_energies' : 'Exc. energy',
         'osc_strengths' : 'Osc. strength',
         'freq' : 'Frequency',
-        'qTotal' : 'Total molar partition function'
+        'qTotal' : 'Total molar partition function',
+        'hcalc' : 'Enthalpy',
+        'scalc' : 'Entropy (kJ/(mol*K)'
     }
 
     quiet = args.quiet
@@ -177,6 +187,16 @@ if __name__ == "__main__":
     if Arguments['_PartitionFunctions'] != None and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
         if suppressed == False:
             print('Frequencies will be found as well, since you are trying to extract partition functions')
+        Arguments['_Frequencies'] = -1
+    
+    if Arguments['_Enthalpy_calc'] == True and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
+        if suppressed == False:
+            print('Frequencies will be found as well, since you are trying to calculate enthalpies')
+        Arguments['_Frequencies'] = -1
+
+    if Arguments['_Entropy_calc'] == True and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
+        if suppressed == False:
+            print('Frequencies will be found as well, since you are trying to calculate entropies')
         Arguments['_Frequencies'] = -1
 
     Variable_arrays = dict([item for item in Arguments.items() if type(item[1]) == int])    #Dictionary of data where the amount of values printed can be changed
@@ -258,6 +278,7 @@ class gaus:
         linenumbers = Forward_search_all(self.file, 'Rotational constants (GHZ):', 'rotational constants')
         for i in self.lines[linenumbers[-2]].split()[3:]:
             self.rots.append(float(i))
+        self.rots = np.array(self.rots)
         self.rots = self.rots[self.rots != 0.0]
 
     def _Mass(self):
@@ -271,6 +292,12 @@ class gaus:
         linenumber = Forward_search_last(self.file, 'Rotational symmetry number', 'rotational symmetry number')
         if type(linenumber) == int:
             self.symnum = int(self.lines[linenumber].split()[-1].replace('.',''))
+    
+    def _Multiplicity(self):
+        self.multi = 0
+        linenumber = Forward_search_first(self.file, 'Multiplicity', 'multiplicity')
+        if type(linenumber) == int:
+            self.multi = int(self.lines[linenumber].split()[-1])
      
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
@@ -280,18 +307,59 @@ class gaus:
             return
         self._RotationalConsts()
         self._Mass()
-        self._SymmetryNumber()       
-        self.qT = trans_const_fac * self.mass ** (1.5) * Arguments['_PartitionFunctions'] ** (2.5)
+        self._SymmetryNumber()
+        self._Multiplicity()      
+        self.qT = trans_const_fac * self.mass ** (1.5) * T ** (2.5)
         if len(self.rots) == 1:
-            self.qR = rot_lin_const * Arguments['_PartitionFunctions'] / (self.symnum * self.rots[0])
+            self.qR = rot_lin_const * T / (self.symnum * self.rots[0])
         else:
-            self.qR = rot_poly_const * Arguments['_PartitionFunctions'] ** (1.5) / ( self.symnum * np.prod(np.array(self.rots)) ** (0.5))
+            self.qR = rot_poly_const * T ** (1.5) / ( self.symnum * np.prod(np.array(self.rots)) ** (0.5))
         realfreq = np.array([x for x in self.freq if x != 'NaN'])
         realfreq = realfreq[realfreq > 0.0]
-        self.qV = np.prod(1 / (1 - np.exp( - vib_const * realfreq / Arguments['_PartitionFunctions'])))
-        self.qE = 1 #Good approximation for most closed-shell molecules 
+        self.qV = np.prod(1 / (1 - np.exp( - vib_const * realfreq / T)))
+        self.qE = self.multi #Good approximation for most closed-shell molecules 
         self.qTotal = self.qT*self.qR*self.qV*self.qE
 
+    def _Enthalpy_calc(self):
+        if CheckForOnlyNans(np.array(self.freq)) == True:
+            if suppressed == False:
+                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+            self.hcalc = 'NaN'
+            return
+        print("Got in here")
+        self._RotationalConsts()
+        self._Energy()       
+        self.E_T = 3/2 * T * gas_constant
+        if len(self.rots) == 1:
+            self.E_R = T * gas_constant
+        else:
+            self.E_R = 3/2 * T * gas_constant
+        realfreq = np.array([x for x in self.freq if x != 'NaN'])
+        realfreq = realfreq[realfreq > 0.0]
+        self.E_V = gas_constant * np.sum(vib_const * realfreq * (1/2 + 1 / (np.exp(vib_const * realfreq / T) - 1)))
+        self.E_e = 0 #Good approximation for most closed-shell molecules 
+        self.hcalc = (self.E_T+self.E_R+self.E_V+gas_constant * T) / au_to_kJmol + self.tot_energy
+    
+    def _Entropy_calc(self):
+        if CheckForOnlyNans(np.array(self.freq)) == True:
+            if suppressed == False:
+                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+            self.hcalc = 'NaN'
+            return
+        self._RotationalConsts()
+        self._Mass()
+        self._SymmetryNumber()
+        self._Multiplicity()
+        self.S_T = gas_constant * np.log(s_trans_const * self.mass ** 1.5 * T ** 2.5)
+        if len(self.rots) == 1:
+            self.S_R = gas_constant * np.log(rot_lin_const * T / (self.symnum * self.rots[0]))
+        else:
+            self.S_R = gas_constant * (3/2 + np.log(rot_poly_const * T ** (1.5) / ( self.symnum * np.prod(np.array(self.rots)) ** (0.5))))
+        realfreq = np.array([x for x in self.freq if x != 'NaN'])
+        realfreq = realfreq[realfreq > 0.0]
+        self.S_V = gas_constant * np.sum(vib_const * realfreq / T / (np.exp(vib_const * realfreq / T) - 1) - np.log(1-np.exp(-vib_const * realfreq / T)))
+        self.S_E = gas_constant * np.log(self.multi) #Good approximation for most closed-shell molecules
+        self.scalc = self.S_T+self.S_R+self.S_V+self.S_E
 
 
 
@@ -713,7 +781,10 @@ if __name__ == "__main__":
     trans_const_fac = 1.5625517342018425307E+22 #Molar value assuming 1 bar standard pressure
     rot_lin_const = 20.83661793 #Assuming rigid, linear rotor and T>>Rotational temperature and rotational constant in GHz
     rot_poly_const = 168.5837766 #Assuming rigid, polyatomic rotor and T>>Rotational temperature and rotational constant in GHz
-    vib_const = 3.157750419E+05 #Assuming harmonic oscillator and frequency in au 
+    vib_const = 3.157750419E+05 #Assuming harmonic oscillator and frequency in au
+    gas_constant = 8.31446261815324E-03 # In kJ/(mol*K)
+    s_trans_const = 0.3160965065 #Assuming 1 bar standard pressure and molar
+    au_to_kJmol = 2625.5 
     Barrier = '\n**********************************************\n'
     
     if quiet == True:
