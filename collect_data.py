@@ -254,16 +254,39 @@ class gaus:
     def _Frequencies(self):
         self.freq = []
         linenumbers = Forward_search_all(self.file, 'Frequencies --', 'frequencies')
-        for i in linenumbers:
-            for j in self.lines[i].split()[2:]:
-                self.freq.append(float(j)*inv_cm_to_au)
+        if type(linenumbers) == list:
+            for i in linenumbers:
+                for j in self.lines[i].split()[2:]:
+                    self.freq.append(float(j)*inv_cm_to_au)
         if len(self.freq) == 0:
             if Arguments['_Frequencies'] == -1:
-                self.freq = ['NaN']
-            else:
-                self.freq = ['NaN'] * Arguments['_Frequencies']
+                self.freq = ['NaN'] * abs(Arguments['_Frequencies'])
         if len(self.freq) < Arguments['_Frequencies']:
             self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
+        
+    def _Excitation_energies(self):
+        self.exc_energies = []
+        linenumbers = Forward_search_all(self.file, 'Excited State', 'excitation energies')
+        if type(linenumbers) == list:
+            for i in linenumbers:
+                self.exc_energies.append(float(self.lines[i].split()[4])*ev_to_au)
+        if len(self.exc_energies) == 0:
+            if Arguments['_Excitation_energies'] == -1:
+                self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies'])
+        if len(self.exc_energies) < Arguments['_Excitation_energies']:
+            self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
+
+    def _Oscillator_strengths(self):
+        self.osc_strengths = []
+        linenumbers = Forward_search_all(self.file, 'Excited State', 'oscillator strengths')
+        if type(linenumbers) == list:
+            for i in linenumbers:
+                self.osc_strengths.append(float(self.lines[i].split()[-2].replace('f=','')))
+        if len(self.osc_strengths) == 0:
+            if Arguments['_Excitation_energies'] == -1:
+                self.osc_strengths = ['NaN'] * abs(Arguments['_Excitation_energies'])
+            if len(self.osc_strengths) < Arguments['_Excitation_energies']:
+                self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
 
     def _RotationalConsts(self):
         self.rots = []
@@ -415,13 +438,10 @@ class orca:
         if type(linenumbers) == list:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[3]))
-            if len(self.exc_energies) < Arguments['_Excitation_energies']:
-                self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
-            return
         if Arguments['_Excitation_energies'] == -1:
-            self.exc_energies = ['NaN']
-        else:
-            self.exc_energies = ['NaN'] * Arguments['_Excitation_energies']        
+            self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies']  )
+        if len(self.exc_energies) < Arguments['_Excitation_energies']:
+            self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
@@ -431,9 +451,7 @@ class orca:
                 self.osc_strengths.append(float(self.lines[linenumber+5+i].split()[3]))
         if len(self.osc_strengths) == 0:
             if Arguments['_Excitation_energies'] == -1:
-                self.osc_strengths = ['NaN']
-            else:
-                self.osc_strengths = ['NaN'] * Arguments['_Excitation_energies']
+                self.osc_strengths = ['NaN'] * abs(Arguments['_Excitation_energies'])
         if len(self.osc_strengths) < Arguments['_Excitation_energies']:
             self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
 
@@ -451,9 +469,7 @@ class orca:
             return
         if len(self.freq) == 0:
             if Arguments['_Frequencies'] == -1:
-                self.freq = ['NaN']
-            else:
-                self.freq = ['NaN'] * Arguments['_Frequencies']
+                self.freq = ['NaN'] * abs(Arguments['_Frequencies'])
         if len(self.freq) < Arguments['_Frequencies']:
             self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
 
@@ -517,9 +533,7 @@ class dal:
                 self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
             return
         if Arguments['_Excitation_energies'] == -1:
-            self.exc_energies = ['NaN']
-        else:
-            self.exc_energies = ['NaN'] * Arguments['_Excitation_energies']
+            self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies'])
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
@@ -680,7 +694,6 @@ def Downsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int,
 
 def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict):
     header = ['File']
-    temp = [val[1] for val in Header_text.items() if val[0] in Set_of_values]
     for key in Set_of_values.keys():
         for val in Set_of_values[key]:
             if len(Final_arrays[val][0]) > 1:
@@ -785,7 +798,7 @@ if __name__ == "__main__":
 
     for infile in input_file:
         array_input.append([infile])
-        if not(quiet == False or suppressed == False) == True:
+        if quiet == False or suppressed == False:
             print(Barrier)
             print(f'Collecting data from {infile}')
 
