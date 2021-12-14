@@ -12,94 +12,94 @@ import os
 #*************************** INPUT PARSING ****************************
 
 
-parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''
-A script designed to make it easier to extract data from output files
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''
+    A script designed to make it easier to extract data from output files
 
-          Currently the output formats supported are
-          ------------------------------------------
-            -  ORCA
-            -  DALTON
-            -  GAUSSIAN
-            -  LSDALTON
+            Currently the output formats supported are
+            ------------------------------------------
+                -  ORCA
+                -  DALTON
+                -  GAUSSIAN
+                -  LSDALTON
 
-          This script can currently extract the data
-          ------------------------------------------
-            -  Total energies
-            -  Zero-Point Vibrational energies
-            -  Enthalpies
-            -  Entropies
-            -  Gibbs Free energies
-            -  Dipole moments
-            -  Polarizability
-            -  Excitation energies
-            -  Oscillator strengths
-            -  Frequencies
-            -  Partition functions at a given temperature
+            This script can currently extract the data
+            ------------------------------------------
+                -  Total energies
+                -  Zero-Point Vibrational energies
+                -  Enthalpies
+                -  Entropies
+                -  Gibbs Free energies
+                -  Dipole moments
+                -  Polarizability
+                -  Excitation energies
+                -  Oscillator strengths
+                -  Frequencies
+                -  Partition functions at a given temperature
 
-Though not all data types have been implemented for all of the output formats
+    Though not all data types have been implemented for all of the output formats
 
-All values are extracted as Atomic Units where applicable'''
-,epilog='''
-The following is not implemented for ORCA
- -  Entropies
+    All values are extracted as Atomic Units where applicable'''
+    ,epilog='''
+    The following is not implemented for ORCA
+    -  Entropies
 
-The following is not implemented for DALTON
- -  Non DFT total energies
- -  Zero-Point Vibrational energies
- -  Enthalpies
- -  Entropies
- -  Gibbs Free energies
- -  Frequencies
- -  Partition functions with symmetry
+    The following is not implemented for DALTON
+    -  Non DFT total energies
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Frequencies
+    -  Partition functions with symmetry
 
-The following is not implemented for GAUSSIAN
- -  Entropies
- -  Excitation energies
- -  Oscillator strengths
+    The following is not implemented for GAUSSIAN
+    -  Entropies
+    -  Excitation energies
+    -  Oscillator strengths
 
-The following is not implemented for LSDALTON
- -  Probably some total energies
- -  Zero-Point Vibrational energies
- -  Enthalpies
- -  Gibbs Free energies
- -  Entropies
- -  Dipole moments
- -  Polarizabilities
- -  Excitation energies
- -  Oscillator strengths
- -  Frequencies
- -  Partition functions
+    The following is not implemented for LSDALTON
+    -  Probably some total energies
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Gibbs Free energies
+    -  Entropies
+    -  Dipole moments
+    -  Polarizabilities
+    -  Excitation energies
+    -  Oscillator strengths
+    -  Frequencies
+    -  Partition functions
 
-For help contact
-  Theo Juncker von Buchwald
-  fnc970@alumni.ku.dk
+    For help contact
+    Theo Juncker von Buchwald
+    fnc970@alumni.ku.dk
 
-  Magnus Bukhave Johansen
-  qhw298@alumni.ku.dk''')
+    Magnus Bukhave Johansen
+    qhw298@alumni.ku.dk''')
 
-parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='File')
+    parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='File')
 
-parser.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
-parser.add_argument('-s', '--suppress', action='store_true', help='Include to suppress all print statements (including errors) except the data output')
-parser.add_argument('-csv', action='store_true', help='Include to write the found values in csv file(s)')
-parser.add_argument('-E', '--energy', action='store_true', help='Include to extract the Total Energy')
-parser.add_argument('-Z', '--zpv', action='store_true', help='Include to extract the Zero-Point Vibrational Energy')
-parser.add_argument('-H', '--enthalpy', action='store_true', help='Include to extract the Enthalpy')
-parser.add_argument('-S', '--entropy', action='store_true', help='Include to extract the Entropy')
-parser.add_argument('-G', '--gibbs', action='store_true', help='Include to extract the Gibbs Free Energy')
-parser.add_argument('-D', '--dipole', action='store_true', help='Include to extract the Dipole Moment')
-parser.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
-parser.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
-parser.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
-parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
-parser.add_argument('-Q', '--partfunc', const=298.15, type=float, help='Include to calculate partition functions. Add a temperature to calculate at.',nargs='?')
-parser.add_argument('--uvvis', action='store_true', help='Include to calculate a UV-VIS spectrum')
+    parser.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
+    parser.add_argument('-s', '--suppress', action='store_true', help='Include to suppress all print statements (including errors) except the data output')
+    parser.add_argument('-csv', action='store_true', help='Include to write the found values in csv file(s)')
+    parser.add_argument('-E', '--energy', action='store_true', help='Include to extract the Total Energy')
+    parser.add_argument('-Z', '--zpv', action='store_true', help='Include to extract the Zero-Point Vibrational Energy')
+    parser.add_argument('-H', '--enthalpy', action='store_true', help='Include to extract the Enthalpy')
+    parser.add_argument('-S', '--entropy', action='store_true', help='Include to extract the Entropy')
+    parser.add_argument('-G', '--gibbs', action='store_true', help='Include to extract the Gibbs Free Energy')
+    parser.add_argument('-D', '--dipole', action='store_true', help='Include to extract the Dipole Moment')
+    parser.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
+    parser.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
+    parser.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
+    parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
+    parser.add_argument('-Q', '--partfunc', const=298.15, type=float, help='Include to calculate partition functions. Add a temperature to calculate at.',nargs='?')
+    parser.add_argument('--uvvis', action='store_true', help='Include to calculate a UV-VIS spectrum')
 
 
 #******************************* SETUP ********************************
 
 
-if __name__ == "__main__":
     args = parser.parse_args()
     input_file = args.infile
     CSV = args.csv

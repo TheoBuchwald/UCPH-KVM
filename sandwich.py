@@ -8,34 +8,35 @@ import argparse
 
 # ------------------------------------ INPUTS ------------------------------------
 
-parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,description='''A script to make junction consisting of a molecule and nanoparticles
-
-To use the follwoing must be given:
-      xyz-file   atom   atom   diameter''',epilog='''For help contact
-  Theo Juncker von Buchwald
-  fnc970@alumni.ku.dk''')
-
-parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
-parser.add_argument('atom1', type=int, nargs=1, help='Atom 1 that should be aligned between the nanoparticles')
-parser.add_argument('atom2', type=int, nargs=1, help='Atom 2 that should be aligned between the nanoparticles')
-parser.add_argument('diameter', type=float, nargs=1, help='Diameter of the nanoparticle')
-
-parser.add_argument('-au', action='store_true', help='Include to make gold nanoparticles')
-parser.add_argument('-ag', action='store_true', help='Include to make silver nanoparticles')
-parser.add_argument('-cu', action='store_true', help='Include to make copper nanoparticles')
-parser.add_argument('-tio2', action='store_true', help='Include to make titanium dioxide nanoparticles')
-parser.add_argument('-nacl', action='store_true', help='Include to make salt nanoparticles')
-parser.add_argument('-pd', action='store_true', help='Include to make palladium nanoparticles')
-parser.add_argument('-pt', action='store_true', help='Include to make platinum nanoparticles')
-parser.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
-parser.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
-parser.add_argument('--returnxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
-parser.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
-parser.add_argument('--charge', default=0, nargs='?', type=int, help='Include to specify charge - 0 if not included')
-parser.add_argument('--basis', default='pc-1', nargs='?', type=str, help='Include to specify basis set - pc-1 if not included')
-parser.add_argument('--ribasis', default='pc-1-RI', nargs='?', type=str, help='Include to specify basis set - pc-1-RI if not included')
-
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,description='''A script to make junction consisting of a molecule and nanoparticles
+
+    To use the follwoing must be given:
+        xyz-file   atom   atom   diameter''',epilog='''For help contact
+    Theo Juncker von Buchwald
+    fnc970@alumni.ku.dk''')
+
+    parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
+    parser.add_argument('atom1', type=int, nargs=1, help='Atom 1 that should be aligned between the nanoparticles')
+    parser.add_argument('atom2', type=int, nargs=1, help='Atom 2 that should be aligned between the nanoparticles')
+    parser.add_argument('diameter', type=float, nargs=1, help='Diameter of the nanoparticle')
+
+    parser.add_argument('-au', action='store_true', help='Include to make gold nanoparticles')
+    parser.add_argument('-ag', action='store_true', help='Include to make silver nanoparticles')
+    parser.add_argument('-cu', action='store_true', help='Include to make copper nanoparticles')
+    parser.add_argument('-tio2', action='store_true', help='Include to make titanium dioxide nanoparticles')
+    parser.add_argument('-nacl', action='store_true', help='Include to make salt nanoparticles')
+    parser.add_argument('-pd', action='store_true', help='Include to make palladium nanoparticles')
+    parser.add_argument('-pt', action='store_true', help='Include to make platinum nanoparticles')
+    parser.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
+    parser.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
+    parser.add_argument('--noxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
+    parser.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
+    parser.add_argument('--charge', default=0, nargs='?', type=int, help='Include to specify charge - 0 if not included')
+    parser.add_argument('--basis', default='pc-1', nargs='?', type=str, help='Include to specify basis set - pc-1 if not included')
+    parser.add_argument('--ribasis', default='pc-1-RI', nargs='?', type=str, help='Include to specify basis set - pc-1-RI if not included')
+
+
     args = parser.parse_args()
 
     Arguments = {   #Only crystal structures
@@ -59,7 +60,7 @@ if __name__ == '__main__':
     basis = args.basis
     RIbasis = args.ribasis
     linenumber = args.linenumber
-    returnxyz = args.returnxyz
+    returnxyz = args.noxyz
 
 # ------------------------------------ FUNCTIONS ------------------------------------
 
