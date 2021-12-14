@@ -30,7 +30,7 @@ if __name__ == '__main__':
     parser.add_argument('-pt', action='store_true', help='Include to make platinum nanoparticles')
     parser.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
     parser.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
-    parser.add_argument('--returnxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
+    parser.add_argument('--noxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
     parser.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
     parser.add_argument('--charge', default=0, nargs='?', type=int, help='Include to specify charge - 0 if not included')
     parser.add_argument('--basis', default='pc-1', nargs='?', type=str, help='Include to specify basis set - pc-1 if not included')
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     basis = args.basis
     RIbasis = args.ribasis
     linenumber = args.linenumber
-    returnxyz = args.returnxyz
+    returnxyz = args.noxyz
 
 # ------------------------------------ FUNCTIONS ------------------------------------
 
