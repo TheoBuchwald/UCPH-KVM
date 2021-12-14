@@ -15,8 +15,8 @@ This repository was created to collect all the scripts and programs developed an
   | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
   | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
   | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Excitation energies             |:heavy_check_mark:|        :x:       |:heavy_check_mark:|        :x:       |
-  | Oscillator strengths            |:heavy_check_mark:|        :x:       |:heavy_check_mark:|        :x:       |
+  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
   | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
   | Partition functions             |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
 
