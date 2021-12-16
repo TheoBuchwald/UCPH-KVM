@@ -478,6 +478,76 @@ class orca:
                 self.freq = ['NaN'] * abs(Arguments['_Frequencies'])
         if len(self.freq) < Arguments['_Frequencies']:
             self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
+    
+    def _RotationalConsts(self):
+        self.rots = []
+        linenumbers = Forward_search_first(self.file, 'Rotational constants in MHz', 'rotational constants')
+        for i in self.lines[linenumbers].split()[-3:]:
+            self.rots.append(float(i))
+        self.rots = np.array(self.rots) * 1E-3
+        self.rots = self.rots[self.rots != 0.0]
+
+    def _Mass(self):
+        self.mass = 0.0
+        linenumber = Forward_search_last(self.file, 'Total Mass', 'molecular mass')
+        if type(linenumber) == int:
+            self.mass = float(self.lines[linenumber].split()[-2])
+
+
+    def _SymmetryNumber(self):
+        self.symnum = 0
+        linenumber = Forward_search_last(self.file, 'Symmetry Number', 'rotational symmetry number')
+        if type(linenumber) == int:
+            self.symnum = int(self.lines[linenumber].split()[-1])
+    
+    def _Multiplicity(self):
+        self.multi = 0
+        linenumber = Forward_search_first(self.file, 'Multiplicity', 'multiplicity')
+        if type(linenumber) == int:
+            self.multi = int(self.lines[linenumber].split()[-1])
+    
+    def _PartitionFunctions(self):
+        if CheckForOnlyNans(np.array(self.freq)) == True:
+            if suppressed == False:
+                print(f"No frequencies found in {infile}, skipping partition function calculation")
+            self.qTotal = 'NaN'
+            return
+        self._RotationalConsts()
+        self._Mass()
+        self._Multiplicity()
+        self._SymmetryNumber()      
+        self.qT = trans_const_fac * self.mass ** (1.5) * T ** (2.5)
+        if len(self.rots) == 1:
+            self.qR = rot_lin_const * T / (self.symnum * self.rots[0])
+        else:
+            self.qR = rot_poly_const * T ** (1.5) / ( self.symnum * np.prod(np.array(self.rots)) ** (0.5))
+        realfreq = np.array([x for x in self.freq if x != 'NaN'])
+        realfreq = realfreq[realfreq > 0.0]
+        self.qV = np.prod(1 / (1 - np.exp( - vib_const * realfreq / T)))
+        self.qE = self.multi #Good approximation for most closed-shell molecules
+        self.qTotal = self.qT*self.qR*self.qV*self.qE
+    
+    def _Entropy(self):
+        if CheckForOnlyNans(np.array(self.freq)) == True:
+            if suppressed == False:
+                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+            self.entropy = 'NaN'
+            return
+        self._RotationalConsts()
+        self._Mass()
+        self._Multiplicity()
+        self._SymmetryNumber()
+        self.S_T = gas_constant * np.log(s_trans_const * self.mass ** 1.5 * T ** 2.5)
+        if len(self.rots) == 1:
+            self.S_R = gas_constant * np.log(rot_lin_const * T / (self.symnum * self.rots[0]))
+        else:
+            self.S_R = gas_constant * (3/2 + np.log(rot_poly_const * T ** (1.5) / ( self.symnum * np.prod(np.array(self.rots)) ** (0.5))))
+        realfreq = np.array([x for x in self.freq if x != 'NaN'])
+        realfreq = realfreq[realfreq > 0.0]
+        self.S_V = gas_constant * np.sum(vib_const * realfreq / T / (np.exp(vib_const * realfreq / T) - 1) - np.log(1-np.exp(-vib_const * realfreq / T)))
+        self.S_E = gas_constant * np.log(self.multi) #Good approximation for most closed-shell molecules
+        self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
+
 
 
 
