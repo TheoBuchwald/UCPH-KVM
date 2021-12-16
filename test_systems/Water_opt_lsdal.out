@@ -1,0 +1,2085 @@
+  
+     ******************************************************************    
+     **********  LSDalton - An electronic structure program  **********    
+     ******************************************************************    
+  
+  
+    This is output from LSDalton v2020.0
+  
+  
+     IF RESULTS OBTAINED WITH THIS CODE ARE PUBLISHED,
+     THE FOLLOWING PAPER SHOULD BE CITED:
+     
+     K. Aidas, C. Angeli, K. L. Bak, V. Bakken, R. Bast,
+     L. Boman, O. Christiansen, R. Cimiraglia, S. Coriani,
+     P. Dahle, E. K. Dalskov, U. Ekstroem, T. Enevoldsen,
+     J. J. Eriksen, P. Ettenhuber, B. Fernandez,
+     L. Ferrighi, H. Fliegl, L. Frediani, K. Hald,
+     A. Halkier, C. Haettig, H. Heiberg,
+     T. Helgaker, A. C. Hennum, H. Hettema,
+     E. Hjertenaes, S. Hoest, I.-M. Hoeyvik,
+     M. F. Iozzi, B. Jansik, H. J. Aa. Jensen,
+     D. Jonsson, P. Joergensen, J. Kauczor,
+     S. Kirpekar, T. Kjaergaard, W. Klopper,
+     S. Knecht, R. Kobayashi, H. Koch, J. Kongsted,
+     A. Krapp, K. Kristensen, A. Ligabue,
+     O. B. Lutnaes, J. I. Melo, K. V. Mikkelsen, R. H. Myhre,
+     C. Neiss, C. B. Nielsen, P. Norman,
+     J. Olsen, J. M. H. Olsen, A. Osted,
+     M. J. Packer, F. Pawlowski, T. B. Pedersen,
+     P. F. Provasi, S. Reine, Z. Rinkevicius,
+     T. A. Ruden, K. Ruud, V. Rybkin,
+     P. Salek, C. C. M. Samson, A. Sanchez de Meras,
+     T. Saue, S. P. A. Sauer, B. Schimmelpfennig,
+     K. Sneskov, A. H. Steindal, K. O. Sylvester-Hvid,
+     P. R. Taylor, A. M. Teale, E. I. Tellgren,
+     D. P. Tew, A. J. Thorvaldsen, L. Thoegersen,
+     O. Vahtras, M. A. Watson, D. J. D. Wilson,
+     M. Ziolkowski, and H. AAgren,
+     "The Dalton quantum chemistry program system",
+     WIREs Comput. Mol. Sci. (doi: 10.1002/wcms.1172)
+  
+  
+                                               
+    LSDalton authors in alphabetical order (main contribution(s) in parenthesis)
+    ----------------------------------------------------------------------------
+    Vebjoern Bakken,        University of Oslo,                    Norway   (Geometry optimizer)
+    Ashleigh Barnes,        Oak Ridge National Laboratory,         USA      (ML-DEC)
+    Radovan Bast,           UiT The Arctic University of Norway,   Norway   (CMake, Testing)
+    Pablo Baudin,           Aarhus University,                     Denmark  (DEC,CCSD)
+    Dmytro Bykov,           Oak Ridge National Laboratory,         USA      (ML-DEC)
+    Sonia Coriani,          Technical University of Denmark,       Denmark  (Response)
+    Roberto Di Remigio,     UiT The Arctic University of Norway,   Norway   (PCM)
+    Karen Dundas,           UiT The Arctic University of Norway,   Norway   (OpenRSP)
+    Patrick Ettenhuber,     Aarhus University,                     Denmark  (CCSD)
+    Janus Juul Eriksen,     Aarhus University,                     Denmark  (CCSD(T), DEC)
+    Luca Frediani,          UiT The Arctic University of Norway,   Norway   (PCM, Supervision)
+    Daniel Henrik Friese,   Heinrich-Heine-Universitat Dusseldorf, Germany  (OpenRSP)
+    Bin Gao,                UiT The Arctic University of Norway,   Norway   (OpenRSP, QcMatrix)
+    Trygve Helgaker,        University of Oslo,                    Norway   (Supervision)
+    Stinne Hoest,           Aarhus University,                     Denmark  (SCF optimization)
+    Ida-Marie Hoeyvik,      Aarhus University,                     Denmark  (Orbital localization, SCF opt)
+    Robert Izsak,           University of Oslo,                    Norway   (ADMM)
+    Branislav Jansik,       Aarhus University,                     Denmark  (Trilevel, orbital localization)
+    Frank Jensen,           Aarhus University,                     Denmark  (ADMM basis sets)
+    Poul Joergensen,        Aarhus University,                     Denmark  (Supervision)
+    Joanna Kauczor,         Aarhus University,                     Denmark  (Response solver)
+    Thomas Kjaergaard,      Aarhus University,                     Denmark  (RSP, INT, DEC, SCF, Input, MPI, 
+                                                                             MAT)
+    Andreas Krapp,          University of Oslo,                    Norway   (FMM, dispersion-corrected DFT)
+    Kasper Kristensen,      Aarhus University,                     Denmark  (Response, DEC)
+    Chandan Kumar,          University of Oslo,                    Norway   (Nuclei-selected NMR shielding)
+    Patrick Merlot,         University of Oslo,                    Norway   (ADMM)
+    Cecilie Nygaard,        Aarhus University,                     Denmark  (SOEO)
+    Jeppe Olsen,            Aarhus University,                     Denmark  (Supervision)
+    Elisa Rebolini,         University of Oslo,                    Norway   (MO-PARI-K)
+    Simen Reine,            University of Oslo,                    Norway   (Integrals and approximations, 
+                                                                             XC, MPI, OpenMP, geo.opt.)
+    Magnus Ringholm,        UiT The Arctic University of Norway,   Norway   (OpenRSP)
+    Kenneth Ruud,           UiT The Arctic University of Norway,   Norway   (OpenRSP, Supervision)
+    Vladimir Rybkin,        University of Oslo,                    Norway   (Geometry optimizer, dynamics)
+    Pawel Salek,            KTH Stockholm,                         Sweden   (FMM, DFT functionals)
+    Andrew M. Teale,        University of Nottingham               England  (E-coefficients)
+    Erik Tellgren,          University of Oslo,                    Norway   (Density fitting, E-coefficients)
+    Andreas J. Thorvaldsen, University of Tromsoe,                 Norway   (Response)
+    Lea Thoegersen,         Aarhus University,                     Denmark  (SCF optimization)
+    Mark Watson,            University of Oslo,                    Norway   (FMM)
+    Lukas Wirz,             University of Oslo,                    Norway   (NR-PARI)
+    Marcin Ziolkowski,      Aarhus University,                     Denmark  (DEC)
+  
+  
+     NOTE:
+      
+     This is an experimental code for the evaluation of molecular
+     energies and properties using various electronic structure models.
+     The authors accept no responsibility for the performance of the code or
+     for the correctness of the results.
+      
+     The code (in whole or part) is provided under a licence and
+     is not to be reproduced for further distribution without
+     the written permission of the authors or their representatives.
+      
+     See the home page "http://daltonprogram.org"
+     for further information.
+  
+  
+ ================================================================
+Version information
+-------------------
+Version       | v2020.0-124-gc501620-dirty
+Commit hash   | c50162019b4c3495703af4da3dfa0137916f5b4f
+Commit author | andreasbendtsen
+Commit date   | Wed Oct 13 15:09:15 2021 +0200
+Branch        | CPSD4
+
+Configuration and build information
+-----------------------------------
+Who compiled             | andreasb
+Compilation hostname     | fend04.cluster
+Operating system         | Linux-3.10.0-1160.11.1.el7.x86_64
+Processor                | x86_64
+CMake version            | 3.14.7
+CMake generator          | Unix Makefiles
+Build type               | RELEASE
+Configuration time       | 2021-11-03 11:05:42
+Fortran compiler         | /usr/bin/gfortran
+Fortran compiler version | 4.8.5
+C compiler               | /usr/bin/gcc
+C compiler version       | 4.8.5
+C++ compiler             | /usr/bin/g++
+C++ compiler version     | 4.8.5
+64-bit integers          | OFF
+MPI parallelization      | OFF
+OpenMP parallelization   | ON
+
+Further components
+------------------
+
+Runtime information
+-------------------
+Hostname:
+    node378.cluster
+Current working dir:
+    /data/scratch/29473583/DALTON_scratch_qhw298/HF_Water_opt_29535
+  
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  8.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  1.0000     2 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+ This is a CAM functional with
+ config%integral%CAMalpha  0.19000000000000000     
+ config%integral%CAMbeta  0.46000000000000002     
+ config%integral%CAMmu  0.33000000000000002     
+ Default 1st order method will be used: BFGS update.
+ Optimization will be performed in redundant internal coordinates.
+ Model Hessian will be used as initial Hessian.
+ The model Hessian    parameters of Roland Lindh will be used.
+
+ Current Hessian will not be written out to DALTON.HES.
+
+
+ Trust region method will be used to control step (default).
+
+
+ New thresholding scheme for geometry convergence will be used
+ -------------------------------------------------------------
+ Root-mean-square gradient threshold set to    :      1.00D-05
+ Maximum gradient element threshold set to     :      5.00D-05
+ Root-mean-square step threshold set to        :      3.00D-05
+ Maximum step element threshold set to         :      1.50D-04
+    The Functional chosen is a GGA type functional
+    The Functional chosen contains an exact exchange contribution
+    with the weight:  1.00000000E+00
+
+         Start simulation
+     Date and time (Linux)  : Thu Dec 16 16:00:47 2021
+     Host name              : node378.cluster                         
+                      
+    ---------------------------------------------------
+             PRINTING THE MOLECULE.INP FILE 
+    ---------------------------------------------------
+                      
+    ATOMBASIS                               
+    ./Water.xyz                             
+    Hej Magnus                              
+    Atomtypes=2 Charge=0 NoSymmetry Angstrom                                                                                
+      8.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+    O     0.906440000        -0.069780000         0.021830000                                                               
+      1.0000     2 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+    H     1.874330000        -0.048440000        -0.019410000                                                               
+    H     0.627590000         0.356710000        -0.802370000                                                               
+                      
+    ---------------------------------------------------
+             PRINTING THE LSDALTON.INP FILE 
+    ---------------------------------------------------
+                      
+    **WAVE FUNCTIONS
+    .DFT
+    CAMB3LYP
+    **OPTIMIZE
+    *END OF INPUT
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  8.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  1.0000     2 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+ 
+ 
+Using basis set library located: /groups/kemi/qhw298/bin/UCPH-KVM/test_systems/lsdalton_input:/lustre/hpc/kemi/andreasb/Applications/lsdalton_batching/build_final/bin/../share/lsdalton/basis
+Using basis set library located: /groups/kemi/qhw298/bin/UCPH-KVM/test_systems/lsdalton_input:/lustre/hpc/kemi/andreasb/Applications/lsdalton_batching/build_final/bin/../share/lsdalton/basis
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+                      
+    Atoms and basis sets
+      Total number of atoms        :      3
+      THE  REGULAR   is on R =   1
+    ---------------------------------------------------------------------
+      atom label  charge basisset                prim     cont   basis
+    ---------------------------------------------------------------------
+          1 O      8.000 cc-pVDZ                   26       14 [9s4p1d|3s2p1d]                              
+          2 H      1.000 cc-pVDZ                    7        5 [4s1p|2s1p]                                  
+          3 H      1.000 cc-pVDZ                    7        5 [4s1p|2s1p]                                  
+    ---------------------------------------------------------------------
+    total         10                               40       24
+    ---------------------------------------------------------------------
+                      
+                      
+    Atoms and basis sets
+      Total number of atoms        :      3
+      THE  AUXILIARY is on R =   2
+    ---------------------------------------------------------------------
+      atom label  charge basisset                prim     cont   basis
+    ---------------------------------------------------------------------
+          1 O      8.000 cc-pVDZ-RI                56       56 [7s5p4d2f|7s5p4d2f]                          
+          2 H      1.000 cc-pVDZ-RI                14       14 [3s2p1d|3s2p1d]                              
+          3 H      1.000 cc-pVDZ-RI                14       14 [3s2p1d|3s2p1d]                              
+    ---------------------------------------------------------------------
+    total         10                               84       84
+    ---------------------------------------------------------------------
+                      
+                      
+    Basic Molecule/Basis information
+    --------------------------------------------------------------------
+      Molecular Charge                   :    0.0000
+      Regular basisfunctions             :       24
+      Auxiliary basisfunctions           :       84
+      Primitive Regular basisfunctions   :       40
+      Primitive Auxiliary basisfunctions :       84
+    --------------------------------------------------------------------
+                      
+    Configuration:
+    ==============
+    This is an OpenMP calculation using   2 threads.
+    This is a serial calculation (no MPI)
+    The Functional chosen is a GGA type functional
+    The Functional chosen contains a exact exchange contribution
+    with the weight:  1.00000000E+00
+     
+    The Exchange-Correlation Grid specifications:
+    Radial Quadrature : Treutler-Ahlrichs M4-T2 scheme
+                        (J. Chem. Phys. (1995) 102, 346).
+                        Implies also that the angular integration quality becomes Z-dependant
+    Space partitioning: Stratmann-Scuseria-Frisch partitioning scheme
+                        Chem. Phys. Lett. (1996) vol. 213 page 257,
+                        Combined with a blockwise handling of grid points
+                        J. Chem. Phys. (2004) vol 121, page 2915.
+                        Useful for large molecules.
+
+    We use grid pruning according to Mol. Phys. (1993) vol 78 page 997
+
+     DFT LSint Radial integration threshold:   0.5012D-13
+     DFT LSint integration order range     :   [  5:  35]
+     Hardness of the partioning function   :   3
+     DFT LSint screening thresholds        :   0.10D-08   0.20D-09   0.20D-11
+     Threshold for number of electrons     :   0.10D-02
+     The Exact Exchange Factor             : 0.1000D+01
+
+    You have requested Augmented Roothaan-Hall optimization
+    => explicit averaging is turned off!
+
+    Expand trust radius if ratio is larger than:            0.75
+    Contract trust radius if ratio is smaller than:         0.25
+    On expansion, trust radius is expanded by a factor      1.20
+    On contraction, trust radius is contracted by a factor  0.70
+
+    Maximum size of subspace in ARH linear equations:       2
+
+    Density subspace min. method    : None                    
+    Density optimization            : Augmented RH optimization          
+
+    Maximum size of Fock/density queue in averaging:    7
+
+    Convergence threshold for gradient        :   0.10E-03
+    We have detected a Dunnings Basis set so we deactivate the
+    use of the Grand Canonical basis, which is normally default.
+    The use of Grand Canonical basis can be enforced using the FORCEGCBASIS keyword
+    We perform the calculation in the standard input basis
+     
+    The Overall Screening threshold is set to              :  1.0000E-08
+    The Screening threshold used for Coulomb               :  1.0000E-10
+    The Screening threshold used for Exchange              :  1.0000E-08
+    The Screening threshold used for One-electron operators:  1.0000E-15
+    The SCF Convergence Criteria is applied to the gradnorm in OAO basis
+
+    End of configuration!
+
+ Using 64-bit integers!
+ ndim =                   24
+
+    First density: Atoms in molecule guess
+
+    This is an OpenMP Gridgeneration calculation using  2 threads.
+    Total Number of grid points:       34420
+
+    Max allocated memory, Grid                    2.442 MB
+
+    Iteration 0 energy:      -76.335877980877
+ 
+    Diagonalize the Atoms in Molecule Fock Matrix to obtain Initial Density
+    Preparing to do S^1/2 decomposition...
+  
+    Relative convergence threshold for solver:  1.00000000E-02
+    SCF Convergence criteria for gradient norm:  9.99999975E-05
+    ******************************************************************************** ###
+     it            E(SCF)          dE(SCF)    exit        alpha RHshift OAO gradient ###
+    ******************************************************************************** ###
+      1    -76.3335202680    0.00000000000    0.00      0.00000    0.00    3.944E-01 ###
+      2    -76.3335202680    0.00000000000    0.00      0.00000   -0.00    4.526E-01 ###
+      3    -76.3335202680    0.00000000000    0.00      0.00000    0.10    4.537E-01 ###
+      4    -76.3420844862   -0.00856421812    0.00      0.00000    0.20    3.842E-01 ###
+      5    -76.3916489196   -0.04956443341    0.00      0.00000   -0.00    2.877E-02 ###
+      6    -76.3919334319   -0.00028451233    0.00      0.00000   -0.00    2.696E-03 ###
+      7    -76.3919368149   -0.00000338296    0.00      0.00000   -0.00    2.324E-04 ###
+      8    -76.3919368385   -0.00000002366    0.00      0.00000   -0.00    1.586E-05 ###
+    SCF converged in      8 iterations
+    >>>  CPU Time used in SCF iterations is   5.67 seconds
+    >>> wall Time used in SCF iterations is   2.85 seconds
+
+    Total no. of matmuls in SCF optimization:        614
+
+    Number of occupied orbitals:       5
+    Number of virtual orbitals:       19
+
+    Number of occupied orbital energies to be found:       1
+    Number of virtual orbital energies to be found:        1
+
+
+    Calculation of HOMO-LUMO gap
+    ============================
+
+    Calculation of occupied orbital energies converged in     5 iterations!
+
+    Calculation of virtual orbital energies converged in     8 iterations!
+
+     E(LUMO):                         0.097521 au
+    -E(HOMO):                        -0.356842 au
+    -------------------------------------------------
+     HOMO-LUMO Gap (iteratively):     0.454363 au
+
+
+    ********************************************************
+     it       dE(HF)          exit   RHshift    RHinfo 
+    ********************************************************
+      1    0.00000000000    0.0000    0.0000    0.0000000
+      2    0.00000000000    0.0000   -0.0000    0.0000000
+      3    0.00000000000    0.0000    0.1000    0.0000000
+      4   -0.00856421812    0.0000    0.2000    0.0000000
+      5   -0.04956443341    0.0000   -0.0000    0.0000000
+      6   -0.00028451233    0.0000   -0.0000    0.0000000
+      7   -0.00000338296    0.0000   -0.0000    0.0000000
+      8   -0.00000002366    0.0000   -0.0000    0.0000000
+
+    ======================================================================
+                       LINSCF ITERATIONS:
+      It.nr.               Energy                 OAO Gradient norm
+    ======================================================================
+        1           -76.33352026804561774043      0.394402203581436D+00
+        2           -76.33352026804561774043      0.452649010673622D+00
+        3           -76.33352026804561774043      0.453701792890086D+00
+        4           -76.34208448616531939024      0.384239649656746D+00
+        5           -76.39164891957904046649      0.287738361588502D-01
+        6           -76.39193343190538598719      0.269602151688830D-02
+        7           -76.39193681486244713597      0.232415544763334D-03
+        8           -76.39193683851961225173      0.158570494665127D-04
+
+          SCF converged !!!! 
+             >>> Final SCF results from LSDALTON <<<
+
+
+          Final DFT energy:                      -76.391936838520
+          Nuclear repulsion:                       9.084261304510
+          Electronic energy:                     -85.476198143029
+
+
+
+
+        *************************************************************
+        *            MOLECULAR GRADIENT RESULTS (in a.u.)           *
+        *************************************************************
+
+
+
+
+                   nuclear rep contribution to gradient
+                   ------------------------------------
+
+   O        1.6965165924            1.1026476320           -2.1308875390
+   H       -2.4811673565           -0.0206744784            0.0399539376
+   H        0.7846507642           -1.0819731536            2.0909336014
+
+
+                     Coulomb contribution to gradient
+                     --------------------------------
+
+   O        2.8105227045            1.8266083278           -3.5300766447
+   H       -3.9459970917           -0.0876662907            0.1694311828
+   H        1.1354743871           -1.7389420371            3.3606454619
+
+
+                    exchange contribution to gradient
+                    ---------------------------------
+
+   O       -0.1168439093           -0.0759383204            0.1467585497
+   H        0.1621884000            0.0042494641           -0.0082129307
+   H       -0.0453444907            0.0716888563           -0.1385456190
+
+
+                   twoElectron contribution to gradient
+                   ------------------------------------
+
+   O        2.6936787952            1.7506700074           -3.3833180950
+   H       -3.7838086916           -0.0834168266            0.1612182522
+   H        1.0901298964           -1.6672531808            3.2220998428
+
+
+                   nuc-el attr contribution to gradient
+                   ------------------------------------
+
+   O       -4.9556678688           -3.2208306660            6.2244476024
+   H        7.0504177317            0.1244874819           -0.2405901019
+   H       -2.0947498630            3.0963431841           -5.9838575004
+
+
+                  exchange-corr contribution to gradient
+                  --------------------------------------
+
+   O       -0.2012281335           -0.1307803752            0.2527479570
+   H        0.2825699233            0.0062593284           -0.0120971733
+   H       -0.0813483519            0.1245192280           -0.2406417059
+
+
+                     kinetic contribution to gradient
+                     --------------------------------
+
+   O        0.5303360540            0.3446816116           -0.6661147111
+   H       -0.7535264375           -0.0136410975            0.0263629476
+   H        0.2231903835           -0.3310405141            0.6397517635
+
+
+                  reorthonomal contribution to gradient
+                  -------------------------------------
+
+   O        0.2356904443            0.1531823816           -0.2960360551
+   H       -0.3116470461           -0.0136124964            0.0263075573
+   H        0.0759566018           -0.1395698852            0.2697284978
+
+
+                         Molecular gradient (au)
+                         -----------------------
+
+   O       -0.0006741163           -0.0004294086            0.0008391591
+   H        0.0028381233           -0.0005980885            0.0011554195
+   H       -0.0021705691            0.0010256784           -0.0019855008
+
+
+ RMS gradient norm (au):      0.0015200972264675
+
+
+
+
+                 Cartesian step from back-transformation
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3     Column   4
+       1      -0.00113492    -0.00074082     0.00143166    -0.00553806
+
+               Column   5     Column   6     Column   7     Column   8
+       1       0.00235362    -0.00454842     0.00667298    -0.00161280
+
+               Column   9
+       1       0.00311676
+
+
+                 Internal step from back-transformation:
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3
+       1      -0.00406225    -0.00405083    -0.00759032
+
+ Norm of internal step   0.009514413273
+
+
+                      Step in delocalized internals:
+                      ------------------------------
+
+
+               Column   1     Column   2     Column   3
+       1      -0.00002173    -0.00001613    -0.01902881
+
+
+
+ ------------------------------------------------------------+---------------------------
+              RMS grad    Max grad    RMS step    Max step   |  Tr.rad.        Energy
+ ------------------------------------------------------------+---------------------------
+ Curr.val.   0.00272269  0.00277484  0.00549315  0.00759032  |  0.500000     -76.39193684
+ Threshold   0.00001000  0.00005000  0.00003000  0.00015000  |
+ Converged?      F          F          F          F      |
+ ------------------------------------------------------------+---------------------------
+
+
+
+
+
+                       Optimization Control Center
+                       ---------------------------
+
+
+
+                            Next geometry (au)
+                            ------------------
+
+   Total number of coordinates:  9
+   Written in atomic units    
+ 
+   1   O        x      1.7117884329
+   2            y     -0.1326059144
+   3            z      0.0426843795
+ 
+   4   H        x      3.5364323276
+   5            y     -0.0891847105
+   6            z     -0.0412280059
+ 
+   7   H        x      1.1926462053
+   8            y      0.6724714106
+   9            z     -1.5131427944
+
+
+                         Optimization information
+                         ------------------------
+
+ Iteration number               :       0
+ End of optimization            :       F 
+ Energy at this geometry is     :     -76.391937
+ Norm of gradient               :       0.004560
+ Norm of step                   :       0.009514
+ Updated trust radius           :       0.500000
+
+    First density: Atoms in molecule guess
+
+    This is an OpenMP Gridgeneration calculation using  2 threads.
+    Total Number of grid points:       34420
+
+    Max allocated memory, Grid                    2.442 MB
+
+    Iteration 0 energy:      -76.339117324565
+ 
+    Diagonalize the Atoms in Molecule Fock Matrix to obtain Initial Density
+    Preparing to do S^1/2 decomposition...
+  
+    Relative convergence threshold for solver:  1.00000000E-02
+    SCF Convergence criteria for gradient norm:  9.99999975E-05
+    ******************************************************************************** ###
+     it            E(SCF)          dE(SCF)    exit        alpha RHshift OAO gradient ###
+    ******************************************************************************** ###
+      1    -76.3335115055    0.00000000000    0.00      0.00000    0.00    3.947E-01 ###
+      2    -76.3335115055    0.00000000000    0.00      0.00000   -0.00    4.523E-01 ###
+      3    -76.3335115055    0.00000000000    0.00      0.00000    0.10    4.525E-01 ###
+      4    -76.3425554482   -0.00904394263    0.00      0.00000    0.20    3.827E-01 ###
+      5    -76.3916803451   -0.04912489694    0.00      0.00000   -0.00    2.858E-02 ###
+      6    -76.3919607817   -0.00028043655    0.00      0.00000   -0.00    2.685E-03 ###
+      7    -76.3919641325   -0.00000335086    0.00      0.00000   -0.00    2.303E-04 ###
+      8    -76.3919641558   -0.00000002327    0.00      0.00000   -0.00    1.561E-05 ###
+    SCF converged in      8 iterations
+    >>>  CPU Time used in SCF iterations is   5.59 seconds
+    >>> wall Time used in SCF iterations is   2.80 seconds
+
+    Total no. of matmuls in SCF optimization:       1238
+
+    Number of occupied orbitals:       5
+    Number of virtual orbitals:       19
+
+    Number of occupied orbital energies to be found:       1
+    Number of virtual orbital energies to be found:        1
+
+
+    Calculation of HOMO-LUMO gap
+    ============================
+
+    Calculation of occupied orbital energies converged in     5 iterations!
+
+    Calculation of virtual orbital energies converged in     8 iterations!
+
+     E(LUMO):                         0.097881 au
+    -E(HOMO):                        -0.357141 au
+    -------------------------------------------------
+     HOMO-LUMO Gap (iteratively):     0.455022 au
+
+
+    ********************************************************
+     it       dE(HF)          exit   RHshift    RHinfo 
+    ********************************************************
+      1    0.00000000000    0.0000    0.0000    0.0000000
+      2    0.00000000000    0.0000   -0.0000    0.0000000
+      3    0.00000000000    0.0000    0.1000    0.0000000
+      4   -0.00904394263    0.0000    0.2000    0.0000000
+      5   -0.04912489694    0.0000   -0.0000    0.0000000
+      6   -0.00028043655    0.0000   -0.0000    0.0000000
+      7   -0.00000335086    0.0000   -0.0000    0.0000000
+      8   -0.00000002327    0.0000   -0.0000    0.0000000
+
+    ======================================================================
+                       LINSCF ITERATIONS:
+      It.nr.               Energy                 OAO Gradient norm
+    ======================================================================
+        1           -76.33351150554645414559      0.394717327155079D+00
+        2           -76.33351150554645414559      0.452271550384528D+00
+        3           -76.33351150554645414559      0.452549488450333D+00
+        4           -76.34255544817450811479      0.382685608917848D+00
+        5           -76.39168034511266114350      0.285817477152843D-01
+        6           -76.39196078166602887904      0.268508289531299D-02
+        7           -76.39196413253050366166      0.230272853791968D-03
+        8           -76.39196415580514099020      0.156144658470004D-04
+
+          SCF converged !!!! 
+             >>> Final SCF results from LSDALTON <<<
+
+
+          Final DFT energy:                      -76.391964155805
+          Nuclear repulsion:                       9.105466231183
+          Electronic energy:                     -85.497430386988
+
+
+
+             StepInfo:Energy difference to previous geometry:
+             ------------------------------------------------
+
+
+      Energy       Old_Energy     Actual_diff  Predicted_diff  Ratio
+
+      -76.3919641558      -76.3919368385  -0.0000273173  -0.0000211970   1.2887311908
+
+ Trust radius increased due to good ratio.
+ Updated trust radius   0.50000
+
+
+
+        *************************************************************
+        *            MOLECULAR GRADIENT RESULTS (in a.u.)           *
+        *************************************************************
+
+
+
+
+                   nuclear rep contribution to gradient
+                   ------------------------------------
+
+   O        1.7123363241            1.1129139822           -2.1507274563
+   H       -2.4923470987           -0.0247515620            0.0478329796
+   H        0.7800107746           -1.0881624202            2.1028944767
+
+
+                     Coulomb contribution to gradient
+                     --------------------------------
+
+   O        2.8369893339            1.8438053527           -3.5633080501
+   H       -3.9530003342           -0.0982956621            0.1899718485
+   H        1.1160110003           -1.7455096906            3.3733362017
+
+
+                    exchange contribution to gradient
+                    ---------------------------------
+
+   O       -0.1179689483           -0.0766694530            0.1481713624
+   H        0.1623758889            0.0047371375           -0.0091553254
+   H       -0.0444069407            0.0719323155           -0.1390160370
+
+
+                   twoElectron contribution to gradient
+                   ------------------------------------
+
+   O        2.7190203856            1.7671358997           -3.4151366878
+   H       -3.7906244452           -0.0935585246            0.1808165230
+   H        1.0716040596           -1.6735773751            3.2343201647
+
+
+                   nuc-el attr contribution to gradient
+                   ------------------------------------
+
+   O       -5.0018012998           -3.2507942930            6.2823505021
+   H        7.0693422912            0.1408288951           -0.2721693230
+   H       -2.0675409914            3.1099653979           -6.0101811791
+
+
+                  exchange-corr contribution to gradient
+                  --------------------------------------
+
+   O       -0.2031981434           -0.1320605269            0.2552224060
+   H        0.2832663932            0.0069929579           -0.0135148861
+   H       -0.0800758055            0.1250645645           -0.2416955055
+
+
+                     kinetic contribution to gradient
+                     --------------------------------
+
+   O        0.5363528623            0.3485876212           -0.6736629185
+   H       -0.7569312885           -0.0154673753            0.0298921958
+   H        0.2205784262           -0.3331202459            0.6437707227
+
+
+                  reorthonomal contribution to gradient
+                  -------------------------------------
+
+   O        0.2375468509            0.1543887080           -0.2983671840
+   H       -0.3122582228           -0.0143191416            0.0276731017
+   H        0.0747113719           -0.1400695664            0.2706940823
+
+
+                         Molecular gradient (au)
+                         -----------------------
+
+   O        0.0002569798            0.0001713912           -0.0003213385
+   H        0.0004476292           -0.0002747504            0.0005305911
+   H       -0.0007121646            0.0001003548           -0.0001972382
+
+
+ RMS gradient norm (au):      0.0003818392413631
+
+
+
+
+                 Cartesian step from back-transformation
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3     Column   4
+       1      -0.00108889    -0.00070842     0.00136903    -0.00232542
+
+               Column   5     Column   6     Column   7     Column   8
+       1       0.00128663    -0.00248643     0.00341431    -0.00057821
+
+               Column   9
+       1       0.00111741
+
+
+                 Internal step from back-transformation:
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3
+       1      -0.00100510    -0.00100259    -0.00481757
+
+ Norm of internal step   0.005022389171
+
+
+                      Step in delocalized internals:
+                      ------------------------------
+
+
+               Column   1     Column   2     Column   3
+       1      -0.00354330    -0.00000355    -0.00939907
+
+
+
+ ------------------------------------------------------------+---------------------------
+              RMS grad    Max grad    RMS step    Max step   |  Tr.rad.        Energy
+ ------------------------------------------------------------+---------------------------
+ Curr.val.   0.00073424  0.00112581  0.00289968  0.00481757  |  0.500000     -76.39196416
+ Threshold   0.00001000  0.00005000  0.00003000  0.00015000  |
+ Converged?      F          F          F          F      |
+ ------------------------------------------------------------+---------------------------
+
+
+
+
+
+                       Optimization Control Center
+                       ---------------------------
+
+
+
+                            Next geometry (au)
+                            ------------------
+
+   Total number of coordinates:  9
+   Written in atomic units    
+ 
+   1   O        x      1.7106995463
+   2            y     -0.1333143296
+   3            z      0.0440534054
+ 
+   4   H        x      3.5341069027
+   5            y     -0.0878980827
+   6            z     -0.0437144384
+ 
+   7   H        x      1.1960605169
+   8            y      0.6718931980
+   9            z     -1.5120253878
+
+
+                         Optimization information
+                         ------------------------
+
+ Iteration number               :       1
+ End of optimization            :       F 
+ Energy at this geometry is     :     -76.391964
+ Energy change from last geom.  :      -0.000027
+ Norm of gradient               :       0.001146
+ Norm of step                   :       0.005022
+ Updated trust radius           :       0.500000
+
+    First density: Atoms in molecule guess
+
+    This is an OpenMP Gridgeneration calculation using  2 threads.
+    Total Number of grid points:       34420
+
+    Max allocated memory, Grid                    2.442 MB
+
+    Iteration 0 energy:      -76.340039812525
+ 
+    Diagonalize the Atoms in Molecule Fock Matrix to obtain Initial Density
+    Preparing to do S^1/2 decomposition...
+  
+    Relative convergence threshold for solver:  1.00000000E-02
+    SCF Convergence criteria for gradient norm:  9.99999975E-05
+    ******************************************************************************** ###
+     it            E(SCF)          dE(SCF)    exit        alpha RHshift OAO gradient ###
+    ******************************************************************************** ###
+      1    -76.3334944024    0.00000000000    0.00      0.00000    0.00    3.948E-01 ###
+      2    -76.3334944024    0.00000000000    0.00      0.00000   -0.00    4.523E-01 ###
+      3    -76.3334944024    0.00000000000    0.00      0.00000    0.10    4.525E-01 ###
+      4    -76.3426032876   -0.00910888516    0.00      0.00000    0.20    3.825E-01 ###
+      5    -76.3916839792   -0.04908069161    0.00      0.00000   -0.00    2.858E-02 ###
+      6    -76.3919643593   -0.00028038008    0.00      0.00000   -0.00    2.684E-03 ###
+      7    -76.3919677098   -0.00000335056    0.00      0.00000   -0.00    2.301E-04 ###
+      8    -76.3919677331   -0.00000002325    0.00      0.00000   -0.00    1.554E-05 ###
+    SCF converged in      8 iterations
+    >>>  CPU Time used in SCF iterations is   5.59 seconds
+    >>> wall Time used in SCF iterations is   2.82 seconds
+
+    Total no. of matmuls in SCF optimization:       1862
+
+    Number of occupied orbitals:       5
+    Number of virtual orbitals:       19
+
+    Number of occupied orbital energies to be found:       1
+    Number of virtual orbital energies to be found:        1
+
+
+    Calculation of HOMO-LUMO gap
+    ============================
+
+    Calculation of occupied orbital energies converged in     5 iterations!
+
+    Calculation of virtual orbital energies converged in     8 iterations!
+
+     E(LUMO):                         0.097932 au
+    -E(HOMO):                        -0.357266 au
+    -------------------------------------------------
+     HOMO-LUMO Gap (iteratively):     0.455199 au
+
+
+    ********************************************************
+     it       dE(HF)          exit   RHshift    RHinfo 
+    ********************************************************
+      1    0.00000000000    0.0000    0.0000    0.0000000
+      2    0.00000000000    0.0000   -0.0000    0.0000000
+      3    0.00000000000    0.0000    0.1000    0.0000000
+      4   -0.00910888516    0.0000    0.2000    0.0000000
+      5   -0.04908069161    0.0000   -0.0000    0.0000000
+      6   -0.00028038008    0.0000   -0.0000    0.0000000
+      7   -0.00000335056    0.0000   -0.0000    0.0000000
+      8   -0.00000002325    0.0000   -0.0000    0.0000000
+
+    ======================================================================
+                       LINSCF ITERATIONS:
+      It.nr.               Energy                 OAO Gradient norm
+    ======================================================================
+        1           -76.33349440242693617620      0.394787945249190D+00
+        2           -76.33349440242693617620      0.452293254950981D+00
+        3           -76.33349440242693617620      0.452481885375203D+00
+        4           -76.34260328759026492662      0.382544851069412D+00
+        5           -76.39168397919604558410      0.285817741555928D-01
+        6           -76.39196435927799200272      0.268396361128721D-02
+        7           -76.39196770984213458178      0.230057738832391D-03
+        8           -76.39196773309313925893      0.155392335010531D-04
+
+          SCF converged !!!! 
+             >>> Final SCF results from LSDALTON <<<
+
+
+          Final DFT energy:                      -76.391967733093
+          Nuclear repulsion:                       9.111135395565
+          Electronic energy:                     -85.503103128658
+
+
+
+             StepInfo:Energy difference to previous geometry:
+             ------------------------------------------------
+
+
+      Energy       Old_Energy     Actual_diff  Predicted_diff  Ratio
+
+      -76.3919677331      -76.3919641558  -0.0000035773  -0.0000031317   1.1422841997
+
+ Trust radius increased due to good ratio.
+ Updated trust radius   0.50000
+
+
+
+        *************************************************************
+        *            MOLECULAR GRADIENT RESULTS (in a.u.)           *
+        *************************************************************
+
+
+
+
+                   nuclear rep contribution to gradient
+                   ------------------------------------
+
+   O        1.7194598734            1.1175404608           -2.1596682143
+   H       -2.4951636286           -0.0273084414            0.0527741976
+   H        0.7757037551           -1.0902320195            2.1068940167
+
+
+                     Coulomb contribution to gradient
+                     --------------------------------
+
+   O        2.8506634385            1.8526919906           -3.5804807839
+   H       -3.9534166059           -0.1048268488            0.2025931230
+   H        1.1027531675           -1.7478651417            3.3778876608
+
+
+                    exchange contribution to gradient
+                    ---------------------------------
+
+   O       -0.1185647518           -0.0770566876            0.1489196553
+   H        0.1623517081            0.0050354699           -0.0097318384
+   H       -0.0437869563            0.0720212178           -0.1391878169
+
+
+                   twoElectron contribution to gradient
+                   ------------------------------------
+
+   O        2.7320986867            1.7756353029           -3.4315611286
+   H       -3.7910648978           -0.0997913790            0.1928612846
+   H        1.0589662112           -1.6758439240            3.2386998440
+
+
+                   nuc-el attr contribution to gradient
+                   ------------------------------------
+
+   O       -5.0247628830           -3.2657138511            6.3111818853
+   H        7.0727166669            0.1509259333           -0.2916816385
+   H       -2.0479537839            3.1147879178           -6.0195002469
+
+
+                  exchange-corr contribution to gradient
+                  --------------------------------------
+
+   O       -0.2041859994           -0.1327026600            0.2564635636
+   H        0.2833614836            0.0074435953           -0.0143857338
+   H       -0.0791831131            0.1252557727           -0.2420649939
+
+
+                     kinetic contribution to gradient
+                     --------------------------------
+
+   O        0.5391888173            0.3504298750           -0.6772230114
+   H       -0.7577197329           -0.0165935390            0.0320684951
+   H        0.2185309155           -0.3338363359            0.6451545164
+
+
+                  reorthonomal contribution to gradient
+                  -------------------------------------
+
+   O        0.2385220800            0.1550224952           -0.2995919483
+   H       -0.3123886185           -0.0147522211            0.0285100112
+   H        0.0738665385           -0.1402702742            0.2710819371
+
+
+                         Molecular gradient (au)
+                         -----------------------
+
+   O        0.0003205751            0.0002116229           -0.0003988537
+   H       -0.0002587273           -0.0000760518            0.0001466163
+   H       -0.0000694767           -0.0001388631            0.0002650734
+
+
+ RMS gradient norm (au):      0.0002345754555687
+
+
+
+
+                 Cartesian step from back-transformation
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3     Column   4
+       1    -4.416801D-04  -2.868744D-04   5.543902D-04  -2.193024D-04
+
+               Column   5     Column   6     Column   7     Column   8
+       1     2.865234D-04  -5.537119D-04   6.609825D-04   3.510030D-07
+
+               Column   9
+       1    -6.783508D-07
+
+
+                 Internal step from back-transformation:
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3
+       1       0.00028999     0.00028930    -0.00135126
+
+ Norm of internal step   0.001411982559
+
+
+                      Step in delocalized internals:
+                      ------------------------------
+
+
+               Column   1     Column   2     Column   3
+       1      -0.00228017     0.00000098    -0.00166602
+
+
+
+ ------------------------------------------------------------+---------------------------
+              RMS grad    Max grad    RMS step    Max step   |  Tr.rad.        Energy
+ ------------------------------------------------------------+---------------------------
+ Curr.val.   0.00026573  0.00026853  0.00081521  0.00135126  |  0.500000     -76.39196773
+ Threshold   0.00001000  0.00005000  0.00003000  0.00015000  |
+ Converged?      F          F          F          F      |
+ ------------------------------------------------------------+---------------------------
+
+
+
+
+
+                       Optimization Control Center
+                       ---------------------------
+
+
+
+                            Next geometry (au)
+                            ------------------
+
+   Total number of coordinates:  9
+   Written in atomic units    
+ 
+   1   O        x      1.7102578661
+   2            y     -0.1336012040
+   3            z      0.0446077956
+ 
+   4   H        x      3.5338876003
+   5            y     -0.0876115593
+   6            z     -0.0442681503
+ 
+   7   H        x      1.1967214994
+   8            y      0.6718935490
+   9            z     -1.5120260661
+
+
+                         Optimization information
+                         ------------------------
+
+ Iteration number               :       2
+ End of optimization            :       F 
+ Energy at this geometry is     :     -76.391968
+ Energy change from last geom.  :      -0.000004
+ Norm of gradient               :       0.000704
+ Norm of step                   :       0.001412
+ Updated trust radius           :       0.500000
+
+    First density: Atoms in molecule guess
+
+    This is an OpenMP Gridgeneration calculation using  2 threads.
+    Total Number of grid points:       34420
+
+    Max allocated memory, Grid                    2.442 MB
+
+    Iteration 0 energy:      -76.339885414906
+ 
+    Diagonalize the Atoms in Molecule Fock Matrix to obtain Initial Density
+    Preparing to do S^1/2 decomposition...
+  
+    Relative convergence threshold for solver:  1.00000000E-02
+    SCF Convergence criteria for gradient norm:  9.99999975E-05
+    ******************************************************************************** ###
+     it            E(SCF)          dE(SCF)    exit        alpha RHshift OAO gradient ###
+    ******************************************************************************** ###
+      1    -76.3334903205    0.00000000000    0.00      0.00000    0.00    3.948E-01 ###
+      2    -76.3334903205    0.00000000000    0.00      0.00000   -0.00    4.524E-01 ###
+      3    -76.3334903205    0.00000000000    0.00      0.00000    0.10    4.527E-01 ###
+      4    -76.3425310091   -0.00904068865    0.00      0.00000    0.20    3.828E-01 ###
+      5    -76.3916834407   -0.04915243157    0.00      0.00000   -0.00    2.863E-02 ###
+      6    -76.3919647161   -0.00028127542    0.00      0.00000   -0.00    2.686E-03 ###
+      7    -76.3919680738   -0.00000335769    0.00      0.00000   -0.00    2.304E-04 ###
+      8    -76.3919680971   -0.00000002332    0.00      0.00000   -0.00    1.554E-05 ###
+    SCF converged in      8 iterations
+    >>>  CPU Time used in SCF iterations is   5.53 seconds
+    >>> wall Time used in SCF iterations is   2.83 seconds
+
+    Total no. of matmuls in SCF optimization:       2486
+
+    Number of occupied orbitals:       5
+    Number of virtual orbitals:       19
+
+    Number of occupied orbital energies to be found:       1
+    Number of virtual orbital energies to be found:        1
+
+
+    Calculation of HOMO-LUMO gap
+    ============================
+
+    Calculation of occupied orbital energies converged in     5 iterations!
+
+    Calculation of virtual orbital energies converged in     8 iterations!
+
+     E(LUMO):                         0.097883 au
+    -E(HOMO):                        -0.357278 au
+    -------------------------------------------------
+     HOMO-LUMO Gap (iteratively):     0.455162 au
+
+
+    ********************************************************
+     it       dE(HF)          exit   RHshift    RHinfo 
+    ********************************************************
+      1    0.00000000000    0.0000    0.0000    0.0000000
+      2    0.00000000000    0.0000   -0.0000    0.0000000
+      3    0.00000000000    0.0000    0.1000    0.0000000
+      4   -0.00904068865    0.0000    0.2000    0.0000000
+      5   -0.04915243157    0.0000   -0.0000    0.0000000
+      6   -0.00028127542    0.0000   -0.0000    0.0000000
+      7   -0.00000335769    0.0000   -0.0000    0.0000000
+      8   -0.00000002332    0.0000   -0.0000    0.0000000
+
+    ======================================================================
+                       LINSCF ITERATIONS:
+      It.nr.               Energy                 OAO Gradient norm
+    ======================================================================
+        1           -76.33349032048587901045      0.394758796354919D+00
+        2           -76.33349032048587901045      0.452391631442435D+00
+        3           -76.33349032048587901045      0.452700857649781D+00
+        4           -76.34253100913440448494      0.382809129273458D+00
+        5           -76.39168344070434102377      0.286258771596863D-01
+        6           -76.39196471612602579171      0.268574299062534D-02
+        7           -76.39196807381549092497      0.230402336964544D-03
+        8           -76.39196809713696723065      0.155449455505405D-04
+
+          SCF converged !!!! 
+             >>> Final SCF results from LSDALTON <<<
+
+
+          Final DFT energy:                      -76.391968097137
+          Nuclear repulsion:                       9.109877385322
+          Electronic energy:                     -85.501845482459
+
+
+
+             StepInfo:Energy difference to previous geometry:
+             ------------------------------------------------
+
+
+      Energy       Old_Energy     Actual_diff  Predicted_diff  Ratio
+
+      -76.3919680971      -76.3919677331  -0.0000003640  -0.0000002580   1.4111046849
+
+ Trust radius increased due to good ratio.
+ Updated trust radius   0.50000
+
+
+
+        *************************************************************
+        *            MOLECULAR GRADIENT RESULTS (in a.u.)           *
+        *************************************************************
+
+
+
+
+                   nuclear rep contribution to gradient
+                   ------------------------------------
+
+   O        1.7203802012            1.1181395550           -2.1608259751
+   H       -2.4943897657           -0.0280086129            0.0541272923
+   H        0.7740095645           -1.0901309421            2.1066986828
+
+
+                     Coulomb contribution to gradient
+                     --------------------------------
+
+   O        2.8533637527            1.8544474222           -3.5838731259
+   H       -3.9521035724           -0.1065696112            0.2059609684
+   H        1.0987398197           -1.7478778110            3.3779121575
+
+
+                    exchange contribution to gradient
+                    ---------------------------------
+
+   O       -0.1186891197           -0.0771375289            0.1490758795
+   H        0.1622944228            0.0051146989           -0.0098849461
+   H       -0.0436053031            0.0720228300           -0.1391909334
+
+
+                   twoElectron contribution to gradient
+                   ------------------------------------
+
+   O        2.7346746330            1.7773098933           -3.4347972465
+   H       -3.7898091496           -0.1014549123            0.1960760224
+   H        1.0551345166           -1.6758549810            3.2387212241
+
+
+                   nuc-el attr contribution to gradient
+                   ------------------------------------
+
+   O       -5.0288919675           -3.2683988443            6.3163706159
+   H        7.0705575379            0.1536401431           -0.2969268166
+   H       -2.0416655703            3.1147587012           -6.0194437992
+
+
+                  exchange-corr contribution to gradient
+                  --------------------------------------
+
+   O       -0.2043675276           -0.1328206925            0.2566917192
+   H        0.2832640801            0.0075638000           -0.0146180279
+   H       -0.0789040302            0.1252537003           -0.2420609907
+
+
+                     kinetic contribution to gradient
+                     --------------------------------
+
+   O        0.5396225507            0.3507120691           -0.6777683464
+   H       -0.7574447840           -0.0168943283            0.0326497675
+   H        0.2178222333           -0.3338177408            0.6451185789
+
+
+                  reorthonomal contribution to gradient
+                  -------------------------------------
+
+   O        0.2387232427            0.1551532438           -0.2998446230
+   H       -0.3123336835           -0.0148681063            0.0287339588
+   H        0.0736104408           -0.1402851375            0.2711106642
+
+
+                         Molecular gradient (au)
+                         -----------------------
+
+   O        0.0001411324            0.0000952243           -0.0001738560
+   H       -0.0001557648           -0.0000220167            0.0000421964
+   H        0.0000071546           -0.0000763999            0.0001443601
+
+
+ RMS gradient norm (au):      0.0001117874256410
+
+
+
+
+                 Cartesian step from back-transformation
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3     Column   4
+       1    -2.220256D-04  -1.441471D-04   2.785670D-04   5.388736D-05
+
+               Column   5     Column   6     Column   7     Column   8
+       1     9.068140D-05  -1.752435D-04   1.681382D-04   5.346569D-05
+
+               Column   9
+       1    -1.033235D-04
+
+
+                 Internal step from back-transformation:
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3
+       1     3.035623D-04   3.030038D-04  -5.421915D-04
+
+ Norm of internal step   0.000691327008
+
+
+                      Step in delocalized internals:
+                      ------------------------------
+
+
+               Column   1     Column   2     Column   3
+       1      -0.00133730     0.00000079    -0.00035121
+
+
+
+ ------------------------------------------------------------+---------------------------
+              RMS grad    Max grad    RMS step    Max step   |  Tr.rad.        Energy
+ ------------------------------------------------------------+---------------------------
+ Curr.val.   0.00013219  0.00015555  0.00039914  0.00054219  |  0.500000     -76.39196810
+ Threshold   0.00001000  0.00005000  0.00003000  0.00015000  |
+ Converged?      F          F          F          F      |
+ ------------------------------------------------------------+---------------------------
+
+
+
+
+
+                       Optimization Control Center
+                       ---------------------------
+
+
+
+                            Next geometry (au)
+                            ------------------
+
+   Total number of coordinates:  9
+   Written in atomic units    
+ 
+   1   O        x      1.7100358405
+   2            y     -0.1337453511
+   3            z      0.0448863626
+ 
+   4   H        x      3.5339414876
+   5            y     -0.0875208779
+   6            z     -0.0444433938
+ 
+   7   H        x      1.1968896377
+   8            y      0.6719470147
+   9            z     -1.5121293896
+
+
+                         Optimization information
+                         ------------------------
+
+ Iteration number               :       3
+ End of optimization            :       F 
+ Energy at this geometry is     :     -76.391968
+ Energy change from last geom.  :      -0.000000
+ Norm of gradient               :       0.000335
+ Norm of step                   :       0.000691
+ Updated trust radius           :       0.500000
+
+    First density: Atoms in molecule guess
+
+    This is an OpenMP Gridgeneration calculation using  2 threads.
+    Total Number of grid points:       34420
+
+    Max allocated memory, Grid                    2.442 MB
+
+    Iteration 0 energy:      -76.339688065014
+ 
+    Diagonalize the Atoms in Molecule Fock Matrix to obtain Initial Density
+    Preparing to do S^1/2 decomposition...
+  
+    Relative convergence threshold for solver:  1.00000000E-02
+    SCF Convergence criteria for gradient norm:  9.99999975E-05
+    ******************************************************************************** ###
+     it            E(SCF)          dE(SCF)    exit        alpha RHshift OAO gradient ###
+    ******************************************************************************** ###
+      1    -76.3334890688    0.00000000000    0.00      0.00000    0.00    3.947E-01 ###
+      2    -76.3334890688    0.00000000000    0.00      0.00000   -0.00    4.525E-01 ###
+      3    -76.3334890688    0.00000000000    0.00      0.00000    0.10    4.529E-01 ###
+      4    -76.3424740043   -0.00898493543    0.00      0.00000    0.20    3.830E-01 ###
+      5    -76.3916828501   -0.04920884590    0.00      0.00000   -0.00    2.866E-02 ###
+      6    -76.3919647849   -0.00028193473    0.00      0.00000   -0.00    2.687E-03 ###
+      7    -76.3919681478   -0.00000336291    0.00      0.00000   -0.00    2.307E-04 ###
+      8    -76.3919681712   -0.00000002338    0.00      0.00000   -0.00    1.556E-05 ###
+    SCF converged in      8 iterations
+    >>>  CPU Time used in SCF iterations is   5.51 seconds
+    >>> wall Time used in SCF iterations is   2.84 seconds
+
+    Total no. of matmuls in SCF optimization:       3110
+
+    Number of occupied orbitals:       5
+    Number of virtual orbitals:       19
+
+    Number of occupied orbital energies to be found:       1
+    Number of virtual orbital energies to be found:        1
+
+
+    Calculation of HOMO-LUMO gap
+    ============================
+
+    Calculation of occupied orbital energies converged in     5 iterations!
+
+    Calculation of virtual orbital energies converged in     8 iterations!
+
+     E(LUMO):                         0.097843 au
+    -E(HOMO):                        -0.357276 au
+    -------------------------------------------------
+     HOMO-LUMO Gap (iteratively):     0.455118 au
+
+
+    ********************************************************
+     it       dE(HF)          exit   RHshift    RHinfo 
+    ********************************************************
+      1    0.00000000000    0.0000    0.0000    0.0000000
+      2    0.00000000000    0.0000   -0.0000    0.0000000
+      3    0.00000000000    0.0000    0.1000    0.0000000
+      4   -0.00898493543    0.0000    0.2000    0.0000000
+      5   -0.04920884590    0.0000   -0.0000    0.0000000
+      6   -0.00028193473    0.0000   -0.0000    0.0000000
+      7   -0.00000336291    0.0000   -0.0000    0.0000000
+      8   -0.00000002338    0.0000   -0.0000    0.0000000
+
+    ======================================================================
+                       LINSCF ITERATIONS:
+      It.nr.               Energy                 OAO Gradient norm
+    ======================================================================
+        1           -76.33348906881606410479      0.394731010202528D+00
+        2           -76.33348906881606410479      0.452461282068628D+00
+        3           -76.33348906881606410479      0.452866686304631D+00
+        4           -76.34247400425024920878      0.383014768072679D+00
+        5           -76.39168285014538639643      0.286580500096958D-01
+        6           -76.39196478487104968735      0.268714079360504D-02
+        7           -76.39196814778422606196      0.230672969813489D-03
+        8           -76.39196817115929150077      0.155559519809772D-04
+
+          SCF converged !!!! 
+             >>> Final SCF results from LSDALTON <<<
+
+
+          Final DFT energy:                      -76.391968171159
+          Nuclear repulsion:                       9.108439969112
+          Electronic energy:                     -85.500408140271
+
+
+
+             StepInfo:Energy difference to previous geometry:
+             ------------------------------------------------
+
+
+      Energy       Old_Energy     Actual_diff  Predicted_diff  Ratio
+
+      -76.3919681712      -76.3919680971  -0.0000000740  -0.0000000645   1.1468376767
+
+ Trust radius increased due to good ratio.
+ Updated trust radius   0.50000
+
+
+
+        *************************************************************
+        *            MOLECULAR GRADIENT RESULTS (in a.u.)           *
+        *************************************************************
+
+
+
+
+                   nuclear rep contribution to gradient
+                   ------------------------------------
+
+   O        1.7203962668            1.1181507567           -2.1608476227
+   H       -2.4935679665           -0.0282835594            0.0546586316
+   H        0.7731716997           -1.0898671973            2.1061889911
+
+
+                     Coulomb contribution to gradient
+                     --------------------------------
+
+   O        2.8540758845            1.8549105315           -3.5847681262
+   H       -3.9511119517           -0.1072388030            0.2072541718
+   H        1.0970360672           -1.7476717285            3.3775139544
+
+
+                    exchange contribution to gradient
+                    ---------------------------------
+
+   O       -0.1187250529           -0.0771608888            0.1491210246
+   H        0.1622550446            0.0051450022           -0.0099435066
+   H       -0.0435299917            0.0720158866           -0.1391775181
+
+
+                   twoElectron contribution to gradient
+                   ------------------------------------
+
+   O        2.7353508316            1.7777496427           -3.4356471016
+   H       -3.7888569071           -0.1020938008            0.1973106652
+   H        1.0535060755           -1.6756558419            3.2383364364
+
+
+                   nuc-el attr contribution to gradient
+                   ------------------------------------
+
+   O       -5.0297918789           -3.2689847639            6.3175029520
+   H        7.0686787984            0.1546891773           -0.2989540701
+   H       -2.0388869195            3.1142955866           -6.0185488819
+
+
+                  exchange-corr contribution to gradient
+                  --------------------------------------
+
+   O       -0.2044090943           -0.1328477228            0.2567439784
+   H        0.2831845814            0.0076099455           -0.0147072040
+   H       -0.0787828482            0.1252346862           -0.2420242492
+
+
+                     kinetic contribution to gradient
+                     --------------------------------
+
+   O        0.5396779858            0.3507483296           -0.6778384219
+   H       -0.7571725399           -0.0170098303            0.0328729741
+   H        0.2174945541           -0.3337384993            0.6449654477
+
+
+                  reorthonomal contribution to gradient
+                  -------------------------------------
+
+   O        0.2387803428            0.1551903610           -0.2999163571
+   H       -0.3122818134           -0.0149127767            0.0288202857
+   H        0.0735014706           -0.1402775843            0.2710960714
+
+
+                         Molecular gradient (au)
+                         -----------------------
+
+   O        0.0000044539            0.0000066033           -0.0000025728
+   H       -0.0000158471           -0.0000008444            0.0000012825
+   H        0.0000040321           -0.0000088500            0.0000138155
+
+
+ RMS gradient norm (au):      0.0000082259567370
+
+
+
+
+                 Cartesian step from back-transformation
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3     Column   4
+       1     1.602439D-07   1.018637D-07  -1.968535D-07   2.385498D-05
+
+               Column   5     Column   6     Column   7     Column   8
+       1    -7.829724D-06   1.513109D-05  -2.401523D-05   7.727860D-06
+
+               Column   9
+       1    -1.493424D-05
+
+
+                 Internal step from back-transformation:
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3
+       1     2.270859D-05   2.271678D-05   2.029755D-05
+
+ Norm of internal step   0.000037996352
+
+
+                      Step in delocalized internals:
+                      ------------------------------
+
+
+               Column   1     Column   2     Column   3
+       1    -2.697890D-05  -1.147850D-08   7.104245D-05
+
+
+
+ ------------------------------------------------------------+---------------------------
+              RMS grad    Max grad    RMS step    Max step   |  Tr.rad.        Energy
+ ------------------------------------------------------------+---------------------------
+ Curr.val.   0.00001139  0.00001336  0.00002194  0.00002272  |  0.500000     -76.39196817
+ Threshold   0.00001000  0.00005000  0.00003000  0.00015000  |
+ Converged?      F          T          T          T      |
+ ------------------------------------------------------------+---------------------------
+
+
+
+
+
+                       Optimization Control Center
+                       ---------------------------
+
+
+
+                            Next geometry (au)
+                            ------------------
+
+   Total number of coordinates:  9
+   Written in atomic units    
+ 
+   1   O        x      1.7100360008
+   2            y     -0.1337452492
+   3            z      0.0448861657
+ 
+   4   H        x      3.5339653426
+   5            y     -0.0875287076
+   6            z     -0.0444282627
+ 
+   7   H        x      1.1968656224
+   8            y      0.6719547426
+   9            z     -1.5121443238
+
+
+                         Optimization information
+                         ------------------------
+
+ Iteration number               :       4
+ End of optimization            :       F 
+ Energy at this geometry is     :     -76.391968
+ Energy change from last geom.  :      -0.000000
+ Norm of gradient               :       0.000025
+ Norm of step                   :       0.000038
+ Updated trust radius           :       0.500000
+
+    First density: Atoms in molecule guess
+
+    This is an OpenMP Gridgeneration calculation using  2 threads.
+    Total Number of grid points:       34420
+
+    Max allocated memory, Grid                    2.442 MB
+
+    Iteration 0 energy:      -76.339670789830
+ 
+    Diagonalize the Atoms in Molecule Fock Matrix to obtain Initial Density
+    Preparing to do S^1/2 decomposition...
+  
+    Relative convergence threshold for solver:  1.00000000E-02
+    SCF Convergence criteria for gradient norm:  9.99999975E-05
+    ******************************************************************************** ###
+     it            E(SCF)          dE(SCF)    exit        alpha RHshift OAO gradient ###
+    ******************************************************************************** ###
+      1    -76.3334892052    0.00000000000    0.00      0.00000    0.00    3.947E-01 ###
+      2    -76.3334892052    0.00000000000    0.00      0.00000   -0.00    4.525E-01 ###
+      3    -76.3334892052    0.00000000000    0.00      0.00000    0.10    4.529E-01 ###
+      4    -76.3424710689   -0.00898186361    0.00      0.00000    0.20    3.830E-01 ###
+      5    -76.3916828203   -0.04921175140    0.00      0.00000   -0.00    2.866E-02 ###
+      6    -76.3919647848   -0.00028196452    0.00      0.00000   -0.00    2.687E-03 ###
+      7    -76.3919681479   -0.00000336315    0.00      0.00000   -0.00    2.307E-04 ###
+      8    -76.3919681713   -0.00000002338    0.00      0.00000   -0.00    1.556E-05 ###
+    SCF converged in      8 iterations
+    >>>  CPU Time used in SCF iterations is   5.47 seconds
+    >>> wall Time used in SCF iterations is   2.86 seconds
+
+    Total no. of matmuls in SCF optimization:       3734
+
+    Number of occupied orbitals:       5
+    Number of virtual orbitals:       19
+
+    Number of occupied orbital energies to be found:       1
+    Number of virtual orbital energies to be found:        1
+
+
+    Calculation of HOMO-LUMO gap
+    ============================
+
+    Calculation of occupied orbital energies converged in     5 iterations!
+
+    Calculation of virtual orbital energies converged in     8 iterations!
+
+     E(LUMO):                         0.097841 au
+    -E(HOMO):                        -0.357274 au
+    -------------------------------------------------
+     HOMO-LUMO Gap (iteratively):     0.455115 au
+
+
+    ********************************************************
+     it       dE(HF)          exit   RHshift    RHinfo 
+    ********************************************************
+      1    0.00000000000    0.0000    0.0000    0.0000000
+      2    0.00000000000    0.0000   -0.0000    0.0000000
+      3    0.00000000000    0.0000    0.1000    0.0000000
+      4   -0.00898186361    0.0000    0.2000    0.0000000
+      5   -0.04921175140    0.0000   -0.0000    0.0000000
+      6   -0.00028196452    0.0000   -0.0000    0.0000000
+      7   -0.00000336315    0.0000   -0.0000    0.0000000
+      8   -0.00000002338    0.0000   -0.0000    0.0000000
+
+    ======================================================================
+                       LINSCF ITERATIONS:
+      It.nr.               Energy                 OAO Gradient norm
+    ======================================================================
+        1           -76.33348920524176151048      0.394729110659833D+00
+        2           -76.33348920524176151048      0.452464147835203D+00
+        3           -76.33348920524176151048      0.452874640995600D+00
+        4           -76.34247106885212019733      0.383025165010477D+00
+        5           -76.39168282025273981617      0.286594775504692D-01
+        6           -76.39196478477346374802      0.268721277746055D-02
+        7           -76.39196814792052236953      0.230686895943870D-03
+        8           -76.39196817129815997305      0.155571138703636D-04
+
+          SCF converged !!!! 
+             >>> Final SCF results from LSDALTON <<<
+
+
+          Final DFT energy:                      -76.391968171298
+          Nuclear repulsion:                       9.108323905035
+          Electronic energy:                     -85.500292076333
+
+
+
+             StepInfo:Energy difference to previous geometry:
+             ------------------------------------------------
+
+
+      Energy       Old_Energy     Actual_diff  Predicted_diff  Ratio
+
+      -76.3919681713      -76.3919681712  -0.0000000001  -0.0000000004   0.3848522949
+
+ Trust radius decreased due to bad ratio.
+ Updated trust radius   0.00003
+
+
+
+        *************************************************************
+        *            MOLECULAR GRADIENT RESULTS (in a.u.)           *
+        *************************************************************
+
+
+
+
+                   nuclear rep contribution to gradient
+                   ------------------------------------
+
+   O        1.7203314846            1.1181086411           -2.1607662335
+   H       -2.4935057039           -0.0282722135            0.0546367055
+   H        0.7731742194           -1.0898364276            2.1061295280
+
+
+                     Coulomb contribution to gradient
+                     --------------------------------
+
+   O        2.8539817852            1.8548493648           -3.5846499297
+   H       -3.9510646834           -0.1072082968            0.2071952203
+   H        1.0970828982           -1.7476410680            3.3774547094
+
+
+                    exchange contribution to gradient
+                    ---------------------------------
+
+   O       -0.1187211716           -0.0771583659            0.1491161497
+   H        0.1622535443            0.0051435979           -0.0099407929
+   H       -0.0435323726            0.0720147680           -0.1391753568
+
+
+                   twoElectron contribution to gradient
+                   ------------------------------------
+
+   O        2.7352606135            1.7776909989           -3.4355337800
+   H       -3.7888111391           -0.1020646989            0.1972544274
+   H        1.0535505256           -1.6756263000            3.2382793527
+
+
+                   nuc-el attr contribution to gradient
+                   ------------------------------------
+
+   O       -5.0296207219           -3.2688735031            6.3172879487
+   H        7.0685651443            0.1546426819           -0.2988642195
+   H       -2.0389444224            3.1142308212           -6.0184237292
+
+
+                  exchange-corr contribution to gradient
+                  --------------------------------------
+
+   O       -0.2044018600           -0.1328430168            0.2567348831
+   H        0.2831802147            0.0076078412           -0.0147031375
+   H       -0.0787857098            0.1252320919           -0.2420192360
+
+
+                     kinetic contribution to gradient
+                     --------------------------------
+
+   O        0.5396543698            0.3507329770           -0.6778087536
+   H       -0.7571532945           -0.0170045726            0.0328628136
+   H        0.2174989247           -0.3337284044            0.6449459400
+
+
+                  reorthonomal contribution to gradient
+                  -------------------------------------
+
+   O        0.2387739229            0.1551861884           -0.2999082939
+   H       -0.3122783446           -0.0149107748            0.0288164172
+   H        0.0735044217           -0.1402754135            0.2710918767
+
+
+                         Molecular gradient (au)
+                         -----------------------
+
+   O       -0.0000021911            0.0000022853            0.0000057708
+   H       -0.0000031233           -0.0000017366            0.0000030067
+   H       -0.0000020408           -0.0000036324            0.0000037322
+
+
+ RMS gradient norm (au):      0.0000032732160441
+
+
+
+
+                 Cartesian step from back-transformation
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3     Column   4
+       1     9.554440D-07   6.175501D-07  -1.193427D-06   2.356212D-06
+
+               Column   5     Column   6     Column   7     Column   8
+       1    -1.230677D-06   2.378306D-06  -3.311656D-06   6.131264D-07
+
+               Column   9
+       1    -1.184878D-06
+
+
+                 Internal step from back-transformation:
+                 ---------------------------------------
+
+
+
+                                  HOBIT
+                                  -----
+
+
+               Column   1     Column   2     Column   3
+       1     1.177251D-06   1.189511D-06   4.483805D-06
+
+ Norm of internal step   0.000004785954
+
+
+                      Step in delocalized internals:
+                      ------------------------------
+
+
+               Column   1     Column   2     Column   3
+       1     2.710218D-06  -1.734266D-08   9.180188D-06
+
+
+
+ ------------------------------------------------------------+---------------------------
+              RMS grad    Max grad    RMS step    Max step   |  Tr.rad.        Energy
+ ------------------------------------------------------------+---------------------------
+ Curr.val.   0.00000079  0.00000083  0.00000276  0.00000448  |  0.000027     -76.39196817
+ Threshold   0.00001000  0.00005000  0.00003000  0.00015000  |
+ Converged?      T          T          T          T      |
+ ------------------------------------------------------------+---------------------------
+
+
+
+
+
+                       Optimization Control Center
+                       ---------------------------
+
+
+
+                           Final geometry (au)
+                           -------------------
+
+   Total number of coordinates:  9
+   Written in atomic units    
+ 
+   1   O        x      1.7100360008
+   2            y     -0.1337452492
+   3            z      0.0448861657
+ 
+   4   H        x      3.5339653426
+   5            y     -0.0875287076
+   6            z     -0.0444282627
+ 
+   7   H        x      1.1968656224
+   8            y      0.6719547426
+   9            z     -1.5121443238
+
+
+                         Optimization information
+                         ------------------------
+
+ Iteration number               :       5
+ End of optimization            :       T 
+ Energy at this geometry is     :     -76.391968
+ Energy change from last geom.  :      -0.000000
+ Norm of gradient               :       0.000010
+ Norm of step                   :       0.000005
+ Updated trust radius           :       0.000027
+
+
+                           End of Optimization 
+                          ---------------------
+
+
+
+                              Final geometry
+                              --------------
+
+   Total number of coordinates:  9
+   Written in atomic units    
+ 
+   1   O        x      1.7100360008
+   2            y     -0.1337452492
+   3            z      0.0448861657
+ 
+   4   H        x      3.5339653426
+   5            y     -0.0875287076
+   6            z     -0.0444282627
+ 
+   7   H        x      1.1968656224
+   8            y      0.6719547426
+   9            z     -1.5121443238
+ Iter      Energy        Change       GradNorm  Index   StepLen   TrustRad #Rej
+ -------------------------------------------------------------------------------
+   0      -76.391937     0.000000     0.004560    0    0.009514*   0.500000   0 
+   1      -76.391964    -0.000027     0.001146    0    0.005022*   0.500000   0 
+   2      -76.391968    -0.000004     0.000704    0    0.001412*   0.500000   0 
+   3      -76.391968    -0.000000     0.000335    0    0.000691*   0.500000   0 
+   4      -76.391968    -0.000000     0.000025    0    0.000038*   0.500000   0 
+   5      -76.391968    -0.000000     0.000010    0    0.000005*   0.000027   0 
+
+ Geometry converged in                     6  iterations!
+
+ Energy at final geometry is       :     -76.391968 a.u.
+ Energy change during optimization :      -0.000031 a.u.
+                                             -0.082 kJ/mol
+
+    Total no. of matmuls used:                      3752
+    Total no. of Fock/KS matrix evaluations:          54
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+                      Memory statistics          
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+      Allocated memory (TOTAL):         0 byte Should be zero, otherwise a leakage is present
+ 
+      Max allocated memory, TOTAL                         80.261 MB
+      Max allocated memory, type(matrix)                 161.280 kB
+      Max allocated memory, real(realk)                   80.028 MB
+      Max allocated memory, integer                      514.720 kB
+      Max allocated memory, logical                      138.320 kB
+      Max allocated memory, character                      2.048 kB
+      Max allocated memory, AOBATCH                       41.736 kB
+      Max allocated memory, ODBATCH                        6.720 kB
+      Max allocated memory, LSAOTENSOR                     7.560 kB
+      Max allocated memory, SLSAOTENSOR                    8.112 kB
+      Max allocated memory, ATOMTYPEITEM                 161.440 kB
+      Max allocated memory, ATOMITEM                       2.688 kB
+      Max allocated memory, LSMATRIX                       3.840 kB
+      Max allocated memory, OverlapT                     187.776 kB
+      Max allocated memory, linkshell                      2.520 kB
+      Max allocated memory, integrand                      1.161 MB
+      Max allocated memory, integralitem                  52.255 MB
+      Max allocated memory, IntWork                        1.067 MB
+      Max allocated memory, Overlap                       37.836 MB
+      Max allocated memory, ODitem                         4.704 kB
+      Max allocated memory, LStensor                      21.908 kB
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+
+    Allocated MPI memory a cross all slaves:          0 byte  - Should be zero - otherwise a leakage is present
+    This is a non MPI calculation so naturally no memory is allocated on slaves!
+    >>>  CPU Time used in LSDALTON is  45.49 seconds
+    >>> wall Time used in LSDALTON is  23.58 seconds
+
+    End simulation
+     Date and time (Linux)  : Thu Dec 16 16:01:11 2021
+     Host name              : node378.cluster                         
