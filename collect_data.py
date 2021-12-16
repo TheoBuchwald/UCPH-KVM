@@ -110,7 +110,6 @@ if __name__ == "__main__":
     Arguments = {   #These are all the possible arguments that extract data
         '_Energy' : args.energy,
         '_ZPV' : args.zpv,
-        '_Gibbs' : args.gibbs,
         '_Dipole_moments' : args.dipole,
         '_Polarizabilities' : args.polar,
         '_Excitation_energies' : args.exc,
@@ -118,6 +117,7 @@ if __name__ == "__main__":
         '_Frequencies' : args.freq,
         '_Enthalpy' : args.enthalpy,
         '_Entropy' : args.entropy,
+        '_Gibbs' : args.gibbs,
         '_PartitionFunctions' : args.partfunc,
     }
 
@@ -176,11 +176,17 @@ if __name__ == "__main__":
     if Arguments['_Oscillator_strengths'] == True:  #Makes the amount of Oscillator strengths printed equal to that of excitation energies
         Arguments['_Oscillator_strengths'] = Arguments['_Excitation_energies']
 
+    if Arguments['_Gibbs'] == True and (Arguments['_Enthalpy'] == False or Arguments['_Entropy'] == False):
+        if suppressed == False:
+            print('Entropy and enthalpy will be extracted as well, since you requested Gibbs free energies')
+        Arguments['_Enthalpy'] = True
+        Arguments['_Entropy'] = True
+
     if Arguments['_PartitionFunctions'] == True and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
         if suppressed == False:
             print('Frequencies will be found as well, since you are trying to extract partition functions')
         Arguments['_Frequencies'] = -1
-    
+
     if Arguments['_Enthalpy'] == True and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
         if suppressed == False:
             print('Frequencies will be found as well, since you are trying to calculate enthalpies')
@@ -222,13 +228,6 @@ class gaus:
             self.zpv = float(self.lines[linenumber].split()[-1])
             return
         self.zpv = 'NaN'
-        
-    def _Gibbs(self):
-        linenumber = Forward_search_last(self.file, 'Sum of electronic and thermal Free Energies=', 'Gibbs free energy')
-        if type(linenumber) == int:
-            self.gibbs = float(self.lines[linenumber].split()[-1])
-            return
-        self.gibbs = 'NaN'
 
     def _Dipole_moments(self):
         linenumber = Forward_search_last(self.file, 'Electric dipole moment (input orientation):', 'dipole moments')
@@ -338,7 +337,7 @@ class gaus:
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
                 print(f"No frequencies found in {infile}, skipping enthalpy calculation")
-            self.hcalc = 'NaN'
+            self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
         self._Energy()
@@ -357,7 +356,7 @@ class gaus:
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
                 print(f"No frequencies found in {infile}, skipping enthalpy calculation")
-            self.hcalc = 'NaN'
+            self.entropy = 'NaN'
             return
         self._RotationalConsts()
         self._Mass()
@@ -373,6 +372,14 @@ class gaus:
         self.S_V = gas_constant * np.sum(vib_const * realfreq / T / (np.exp(vib_const * realfreq / T) - 1) - np.log(1-np.exp(-vib_const * realfreq / T)))
         self.S_E = gas_constant * np.log(self.multi) #Good approximation for most closed-shell molecules
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
+
+    def _Gibbs(self):
+        if CheckForOnlyNans(np.array(self.freq)) == True:
+            if suppressed == False:
+                print(f"No frequencies found in {infile}, skipping free energy calculation")
+            self.gibbs = 'NaN'
+            return
+        self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
 
 
 
@@ -791,7 +798,7 @@ if __name__ == "__main__":
     vib_const = 3.157750419E+05 #Assuming harmonic oscillator and frequency in au
     gas_constant = 8.31446261815324E-03 # In kJ/(mol*K)
     s_trans_const = 0.3160965065 #Assuming 1 bar standard pressure and molar
-    au_to_kJmol = 2625.5 
+    au_to_kJmol = 2625.4996394799
     Barrier = '\n**********************************************\n'
     
     if quiet == True:
