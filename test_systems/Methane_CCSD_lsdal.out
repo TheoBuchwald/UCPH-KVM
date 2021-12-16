@@ -1,0 +1,684 @@
+  
+     ******************************************************************    
+     **********  LSDalton - An electronic structure program  **********    
+     ******************************************************************    
+  
+  
+    This is output from LSDalton v2020.0
+  
+  
+     IF RESULTS OBTAINED WITH THIS CODE ARE PUBLISHED,
+     THE FOLLOWING PAPER SHOULD BE CITED:
+     
+     K. Aidas, C. Angeli, K. L. Bak, V. Bakken, R. Bast,
+     L. Boman, O. Christiansen, R. Cimiraglia, S. Coriani,
+     P. Dahle, E. K. Dalskov, U. Ekstroem, T. Enevoldsen,
+     J. J. Eriksen, P. Ettenhuber, B. Fernandez,
+     L. Ferrighi, H. Fliegl, L. Frediani, K. Hald,
+     A. Halkier, C. Haettig, H. Heiberg,
+     T. Helgaker, A. C. Hennum, H. Hettema,
+     E. Hjertenaes, S. Hoest, I.-M. Hoeyvik,
+     M. F. Iozzi, B. Jansik, H. J. Aa. Jensen,
+     D. Jonsson, P. Joergensen, J. Kauczor,
+     S. Kirpekar, T. Kjaergaard, W. Klopper,
+     S. Knecht, R. Kobayashi, H. Koch, J. Kongsted,
+     A. Krapp, K. Kristensen, A. Ligabue,
+     O. B. Lutnaes, J. I. Melo, K. V. Mikkelsen, R. H. Myhre,
+     C. Neiss, C. B. Nielsen, P. Norman,
+     J. Olsen, J. M. H. Olsen, A. Osted,
+     M. J. Packer, F. Pawlowski, T. B. Pedersen,
+     P. F. Provasi, S. Reine, Z. Rinkevicius,
+     T. A. Ruden, K. Ruud, V. Rybkin,
+     P. Salek, C. C. M. Samson, A. Sanchez de Meras,
+     T. Saue, S. P. A. Sauer, B. Schimmelpfennig,
+     K. Sneskov, A. H. Steindal, K. O. Sylvester-Hvid,
+     P. R. Taylor, A. M. Teale, E. I. Tellgren,
+     D. P. Tew, A. J. Thorvaldsen, L. Thoegersen,
+     O. Vahtras, M. A. Watson, D. J. D. Wilson,
+     M. Ziolkowski, and H. AAgren,
+     "The Dalton quantum chemistry program system",
+     WIREs Comput. Mol. Sci. (doi: 10.1002/wcms.1172)
+  
+  
+                                               
+    LSDalton authors in alphabetical order (main contribution(s) in parenthesis)
+    ----------------------------------------------------------------------------
+    Vebjoern Bakken,        University of Oslo,                    Norway   (Geometry optimizer)
+    Ashleigh Barnes,        Oak Ridge National Laboratory,         USA      (ML-DEC)
+    Radovan Bast,           UiT The Arctic University of Norway,   Norway   (CMake, Testing)
+    Pablo Baudin,           Aarhus University,                     Denmark  (DEC,CCSD)
+    Dmytro Bykov,           Oak Ridge National Laboratory,         USA      (ML-DEC)
+    Sonia Coriani,          Technical University of Denmark,       Denmark  (Response)
+    Roberto Di Remigio,     UiT The Arctic University of Norway,   Norway   (PCM)
+    Karen Dundas,           UiT The Arctic University of Norway,   Norway   (OpenRSP)
+    Patrick Ettenhuber,     Aarhus University,                     Denmark  (CCSD)
+    Janus Juul Eriksen,     Aarhus University,                     Denmark  (CCSD(T), DEC)
+    Luca Frediani,          UiT The Arctic University of Norway,   Norway   (PCM, Supervision)
+    Daniel Henrik Friese,   Heinrich-Heine-Universitat Dusseldorf, Germany  (OpenRSP)
+    Bin Gao,                UiT The Arctic University of Norway,   Norway   (OpenRSP, QcMatrix)
+    Trygve Helgaker,        University of Oslo,                    Norway   (Supervision)
+    Stinne Hoest,           Aarhus University,                     Denmark  (SCF optimization)
+    Ida-Marie Hoeyvik,      Aarhus University,                     Denmark  (Orbital localization, SCF opt)
+    Robert Izsak,           University of Oslo,                    Norway   (ADMM)
+    Branislav Jansik,       Aarhus University,                     Denmark  (Trilevel, orbital localization)
+    Frank Jensen,           Aarhus University,                     Denmark  (ADMM basis sets)
+    Poul Joergensen,        Aarhus University,                     Denmark  (Supervision)
+    Joanna Kauczor,         Aarhus University,                     Denmark  (Response solver)
+    Thomas Kjaergaard,      Aarhus University,                     Denmark  (RSP, INT, DEC, SCF, Input, MPI, 
+                                                                             MAT)
+    Andreas Krapp,          University of Oslo,                    Norway   (FMM, dispersion-corrected DFT)
+    Kasper Kristensen,      Aarhus University,                     Denmark  (Response, DEC)
+    Chandan Kumar,          University of Oslo,                    Norway   (Nuclei-selected NMR shielding)
+    Patrick Merlot,         University of Oslo,                    Norway   (ADMM)
+    Cecilie Nygaard,        Aarhus University,                     Denmark  (SOEO)
+    Jeppe Olsen,            Aarhus University,                     Denmark  (Supervision)
+    Elisa Rebolini,         University of Oslo,                    Norway   (MO-PARI-K)
+    Simen Reine,            University of Oslo,                    Norway   (Integrals and approximations, 
+                                                                             XC, MPI, OpenMP, geo.opt.)
+    Magnus Ringholm,        UiT The Arctic University of Norway,   Norway   (OpenRSP)
+    Kenneth Ruud,           UiT The Arctic University of Norway,   Norway   (OpenRSP, Supervision)
+    Vladimir Rybkin,        University of Oslo,                    Norway   (Geometry optimizer, dynamics)
+    Pawel Salek,            KTH Stockholm,                         Sweden   (FMM, DFT functionals)
+    Andrew M. Teale,        University of Nottingham               England  (E-coefficients)
+    Erik Tellgren,          University of Oslo,                    Norway   (Density fitting, E-coefficients)
+    Andreas J. Thorvaldsen, University of Tromsoe,                 Norway   (Response)
+    Lea Thoegersen,         Aarhus University,                     Denmark  (SCF optimization)
+    Mark Watson,            University of Oslo,                    Norway   (FMM)
+    Lukas Wirz,             University of Oslo,                    Norway   (NR-PARI)
+    Marcin Ziolkowski,      Aarhus University,                     Denmark  (DEC)
+  
+  
+     NOTE:
+      
+     This is an experimental code for the evaluation of molecular
+     energies and properties using various electronic structure models.
+     The authors accept no responsibility for the performance of the code or
+     for the correctness of the results.
+      
+     The code (in whole or part) is provided under a licence and
+     is not to be reproduced for further distribution without
+     the written permission of the authors or their representatives.
+      
+     See the home page "http://daltonprogram.org"
+     for further information.
+  
+  
+ ================================================================
+Version information
+-------------------
+Version       | v2020.0-124-gc501620-dirty
+Commit hash   | c50162019b4c3495703af4da3dfa0137916f5b4f
+Commit author | andreasbendtsen
+Commit date   | Wed Oct 13 15:09:15 2021 +0200
+Branch        | CPSD4
+
+Configuration and build information
+-----------------------------------
+Who compiled             | andreasb
+Compilation hostname     | fend04.cluster
+Operating system         | Linux-3.10.0-1160.11.1.el7.x86_64
+Processor                | x86_64
+CMake version            | 3.14.7
+CMake generator          | Unix Makefiles
+Build type               | RELEASE
+Configuration time       | 2021-11-03 11:05:42
+Fortran compiler         | /usr/bin/gfortran
+Fortran compiler version | 4.8.5
+C compiler               | /usr/bin/gcc
+C compiler version       | 4.8.5
+C++ compiler             | /usr/bin/g++
+C++ compiler version     | 4.8.5
+64-bit integers          | OFF
+MPI parallelization      | OFF
+OpenMP parallelization   | ON
+
+Further components
+------------------
+
+Runtime information
+-------------------
+Hostname:
+    node378.cluster
+Current working dir:
+    /data/scratch/29473484/DALTON_scratch_qhw298/CCSD_Methane_CCSD_26800
+  
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  6.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  1.0000     4 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+
+         Start simulation
+     Date and time (Linux)  : Thu Dec 16 15:14:39 2021
+     Host name              : node378.cluster                         
+                      
+    ---------------------------------------------------
+             PRINTING THE MOLECULE.INP FILE 
+    ---------------------------------------------------
+                      
+    ATOMBASIS                               
+    ./Methane.xyz                           
+    Hej Magnus                              
+    Atomtypes=2 Charge=0 NoSymmetry Angstrom                                                                                
+      6.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+    C     1.018250000         0.093150000         0.031470000                                                               
+      1.0000     4 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+    H     2.110450000         0.093150000         0.031470000                                                               
+    H     0.654190000        -0.602800000         0.790430000                                                               
+    H     0.654180000        -0.216150000        -0.950710000                                                               
+    H     0.654180000         1.098400000         0.254700000                                                               
+                      
+    ---------------------------------------------------
+             PRINTING THE LSDALTON.INP FILE 
+    ---------------------------------------------------
+                      
+    **WAVE FUNCTIONS
+    .HF
+    *DENSOPT
+    .RH
+    .DIIS
+    .START
+    ATOMS
+    .LCM
+    .MAXIT
+    1000
+    **CC
+    .CCSD
+    .CANONICAL
+    .MEMORY
+    20
+    *END OF INPUT
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  6.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  1.0000     4 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+ 
+ 
+Using basis set library located: /groups/kemi/qhw298/bin/UCPH-KVM/test_systems/lsdalton_input:/lustre/hpc/kemi/andreasb/Applications/lsdalton_batching/build_final/bin/../share/lsdalton/basis
+Using basis set library located: /groups/kemi/qhw298/bin/UCPH-KVM/test_systems/lsdalton_input:/lustre/hpc/kemi/andreasb/Applications/lsdalton_batching/build_final/bin/../share/lsdalton/basis
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+                      
+    Atoms and basis sets
+      Total number of atoms        :      5
+      THE  REGULAR   is on R =   1
+    ---------------------------------------------------------------------
+      atom label  charge basisset                prim     cont   basis
+    ---------------------------------------------------------------------
+          1 C      6.000 cc-pVDZ                   26       14 [9s4p1d|3s2p1d]                              
+          2 H      1.000 cc-pVDZ                    7        5 [4s1p|2s1p]                                  
+          3 H      1.000 cc-pVDZ                    7        5 [4s1p|2s1p]                                  
+          4 H      1.000 cc-pVDZ                    7        5 [4s1p|2s1p]                                  
+          5 H      1.000 cc-pVDZ                    7        5 [4s1p|2s1p]                                  
+    ---------------------------------------------------------------------
+    total         10                               54       34
+    ---------------------------------------------------------------------
+                      
+                      
+    Atoms and basis sets
+      Total number of atoms        :      5
+      THE  AUXILIARY is on R =   2
+    ---------------------------------------------------------------------
+      atom label  charge basisset                prim     cont   basis
+    ---------------------------------------------------------------------
+          1 C      6.000 cc-pVDZ-RI                56       56 [7s5p4d2f|7s5p4d2f]                          
+          2 H      1.000 cc-pVDZ-RI                14       14 [3s2p1d|3s2p1d]                              
+          3 H      1.000 cc-pVDZ-RI                14       14 [3s2p1d|3s2p1d]                              
+          4 H      1.000 cc-pVDZ-RI                14       14 [3s2p1d|3s2p1d]                              
+          5 H      1.000 cc-pVDZ-RI                14       14 [3s2p1d|3s2p1d]                              
+    ---------------------------------------------------------------------
+    total         10                              112      112
+    ---------------------------------------------------------------------
+                      
+                      
+    Basic Molecule/Basis information
+    --------------------------------------------------------------------
+      Molecular Charge                   :    0.0000
+      Regular basisfunctions             :       34
+      Auxiliary basisfunctions           :      112
+      Primitive Regular basisfunctions   :       54
+      Primitive Auxiliary basisfunctions :      112
+    --------------------------------------------------------------------
+                      
+    Configuration:
+    ==============
+    This is an OpenMP calculation using   2 threads.
+    This is a serial calculation (no MPI)
+
+    Density subspace min. method    : DIIS                    
+    Density optimization            : Diagonalization                    
+
+    Maximum size of Fock/density queue in averaging:   10
+
+    Convergence threshold for gradient        :   0.10E-03
+    We have detected a Dunnings Basis set so we deactivate the
+    use of the Grand Canonical basis, which is normally default.
+    The use of Grand Canonical basis can be enforced using the FORCEGCBASIS keyword
+    We perform the calculation in the standard input basis
+     
+    The Overall Screening threshold is set to              :  1.0000E-08
+    The Screening threshold used for Coulomb               :  1.0000E-10
+    The Screening threshold used for Exchange              :  1.0000E-08
+    The Screening threshold used for One-electron operators:  1.0000E-15
+    The SCF Convergence Criteria is applied to the gradnorm in AO basis
+ Warning: Increased initial fragment size
+
+    End of configuration!
+
+ Using 64-bit integers!
+ ndim =                   34
+
+    First density: Atoms in molecule guess
+
+    Iteration 0 energy:      -40.237233085087
+ 
+    Diagonalize the Atoms in Molecule Fock Matrix to obtain Initial Density
+    Preparing to do S^1/2 decomposition...
+  
+    Relative convergence threshold for solver:  1.00000000E-02
+    SCF Convergence criteria for gradient norm:  9.99999975E-05
+    *********************************************************************************** ###
+     it            E(SCF)          dE(SCF)    exit        alpha RHshift       RHinfo  AO gradient ###
+    *********************************************************************************** ###
+      1    -40.1867113699    0.00000000000    0.00      0.00000    0.00    0.0000000    6.892E-01 ###
+      2    -40.1976575192   -0.01094614931    0.00      0.00000    0.00    0.0000000    2.208E-01 ###
+      3    -40.1985839601   -0.00092644088   -1.00      0.00000    0.00    0.0000000    8.408E-02 ###
+      4    -40.1987054218   -0.00012146171   -1.00      0.00000    0.00    0.0000000    5.009E-03 ###
+      5    -40.1987065071   -0.00000108531   -1.00      0.00000    0.00    0.0000000    1.183E-03 ###
+      6    -40.1987065303   -0.00000002315   -1.00      0.00000    0.00    0.0000000    5.878E-05 ###
+    SCF converged in      6 iterations
+    >>>  CPU Time used in SCF iterations is   1.05 seconds
+    >>> wall Time used in SCF iterations is   0.52 seconds
+
+    Total no. of matmuls in SCF optimization:         28
+
+    Number of occupied orbitals:       5
+    Number of virtual orbitals:       29
+
+    Number of occupied orbital energies to be found:       1
+    Number of virtual orbital energies to be found:        1
+
+
+    Calculation of HOMO-LUMO gap
+    ============================
+
+    Calculation of occupied orbital energies converged in     3 iterations!
+
+    Calculation of virtual orbital energies converged in    10 iterations!
+
+     E(LUMO):                         0.192749 au
+    -E(HOMO):                        -0.542013 au
+    -------------------------------------------------
+     HOMO-LUMO Gap (iteratively):     0.734762 au
+
+
+    ********************************************************
+     it       dE(HF)          exit   RHshift    RHinfo 
+    ********************************************************
+      1    0.00000000000    0.0000    0.0000    0.0000000
+      2   -0.01094614931    0.0000    0.0000    0.0000000
+      3   -0.00092644088   -1.0000    0.0000    0.0000000
+      4   -0.00012146171   -1.0000    0.0000    0.0000000
+      5   -0.00000108531   -1.0000    0.0000    0.0000000
+      6   -0.00000002315   -1.0000    0.0000    0.0000000
+
+    ======================================================================
+                       LINSCF ITERATIONS:
+      It.nr.               Energy                 AO Gradient norm
+    ======================================================================
+        1           -40.18671136992693959655      0.689246155082607D+00
+        2           -40.19765751923704044657      0.220814637372663D+00
+        3           -40.19858396012011780840      0.840845406597499D-01
+        4           -40.19870542183311101780      0.500930572343619D-02
+        5           -40.19870650713991722114      0.118273514427683D-02
+        6           -40.19870653028877427460      0.587756118676974D-04
+
+          SCF converged !!!! 
+             >>> Final SCF results from LSDALTON <<<
+
+
+          Final HF energy:                       -40.198706530289
+          Nuclear repulsion:                      13.408325084307
+          Electronic energy:                     -53.607031614595
+
+      %LOC%
+      %LOC% Localized orbitals written to lcm_orbitals.u
+      %LOC%
+
+    Number of electrons  in molecule =       10
+    Number of occ. orb.  in molecule =        5
+    Number of virt. orb. in molecule =       29
+
+
+
+
+    -- Full molecular info --
+
+    FULL: Overall charge of molecule    :      0
+
+    FULL: Number of electrons           :     10
+    FULL: Number of atoms               :      5
+    FULL: Number of basis func.         :     34
+    FULL: Number of aux. basis func.    :    112
+    FULL: Number of core orbitals       :      1
+    FULL: Number of valence orbitals    :      4
+    FULL: Number of occ. orbitals       :      5
+    FULL: Number of occ. alpha orbitals : ******
+    FULL: Number of occ. beta  orbitals : ******
+    FULL: Number of virt. orbitals      :     29
+    FULL: Local memory use type full    :  0.24E-04
+    FULL: Distribute matrices           : F
+    FULL: Using frozen-core approx.     : F
+
+ Allocate space for molecule%Co on Master use_bg= F
+ Allocate space for molecule%Cv on Master use_bg= F
+    Memory set in input to be:    20.00     GB
+
+
+    =============================================================================
+         -- Full molecular Coupled-Cluster calculation -- 
+    =============================================================================
+
+    Using canonical orbitals as requested in input!
+
+
+
+ ================================================ 
+              Full molecular driver               
+ ================================================ 
+
+
+--------------------------
+  Coupled-cluster energy  
+--------------------------
+
+Wave function    = CCSD    
+MaxIter          =  100
+Num. b.f.        =   34
+Num. occ. orb.   =    5
+Num. unocc. orb. =   29
+Convergence      =  0.1E-08
+Debug mode       =    F
+Print level      =    2
+Use CROP         =    T
+CROP subspace    =    3
+Preconditioner   =    T
+Precond. B       =    T
+Singles          =    T
+
+ ### Starting CC iterations
+ ### ----------------------
+ ###  Iteration     Residual norm          CC energy
+ The Coulomb energy contribution    0.0000000000000000     
+ The Exchange energy contribution   -0.0000000000000000     
+ The Fock energy contribution   -0.0000000000000000     
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      1         0.115057431           -0.164217393    
+ The Coulomb energy contribution    4.8269586356577436E-005
+ The Exchange energy contribution    9.4291234881379153E-005
+ The Fock energy contribution    4.6021648524801697E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      2         0.327143942E-01       -0.181711383    
+ The Coulomb energy contribution    5.3073186274460197E-005
+ The Exchange energy contribution    1.2966155334973278E-004
+ The Fock energy contribution    7.6588367075272582E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      3         0.613352629E-02       -0.187188074    
+ The Coulomb energy contribution    5.6587407517635324E-005
+ The Exchange energy contribution    1.3762898530045200E-004
+ The Fock energy contribution    8.1041577782816680E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      4         0.152205429E-02       -0.187508412    
+ The Coulomb energy contribution    5.5971013867499295E-005
+ The Exchange energy contribution    1.3723095674916968E-004
+ The Fock energy contribution    8.1259942881670353E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      5         0.343312580E-03       -0.187565064    
+ The Coulomb energy contribution    5.6155254219962268E-005
+ The Exchange energy contribution    1.3752504881429456E-004
+ The Fock energy contribution    8.1369794594332334E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      6         0.616907519E-04       -0.187571408    
+ The Coulomb energy contribution    5.6128728263413172E-005
+ The Exchange energy contribution    1.3750960359916074E-004
+ The Fock energy contribution    8.1380875335747554E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      7         0.929516728E-05       -0.187571130    
+ The Coulomb energy contribution    5.6128099360190799E-005
+ The Exchange energy contribution    1.3751282190812078E-004
+ The Fock energy contribution    8.1384722547929995E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      8         0.164219501E-05       -0.187570986    
+ The Coulomb energy contribution    5.6128307727591430E-005
+ The Exchange energy contribution    1.3751482397789840E-004
+ The Fock energy contribution    8.1386516250307026E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###      9         0.359810564E-06       -0.187570992    
+ The Coulomb energy contribution    5.6128399634120076E-005
+ The Exchange energy contribution    1.3751547160319936E-004
+ The Fock energy contribution    8.1387071969079322E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###     10         0.785078168E-07       -0.187570988    
+ The Coulomb energy contribution    5.6128421137840132E-005
+ The Exchange energy contribution    1.3751556886777485E-004
+ The Fock energy contribution    8.1387147729934770E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###     11         0.155517200E-07       -0.187570985    
+ The Coulomb energy contribution    5.6128422507705765E-005
+ The Exchange energy contribution    1.3751557640836106E-004
+ The Fock energy contribution    8.1387153900655253E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###     12         0.300994113E-08       -0.187570985    
+ The Coulomb energy contribution    5.6128424261169425E-005
+ The Exchange energy contribution    1.3751557930692188E-004
+ The Fock energy contribution    8.1387155045752480E-005
+Using memory intensive scheme (NON-PDM)
+ Since the full 4 dim is used we call the more efficient
+ II_GET_DECPACKED4CENTER_J_ERI to calc the full 4 dim int
+ ###     13         0.625872085E-09       -0.187570985    
+ CCSOL: MAIN LOOP      :  3.48    s
+
+
+-------------------------------
+  Coupled-cluster job summary  
+-------------------------------
+
+Hooray! CC equation is solved!
+Singles amplitudes norm  =  0.1536946E-01
+Doubles amplitudes norm  =  0.2530969    
+Total amplitudes norm    =  0.2535632    
+Corr. energy             =     -0.1875709849
+CCSOL: Total cpu time    =   7.11     s
+CCSOL: Total wall time   =   3.57     s
+Number of CC iterations  =   13
+ CCSOLVER - tot time (min.)            0.05945
+
+
+
+ CCSD correlation energy :    -0.1875709849    
+
+
+
+    ******************************************************************************
+    *                      Full CCSD     calculation is done !                   *
+    ******************************************************************************
+
+
+
+
+
+    ******************************************************************************
+    *                             CC ENERGY SUMMARY                              *
+    ******************************************************************************
+
+     E: Hartree-Fock energy                            :      -40.1987065303
+     E: Correlation energy                             :       -0.1875709849
+     E: Total CCSD energy                              :      -40.3862775152
+
+
+
+    CC Memory summary
+    -----------------
+     Allocated memory for array4   :   0.000     GB
+     Memory in use for array4      :   0.000     GB
+     Max memory in use for array4  :   0.000     GB
+    ------------------
+
+
+    ------------------------------------------------------
+    Total CPU  time used in CC           :         7.28389     s
+    Total Wall time used in CC           :         3.65400     s
+    ------------------------------------------------------
+
+
+    Hostname       : node378.cluster                                   
+    Job finished   : Date: 16/12/2021   Time: 15:14:43
+
+
+
+    =============================================================================
+                              -- end of CC program --
+    =============================================================================
+
+
+
+    Total no. of matmuls used:                        65
+    Total no. of Fock/KS matrix evaluations:           7
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+                      Memory statistics          
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+      Allocated memory (TOTAL):         0 byte Should be zero, otherwise a leakage is present
+ 
+      Max allocated memory, TOTAL                         36.419 MB
+      Max allocated memory, type(matrix)                 278.864 kB
+      Max allocated memory, real(realk)                   33.805 MB
+      Max allocated memory, integer                      335.381 kB
+      Max allocated memory, logical                        1.112 kB
+      Max allocated memory, character                      2.656 kB
+      Max allocated memory, AOBATCH                       61.272 kB
+      Max allocated memory, BATCHTOORB                     0.112 kB
+      Max allocated memory, ARRAY                          5.040 kB
+      Max allocated memory, ODBATCH                       15.840 kB
+      Max allocated memory, LSAOTENSOR                    18.000 kB
+      Max allocated memory, SLSAOTENSOR                   32.240 kB
+      Max allocated memory, ATOMTYPEITEM                 161.440 kB
+      Max allocated memory, ATOMITEM                       4.480 kB
+      Max allocated memory, LSMATRIX                       3.840 kB
+      Max allocated memory, OverlapT                     219.072 kB
+      Max allocated memory, linkshell                      6.072 kB
+      Max allocated memory, integrand                      1.306 MB
+      Max allocated memory, integralitem                   2.335 MB
+      Max allocated memory, IntWork                      251.136 kB
+      Max allocated memory, Overlap                       28.713 MB
+      Max allocated memory, ODitem                        11.088 kB
+      Max allocated memory, LStensor                      63.884 kB
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+
+    Allocated MPI memory a cross all slaves:          0 byte  - Should be zero - otherwise a leakage is present
+    This is a non MPI calculation so naturally no memory is allocated on slaves!
+    >>>  CPU Time used in LSDALTON is   8.55 seconds
+    >>> wall Time used in LSDALTON is   4.35 seconds
+
+    End simulation
+     Date and time (Linux)  : Thu Dec 16 15:14:43 2021
+     Host name              : node378.cluster                         
