@@ -206,9 +206,13 @@ class gaus:
         self.end = len(self.lines)
 
     def _Energy(self):
-        linenumber = Forward_search_last(self.file, 'Sum of electronic and zero-point Energies=', 'final energy')
+        linenumber = Forward_search_last(self.file, 'Sum of electronic and zero-point Energies=', 'final energy', err=False)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1]) - float(self.lines[linenumber-4].split()[-2])
+            return
+        linenumber = Forward_search_last(self.file, 'SCF Done:', 'final energy')
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[4])
             return
         self.tot_energy = 'NaN'
 
@@ -218,14 +222,7 @@ class gaus:
             self.zpv = float(self.lines[linenumber].split()[-1])
             return
         self.zpv = 'NaN'
-
-    # def _Enthalpy(self):
-    #     linenumber = Forward_search_last(self.file, 'Sum of electronic and thermal Enthalpies=', 'enthalpy')
-    #     if type(linenumber) == int:
-    #         self.enthalpy = float(self.lines[linenumber].split()[-1])
-    #         return
-    #     self.enthalpy = 'NaN'
-
+        
     def _Gibbs(self):
         linenumber = Forward_search_last(self.file, 'Sum of electronic and thermal Free Energies=', 'Gibbs free energy')
         if type(linenumber) == int:
@@ -488,7 +485,7 @@ class dal:
         self.end = len(self.lines)
 
     def _Energy(self):
-        linenumber = Forward_search_last(self.file, '@    Final DFT energy:', 'final energy', err=False)
+        linenumber = Forward_search_last(self.file, '@    Final .* energy:', 'final energy', err=False)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
