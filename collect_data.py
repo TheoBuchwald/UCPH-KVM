@@ -567,6 +567,10 @@ class lsdal:
         self.end = len(self.lines)
 
     def _Energy(self):
+        linenumber = Forward_search_last(self.file, '@    Final .* energy:', 'final energy', err=False)
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
         linenumber = Forward_search_last(self.file, 'ENERGY SUMMARY', 'final energy')
         if type(linenumber) == int:
             for i in self.lines[linenumber+3:self.end]:
