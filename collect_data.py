@@ -266,8 +266,10 @@ class gaus:
         
     def _Excitation_energies(self):
         self.exc_energies = []
+        linenumber = Forward_search_last(self.file, 'Excitation energies and oscillator strengths:', 'excitation energies')
         linenumbers = Forward_search_all(self.file, 'Excited State', 'excitation energies')
-        if type(linenumbers) == list:
+        if type(linenumber) == int:
+            linenumbers = [i for i in linenumbers if i > linenumber]
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[4])*ev_to_au)
         if len(self.exc_energies) == 0:
@@ -528,7 +530,7 @@ class dal:
         if type(linenumbers) == list:
             self.exc_type = 'MCTDHF'
             for i in linenumbers:
-                self.exc_energies.append(self.exc_energies.append(float(self.lines[i].split()[-2])))
+                self.exc_energies.append(float(self.lines[i].split()[-2]))
             if len(self.exc_energies) < Arguments['_Excitation_energies']:
                 self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
             return
@@ -798,7 +800,7 @@ if __name__ == "__main__":
 
     for infile in input_file:
         array_input.append([infile])
-        if quiet == False or suppressed == False:
+        if (quiet == True or suppressed == True) == False:
             print(Barrier)
             print(f'Collecting data from {infile}')
 

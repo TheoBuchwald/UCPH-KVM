@@ -1,0 +1,3713 @@
+ Entering Gaussian System, Link 0=/opt/gaussian/g16/sse4/g16/g16
+ Initial command:
+ /opt/gaussian/g16/sse4/g16/l1.exe "/scratch/1549222/Gau-26402.inp" -scrdir="/scratch/1549222/"
+ Entering Link 1 = /opt/gaussian/g16/sse4/g16/l1.exe PID=     26404.
+  
+ Copyright (c) 1988,1990,1992,1993,1995,1998,2003,2009,2016,
+            Gaussian, Inc.  All Rights Reserved.
+  
+ This is part of the Gaussian(R) 16 program.  It is based on
+ the Gaussian(R) 09 system (copyright 2009, Gaussian, Inc.),
+ the Gaussian(R) 03 system (copyright 2003, Gaussian, Inc.),
+ the Gaussian(R) 98 system (copyright 1998, Gaussian, Inc.),
+ the Gaussian(R) 94 system (copyright 1995, Gaussian, Inc.),
+ the Gaussian 92(TM) system (copyright 1992, Gaussian, Inc.),
+ the Gaussian 90(TM) system (copyright 1990, Gaussian, Inc.),
+ the Gaussian 88(TM) system (copyright 1988, Gaussian, Inc.),
+ the Gaussian 86(TM) system (copyright 1986, Carnegie Mellon
+ University), and the Gaussian 82(TM) system (copyright 1983,
+ Carnegie Mellon University). Gaussian is a federally registered
+ trademark of Gaussian, Inc.
+  
+ This software contains proprietary and confidential information,
+ including trade secrets, belonging to Gaussian, Inc.
+  
+ This software is provided under written license and may be
+ used, copied, transmitted, or stored only in accord with that
+ written license.
+  
+ The following legend is applicable only to US Government
+ contracts under FAR:
+  
+                    RESTRICTED RIGHTS LEGEND
+  
+ Use, reproduction and disclosure by the US Government is
+ subject to restrictions as set forth in subparagraphs (a)
+ and (c) of the Commercial Computer Software - Restricted
+ Rights clause in FAR 52.227-19.
+  
+ Gaussian, Inc.
+ 340 Quinnipiac St., Bldg. 40, Wallingford CT 06492
+  
+  
+ ---------------------------------------------------------------
+ Warning -- This program may not be used in any manner that
+ competes with the business of Gaussian, Inc. or will provide
+ assistance to any competitor of Gaussian, Inc.  The licensee
+ of this program is prohibited from giving any competitor of
+ Gaussian, Inc. access to this program.  By using this program,
+ the user acknowledges that Gaussian, Inc. is engaged in the
+ business of creating and licensing software in the field of
+ computational chemistry and represents and warrants to the
+ licensee that it is not a competitor of Gaussian, Inc. and that
+ it will not use this program in any manner prohibited above.
+ ---------------------------------------------------------------
+  
+
+ Cite this work as:
+ Gaussian 16, Revision A.03,
+ M. J. Frisch, G. W. Trucks, H. B. Schlegel, G. E. Scuseria, 
+ M. A. Robb, J. R. Cheeseman, G. Scalmani, V. Barone, 
+ G. A. Petersson, H. Nakatsuji, X. Li, M. Caricato, A. V. Marenich, 
+ J. Bloino, B. G. Janesko, R. Gomperts, B. Mennucci, H. P. Hratchian, 
+ J. V. Ortiz, A. F. Izmaylov, J. L. Sonnenberg, D. Williams-Young, 
+ F. Ding, F. Lipparini, F. Egidi, J. Goings, B. Peng, A. Petrone, 
+ T. Henderson, D. Ranasinghe, V. G. Zakrzewski, J. Gao, N. Rega, 
+ G. Zheng, W. Liang, M. Hada, M. Ehara, K. Toyota, R. Fukuda, 
+ J. Hasegawa, M. Ishida, T. Nakajima, Y. Honda, O. Kitao, H. Nakai, 
+ T. Vreven, K. Throssell, J. A. Montgomery, Jr., J. E. Peralta, 
+ F. Ogliaro, M. J. Bearpark, J. J. Heyd, E. N. Brothers, K. N. Kudin, 
+ V. N. Staroverov, T. A. Keith, R. Kobayashi, J. Normand, 
+ K. Raghavachari, A. P. Rendell, J. C. Burant, S. S. Iyengar, 
+ J. Tomasi, M. Cossi, J. M. Millam, M. Klene, C. Adamo, R. Cammi, 
+ J. W. Ochterski, R. L. Martin, K. Morokuma, O. Farkas, 
+ J. B. Foresman, and D. J. Fox, Gaussian, Inc., Wallingford CT, 2016.
+ 
+ ******************************************
+ Gaussian 16:  ES64L-G16RevA.03 25-Dec-2016
+                14-Dec-2021 
+ ******************************************
+ %chk=CCSD_Water_gaus.chk
+ %nprocshared=4
+ Will use up to    4 processors via shared memory.
+ %mem=4GB
+ -------------------------------------------------------------
+ #p eomccsd=(nstate=10)/cc-pvdz guess=read geom=allcheck polar
+ -------------------------------------------------------------
+ 1/29=7,30=1,38=101,172=1/1,6;
+ 2/12=2,40=1/2;
+ 3/5=16,11=9,14=-4,25=1,30=1,71=1,116=-2/1,2,3,8;
+ 4/5=1,69=2/1;
+ 5/5=2,38=6,98=1/2;
+ 8/6=1,10=1,68=101,105=8,108=10/1;
+ 9/41=10,42=1,68=1/14;
+ 8/6=4,9=120000,10=92,68=1,105=8,108=10/1,4;
+ 9/5=7,15=1,41=10,68=1/13;
+ 11/28=-16,32=3,42=3/11;
+ 10/5=6,13=10/2;
+ 6/7=2,8=2,9=2,10=2,22=-1/1;
+ 1/38=100/6(1);
+ 99/9=1/99;
+ 3/5=16,11=9,14=-3,25=1,30=1,71=1/1,2,3,8;
+ 4/5=5,16=3,69=2,133=2/1;
+ 5/5=2,38=5,98=1/2;
+ 8/6=4,9=120000,10=92,24=1,68=1,69=-2,105=8,108=10/1,4;
+ 9/5=7,15=1,41=10,68=1,114=-2/13;
+ 11/28=-16,32=3,42=3/11;
+ 10/5=6,13=10/2;
+ 6/7=2,8=2,9=2,10=2,22=-1/1;
+ 1/38=100/6(-8);
+ 99/9=1/99;
+ Leave Link    1 at Tue Dec 14 23:09:00 2021, MaxMem=   536870912 cpu:               0.3 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l101.exe)
+ Structure from the checkpoint file:  "CCSD_Water_gaus.chk"
+ ---------
+ Water.xyz
+ ---------
+ Charge =  0 Multiplicity = 1
+ Redundant internal coordinates found in file.  (old form).
+ O,0,0.902865501,-0.0721047176,0.026322561
+ H,0,1.865783333,-0.0439198795,-0.0281452182
+ H,0,0.639711166,0.3545145971,-0.7981273428
+ Recover connectivity data from disk.
+ ITRead=  0  0  0
+ MicOpt= -1 -1 -1
+                           ----------------------------
+                           !    Current Parameters    !
+                           ! (Angstroms and Degrees)  !
+ --------------------------                            --------------------------
+ ! Name  Definition              Value                                          !
+ --------------------------------------------------------------------------------
+ ! R1    R(1,2)                  0.9649                                         !
+ ! R2    R(1,3)                  0.9649                                         !
+ ! A1    A(2,1,3)              102.1829                                         !
+ --------------------------------------------------------------------------------
+ NAtoms=      3 NQM=        3 NQMF=       0 NMMI=      0 NMMIF=      0
+                NMic=       0 NMicF=      0.
+                    Isotopes and Nuclear Properties:
+ (Nuclear quadrupole moments (NQMom) in fm**2, nuclear magnetic moments (NMagM)
+  in nuclear magnetons)
+
+  Atom         1           2           3
+ IAtWgt=          16           1           1
+ AtmWgt=  15.9949146   1.0078250   1.0078250
+ NucSpn=           0           1           1
+ AtZEff=   5.6000000   1.0000000   1.0000000
+ NQMom=    0.0000000   0.0000000   0.0000000
+ NMagM=    0.0000000   2.7928460   2.7928460
+ AtZNuc=   8.0000000   1.0000000   1.0000000
+ Leave Link  101 at Tue Dec 14 23:09:00 2021, MaxMem=   536870912 cpu:               0.9 elap:               0.2
+ (Enter /opt/gaussian/g16/sse4/g16/l106.exe)
+ Differentiate once with respect to electric field.
+ Nuclear step= 0.001000 Angstroms, electric field step= 0.000333 atomic units, NStep=1.
+ Leave Link  106 at Tue Dec 14 23:09:01 2021, MaxMem=   536870912 cpu:               0.0 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l202.exe)
+                          Input orientation:                          
+ ---------------------------------------------------------------------
+ Center     Atomic      Atomic             Coordinates (Angstroms)
+ Number     Number       Type             X           Y           Z
+ ---------------------------------------------------------------------
+      1          8           0        0.902866   -0.072105    0.026323
+      2          1           0        1.865783   -0.043920   -0.028145
+      3          1           0        0.639711    0.354515   -0.798127
+ ---------------------------------------------------------------------
+                    Distance matrix (angstroms):
+                    1          2          3
+     1  O    0.000000
+     2  H    0.964869   0.000000
+     3  H    0.964869   1.501624   0.000000
+ Stoichiometry    H2O
+ Framework group  CS[SG(H2O)]
+ Deg. of freedom     3
+ Full point group                 CS      NOp   2
+ RotChk:  IX=0 Diff= 5.00D-16
+ Largest Abelian subgroup         CS      NOp   2
+ Largest concise Abelian subgroup C1      NOp   1
+                         Standard orientation:                         
+ ---------------------------------------------------------------------
+ Center     Atomic      Atomic             Coordinates (Angstroms)
+ Number     Number       Type             X           Y           Z
+ ---------------------------------------------------------------------
+      1          8           0       -0.000000    0.121203    0.000000
+      2          1           0        0.750812   -0.484811    0.000000
+      3          1           0       -0.750812   -0.484811   -0.000000
+ ---------------------------------------------------------------------
+ Rotational constants (GHZ):         768.7446272         444.7741019         281.7572510
+ Leave Link  202 at Tue Dec 14 23:09:01 2021, MaxMem=   536870912 cpu:               0.0 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l301.exe)
+ Standard basis: CC-pVDZ (5D, 7F)
+ Ernie: Thresh=  0.10000D-02 Tol=  0.10000D-05 Strict=F.
+ Ernie:  2 primitive shells out of 32 were deleted.
+ There are    19 symmetry adapted cartesian basis functions of A'  symmetry.
+ There are     6 symmetry adapted cartesian basis functions of A"  symmetry.
+ There are    18 symmetry adapted basis functions of A'  symmetry.
+ There are     6 symmetry adapted basis functions of A"  symmetry.
+    24 basis functions,    47 primitive gaussians,    25 cartesian basis functions
+     5 alpha electrons        5 beta electrons
+       nuclear repulsion energy         9.1275185491 Hartrees.
+ IExCor=    0 DFT=F Ex=HF Corr=None ExCW=0 ScaHFX=  1.000000
+ ScaDFX=  1.000000  1.000000  1.000000  1.000000 ScalE2=  1.000000  1.000000
+ IRadAn=      5 IRanWt=     -1 IRanGd=            0 ICorTp=0 IEmpDi=  4
+ NAtoms=    3 NActive=    3 NUniq=    3 SFac= 1.00D+00 NAtFMM=   60 NAOKFM=F Big=F
+ Integral buffers will be    131072 words long.
+ Raffenetti 1 integral format.
+ Two-electron integral symmetry is turned on.
+ Leave Link  301 at Tue Dec 14 23:09:01 2021, MaxMem=   536870912 cpu:               0.2 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l302.exe)
+ NPDir=0 NMtPBC=     1 NCelOv=     1 NCel=       1 NClECP=     1 NCelD=      1
+         NCelK=      1 NCelE2=     1 NClLst=     1 CellRange=     0.0.
+ One-electron integrals computed using PRISM.
+ One-electron integral symmetry used in STVInt
+ NBasis=    24 RedAO= T EigKep=  3.48D-02  NBF=    18     6
+ NBsUse=    24 1.00D-06 EigRej= -1.00D+00 NBFU=    18     6
+ Leave Link  302 at Tue Dec 14 23:09:01 2021, MaxMem=   536870912 cpu:               0.5 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l303.exe)
+ DipDrv:  MaxL=1.
+ Leave Link  303 at Tue Dec 14 23:09:01 2021, MaxMem=   536870912 cpu:               0.1 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l308.exe)
+ Leave Link  308 at Tue Dec 14 23:09:01 2021, MaxMem=   536870912 cpu:               0.1 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l401.exe)
+ Initial guess from the checkpoint file:  "CCSD_Water_gaus.chk"
+ B after Tr=     0.000000   -0.000000    0.000000
+         Rot=    1.000000    0.000000    0.000000    0.000000 Ang=   0.00 deg.
+ Guess basis will be translated and rotated to current coordinates.
+ JPrj=2 DoOrth=T DoCkMO=T.
+ Initial guess orbital symmetries:
+       Occupied  (A') (A') (A') (A') (A")
+       Virtual   (A') (A') (A') (A') (A') (A") (A') (A') (A") (A")
+                 (A') (A') (A') (A') (A") (A") (A') (A') (A')
+ The electronic state of the initial guess is 1-A'.
+ Leave Link  401 at Tue Dec 14 23:09:01 2021, MaxMem=   536870912 cpu:               0.3 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l502.exe)
+ Keep R1 ints in memory in symmetry-blocked form, NReq=878187.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=       600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    300 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+ Closed shell SCF:
+ Using DIIS extrapolation, IDIIS=  1040.
+ NGot=   536870912 LenX=   536843682 LenY=   536842616
+ Requested convergence on RMS density matrix=1.00D-08 within 128 cycles.
+ Requested convergence on MAX density matrix=1.00D-06.
+ Requested convergence on             energy=1.00D-06.
+ No special actions if energy rises.
+
+ Cycle   1  Pass 1  IDiag  1:
+ E= -76.0262474018494    
+ DIIS: error= 9.95D-10 at cycle   1 NSaved=   1.
+ NSaved= 1 IEnMin= 1 EnMin= -76.0262474018494     IErMin= 1 ErrMin= 9.95D-10
+ ErrMax= 9.95D-10  0.00D+00 EMaxC= 1.00D-01 BMatC= 1.17D-17 BMatP= 1.17D-17
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com:  0.100D+01
+ Coeff:      0.100D+01
+ Gap=     0.677 Goal=   None    Shift=    0.000
+ RMSDP=2.01D-10 MaxDP=1.78D-09              OVMax= 3.26D-09
+
+ SCF Done:  E(RHF) =  -76.0262474018     A.U. after    1 cycles
+            NFock=  1  Conv=0.20D-09     -V/T= 2.0008
+ KE= 7.596319314599D+01 PE=-1.989868268437D+02 EE= 3.786986774679D+01
+ Leave Link  502 at Tue Dec 14 23:09:02 2021, MaxMem=   536870912 cpu:               0.6 elap:               0.2
+ (Enter /opt/gaussian/g16/sse4/g16/l801.exe)
+ ExpMin= 1.22D-01 ExpMax= 1.17D+04 ExpMxC= 4.01D+02 IAcc=3 IRadAn=         5 AccDes= 0.00D+00
+ HarFok:  IExCor=  205 AccDes= 0.00D+00 IRadAn=         5 IDoV=-2 UseB2=F ITyADJ=14
+ ICtDFT= 12500011 ScaDFX=  1.000000  1.000000  1.000000  1.000000
+ Largest valence mixing into a core orbital is  6.05D-05
+ Largest core mixing into a valence orbital is  1.71D-05
+ Range of M.O.s used for correlation:     2    24
+ NBasis=    24 NAE=     5 NBE=     5 NFC=     1 NFV=     0
+ NROrb=     23 NOA=     4 NOB=     4 NVA=    19 NVB=    19
+ Leave Link  801 at Tue Dec 14 23:09:02 2021, MaxMem=   536870912 cpu:               0.3 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l914.exe)
+ RHF ground state
+ Keep R1, R2, and R3 ints in memory in symmetry-blocked form, NReq=906619.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=       600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    300 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+ MDV=   536870912 DFT=F DoStab=F Mixed=F DoRPA=F DoScal=F NonHer=F
+ Making orbital integer symmetry assigments:
+ Orbital symmetries:
+       Occupied  (A') (A') (A') (A') (A")
+       Virtual   (A') (A') (A') (A') (A') (A") (A') (A') (A") (A")
+                 (A') (A') (A') (A') (A") (A") (A') (A') (A')
+    76 initial guesses have been made.
+ Convergence on wavefunction:    0.001000000000000
+ Davidson Disk Diagonalization:  ConvIn= 1.00D-03 SkipCon=T Conv= 1.00D-03.
+ Max sub-space:   304 roots to seek:    80 dimension of matrix:          152
+ *** WARNING: Number of orthogonal guesses is           76
+ Iteration     1 Dimension    76 NMult     0 NNew     76
+ CISAX will form    76 AO SS matrices at one time.
+ NMat=    76 NSing=    76 JSym2X= 2.
+ New state     12 was old state     14
+ New state     14 was old state     16
+ New state     15 was old state     17
+ New state     16 was old state     15
+ New state     17 was old state     18
+ New state     18 was old state     19
+ New state     19 was old state     21
+ Excitation Energies [eV] at current iteration:
+ Root      1 :     9.148641127436029
+ Root      2 :    10.907416717235370
+ Root      3 :    11.879922630635910
+ Root      4 :    13.662207182336720
+ Root      5 :    14.783251515890550
+ Root      6 :    18.138463368363680
+ Root      7 :    22.829254161127150
+ Root      8 :    25.039645640656410
+ Root      9 :    26.364268925691580
+ Root     10 :    27.795255374926120
+ Root     11 :    29.740334401180910
+ Root     12 :    31.263305558013330
+ Root     13 :    31.527335220910300
+ Root     14 :    31.954547944857210
+ Root     15 :    33.014493727791060
+ Root     16 :    33.249376934221840
+ Root     17 :    34.084866109239580
+ Root     18 :    34.270373432211410
+ Root     19 :    36.429257915696010
+ Root     20 :    37.242812635619270
+ Root     21 :    37.877137363032690
+ Root     22 :    38.059256599417770
+ Root     23 :    39.713917471060460
+ Root     24 :    42.912117113052960
+ Root     25 :    43.035158628701200
+ Root     26 :    43.966950771728070
+ Root     27 :    45.813511307296490
+ Root     28 :    46.159419422538410
+ Root     29 :    46.369983530692510
+ Root     30 :    47.428488683172890
+ Root     31 :    47.659686181314660
+ Root     32 :    49.224504557284630
+ Root     33 :    50.411718762862440
+ Root     34 :    51.590698247187650
+ Root     35 :    51.770303447218050
+ Root     36 :    53.832004794655690
+ Root     37 :    54.585602743461650
+ Root     38 :    54.759645800201230
+ Root     39 :    54.900444902756010
+ Root     40 :    55.977653969771240
+ Root     41 :    57.162700259929700
+ Root     42 :    58.037661277896040
+ Root     43 :    59.771174359719990
+ Root     44 :    63.575779476073930
+ Root     45 :    64.222150035686080
+ Root     46 :    65.526771653365330
+ Root     47 :    67.549422356683080
+ Root     48 :    68.764522065252590
+ Root     49 :    69.201626570861690
+ Root     50 :    69.515089000791650
+ Root     51 :    72.347084767731100
+ Root     52 :    72.394159543015560
+ Root     53 :    75.313471780351730
+ Root     54 :    76.963246981411880
+ Root     55 :    88.048183780580980
+ Root     56 :    88.427234957150670
+ Root     57 :    89.170515703605220
+ Root     58 :    89.523039643704380
+ Root     59 :    89.942959992834470
+ Root     60 :    89.985363836075920
+ Root     61 :    92.166744334250680
+ Root     62 :    92.550002894978040
+ Root     63 :    95.217092392408250
+ Root     64 :    97.595203466138870
+ Root     65 :    99.576845241285570
+ Root     66 :   104.453066156920400
+ Root     67 :   104.561507896835300
+ Root     68 :   108.541436490976700
+ Root     69 :   109.529614156159400
+ Root     70 :   109.923204561230600
+ Root     71 :   110.633880771828600
+ Root     72 :   113.974240351425500
+ Root     73 :   115.838962816808800
+ Root     74 :   117.716248155258500
+ Root     75 :   124.844197676013300
+ Root     76 :   133.062685510050100
+ Convergence achieved for final wavefunctions.
+ ***********************************************************************
+ Excited states from <AA,BB:AA,BB> singles matrix:
+ ***********************************************************************
+ 
+ 1PDM for each excited state written to RWF  633
+ Ground to excited state transition densities written to RWF  633
+ Ground to excited state transition electric dipole moments (Au):
+       state          X           Y           Z        Dip. S.      Osc.
+         1         0.0000     -0.0000      0.3514      0.1235      0.0277
+         2        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         3         0.0000      0.6181     -0.0000      0.3820      0.1112
+         4         0.5342      0.0000      0.0000      0.2854      0.0955
+         5         0.9313      0.0000      0.0000      0.8673      0.3141
+         6        -0.0000      0.6203     -0.0000      0.3847      0.1710
+         7        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         8        -0.0000      0.0000      0.3646      0.1329      0.0815
+         9         0.4996      0.0000      0.0000      0.2496      0.1612
+        10         0.0000      0.0450      0.0000      0.0020      0.0014
+        11         0.0000      0.6117     -0.0000      0.3742      0.2726
+        12        -0.0000      0.0000      0.1015      0.0103      0.0079
+        13        -0.6663      0.0000     -0.0000      0.4440      0.3429
+        14         0.0000      0.0528      0.0000      0.0028      0.0022
+        15         0.0000     -0.2010      0.0000      0.0404      0.0327
+        16         0.0000     -0.0000     -0.0179      0.0003      0.0003
+        17         0.0000     -0.0000      0.0000      0.0000      0.0000
+        18        -0.1657     -0.0000     -0.0000      0.0275      0.0230
+        19        -0.2072     -0.0000     -0.0000      0.0429      0.0383
+        20        -0.0000      0.0000      0.0000      0.0000      0.0000
+ Ground to excited state transition velocity dipole moments (Au):
+       state          X           Y           Z        Dip. S.      Osc.
+         1        -0.0000      0.0000     -0.2532      0.0641      0.1271
+         2         0.0000     -0.0000      0.0000      0.0000      0.0000
+         3        -0.0000     -0.3154      0.0000      0.0995      0.1519
+         4        -0.1984     -0.0000     -0.0000      0.0394      0.0523
+         5        -0.4760      0.0000     -0.0000      0.2266      0.2781
+         6         0.0000     -0.3430      0.0000      0.1176      0.1176
+         7         0.0000     -0.0000      0.0000      0.0000      0.0000
+         8         0.0000     -0.0000     -0.2199      0.0484      0.0350
+         9        -0.3236     -0.0000     -0.0000      0.1047      0.0721
+        10        -0.0000     -0.1005      0.0000      0.0101      0.0066
+        11        -0.0000     -0.4926      0.0000      0.2427      0.1480
+        12         0.0000     -0.0000     -0.1129      0.0127      0.0074
+        13         0.5565     -0.0000      0.0000      0.3097      0.1782
+        14        -0.0000     -0.0302     -0.0000      0.0009      0.0005
+        15        -0.0000      0.2789     -0.0000      0.0778      0.0427
+        16         0.0000     -0.0000      0.1769      0.0313      0.0171
+        17        -0.0000      0.0000      0.0000      0.0000      0.0000
+        18         0.2512      0.0000      0.0000      0.0631      0.0334
+        19         0.2823      0.0000      0.0000      0.0797      0.0397
+        20        -0.0000      0.0000     -0.0000      0.0000      0.0000
+ Ground to excited state transition magnetic dipole moments (Au):
+       state          X           Y           Z
+         1         0.1603     -0.0000      0.0000
+         2         0.0000     -0.2921     -0.0000
+         3        -0.0000      0.0000      0.0000
+         4         0.0000     -0.0000      0.3157
+         5        -0.0000      0.0000     -0.0765
+         6        -0.0000     -0.0000     -0.0000
+         7         0.0000     -0.2602     -0.0000
+         8        -0.2089     -0.0000     -0.0000
+         9         0.0000      0.0000      0.5406
+        10         0.0000     -0.0000      0.0000
+        11         0.0000     -0.0000     -0.0000
+        12        -0.1100     -0.0000     -0.0000
+        13         0.0000      0.0000      0.0885
+        14        -0.0000     -0.0000     -0.0000
+        15         0.0000      0.0000      0.0000
+        16         0.1333     -0.0000      0.0000
+        17         0.0000      0.0442      0.0000
+        18        -0.0000     -0.0000     -0.0934
+        19        -0.0000     -0.0000     -0.3265
+        20         0.0000     -0.2140      0.0000
+ Ground to excited state transition velocity quadrupole moments (Au):
+       state          XX          YY          ZZ          XY          XZ          YZ
+         1        -0.0000     -0.0000     -0.0000      0.0000      0.0000      0.1097
+         2         0.0000      0.0000      0.0000     -0.0000      0.2800      0.0000
+         3         0.0764      0.2142     -0.0389      0.0000      0.0000     -0.0000
+         4         0.0000      0.0000      0.0000      0.4353     -0.0000      0.0000
+         5         0.0000      0.0000      0.0000      0.3822     -0.0000      0.0000
+         6         1.1946      0.2848      0.0721      0.0000      0.0000     -0.0000
+         7         0.0000      0.0000     -0.0000     -0.0000     -0.4426     -0.0000
+         8         0.0000     -0.0000     -0.0000     -0.0000     -0.0000     -0.0346
+         9         0.0000     -0.0000     -0.0000     -0.0890     -0.0000     -0.0000
+        10        -0.4641      0.1977      0.3441     -0.0000     -0.0000     -0.0000
+        11        -0.2826     -0.1045     -0.8228      0.0000      0.0000     -0.0000
+        12         0.0000     -0.0000     -0.0000     -0.0000     -0.0000      0.4108
+        13         0.0000      0.0000     -0.0000     -0.8116      0.0000     -0.0000
+        14        -0.4256     -0.8460      0.3345      0.0000     -0.0000      0.0000
+        15        -0.7315      0.4223     -0.4579     -0.0000     -0.0000      0.0000
+        16         0.0000     -0.0000     -0.0000     -0.0000      0.0000      0.6125
+        17        -0.0000     -0.0000     -0.0000      0.0000      0.3764      0.0000
+        18         0.0000      0.0000      0.0000     -0.4526      0.0000     -0.0000
+        19         0.0000      0.0000      0.0000      0.3741     -0.0000     -0.0000
+        20        -0.0000      0.0000      0.0000      0.0000      0.6198      0.0000
+ <0|del|b> * <b|rxdel|0> + <0|del|b> * <b|delr+rdel|0>
+ Rotatory Strengths (R) in cgs (10**-40 erg-esu-cm/Gauss)
+       state          XX          YY          ZZ    R(velocity)    E-M Angle
+         1        -0.0000     -0.0000     -0.0000     -0.0000       90.00
+         2         0.0000      0.0000      0.0000      0.0000       90.00
+         3        -0.0000      0.0000     -0.0000     -0.0000       90.00
+         4        -0.0000     -0.0000     -0.0000     -0.0000       90.00
+         5        -0.0000      0.0000      0.0000      0.0000       90.00
+         6         0.0000     -0.0000     -0.0000      0.0000       90.00
+         7        -0.0000      0.0000      0.0000      0.0000       90.00
+         8         0.0000     -0.0000     -0.0000     -0.0000       90.00
+         9        -0.0000     -0.0000     -0.0000     -0.0000       90.00
+        10        -0.0000      0.0000      0.0000      0.0000       90.00
+        11         0.0000     -0.0000     -0.0000      0.0000       90.00
+        12         0.0000      0.0000     -0.0000     -0.0000       90.00
+        13        -0.0000      0.0000      0.0000      0.0000       90.00
+        14         0.0000      0.0000      0.0000      0.0000       90.00
+        15         0.0000     -0.0000     -0.0000      0.0000       90.00
+        16        -0.0000      0.0000     -0.0000      0.0000       90.00
+        17        -0.0000     -0.0000      0.0000      0.0000       90.00
+        18        -0.0000      0.0000      0.0000     -0.0000       90.00
+        19         0.0000     -0.0000     -0.0000     -0.0000       90.00
+        20        -0.0000      0.0000      0.0000     -0.0000       90.00
+ 1/2[<0|r|b>*<b|rxdel|0> + (<0|rxdel|b>*<b|r|0>)*]
+ Rotatory Strengths (R) in cgs (10**-40 erg-esu-cm/Gauss)
+       state          XX          YY          ZZ     R(length)
+         1        -0.0000     -0.0000     -0.0000     -0.0000
+         2         0.0000      0.0000     -0.0000      0.0000
+         3         0.0000     -0.0000      0.0000     -0.0000
+         4        -0.0000      0.0000     -0.0000     -0.0000
+         5         0.0000     -0.0000      0.0000      0.0000
+         6        -0.0000      0.0000     -0.0000      0.0000
+         7         0.0000      0.0000     -0.0000      0.0000
+         8        -0.0000      0.0000      0.0000     -0.0000
+         9        -0.0000     -0.0000     -0.0000     -0.0000
+        10        -0.0000      0.0000     -0.0000      0.0000
+        11        -0.0000      0.0000     -0.0000      0.0000
+        12        -0.0000      0.0000      0.0000     -0.0000
+        13         0.0000     -0.0000      0.0000      0.0000
+        14         0.0000      0.0000      0.0000      0.0000
+        15        -0.0000      0.0000     -0.0000      0.0000
+        16        -0.0000     -0.0000      0.0000     -0.0000
+        17        -0.0000      0.0000     -0.0000      0.0000
+        18        -0.0000     -0.0000     -0.0000     -0.0000
+        19        -0.0000     -0.0000     -0.0000     -0.0000
+        20         0.0000      0.0000     -0.0000      0.0000
+  1/2[<0|del|b>*<b|r|0> + (<0|r|b>*<b|del|0>)*] (Au)
+       state          X           Y           Z        Dip. S.   Osc.(frdel)
+         1        -0.0000     -0.0000     -0.0890      0.0890      0.0593
+         2        -0.0000     -0.0000     -0.0000      0.0000      0.0000
+         3        -0.0000     -0.1950     -0.0000      0.1950      0.1300
+         4        -0.1060     -0.0000     -0.0000      0.1060      0.0707
+         5        -0.4433      0.0000     -0.0000      0.4433      0.2955
+         6        -0.0000     -0.2127     -0.0000      0.2127      0.1418
+         7        -0.0000     -0.0000     -0.0000      0.0000      0.0000
+         8        -0.0000     -0.0000     -0.0802      0.0802      0.0534
+         9        -0.1617     -0.0000     -0.0000      0.1617      0.1078
+        10        -0.0000     -0.0045      0.0000      0.0045      0.0030
+        11        -0.0000     -0.3013     -0.0000      0.3013      0.2009
+        12        -0.0000     -0.0000     -0.0115      0.0115      0.0076
+        13        -0.3708     -0.0000     -0.0000      0.3708      0.2472
+        14        -0.0000     -0.0016     -0.0000      0.0016      0.0011
+        15        -0.0000     -0.0561     -0.0000      0.0561      0.0374
+        16         0.0000      0.0000     -0.0032      0.0032      0.0021
+        17        -0.0000     -0.0000      0.0000     -0.0000     -0.0000
+        18        -0.0416     -0.0000     -0.0000      0.0416      0.0277
+        19        -0.0585     -0.0000     -0.0000      0.0585      0.0390
+        20         0.0000      0.0000     -0.0000      0.0000      0.0000
+
+ Excitation energies and oscillator strengths:
+ 
+ Excited State   1:      Singlet-A"     9.1486 eV  135.52 nm  f=0.0277  <S**2>=0.000
+       5 ->  6         0.69862
+ This state for optimization and/or second-order correction.
+ Total Energy, E(CIS/TDA) =  -75.6900410266    
+ Copying the excited state density for this state as the 1-particle RhoCI density.
+ 
+ Excited State   2:      Singlet-A"    10.9074 eV  113.67 nm  f=0.0000  <S**2>=0.000
+       5 ->  7         0.68757
+       5 ->  8         0.14165
+ 
+ Excited State   3:      Singlet-A'    11.8799 eV  104.36 nm  f=0.1112  <S**2>=0.000
+       4 ->  6         0.69704
+ 
+ Excited State   4:      Singlet-A'    13.6622 eV   90.75 nm  f=0.0955  <S**2>=0.000
+       4 ->  7         0.69427
+ 
+ Excited State   5:      Singlet-A'    14.7833 eV   83.87 nm  f=0.3141  <S**2>=0.000
+       3 ->  6         0.70023
+ 
+ Excited State   6:      Singlet-A'    18.1385 eV   68.35 nm  f=0.1710  <S**2>=0.000
+       3 ->  7         0.68682
+       5 -> 11        -0.10194
+ 
+ Excited State   7:      Singlet-A"    22.8293 eV   54.31 nm  f=0.0000  <S**2>=0.000
+       5 ->  7        -0.14463
+       5 ->  8         0.69073
+ 
+ Excited State   8:      Singlet-A"    25.0396 eV   49.52 nm  f=0.0815  <S**2>=0.000
+       5 ->  6         0.10230
+       5 ->  9         0.68486
+       5 -> 10        -0.12984
+ 
+ Excited State   9:      Singlet-A'    26.3643 eV   47.03 nm  f=0.1612  <S**2>=0.000
+       3 ->  9         0.13596
+       4 ->  7        -0.10176
+       4 ->  8         0.68033
+ 
+ Excited State  10:      Singlet-A'    27.7953 eV   44.61 nm  f=0.0014  <S**2>=0.000
+       4 ->  9         0.67216
+       5 -> 11         0.15627
+ 
+ Excited State  11:      Singlet-A'    29.7403 eV   41.69 nm  f=0.2726  <S**2>=0.000
+       3 ->  8         0.66629
+       5 -> 11        -0.17989
+ 
+ Excited State  12:      Singlet-A"    31.2633 eV   39.66 nm  f=0.0079  <S**2>=0.000
+       5 ->  9         0.13238
+       5 -> 10         0.68840
+ 
+ Excited State  13:      Singlet-A'    31.5273 eV   39.33 nm  f=0.3429  <S**2>=0.000
+       3 ->  9         0.66489
+       3 -> 10        -0.13432
+       4 ->  8        -0.12007
+ 
+ Excited State  14:      Singlet-A'    31.9545 eV   38.80 nm  f=0.0022  <S**2>=0.000
+       2 ->  6         0.48951
+       4 -> 10        -0.26189
+       5 -> 11         0.41400
+ 
+ Excited State  15:      Singlet-A'    33.0145 eV   37.55 nm  f=0.0327  <S**2>=0.000
+       2 ->  6         0.46752
+       4 ->  9         0.12828
+       4 -> 10         0.43667
+       5 -> 11        -0.25416
+ 
+ Excited State  16:      Singlet-A"    33.2494 eV   37.29 nm  f=0.0003  <S**2>=0.000
+       4 -> 11         0.70305
+ 
+ Excited State  17:      Singlet-A"    34.0849 eV   36.38 nm  f=0.0000  <S**2>=0.000
+       5 -> 12         0.70020
+ 
+ Excited State  18:      Singlet-A'    34.2704 eV   36.18 nm  f=0.0230  <S**2>=0.000
+       2 ->  7         0.67916
+       2 ->  8         0.11123
+ 
+ Excited State  19:      Singlet-A'    36.4293 eV   34.03 nm  f=0.0383  <S**2>=0.000
+       3 -> 10        -0.16815
+       4 -> 12         0.67679
+ 
+ Excited State  20:      Singlet-A"    37.2428 eV   33.29 nm  f=0.0000  <S**2>=0.000
+       3 -> 11         0.70619
+ SavETr:  write IOETrn=   770 NScale= 10 NData=  16 NLR=1 NState=   20 LETran=     370.
+ Leave Link  914 at Tue Dec 14 23:09:02 2021, MaxMem=   536870912 cpu:               0.7 elap:               0.2
+ (Enter /opt/gaussian/g16/sse4/g16/l801.exe)
+ Windowed orbitals will be sorted by symmetry type.
+ Range of M.O.s used for correlation:     2    24
+ NBasis=    24 NAE=     5 NBE=     5 NFC=     1 NFV=     0
+ NROrb=     23 NOA=     4 NOB=     4 NVA=    19 NVB=    19
+ Sorting CIS eigenvectors by symmetry.
+ Leave Link  801 at Tue Dec 14 23:09:02 2021, MaxMem=   536870912 cpu:               0.1 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l804.exe)
+ Closed-shell transformation, MDV=   536870912 ITran=4 ISComp=2.
+ Semi-Direct transformation.
+ ModeAB=           2 MOrb=             4 LenV=     536684719
+ LASXX=        10580 LTotXX=       10580 LenRXX=       10580
+ LTotAB=       12244 MaxLAS=       29900 LenRXY=       29900
+ NonZer=       32384 LenScr=      785920 LnRSAI=           0
+ LnScr1=           0 LExtra=           0 Total=       826400
+ MaxDsk=          -1 SrtSym=           F ITran=            4
+ DoSDTr:  NPSUse=  4
+ JobTyp=0 Pass  1:  I=   1 to   4.
+ (rs|ai) integrals will be sorted in core.
+ Complete sort for first half transformation.
+ First half transformation complete.
+ Complete sort for second half transformation.
+ Second half transformation complete.
+ Spin components of T(2) and E(2):
+     alpha-alpha T2 =       0.6321440502D-02 E2=     -0.2543572884D-01
+     alpha-beta  T2 =       0.3791043487D-01 E2=     -0.1515456041D+00
+     beta-beta   T2 =       0.6321440502D-02 E2=     -0.2543572884D-01
+ ANorm=    0.1024965032D+01
+ E2 =    -0.2024170618D+00 EUMP2 =    -0.76228664463611D+02
+ Leave Link  804 at Tue Dec 14 23:09:02 2021, MaxMem=   536870912 cpu:               0.4 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l913.exe)
+ CIDS:  MDV=   536870912.
+ Frozen-core window:  NFC=   1 NFV=   0.
+ IFCWin=0 IBDFC=1 NFBD=     0     0 NFCmp=     0     0 NFFFC=     0     0
+ Using DD3R+UMP44R for 1st iteration.
+ Using DD4RQ for 2nd and later iterations.
+ Keep R2 and R3 ints in memory in symmetry-blocked form, NReq=884495.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=       600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    300 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+ CIDS: In Core Option IDoMem=           1.
+ Coupled Cluster theory with single and double substitutions
+ ===========================================================
+ Iterations=  50 Convergence= 0.100D-07
+ Produce multiple copies of IABC intergrals
+ Iteration Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ MP4(R+Q)=  0.18260675D-02
+ Maximum subspace dimension=  5
+ A-vector RMS=  3.9398045D-03 Max=  6.1162717D-03 conv= 1.00D-06.
+ RLE energy=       -0.2076158399
+ E3=       -0.69024488D-02        EUMP3=      -0.76235566912D+02
+ E4(DQ)=   -0.16150972D-02        UMP4(DQ)=   -0.76237182010D+02
+ E4(SDQ)=  -0.23211422D-02        UMP4(SDQ)=  -0.76237888055D+02
+ VARIATIONAL ENERGIES WITH THE FIRST-ORDER WAVEFUNCTION:
+ DE(Corr)= -0.20748566     E(Corr)=     -76.233733063    
+ NORM(A)=   0.10264648D+01
+ Iteration Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  7.1180817D-04 Max=  1.8995144D-03 conv= 1.00D-06.
+ RLE energy=       -0.2117287478
+ DE(Corr)= -0.21083988     E(CORR)=     -76.237087283     Delta=-3.35D-03
+ NORM(A)=   0.10281061D+01
+ Iteration Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  3.3396082D-04 Max=  8.7882989D-04 conv= 1.00D-06.
+ RLE energy=       -0.2119343413
+ DE(Corr)= -0.21173363     E(CORR)=     -76.237981034     Delta=-8.94D-04
+ NORM(A)=   0.10283433D+01
+ Iteration Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  5.9802630D-05 Max=  1.3113300D-04 conv= 1.00D-06.
+ RLE energy=       -0.2119587175
+ DE(Corr)= -0.21194595     E(CORR)=     -76.238193356     Delta=-2.12D-04
+ NORM(A)=   0.10283798D+01
+ Iteration Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  3.3678949D-05 Max=  1.2689245D-04 conv= 1.00D-06.
+ RLE energy=       -0.2119595161
+ DE(Corr)= -0.21195792     E(CORR)=     -76.238205320     Delta=-1.20D-05
+ NORM(A)=   0.10283840D+01
+ Iteration Nr.   6
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.0529245D-05 Max=  3.9097185D-05 conv= 1.00D-06.
+ RLE energy=       -0.2119582533
+ DE(Corr)= -0.21195884     E(CORR)=     -76.238206241     Delta=-9.21D-07
+ NORM(A)=   0.10283848D+01
+ Iteration Nr.   7
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  3.0943274D-06 Max=  1.1909186D-05 conv= 1.00D-06.
+ RLE energy=       -0.2119589611
+ DE(Corr)= -0.21195869     E(CORR)=     -76.238206088     Delta= 1.53D-07
+ NORM(A)=   0.10283854D+01
+ Iteration Nr.   8
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  5.0368316D-07 Max=  1.6832420D-06 conv= 1.00D-06.
+ RLE energy=       -0.2119587432
+ DE(Corr)= -0.21195873     E(CORR)=     -76.238206134     Delta=-4.66D-08
+ NORM(A)=   0.10283855D+01
+ Iteration Nr.   9
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  9.6892251D-08 Max=  3.1373212D-07 conv= 1.00D-06.
+ RLE energy=       -0.2119587293
+ DE(Corr)= -0.21195873     E(CORR)=     -76.238206130     Delta= 4.59D-09
+ NORM(A)=   0.10283855D+01
+ CI/CC converged in    9 iterations to DelEn= 4.59D-09 Conv= 1.00D-08 ErrA1= 9.69D-08 Conv= 1.00D-06
+ Wavefunction amplitudes converged. E(Corr)=     -76.238206130    
+ Largest amplitude= 5.14D-02
+
+ Z-amplitude iterations
+
+ Iteration Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  8.9985607D-04 Max=  1.7955405D-03 conv= 1.00D-06.
+ RLE energy=       -0.2119711032
+ DE(Z)= -0.20921604     E(Z)=     -76.235463439     Delta= 2.74D-03
+ NORM(A)=   0.10283891D+01
+ Iteration Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  9.0353424D-04 Max=  1.8031358D-03 conv= 1.00D-06.
+ RLE energy=       -0.2119190523
+ DE(Z)= -0.20921755     E(Z)=     -76.235464955     Delta=-1.52D-06
+ NORM(A)=   0.10283733D+01
+ Iteration Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  8.8901098D-04 Max=  1.7743149D-03 conv= 1.00D-06.
+ RLE energy=       -0.2119144330
+ DE(Z)= -0.20921135     E(Z)=     -76.235458754     Delta= 6.20D-06
+ NORM(A)=   0.10283716D+01
+ Iteration Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  8.8713429D-04 Max=  1.7700384D-03 conv= 1.00D-06.
+ RLE energy=       -0.2118476781
+ DE(Z)= -0.20921070     E(Z)=     -76.235458099     Delta= 6.55D-07
+ NORM(A)=   0.10283506D+01
+ Iteration Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  8.6785064D-04 Max=  1.7315189D-03 conv= 1.00D-06.
+ RLE energy=       -0.2088401289
+ DE(Z)= -0.20920264     E(Z)=     -76.235450041     Delta= 8.06D-06
+ NORM(A)=   0.10274327D+01
+ Iteration Nr.   6
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.1666846D-06 Max=  2.8880658D-06 conv= 1.00D-06.
+ RLE energy=       -0.2088401366
+ DE(Z)= -0.20884013     E(Z)=     -76.235087530     Delta= 3.63D-04
+ NORM(A)=   0.10274326D+01
+ Iteration Nr.   7
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  4.1745022D-07 Max=  1.2460701D-06 conv= 1.00D-06.
+ RLE energy=       -0.2088401890
+ DE(Z)= -0.20884016     E(Z)=     -76.235087567     Delta=-3.65D-08
+ NORM(A)=   0.10274326D+01
+ Iteration Nr.   8
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  4.7547418D-08 Max=  1.1088317D-07 conv= 1.00D-06.
+ RLE energy=       -0.2088401661
+ DE(Z)= -0.20884017     E(Z)=     -76.235087570     Delta=-3.52D-09
+ NORM(A)=   0.10274326D+01
+ CI/CC converged in    8 iterations to DelEn=-3.52D-09 Conv= 1.00D-08 ErrA1= 4.75D-08 Conv= 1.00D-06
+ Z-amplitudes converged.
+
+ ======================================
+
+                EOM-CCSD               
+
+ ======================================
+
+ Processing Closed Shell Singlets
+
+ *****************************************************
+ Starting Irrep 1
+ Dimension of the space: 
+ Singles AA=      47, Singles BB=      47, Doubles AA=        513,
+ Doubles AB=        3050, Doubles BB=        513, Total=        3097
+ EnOnly = F DoTwo = F, DoSame = F, DoRgt = T, DoLft = F, DoTrip = F,
+ MSek =   6, InMSek =   6, MConv =   6, MaxMI =  120, Conv =  1.00D-06
+
+ Right Eigenvector.
+
+ Vector Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   6
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=   6, NOld=   0, NNew=   6
+ Right eigenvalues (eV) at iteration    1
+ Root  1 =   13.851772645206
+ Root  2 =   15.761210190428
+ Root  3 =   16.891290429573
+ Root  4 =   20.138205173266
+ Root  5 =   28.325679088775
+ Root  6 =   29.873101220771
+ Norms of the Right Residuals
+ Root I=  1 Norm= 5.87D-01 Max= 1.19D-01
+ Root I=  2 Norm= 5.81D-01 Max= 1.01D-01
+ Root I=  3 Norm= 5.38D-01 Max= 1.09D-01
+ Root I=  4 Norm= 5.39D-01 Max= 1.63D-01
+ Root I=  5 Norm= 6.41D-01 Max= 1.44D-01
+ Root I=  6 Norm= 6.50D-01 Max= 1.53D-01
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.   7
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   8
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   9
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  10
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  11
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  12
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  12, NOld=   6, NNew=   6
+ Right eigenvalues (eV) at iteration    2
+ Root  1 =   10.899411459195
+ Root  2 =   13.001852939413
+ Root  3 =   14.615304755720
+ Root  4 =   17.743929941663
+ Root  5 =   24.994701082076
+ Root  6 =   26.452336700430
+ Norms of the Right Residuals
+ Root I=  1 Norm= 9.87D-02 Max= 2.53D-02
+ Root I=  2 Norm= 9.68D-02 Max= 2.04D-02
+ Root I=  3 Norm= 8.30D-02 Max= 1.50D-02
+ Root I=  4 Norm= 8.90D-02 Max= 2.07D-02
+ Root I=  5 Norm= 1.32D-01 Max= 2.40D-02
+ Root I=  6 Norm= 1.40D-01 Max= 2.78D-02
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.  13
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  14
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  15
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  16
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  17
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  18
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  18, NOld=  12, NNew=   6
+ Right eigenvalues (eV) at iteration    3
+ Root  1 =   10.871530564007
+ Root  2 =   12.972109865991
+ Root  3 =   14.607947641815
+ Root  4 =   17.727408788304
+ Root  5 =   24.926337393219
+ Root  6 =   26.311419112429
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.35D-02 Max= 4.60D-03
+ Root I=  2 Norm= 3.30D-02 Max= 4.77D-03
+ Root I=  3 Norm= 2.47D-02 Max= 3.90D-03
+ Root I=  4 Norm= 2.87D-02 Max= 5.12D-03
+ Root I=  5 Norm= 4.92D-02 Max= 7.19D-03
+ Root I=  6 Norm= 7.16D-02 Max= 1.41D-02
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.  19
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  20
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  21
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  22
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  23
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  24
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  24, NOld=  18, NNew=   6
+ Right eigenvalues (eV) at iteration    4
+ Root  1 =   10.884284350697
+ Root  2 =   12.983633762276
+ Root  3 =   14.616143094532
+ Root  4 =   17.736683315533
+ Root  5 =   24.932857467272
+ Root  6 =   26.280755582271
+ Norms of the Right Residuals
+ Root I=  1 Norm= 7.99D-03 Max= 1.16D-03
+ Root I=  2 Norm= 8.14D-03 Max= 1.41D-03
+ Root I=  3 Norm= 7.37D-03 Max= 1.06D-03
+ Root I=  4 Norm= 1.03D-02 Max= 1.83D-03
+ Root I=  5 Norm= 1.68D-02 Max= 2.92D-03
+ Root I=  6 Norm= 3.83D-02 Max= 1.38D-02
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.  25
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  26
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  27
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  28
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  29
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  30
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  30, NOld=  24, NNew=   6
+ Right eigenvalues (eV) at iteration    5
+ Root  1 =   10.881933843709
+ Root  2 =   12.981171617535
+ Root  3 =   14.613116873756
+ Root  4 =   17.732422178314
+ Root  5 =   24.924260091052
+ Root  6 =   26.263126068898
+ Norms of the Right Residuals
+ Root I=  1 Norm= 1.63D-03 Max= 2.32D-04
+ Root I=  2 Norm= 1.72D-03 Max= 1.75D-04
+ Root I=  3 Norm= 1.86D-03 Max= 2.20D-04
+ Root I=  4 Norm= 3.51D-03 Max= 5.41D-04
+ Root I=  5 Norm= 6.35D-03 Max= 9.10D-04
+ Root I=  6 Norm= 3.11D-02 Max= 1.59D-02
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.  31
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  32
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  33
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  34
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  35
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  36
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  36, NOld=  30, NNew=   6
+ Right eigenvalues (eV) at iteration    6
+ Root  1 =   10.881442747879
+ Root  2 =   12.980618348541
+ Root  3 =   14.612495359822
+ Root  4 =   17.731360268001
+ Root  5 =   24.922067185343
+ Root  6 =   26.250148351001
+ Norms of the Right Residuals
+ Root I=  1 Norm= 4.11D-04 Max= 6.14D-05
+ Root I=  2 Norm= 4.39D-04 Max= 6.89D-05
+ Root I=  3 Norm= 5.23D-04 Max= 7.95D-05
+ Root I=  4 Norm= 1.19D-03 Max= 1.58D-04
+ Root I=  5 Norm= 2.42D-03 Max= 3.75D-04
+ Root I=  6 Norm= 3.08D-02 Max= 8.73D-03
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.  37
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  38
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  39
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  40
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  41
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  42
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  42, NOld=  36, NNew=   6
+ Right eigenvalues (eV) at iteration    7
+ Root  1 =   10.881493468564
+ Root  2 =   12.980745150324
+ Root  3 =   14.612530164206
+ Root  4 =   17.731344793746
+ Root  5 =   24.922305362405
+ Root  6 =   26.207392089148
+ Norms of the Right Residuals
+ Root I=  1 Norm= 1.02D-04 Max= 1.65D-05
+ Root I=  2 Norm= 1.02D-04 Max= 1.13D-05
+ Root I=  3 Norm= 1.29D-04 Max= 1.73D-05
+ Root I=  4 Norm= 3.55D-04 Max= 6.41D-05
+ Root I=  5 Norm= 9.04D-04 Max= 1.17D-04
+ Root I=  6 Norm= 3.67D-02 Max= 5.17D-03
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.  43
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  44
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  45
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  46
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  47
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  48
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  48, NOld=  42, NNew=   6
+ Right eigenvalues (eV) at iteration    8
+ Root  1 =   10.881521129985
+ Root  2 =   12.980751219430
+ Root  3 =   14.612568011006
+ Root  4 =   17.731316761375
+ Root  5 =   24.922384793838
+ Root  6 =   26.191665067534
+ Norms of the Right Residuals
+ Root I=  1 Norm= 2.60D-05 Max= 3.44D-06
+ Root I=  2 Norm= 2.10D-05 Max= 2.83D-06
+ Root I=  3 Norm= 2.65D-05 Max= 3.43D-06
+ Root I=  4 Norm= 1.08D-04 Max= 2.23D-05
+ Root I=  5 Norm= 2.94D-04 Max= 3.17D-05
+ Root I=  6 Norm= 2.96D-02 Max= 4.56D-03
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.  49
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  50
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  51
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  52
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  53
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  54
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  54, NOld=  48, NNew=   6
+ Right eigenvalues (eV) at iteration    9
+ Root  1 =   10.881519601715
+ Root  2 =   12.980746620205
+ Root  3 =   14.612563936854
+ Root  4 =   17.731305315541
+ Root  5 =   24.922376590360
+ Root  6 =   26.189795039162
+ Norms of the Right Residuals
+ Root I=  1 Norm= 6.22D-06 Max= 1.25D-06
+ Root I=  2 Norm= 4.42D-06 Max= 6.30D-07
+ Root I=  3 Norm= 5.56D-06 Max= 7.36D-07
+ Root I=  4 Norm= 2.89D-05 Max= 4.51D-06
+ Root I=  5 Norm= 7.12D-05 Max= 8.23D-06
+ Root I=  6 Norm= 1.57D-02 Max= 2.02D-03
+ New vectors created:   6
+
+ Right Eigenvector.
+
+ Vector Nr.  55
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  56
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  57
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  58
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  59
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  60
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  60, NOld=  54, NNew=   6
+ Right eigenvalues (eV) at iteration   10
+ Root  1 =   10.881519906668
+ Root  2 =   12.980746555508
+ Root  3 =   14.612564158931
+ Root  4 =   17.731320294014
+ Root  5 =   24.922387127984
+ Root  6 =   26.189828131629
+ Norms of the Right Residuals
+ Root I=  1 Norm= 1.39D-06 Max= 1.77D-07
+ Root I=  2 Norm= 9.68D-07 Max= 1.22D-07
+ Root I=  3 Norm= 1.21D-06 Max= 1.64D-07
+ Root I=  4 Norm= 7.79D-06 Max= 1.04D-06
+ Root I=  5 Norm= 2.23D-05 Max= 2.93D-06
+ Root I=  6 Norm= 8.61D-03 Max= 9.99D-04
+ New vectors created:   5
+
+ Right Eigenvector.
+
+ Vector Nr.  61
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  62
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  63
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  64
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  65
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  65, NOld=  60, NNew=   5
+ Right eigenvalues (eV) at iteration   11
+ Root  1 =   10.881520291877
+ Root  2 =   12.980746616585
+ Root  3 =   14.612564233810
+ Root  4 =   17.731320883571
+ Root  5 =   24.922395143594
+ Root  6 =   26.189156939841
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.27D-07 Max= 5.48D-08
+ Root I=  2 Norm= 4.28D-07 Max= 4.81D-08
+ Root I=  3 Norm= 2.59D-07 Max= 3.39D-08
+ Root I=  4 Norm= 2.08D-06 Max= 3.16D-07
+ Root I=  5 Norm= 6.82D-06 Max= 1.29D-06
+ Root I=  6 Norm= 3.77D-03 Max= 4.58D-04
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.  66
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  67
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  68
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  69
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  69, NOld=  65, NNew=   4
+ Right eigenvalues (eV) at iteration   12
+ Root  1 =   10.881520302777
+ Root  2 =   12.980746610743
+ Root  3 =   14.612564237471
+ Root  4 =   17.731320448176
+ Root  5 =   24.922394264824
+ Root  6 =   26.188940474318
+ Norms of the Right Residuals
+ Root I=  1 Norm= 6.16D-08 Max= 7.57D-09
+ Root I=  2 Norm= 4.26D-07 Max= 4.66D-08
+ Root I=  3 Norm= 2.51D-07 Max= 3.22D-08
+ Root I=  4 Norm= 4.70D-07 Max= 5.06D-08
+ Root I=  5 Norm= 2.30D-06 Max= 5.07D-07
+ Root I=  6 Norm= 1.34D-03 Max= 1.48D-04
+ New vectors created:   3
+
+ Right Eigenvector.
+
+ Vector Nr.  70
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  71
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  72
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  72, NOld=  69, NNew=   3
+ Right eigenvalues (eV) at iteration   13
+ Root  1 =   10.881520300783
+ Root  2 =   12.980746609804
+ Root  3 =   14.612564234461
+ Root  4 =   17.731320461495
+ Root  5 =   24.922394148004
+ Root  6 =   26.188869895893
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.12D-08 Max= 3.46D-09
+ Root I=  2 Norm= 4.26D-07 Max= 4.65D-08
+ Root I=  3 Norm= 2.47D-07 Max= 3.29D-08
+ Root I=  4 Norm= 8.98D-08 Max= 1.33D-08
+ Root I=  5 Norm= 7.97D-07 Max= 1.02D-07
+ Root I=  6 Norm= 4.83D-04 Max= 1.03D-04
+ New vectors created:   2
+
+ Right Eigenvector.
+
+ Vector Nr.  73
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  74
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  74, NOld=  72, NNew=   2
+ Right eigenvalues (eV) at iteration   14
+ Root  1 =   10.881520300799
+ Root  2 =   12.980746601067
+ Root  3 =   14.612564233608
+ Root  4 =   17.731320460176
+ Root  5 =   24.922394195274
+ Root  6 =   26.188846750166
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.12D-08 Max= 3.45D-09
+ Root I=  2 Norm= 4.23D-07 Max= 4.71D-08
+ Root I=  3 Norm= 2.46D-07 Max= 3.10D-08
+ Root I=  4 Norm= 8.63D-08 Max= 1.18D-08
+ Root I=  5 Norm= 2.05D-07 Max= 2.42D-08
+ Root I=  6 Norm= 1.67D-04 Max= 2.34D-05
+ New vectors created:   1
+
+ Right Eigenvector.
+
+ Vector Nr.  75
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  75, NOld=  74, NNew=   1
+ Right eigenvalues (eV) at iteration   15
+ Root  1 =   10.881520300777
+ Root  2 =   12.980746601067
+ Root  3 =   14.612564233608
+ Root  4 =   17.731320458141
+ Root  5 =   24.922394195274
+ Root  6 =   26.188868541451
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.12D-08 Max= 3.46D-09
+ Root I=  2 Norm= 4.23D-07 Max= 4.71D-08
+ Root I=  3 Norm= 2.46D-07 Max= 3.10D-08
+ Root I=  4 Norm= 8.65D-08 Max= 1.21D-08
+ Root I=  5 Norm= 2.05D-07 Max= 2.42D-08
+ Root I=  6 Norm= 6.69D-05 Max= 1.24D-05
+ New vectors created:   1
+
+ Right Eigenvector.
+
+ Vector Nr.  76
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  76, NOld=  75, NNew=   1
+ Right eigenvalues (eV) at iteration   16
+ Root  1 =   10.881520300986
+ Root  2 =   12.980746601067
+ Root  3 =   14.612564233608
+ Root  4 =   17.731320457179
+ Root  5 =   24.922394195274
+ Root  6 =   26.188852816830
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.08D-08 Max= 3.71D-09
+ Root I=  2 Norm= 4.23D-07 Max= 4.71D-08
+ Root I=  3 Norm= 2.46D-07 Max= 3.10D-08
+ Root I=  4 Norm= 8.54D-08 Max= 1.16D-08
+ Root I=  5 Norm= 2.05D-07 Max= 2.42D-08
+ Root I=  6 Norm= 2.69D-05 Max= 4.24D-06
+ New vectors created:   1
+
+ Right Eigenvector.
+
+ Vector Nr.  77
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  77, NOld=  76, NNew=   1
+ Right eigenvalues (eV) at iteration   17
+ Root  1 =   10.881520301221
+ Root  2 =   12.980746601067
+ Root  3 =   14.612564233608
+ Root  4 =   17.731320461851
+ Root  5 =   24.922394195274
+ Root  6 =   26.188858723478
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.07D-08 Max= 3.32D-09
+ Root I=  2 Norm= 4.23D-07 Max= 4.71D-08
+ Root I=  3 Norm= 2.46D-07 Max= 3.10D-08
+ Root I=  4 Norm= 8.44D-08 Max= 1.14D-08
+ Root I=  5 Norm= 2.05D-07 Max= 2.42D-08
+ Root I=  6 Norm= 9.57D-06 Max= 1.36D-06
+ New vectors created:   1
+
+ Right Eigenvector.
+
+ Vector Nr.  78
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  78, NOld=  77, NNew=   1
+ Right eigenvalues (eV) at iteration   18
+ Root  1 =   10.881520301308
+ Root  2 =   12.980746601067
+ Root  3 =   14.612564233608
+ Root  4 =   17.731320462717
+ Root  5 =   24.922394195274
+ Root  6 =   26.188860267888
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.07D-08 Max= 3.38D-09
+ Root I=  2 Norm= 4.23D-07 Max= 4.71D-08
+ Root I=  3 Norm= 2.46D-07 Max= 3.10D-08
+ Root I=  4 Norm= 8.42D-08 Max= 1.18D-08
+ Root I=  5 Norm= 2.05D-07 Max= 2.42D-08
+ Root I=  6 Norm= 2.79D-06 Max= 4.12D-07
+ New vectors created:   1
+
+ Right Eigenvector.
+
+ Vector Nr.  79
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  79, NOld=  78, NNew=   1
+ Right eigenvalues (eV) at iteration   19
+ Root  1 =   10.881520301533
+ Root  2 =   12.980746601067
+ Root  3 =   14.612564233608
+ Root  4 =   17.731320462319
+ Root  5 =   24.922394195274
+ Root  6 =   26.188860045219
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.06D-08 Max= 3.29D-09
+ Root I=  2 Norm= 4.23D-07 Max= 4.71D-08
+ Root I=  3 Norm= 2.46D-07 Max= 3.10D-08
+ Root I=  4 Norm= 8.41D-08 Max= 1.13D-08
+ Root I=  5 Norm= 2.05D-07 Max= 2.42D-08
+ Root I=  6 Norm= 7.77D-07 Max= 1.28D-07
+ New vectors created:   0
+ DoRgt = F, DoLft = T
+
+  Left Eigenvector.
+
+ Vector Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   6
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=   6, NOld=   0, NNew=   6
+ Left eigenvalues (eV) at iteration    1
+ Root  1 =   10.811361873906
+ Root  2 =   12.927103343974
+ Root  3 =   14.589483424365
+ Root  4 =   17.697391832662
+ Root  5 =   24.852728687495
+ Root  6 =   26.146358061141
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.70D-02 Max= 2.16D-02
+ Root I=  2 Norm= 7.53D-02 Max= 2.03D-02
+ Root I=  3 Norm= 6.44D-02 Max= 1.63D-02
+ Root I=  4 Norm= 6.81D-02 Max= 1.70D-02
+ Root I=  5 Norm= 7.19D-02 Max= 1.85D-02
+ Root I=  6 Norm= 6.20D-02 Max= 1.47D-02
+ New vectors created:   6
+
+  Left Eigenvector.
+
+ Vector Nr.   7
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   8
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   9
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  10
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  11
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  12
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  12, NOld=   6, NNew=   6
+ Left eigenvalues (eV) at iteration    2
+ Root  1 =   10.917174024399
+ Root  2 =   13.013809135720
+ Root  3 =   14.639849433722
+ Root  4 =   17.758990962915
+ Root  5 =   24.968759574311
+ Root  6 =   26.213681893212
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.74D-02 Max= 3.06D-03
+ Root I=  2 Norm= 1.67D-02 Max= 3.89D-03
+ Root I=  3 Norm= 1.34D-02 Max= 3.08D-03
+ Root I=  4 Norm= 1.51D-02 Max= 3.42D-03
+ Root I=  5 Norm= 3.12D-02 Max= 4.94D-03
+ Root I=  6 Norm= 2.70D-02 Max= 4.56D-03
+ New vectors created:   6
+
+  Left Eigenvector.
+
+ Vector Nr.  13
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  14
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  15
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  16
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  17
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  18
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  18, NOld=  12, NNew=   6
+ Left eigenvalues (eV) at iteration    3
+ Root  1 =   10.881874453655
+ Root  2 =   12.980778660777
+ Root  3 =   14.611172267776
+ Root  4 =   17.731248855266
+ Root  5 =   24.922509158937
+ Root  6 =   26.230171819863
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 4.64D-03 Max= 1.08D-03
+ Root I=  2 Norm= 4.13D-03 Max= 7.92D-04
+ Root I=  3 Norm= 4.01D-03 Max= 7.35D-04
+ Root I=  4 Norm= 5.26D-03 Max= 1.47D-03
+ Root I=  5 Norm= 1.14D-02 Max= 1.53D-03
+ Root I=  6 Norm= 1.78D-02 Max= 2.97D-03
+ New vectors created:   6
+
+  Left Eigenvector.
+
+ Vector Nr.  19
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  20
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  21
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  22
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  23
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  24
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  24, NOld=  18, NNew=   6
+ Left eigenvalues (eV) at iteration    4
+ Root  1 =   10.881263901710
+ Root  2 =   12.980469392595
+ Root  3 =   14.612230397275
+ Root  4 =   17.730516986216
+ Root  5 =   24.924105188047
+ Root  6 =   26.194489213717
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.33D-03 Max= 2.32D-04
+ Root I=  2 Norm= 1.06D-03 Max= 1.79D-04
+ Root I=  3 Norm= 1.16D-03 Max= 1.81D-04
+ Root I=  4 Norm= 1.91D-03 Max= 3.71D-04
+ Root I=  5 Norm= 5.47D-03 Max= 8.60D-04
+ Root I=  6 Norm= 5.63D-03 Max= 9.88D-04
+ New vectors created:   6
+
+  Left Eigenvector.
+
+ Vector Nr.  25
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  26
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  27
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  28
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  29
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  30
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  30, NOld=  24, NNew=   6
+ Left eigenvalues (eV) at iteration    5
+ Root  1 =   10.881505798270
+ Root  2 =   12.980643963048
+ Root  3 =   14.612521711666
+ Root  4 =   17.731188120928
+ Root  5 =   24.922570301990
+ Root  6 =   26.191319102920
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 3.54D-04 Max= 5.82D-05
+ Root I=  2 Norm= 2.69D-04 Max= 4.85D-05
+ Root I=  3 Norm= 2.78D-04 Max= 3.17D-05
+ Root I=  4 Norm= 4.23D-04 Max= 7.40D-05
+ Root I=  5 Norm= 1.93D-03 Max= 2.56D-04
+ Root I=  6 Norm= 3.85D-03 Max= 7.12D-04
+ New vectors created:   6
+
+  Left Eigenvector.
+
+ Vector Nr.  31
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  32
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  33
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  34
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  35
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  36
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  36, NOld=  30, NNew=   6
+ Left eigenvalues (eV) at iteration    6
+ Root  1 =   10.881535199290
+ Root  2 =   12.980739917707
+ Root  3 =   14.612562163993
+ Root  4 =   17.731345544311
+ Root  5 =   24.922379228977
+ Root  6 =   26.191103087401
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 9.10D-05 Max= 1.40D-05
+ Root I=  2 Norm= 7.79D-05 Max= 1.17D-05
+ Root I=  3 Norm= 6.39D-05 Max= 6.56D-06
+ Root I=  4 Norm= 1.18D-04 Max= 1.80D-05
+ Root I=  5 Norm= 7.22D-04 Max= 1.18D-04
+ Root I=  6 Norm= 6.23D-03 Max= 9.12D-04
+ New vectors created:   6
+
+  Left Eigenvector.
+
+ Vector Nr.  37
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  38
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  39
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  40
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  41
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  42
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  42, NOld=  36, NNew=   6
+ Left eigenvalues (eV) at iteration    7
+ Root  1 =   10.881521025033
+ Root  2 =   12.980745538528
+ Root  3 =   14.612561929542
+ Root  4 =   17.731324144391
+ Root  5 =   24.922516881347
+ Root  6 =   26.188894937951
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.90D-05 Max= 2.69D-06
+ Root I=  2 Norm= 1.98D-05 Max= 2.68D-06
+ Root I=  3 Norm= 1.44D-05 Max= 1.81D-06
+ Root I=  4 Norm= 3.06D-05 Max= 4.30D-06
+ Root I=  5 Norm= 3.10D-04 Max= 3.67D-05
+ Root I=  6 Norm= 4.67D-03 Max= 7.34D-04
+ New vectors created:   6
+
+  Left Eigenvector.
+
+ Vector Nr.  43
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  44
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  45
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  46
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  47
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  48
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  48, NOld=  42, NNew=   6
+ Left eigenvalues (eV) at iteration    8
+ Root  1 =   10.881519980886
+ Root  2 =   12.980746715033
+ Root  3 =   14.612564167846
+ Root  4 =   17.731320963603
+ Root  5 =   24.922431709435
+ Root  6 =   26.188992155307
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 3.71D-06 Max= 5.45D-07
+ Root I=  2 Norm= 3.94D-06 Max= 6.51D-07
+ Root I=  3 Norm= 2.97D-06 Max= 3.55D-07
+ Root I=  4 Norm= 7.27D-06 Max= 8.51D-07
+ Root I=  5 Norm= 1.22D-04 Max= 1.21D-05
+ Root I=  6 Norm= 2.28D-03 Max= 2.38D-04
+ New vectors created:   6
+
+  Left Eigenvector.
+
+ Vector Nr.  49
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  50
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  51
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  52
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  53
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  54
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  54, NOld=  48, NNew=   6
+ Left eigenvalues (eV) at iteration    9
+ Root  1 =   10.881520240866
+ Root  2 =   12.980746683921
+ Root  3 =   14.612564190912
+ Root  4 =   17.731320735472
+ Root  5 =   24.922394857048
+ Root  6 =   26.189130453406
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.79D-07 Max= 9.95D-08
+ Root I=  2 Norm= 7.45D-07 Max= 9.12D-08
+ Root I=  3 Norm= 6.02D-07 Max= 7.94D-08
+ Root I=  4 Norm= 1.82D-06 Max= 2.96D-07
+ Root I=  5 Norm= 4.08D-05 Max= 5.07D-06
+ Root I=  6 Norm= 9.01D-04 Max= 1.19D-04
+ New vectors created:   3
+
+  Left Eigenvector.
+
+ Vector Nr.  55
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  56
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  57
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  57, NOld=  54, NNew=   3
+ Left eigenvalues (eV) at iteration   10
+ Root  1 =   10.881520231160
+ Root  2 =   12.980746762824
+ Root  3 =   14.612564229901
+ Root  4 =   17.731320436046
+ Root  5 =   24.922393499488
+ Root  6 =   26.188876397466
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.70D-07 Max= 9.11D-08
+ Root I=  2 Norm= 6.61D-07 Max= 7.36D-08
+ Root I=  3 Norm= 5.17D-07 Max= 6.56D-08
+ Root I=  4 Norm= 5.27D-07 Max= 5.67D-08
+ Root I=  5 Norm= 1.11D-05 Max= 1.35D-06
+ Root I=  6 Norm= 4.60D-04 Max= 6.14D-05
+ New vectors created:   3
+
+  Left Eigenvector.
+
+ Vector Nr.  58
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  59
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  60
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  60, NOld=  57, NNew=   3
+ Left eigenvalues (eV) at iteration   11
+ Root  1 =   10.881520239999
+ Root  2 =   12.980746751138
+ Root  3 =   14.612564228945
+ Root  4 =   17.731320462247
+ Root  5 =   24.922394060329
+ Root  6 =   26.188942216902
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.63D-07 Max= 8.99D-08
+ Root I=  2 Norm= 6.57D-07 Max= 7.71D-08
+ Root I=  3 Norm= 5.17D-07 Max= 6.69D-08
+ Root I=  4 Norm= 1.39D-07 Max= 1.99D-08
+ Root I=  5 Norm= 3.77D-06 Max= 3.91D-07
+ Root I=  6 Norm= 2.43D-04 Max= 3.63D-05
+ New vectors created:   2
+
+  Left Eigenvector.
+
+ Vector Nr.  61
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  62
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  62, NOld=  60, NNew=   2
+ Left eigenvalues (eV) at iteration   12
+ Root  1 =   10.881520240817
+ Root  2 =   12.980746745841
+ Root  3 =   14.612564234608
+ Root  4 =   17.731320464317
+ Root  5 =   24.922393338838
+ Root  6 =   26.188918507505
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.64D-07 Max= 9.02D-08
+ Root I=  2 Norm= 6.58D-07 Max= 7.41D-08
+ Root I=  3 Norm= 5.15D-07 Max= 6.70D-08
+ Root I=  4 Norm= 8.03D-08 Max= 8.41D-09
+ Root I=  5 Norm= 1.43D-06 Max= 1.72D-07
+ Root I=  6 Norm= 1.08D-04 Max= 1.78D-05
+ New vectors created:   2
+
+  Left Eigenvector.
+
+ Vector Nr.  63
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  64
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  64, NOld=  62, NNew=   2
+ Left eigenvalues (eV) at iteration   13
+ Root  1 =   10.881520233694
+ Root  2 =   12.980746737557
+ Root  3 =   14.612564232880
+ Root  4 =   17.731320467245
+ Root  5 =   24.922394173508
+ Root  6 =   26.188878552152
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.64D-07 Max= 8.93D-08
+ Root I=  2 Norm= 6.54D-07 Max= 7.65D-08
+ Root I=  3 Norm= 5.14D-07 Max= 6.48D-08
+ Root I=  4 Norm= 7.45D-08 Max= 7.42D-09
+ Root I=  5 Norm= 4.44D-07 Max= 5.26D-08
+ Root I=  6 Norm= 4.51D-05 Max= 6.53D-06
+ New vectors created:   2
+
+  Left Eigenvector.
+
+ Vector Nr.  65
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  66
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  66, NOld=  64, NNew=   2
+ Left eigenvalues (eV) at iteration   14
+ Root  1 =   10.881520253368
+ Root  2 =   12.980746737782
+ Root  3 =   14.612564245300
+ Root  4 =   17.731320465877
+ Root  5 =   24.922394180482
+ Root  6 =   26.188863225116
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.59D-07 Max= 8.93D-08
+ Root I=  2 Norm= 6.54D-07 Max= 7.65D-08
+ Root I=  3 Norm= 5.10D-07 Max= 6.34D-08
+ Root I=  4 Norm= 7.37D-08 Max= 7.69D-09
+ Root I=  5 Norm= 1.48D-07 Max= 1.81D-08
+ Root I=  6 Norm= 2.13D-05 Max= 3.53D-06
+ New vectors created:   1
+
+  Left Eigenvector.
+
+ Vector Nr.  67
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  67, NOld=  66, NNew=   1
+ Left eigenvalues (eV) at iteration   15
+ Root  1 =   10.881520256415
+ Root  2 =   12.980746737783
+ Root  3 =   14.612564245300
+ Root  4 =   17.731320466185
+ Root  5 =   24.922394180482
+ Root  6 =   26.188859743231
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.57D-07 Max= 8.82D-08
+ Root I=  2 Norm= 6.54D-07 Max= 7.65D-08
+ Root I=  3 Norm= 5.10D-07 Max= 6.34D-08
+ Root I=  4 Norm= 7.33D-08 Max= 7.65D-09
+ Root I=  5 Norm= 1.48D-07 Max= 1.81D-08
+ Root I=  6 Norm= 7.48D-06 Max= 8.67D-07
+ New vectors created:   1
+
+  Left Eigenvector.
+
+ Vector Nr.  68
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  68, NOld=  67, NNew=   1
+ Left eigenvalues (eV) at iteration   16
+ Root  1 =   10.881520251400
+ Root  2 =   12.980746737783
+ Root  3 =   14.612564245300
+ Root  4 =   17.731320465152
+ Root  5 =   24.922394180482
+ Root  6 =   26.188859851788
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.50D-07 Max= 8.79D-08
+ Root I=  2 Norm= 6.54D-07 Max= 7.65D-08
+ Root I=  3 Norm= 5.10D-07 Max= 6.34D-08
+ Root I=  4 Norm= 7.35D-08 Max= 7.52D-09
+ Root I=  5 Norm= 1.48D-07 Max= 1.81D-08
+ Root I=  6 Norm= 2.64D-06 Max= 3.11D-07
+ New vectors created:   1
+
+  Left Eigenvector.
+
+ Vector Nr.  69
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  69, NOld=  68, NNew=   1
+ Left eigenvalues (eV) at iteration   17
+ Root  1 =   10.881520236974
+ Root  2 =   12.980746737783
+ Root  3 =   14.612564245300
+ Root  4 =   17.731320464949
+ Root  5 =   24.922394180482
+ Root  6 =   26.188860147455
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.44D-07 Max= 8.41D-08
+ Root I=  2 Norm= 6.54D-07 Max= 7.65D-08
+ Root I=  3 Norm= 5.10D-07 Max= 6.34D-08
+ Root I=  4 Norm= 7.36D-08 Max= 7.42D-09
+ Root I=  5 Norm= 1.48D-07 Max= 1.81D-08
+ Root I=  6 Norm= 8.84D-07 Max= 1.19D-07
+ New vectors created:   1
+ Final Eigenvalues for Irrep    1:
+ Root       Hartree              eV                 nm 
+   1     0.399888513157    10.881520301533   113.940138403804
+   2     0.477033660199    12.980746601067    95.513915131703
+   3     0.537001854784    14.612564233608    84.847663242353
+   4     0.651614037332    17.731320462319    69.923835161359
+   5     0.915881134520    24.922394195274    49.748106842622
+   6     0.962422898140    26.188860045219    47.342340485980
+
+ Processing Closed Shell Singlets
+
+ *****************************************************
+ Starting Irrep 2
+ Dimension of the space: 
+ Singles AA=      29, Singles BB=      29, Doubles AA=        513,
+ Doubles AB=        2726, Doubles BB=        513, Total=        2755
+ EnOnly = F DoTwo = F, DoSame = F, DoRgt = T, DoLft = F, DoTrip = F,
+ MSek =   4, InMSek =   4, MConv =   4, MaxMI =   80, Conv =  1.00D-06
+
+ Right Eigenvector.
+
+ Vector Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=   4, NOld=   0, NNew=   4
+ Right eigenvalues (eV) at iteration    1
+ Root  1 =   11.077817589508
+ Root  2 =   12.988303470756
+ Root  3 =   24.749391569236
+ Root  4 =   27.014235007946
+ Norms of the Right Residuals
+ Root I=  1 Norm= 5.89D-01 Max= 1.40D-01
+ Root I=  2 Norm= 5.94D-01 Max= 1.29D-01
+ Root I=  3 Norm= 6.45D-01 Max= 1.26D-01
+ Root I=  4 Norm= 6.44D-01 Max= 1.17D-01
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   6
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   7
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   8
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=   8, NOld=   4, NNew=   4
+ Right eigenvalues (eV) at iteration    2
+ Root  1 =    8.085576957776
+ Root  2 =   10.154298821207
+ Root  3 =   21.365434009303
+ Root  4 =   23.619337720985
+ Norms of the Right Residuals
+ Root I=  1 Norm= 8.31D-02 Max= 1.99D-02
+ Root I=  2 Norm= 8.43D-02 Max= 2.07D-02
+ Root I=  3 Norm= 1.14D-01 Max= 2.53D-02
+ Root I=  4 Norm= 1.25D-01 Max= 2.92D-02
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.   9
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  10
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  11
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  12
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  12, NOld=   8, NNew=   4
+ Right eigenvalues (eV) at iteration    3
+ Root  1 =    8.091737185253
+ Root  2 =   10.146413039400
+ Root  3 =   21.348086112309
+ Root  4 =   23.537010191550
+ Norms of the Right Residuals
+ Root I=  1 Norm= 2.26D-02 Max= 4.61D-03
+ Root I=  2 Norm= 2.49D-02 Max= 4.69D-03
+ Root I=  3 Norm= 3.35D-02 Max= 7.65D-03
+ Root I=  4 Norm= 5.55D-02 Max= 1.16D-02
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.  13
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  14
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  15
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  16
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  16, NOld=  12, NNew=   4
+ Right eigenvalues (eV) at iteration    4
+ Root  1 =    8.107247228260
+ Root  2 =   10.157742351770
+ Root  3 =   21.357268103407
+ Root  4 =   23.518005580807
+ Norms of the Right Residuals
+ Root I=  1 Norm= 4.98D-03 Max= 8.40D-04
+ Root I=  2 Norm= 5.32D-03 Max= 8.45D-04
+ Root I=  3 Norm= 1.01D-02 Max= 1.94D-03
+ Root I=  4 Norm= 1.99D-02 Max= 3.04D-03
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.  17
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  18
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  19
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  20
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  20, NOld=  16, NNew=   4
+ Right eigenvalues (eV) at iteration    5
+ Root  1 =    8.107644899187
+ Root  2 =   10.157094564918
+ Root  3 =   21.355315449889
+ Root  4 =   23.502143942585
+ Norms of the Right Residuals
+ Root I=  1 Norm= 9.75D-04 Max= 1.66D-04
+ Root I=  2 Norm= 9.40D-04 Max= 1.39D-04
+ Root I=  3 Norm= 4.00D-03 Max= 6.42D-04
+ Root I=  4 Norm= 6.29D-03 Max= 1.05D-03
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.  21
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  22
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  23
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  24
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  24, NOld=  20, NNew=   4
+ Right eigenvalues (eV) at iteration    6
+ Root  1 =    8.107619779262
+ Root  2 =   10.157073104220
+ Root  3 =   21.354307209003
+ Root  4 =   23.498422013329
+ Norms of the Right Residuals
+ Root I=  1 Norm= 2.32D-04 Max= 3.32D-05
+ Root I=  2 Norm= 2.14D-04 Max= 4.99D-05
+ Root I=  3 Norm= 1.33D-03 Max= 2.16D-04
+ Root I=  4 Norm= 1.91D-03 Max= 2.95D-04
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.  25
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  26
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  27
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  28
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  28, NOld=  24, NNew=   4
+ Right eigenvalues (eV) at iteration    7
+ Root  1 =    8.107652506658
+ Root  2 =   10.157160764450
+ Root  3 =   21.353995475797
+ Root  4 =   23.498204951661
+ Norms of the Right Residuals
+ Root I=  1 Norm= 5.12D-05 Max= 7.61D-06
+ Root I=  2 Norm= 4.99D-05 Max= 5.80D-06
+ Root I=  3 Norm= 4.26D-04 Max= 9.14D-05
+ Root I=  4 Norm= 5.40D-04 Max= 8.56D-05
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.  29
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  30
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  31
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  32
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  32, NOld=  28, NNew=   4
+ Right eigenvalues (eV) at iteration    8
+ Root  1 =    8.107649556735
+ Root  2 =   10.157165225629
+ Root  3 =   21.353866763551
+ Root  4 =   23.498205901136
+ Norms of the Right Residuals
+ Root I=  1 Norm= 9.15D-06 Max= 1.08D-06
+ Root I=  2 Norm= 8.33D-06 Max= 1.31D-06
+ Root I=  3 Norm= 1.21D-04 Max= 2.11D-05
+ Root I=  4 Norm= 1.66D-04 Max= 2.55D-05
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.  33
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  34
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  35
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  36
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  36, NOld=  32, NNew=   4
+ Right eigenvalues (eV) at iteration    9
+ Root  1 =    8.107647211333
+ Root  2 =   10.157165528138
+ Root  3 =   21.353840196182
+ Root  4 =   23.498183336650
+ Norms of the Right Residuals
+ Root I=  1 Norm= 1.65D-06 Max= 2.28D-07
+ Root I=  2 Norm= 1.57D-06 Max= 2.21D-07
+ Root I=  3 Norm= 2.81D-05 Max= 4.45D-06
+ Root I=  4 Norm= 4.74D-05 Max= 8.19D-06
+ New vectors created:   4
+
+ Right Eigenvector.
+
+ Vector Nr.  37
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  38
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  39
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  40
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  40, NOld=  36, NNew=   4
+ Right eigenvalues (eV) at iteration   10
+ Root  1 =    8.107647244298
+ Root  2 =   10.157165887609
+ Root  3 =   21.353853244942
+ Root  4 =   23.498195442557
+ Norms of the Right Residuals
+ Root I=  1 Norm= 3.03D-07 Max= 3.68D-08
+ Root I=  2 Norm= 2.83D-07 Max= 3.19D-08
+ Root I=  3 Norm= 7.29D-06 Max= 8.16D-07
+ Root I=  4 Norm= 1.59D-05 Max= 2.23D-06
+ New vectors created:   3
+
+ Right Eigenvector.
+
+ Vector Nr.  41
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  42
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  43
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  43, NOld=  40, NNew=   3
+ Right eigenvalues (eV) at iteration   11
+ Root  1 =    8.107647223038
+ Root  2 =   10.157165932537
+ Root  3 =   21.353853503226
+ Root  4 =   23.498192245682
+ Norms of the Right Residuals
+ Root I=  1 Norm= 2.91D-07 Max= 3.52D-08
+ Root I=  2 Norm= 5.11D-08 Max= 6.01D-09
+ Root I=  3 Norm= 1.91D-06 Max= 2.09D-07
+ Root I=  4 Norm= 4.45D-06 Max= 5.10D-07
+ New vectors created:   2
+
+ Right Eigenvector.
+
+ Vector Nr.  44
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  45
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  45, NOld=  43, NNew=   2
+ Right eigenvalues (eV) at iteration   12
+ Root  1 =    8.107647225505
+ Root  2 =   10.157165933287
+ Root  3 =   21.353852798398
+ Root  4 =   23.498190519577
+ Norms of the Right Residuals
+ Root I=  1 Norm= 2.91D-07 Max= 3.45D-08
+ Root I=  2 Norm= 5.00D-08 Max= 5.66D-09
+ Root I=  3 Norm= 5.26D-07 Max= 6.90D-08
+ Root I=  4 Norm= 1.16D-06 Max= 1.43D-07
+ New vectors created:   2
+
+ Right Eigenvector.
+
+ Vector Nr.  46
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  47
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  47, NOld=  45, NNew=   2
+ Right eigenvalues (eV) at iteration   13
+ Root  1 =    8.107647228397
+ Root  2 =   10.157165934658
+ Root  3 =   21.353852807373
+ Root  4 =   23.498190553965
+ Norms of the Right Residuals
+ Root I=  1 Norm= 2.89D-07 Max= 3.16D-08
+ Root I=  2 Norm= 4.89D-08 Max= 6.37D-09
+ Root I=  3 Norm= 1.68D-07 Max= 1.55D-08
+ Root I=  4 Norm= 2.54D-07 Max= 3.03D-08
+ New vectors created:   0
+ DoRgt = F, DoLft = T
+
+  Left Eigenvector.
+
+ Vector Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=   4, NOld=   0, NNew=   4
+ Left eigenvalues (eV) at iteration    1
+ Root  1 =    8.028089678425
+ Root  2 =   10.091459680050
+ Root  3 =   21.275520253788
+ Root  4 =   23.433271701733
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.77D-02 Max= 1.92D-02
+ Root I=  2 Norm= 7.61D-02 Max= 1.86D-02
+ Root I=  3 Norm= 7.27D-02 Max= 1.69D-02
+ Root I=  4 Norm= 7.43D-02 Max= 1.73D-02
+ New vectors created:   4
+
+  Left Eigenvector.
+
+ Vector Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   6
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   7
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.   8
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=   8, NOld=   4, NNew=   4
+ Left eigenvalues (eV) at iteration    2
+ Root  1 =    8.142282525154
+ Root  2 =   10.174262602820
+ Root  3 =   21.364491400281
+ Root  4 =   23.552088923814
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.71D-02 Max= 3.26D-03
+ Root I=  2 Norm= 1.58D-02 Max= 3.30D-03
+ Root I=  3 Norm= 5.33D-02 Max= 8.98D-03
+ Root I=  4 Norm= 2.33D-02 Max= 4.15D-03
+ New vectors created:   4
+
+  Left Eigenvector.
+
+ Vector Nr.   9
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  10
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  11
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  12
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  12, NOld=   8, NNew=   4
+ Left eigenvalues (eV) at iteration    3
+ Root  1 =    8.109729974440
+ Root  2 =   10.157004809088
+ Root  3 =   21.357205394624
+ Root  4 =   23.497454900312
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 3.65D-03 Max= 6.98D-04
+ Root I=  2 Norm= 3.34D-03 Max= 8.44D-04
+ Root I=  3 Norm= 1.20D-02 Max= 2.06D-03
+ Root I=  4 Norm= 6.52D-03 Max= 1.01D-03
+ New vectors created:   4
+
+  Left Eigenvector.
+
+ Vector Nr.  13
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  14
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  15
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  16
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  16, NOld=  12, NNew=   4
+ Left eigenvalues (eV) at iteration    4
+ Root  1 =    8.107881488232
+ Root  2 =   10.156786388264
+ Root  3 =   21.355289858520
+ Root  4 =   23.497186534370
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 7.31D-04 Max= 1.10D-04
+ Root I=  2 Norm= 5.67D-04 Max= 1.12D-04
+ Root I=  3 Norm= 4.29D-03 Max= 6.41D-04
+ Root I=  4 Norm= 2.60D-03 Max= 3.48D-04
+ New vectors created:   4
+
+  Left Eigenvector.
+
+ Vector Nr.  17
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  18
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  19
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  20
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  20, NOld=  16, NNew=   4
+ Left eigenvalues (eV) at iteration    5
+ Root  1 =    8.107696807054
+ Root  2 =   10.157086654546
+ Root  3 =   21.353580267617
+ Root  4 =   23.497447202798
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.71D-04 Max= 2.61D-05
+ Root I=  2 Norm= 1.35D-04 Max= 2.38D-05
+ Root I=  3 Norm= 1.23D-03 Max= 1.78D-04
+ Root I=  4 Norm= 1.34D-03 Max= 1.80D-04
+ New vectors created:   4
+
+  Left Eigenvector.
+
+ Vector Nr.  21
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  22
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  23
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  24
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  24, NOld=  20, NNew=   4
+ Left eigenvalues (eV) at iteration    6
+ Root  1 =    8.107656896905
+ Root  2 =   10.157160694772
+ Root  3 =   21.353844508405
+ Root  4 =   23.498035647894
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 4.15D-05 Max= 6.90D-06
+ Root I=  2 Norm= 2.22D-05 Max= 3.25D-06
+ Root I=  3 Norm= 3.82D-04 Max= 6.02D-05
+ Root I=  4 Norm= 5.55D-04 Max= 1.05D-04
+ New vectors created:   4
+
+  Left Eigenvector.
+
+ Vector Nr.  25
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  26
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  27
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  28
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  28, NOld=  24, NNew=   4
+ Left eigenvalues (eV) at iteration    7
+ Root  1 =    8.107647242550
+ Root  2 =   10.157165177812
+ Root  3 =   21.353931715231
+ Root  4 =   23.498240925864
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 9.66D-06 Max= 1.47D-06
+ Root I=  2 Norm= 4.49D-06 Max= 7.78D-07
+ Root I=  3 Norm= 1.23D-04 Max= 1.70D-05
+ Root I=  4 Norm= 2.94D-04 Max= 4.65D-05
+ New vectors created:   4
+
+  Left Eigenvector.
+
+ Vector Nr.  29
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  30
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  31
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  32
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  32, NOld=  28, NNew=   4
+ Left eigenvalues (eV) at iteration    8
+ Root  1 =    8.107647321739
+ Root  2 =   10.157165770278
+ Root  3 =   21.353850081123
+ Root  4 =   23.498180109676
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.62D-06 Max= 1.98D-07
+ Root I=  2 Norm= 1.05D-06 Max= 1.54D-07
+ Root I=  3 Norm= 3.92D-05 Max= 5.69D-06
+ Root I=  4 Norm= 9.74D-05 Max= 1.31D-05
+ New vectors created:   4
+
+  Left Eigenvector.
+
+ Vector Nr.  33
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  34
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  35
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  36
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  36, NOld=  32, NNew=   4
+ Left eigenvalues (eV) at iteration    9
+ Root  1 =    8.107647292909
+ Root  2 =   10.157165891305
+ Root  3 =   21.353850296316
+ Root  4 =   23.498190667561
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 2.36D-07 Max= 3.58D-08
+ Root I=  2 Norm= 2.63D-07 Max= 4.01D-08
+ Root I=  3 Norm= 1.23D-05 Max= 1.65D-06
+ Root I=  4 Norm= 2.50D-05 Max= 4.20D-06
+ New vectors created:   2
+
+  Left Eigenvector.
+
+ Vector Nr.  37
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  38
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  38, NOld=  36, NNew=   2
+ Left eigenvalues (eV) at iteration   10
+ Root  1 =    8.107647300815
+ Root  2 =   10.157165876612
+ Root  3 =   21.353853356253
+ Root  4 =   23.498190627855
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.93D-07 Max= 2.13D-08
+ Root I=  2 Norm= 1.85D-07 Max= 2.74D-08
+ Root I=  3 Norm= 4.36D-06 Max= 6.88D-07
+ Root I=  4 Norm= 8.44D-06 Max= 1.09D-06
+ New vectors created:   2
+
+  Left Eigenvector.
+
+ Vector Nr.  39
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  40
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  40, NOld=  38, NNew=   2
+ Left eigenvalues (eV) at iteration   11
+ Root  1 =    8.107647300860
+ Root  2 =   10.157165880948
+ Root  3 =   21.353852426395
+ Root  4 =   23.498190125202
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.93D-07 Max= 2.13D-08
+ Root I=  2 Norm= 1.77D-07 Max= 2.38D-08
+ Root I=  3 Norm= 1.51D-06 Max= 2.46D-07
+ Root I=  4 Norm= 2.17D-06 Max= 3.51D-07
+ New vectors created:   2
+
+  Left Eigenvector.
+
+ Vector Nr.  41
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Vector Nr.  42
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Actual subspace dimension: NDim=  42, NOld=  40, NNew=   2
+ Left eigenvalues (eV) at iteration   12
+ Root  1 =    8.107647301756
+ Root  2 =   10.157165893174
+ Root  3 =   21.353852931312
+ Root  4 =   23.498190539452
+ Norms of the Left  Residuals
+ Root I=  1 Norm= 1.91D-07 Max= 2.12D-08
+ Root I=  2 Norm= 1.74D-07 Max= 2.53D-08
+ Root I=  3 Norm= 4.44D-07 Max= 5.90D-08
+ Root I=  4 Norm= 5.45D-07 Max= 7.37D-08
+ New vectors created:   2
+ Final Eigenvalues for Irrep    2:
+ Root       Hartree              eV                 nm 
+   1     0.297950553372     8.107647228397   152.922530331358
+   2     0.373268979972    10.157165934658   122.065735380958
+   3     0.784739651510    21.353852807373    58.061743723004
+   4     0.863542613727    23.498190553965    52.763293682255
+
+ ==============================================
+
+         EOM-CCSD transition properties        
+
+ ==============================================
+ Ground to excited state transition electric dipole moments (Au):
+       state          X           Y           Z        Dip. S.      Osc.
+         1        -0.0000      0.0000     -0.3603      0.1323      0.0263
+         2        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         3         0.0000      0.6048     -0.0000      0.3745      0.0998
+         4        -0.4839      0.0000     -0.0000      0.2424      0.0771
+         5        -0.8890     -0.0000     -0.0000      0.8141      0.2915
+         6         0.0000     -0.5464      0.0000      0.3064      0.1331
+         7        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         8         0.0000     -0.0000     -0.3386      0.1163      0.0670
+         9        -0.4793     -0.0000     -0.0000      0.2332      0.1424
+        10         0.0000      0.0543     -0.0000      0.0028      0.0018
+ Excited to ground state transition electric dipole moments (Au):
+       state          X           Y           Z        Dip. S.      Osc.
+         1        -0.0000      0.0000     -0.3673      0.1323      0.0263
+         2        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         3         0.0000      0.6192     -0.0000      0.3745      0.0998
+         4        -0.5009      0.0000     -0.0000      0.2424      0.0771
+         5        -0.9158     -0.0000     -0.0000      0.8141      0.2915
+         6         0.0000     -0.5607      0.0000      0.3064      0.1331
+         7        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         8         0.0000     -0.0000     -0.3435      0.1163      0.0670
+         9        -0.4865     -0.0000     -0.0000      0.2332      0.1424
+        10         0.0000      0.0510     -0.0000      0.0028      0.0018
+ Ground to excited state transition velocity dipole moments (Au):
+       state          X           Y           Z        Dip. S.      Osc.
+         1        -0.0000      0.0000     -0.2297      0.0537      0.1201
+         2        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         3         0.0000      0.3364     -0.0000      0.1150      0.1917
+         4        -0.2370      0.0000     -0.0000      0.0577      0.0807
+         5        -0.4821     -0.0000     -0.0000      0.2382      0.2957
+         6         0.0000     -0.3574      0.0000      0.1308      0.1339
+         7        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         8         0.0000     -0.0000     -0.2651      0.0716      0.0552
+         9        -0.3993      0.0000     -0.0000      0.1621      0.1180
+        10         0.0000      0.0939     -0.0000      0.0088      0.0061
+ Excited to ground state transition velocity dipole moments (Au):
+       state          X           Y           Z        Dip. S.      Osc.
+         1        -0.0000      0.0000     -0.2337      0.0537      0.1201
+         2        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         3         0.0000      0.3419     -0.0000      0.1150      0.1917
+         4        -0.2437      0.0000     -0.0000      0.0577      0.0807
+         5        -0.4941     -0.0000     -0.0000      0.2382      0.2957
+         6         0.0000     -0.3661      0.0000      0.1308      0.1339
+         7        -0.0000      0.0000     -0.0000      0.0000      0.0000
+         8         0.0000     -0.0000     -0.2699      0.0716      0.0552
+         9        -0.4059      0.0000     -0.0000      0.1621      0.1180
+        10         0.0000      0.0933     -0.0000      0.0088      0.0061
+ Ground to excited state transition magnetic dipole moments (Au):
+       state          X           Y           Z
+         1         0.1665     -0.0000      0.0000
+         2        -0.0000      0.2775      0.0000
+         3         0.0000     -0.0000     -0.0000
+         4         0.0000     -0.0000      0.3062
+         5        -0.0000      0.0000     -0.0860
+         6        -0.0000     -0.0000     -0.0000
+         7        -0.0000      0.2616      0.0000
+         8        -0.2188     -0.0000     -0.0000
+         9         0.0000      0.0000      0.5257
+        10        -0.0000      0.0000     -0.0000
+ Excited to ground state transition magnetic dipole moments (Au):
+       state          X           Y           Z
+         1         0.1719     -0.0000      0.0000
+         2        -0.0000      0.2846      0.0000
+         3         0.0000     -0.0000     -0.0000
+         4         0.0000     -0.0000      0.3145
+         5        -0.0000      0.0000     -0.0896
+         6        -0.0000     -0.0000     -0.0000
+         7        -0.0000      0.2637      0.0000
+         8        -0.2203     -0.0000     -0.0000
+         9         0.0000      0.0000      0.5342
+        10        -0.0000      0.0000     -0.0000
+ 1/2[<0|del|b>*<b|rxdel|0> + (<0|rxdel|b>*<b|del|0>)*]
+ Rotatory Strengths (R) in cgs (10**-40 erg-esu-cm/Gauss)
+       state          XX          YY          ZZ    R(velocity)
+         1        -0.0000     -0.0000     -0.0000     -0.0000
+         2         0.0000      0.0000     -0.0000      0.0000
+         3         0.0000     -0.0000      0.0000     -0.0000
+         4        -0.0000     -0.0000     -0.0000     -0.0000
+         5         0.0000     -0.0000      0.0000      0.0000
+         6        -0.0000      0.0000     -0.0000      0.0000
+         7         0.0000      0.0000     -0.0000      0.0000
+         8        -0.0000      0.0000      0.0000     -0.0000
+         9        -0.0000      0.0000     -0.0000     -0.0000
+        10        -0.0000      0.0000      0.0000      0.0000
+ 1/2[<0|r|b>*<b|rxdel|0> + (<0|rxdel|b>*<b|r|0>)*]
+ Rotatory Strengths (R) in cgs (10**-40 erg-esu-cm/Gauss)
+       state          XX          YY          ZZ     R(length)
+         1        -0.0000     -0.0000     -0.0000     -0.0000
+         2         0.0000      0.0000     -0.0000      0.0000
+         3         0.0000     -0.0000      0.0000     -0.0000
+         4        -0.0000     -0.0000     -0.0000     -0.0000
+         5         0.0000     -0.0000      0.0000      0.0000
+         6        -0.0000      0.0000     -0.0000      0.0000
+         7         0.0000      0.0000     -0.0000      0.0000
+         8        -0.0000      0.0000      0.0000     -0.0000
+         9        -0.0000     -0.0000     -0.0000     -0.0000
+        10        -0.0000      0.0000      0.0000      0.0000
+  1/2[<0|del|b>*<b|r|0> + (<0|r|b>*<b|del|0>)*] (Au)
+       state          X           Y           Z        Dip. S.   Osc.(frdel)
+         1        -0.0000     -0.0000     -0.0843      0.0843      0.0562
+         2        -0.0000     -0.0000     -0.0000      0.0000      0.0000
+         3        -0.0000     -0.2075     -0.0000      0.2075      0.1384
+         4        -0.1183     -0.0000     -0.0000      0.1183      0.0789
+         5        -0.4404     -0.0000     -0.0000      0.4404      0.2936
+         6        -0.0000     -0.2002     -0.0000      0.2002      0.1335
+         7        -0.0000     -0.0000     -0.0000      0.0000      0.0000
+         8        -0.0000     -0.0000     -0.0912      0.0912      0.0608
+         9        -0.1944      0.0000     -0.0000      0.1944      0.1296
+        10        -0.0000     -0.0049     -0.0000      0.0049      0.0033
+
+ Excitation energies and oscillator strengths:
+
+ ----------------------------------------------
+ Excited State   1:      Singlet-A"     8.1076 eV  152.92 nm  f=0.0263
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     6      1    0.685023
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     6      1    0.685023
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     6      1    0.680436
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     6      1    0.680436
+ Total Energy, E(EOM-CCSD) =  -75.9402555765    
+
+ ----------------------------------------------
+ Excited State   2:      Singlet-A"    10.1572 eV  122.07 nm  f=0.0000
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     7      1   -0.679327
+     5      2     8      1   -0.109278
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     7      1   -0.679327
+     5      2     8      1   -0.109278
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     7      1   -0.675635
+     5      2     8      1   -0.106734
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     7      1   -0.675635
+     5      2     8      1   -0.106734
+
+ ----------------------------------------------
+ Excited State   3:      Singlet-A'    10.8815 eV  113.94 nm  f=0.0998
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     4      1     6      1   -0.682557
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     4      1     6      1   -0.682557
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     4      1     6      1   -0.678404
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     4      1     6      1   -0.678404
+
+ ----------------------------------------------
+ Excited State   4:      Singlet-A'    12.9807 eV   95.51 nm  f=0.0771
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     4      1     7      1    0.681550
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     4      1     7      1    0.681550
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     4      1     7      1    0.678294
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     4      1     7      1    0.678294
+
+ ----------------------------------------------
+ Excited State   5:      Singlet-A'    14.6126 eV   84.85 nm  f=0.2915
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     6      1    0.688119
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     6      1    0.688119
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     6      1    0.685871
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     6      1    0.685871
+
+ ----------------------------------------------
+ Excited State   6:      Singlet-A'    17.7313 eV   69.92 nm  f=0.1331
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     7      1    0.678977
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     7      1    0.678977
+ Alpha-Beta  Doubles Amplitudes
+     I    SymI    J    SymJ    A    SymA    B    SymB    Value
+     3      1     3      1     7      1     7      1   -0.103623
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     7      1    0.676804
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     7      1    0.676804
+ Alpha-Beta  Doubles Amplitudes
+     I    SymI    J    SymJ    A    SymA    B    SymB    Value
+     3      1     3      1     7      1     7      1   -0.109798
+
+ ----------------------------------------------
+ Excited State   7:      Singlet-A"    21.3539 eV   58.06 nm  f=0.0000
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     7      1    0.103571
+     5      2     8      1   -0.676856
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     7      1    0.103571
+     5      2     8      1   -0.676856
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     7      1    0.104055
+     5      2     8      1   -0.671961
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     7      1    0.104055
+     5      2     8      1   -0.671961
+
+ ----------------------------------------------
+ Excited State   8:      Singlet-A"    23.4982 eV   52.76 nm  f=0.0670
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     9      1    0.676192
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     9      1    0.676192
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     9      1    0.671359
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     5      2     9      1    0.671359
+
+ ----------------------------------------------
+ Excited State   9:      Singlet-A'    24.9224 eV   49.75 nm  f=0.1424
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     9      1    0.122324
+     4      1     8      1    0.662996
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     9      1    0.122324
+     4      1     8      1    0.662996
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     9      1    0.120765
+     4      1     8      1    0.659661
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     3      1     9      1    0.120765
+     4      1     8      1    0.659661
+
+ ----------------------------------------------
+ Excited State  10:      Singlet-A'    26.1889 eV   47.34 nm  f=0.0018
+ Right Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     2      1     6      1    0.176832
+     4      1     9      1   -0.593055
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     2      1     6      1    0.176832
+     4      1     9      1   -0.593055
+ Alpha-Beta  Doubles Amplitudes
+     I    SymI    J    SymJ    A    SymA    B    SymB    Value
+     5      2     5      2     6      1     6      1    0.321800
+     5      2     5      2     7      1     7      1   -0.112315
+ Left  Eigenvector 
+ Alpha Singles Amplitudes
+     I    SymI    A    SymA    Value
+     2      1     6      1    0.161542
+     4      1     9      1   -0.608067
+ Beta  Singles Amplitudes
+     I    SymI    A    SymA    Value
+     2      1     6      1    0.161542
+     4      1     9      1   -0.608067
+ Alpha-Beta  Doubles Amplitudes
+     I    SymI    J    SymJ    A    SymA    B    SymB    Value
+     5      2     5      2     6      1     6      1    0.271840
+ Ground to excited state transition densities written to RWF  633
+ SavETr:  write IOETrn=   770 NScale= 10 NData=  16 NLR=2 NState=   10 LETran=     350.
+
+ EOM-CCSD Z-AMPLITUDE ITERATIONS
+
+
+ State   1 of Irrep   2
+
+ Iteration Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Restarting extrapolation.
+ Maximum subspace dimension=  5
+ A-vector RMS=  3.3791332D-03 Max=  7.4629254D-03 conv= 1.00D-06.
+ RLE energy=       -0.1382068845
+ DE(Z)= -0.13813261     E(Z)=     -76.164380012     Delta= 7.07D-02
+ NORM(A)=   0.10238631D+01
+ Iteration Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.6065297D-03 Max=  4.4083555D-03 conv= 1.00D-06.
+ RLE energy=       -0.1414986339
+ DE(Z)= -0.14106806     E(Z)=     -76.167315462     Delta=-2.94D-03
+ NORM(A)=   0.10256639D+01
+ Iteration Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  3.4975686D-04 Max=  8.3875609D-04 conv= 1.00D-06.
+ RLE energy=       -0.1416841176
+ DE(Z)= -0.14148712     E(Z)=     -76.167734526     Delta=-4.19D-04
+ NORM(A)=   0.10258945D+01
+ Iteration Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.2573244D-04 Max=  4.5833723D-04 conv= 1.00D-06.
+ RLE energy=       -0.1416967233
+ DE(Z)= -0.14168633     E(Z)=     -76.167933735     Delta=-1.99D-04
+ NORM(A)=   0.10259568D+01
+ Iteration Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  3.1160027D-05 Max=  1.1349050D-04 conv= 1.00D-06.
+ RLE energy=       -0.1416984263
+ DE(Z)= -0.14169727     E(Z)=     -76.167944674     Delta=-1.09D-05
+ NORM(A)=   0.10259657D+01
+ Iteration Nr.   6
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.2254957D-05 Max=  4.5876147D-05 conv= 1.00D-06.
+ RLE energy=       -0.1416978501
+ DE(Z)= -0.14169847     E(Z)=     -76.167945870     Delta=-1.20D-06
+ NORM(A)=   0.10259673D+01
+ Iteration Nr.   7
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  2.3686787D-06 Max=  6.8181970D-06 conv= 1.00D-06.
+ RLE energy=       -0.1416990696
+ DE(Z)= -0.14169877     E(Z)=     -76.167946174     Delta=-3.04D-07
+ NORM(A)=   0.10259684D+01
+ Iteration Nr.   8
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  5.5717125D-07 Max=  1.5050474D-06 conv= 1.00D-06.
+ RLE energy=       -0.1416988143
+ DE(Z)= -0.14169882     E(Z)=     -76.167946219     Delta=-4.50D-08
+ NORM(A)=   0.10259683D+01
+ Iteration Nr.   9
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.1645538D-07 Max=  2.4808471D-07 conv= 1.00D-06.
+ RLE energy=       -0.1416988885
+ DE(Z)= -0.14169887     E(Z)=     -76.167946276     Delta=-5.63D-08
+ NORM(A)=   0.10259683D+01
+ Iteration Nr.  10
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  2.6506248D-08 Max=  5.9021927D-08 conv= 1.00D-06.
+ RLE energy=       -0.1416988638
+ DE(Z)= -0.14169887     E(Z)=     -76.167946267     Delta= 8.38D-09
+ NORM(A)=   0.10259683D+01
+ CI/CC converged in   10 iterations to DelEn= 8.38D-09 Conv= 1.00D-08 ErrA1= 2.65D-08 Conv= 1.00D-06
+ Z-amplitudes converged.
+ Discarding MO integrals.
+ Leave Link  913 at Tue Dec 14 23:09:07 2021, MaxMem=   536870912 cpu:              15.4 elap:               4.1
+ (Enter /opt/gaussian/g16/sse4/g16/l1111.exe)
+ Unit  1 TFree=        170541 TCopy=        451371.
+ Selected functions:
+ Compute EOM-CCSD 2PDM.
+ IO1PDM=    0 IOW=    0 IO2PDM=    0.
+ MDV=     536870912.
+ Frozen-core window:  NFC=   1 NFV=   0.
+ Leave Link 1111 at Tue Dec 14 23:09:07 2021, MaxMem=   536870912 cpu:               1.4 elap:               0.3
+ (Enter /opt/gaussian/g16/sse4/g16/l1002.exe)
+ Minotr:  Closed shell wavefunction.
+          Computing CCSD/QCISD derivatives.
+          Using Z-Vector for PSCF gradient.
+          Skipping F1 and S1 gradient terms here.
+          Frozen-core window.
+          Direct CPHF calculation.
+          Differentiating once with respect to electric field.
+                with respect to dipole field.
+          Electric field/nuclear overlap derivatives assumed to be zero.
+          Using symmetry in CPHF.
+          Requested convergence is 1.0D-10 RMS, and 1.0D-09 maximum.
+          NewPWx=F KeepS1=T KeepF1=T KeepIn=T MapXYZ=F SortEE=F KeepMc=T.
+ Keep R1 ints in memory in symmetry-blocked form, NReq=878652.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=       600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    300 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+          MDV=     536870912 using IRadAn=       5.
+          Solving linear equations separately, MaxMat=       0.
+          There are     1 degrees of freedom in the 1st order CPHF.  IDoFFX=0 NUNeed=     1.
+ LinEq1:  Iter=  0 NonCon=     1 RMS=6.69D-02 Max=3.13D-01 NDo=     1
+ AX will form     1 AO Fock derivatives at one time.
+ LinEq1:  Iter=  1 NonCon=     1 RMS=6.80D-03 Max=4.14D-02 NDo=     1
+ LinEq1:  Iter=  2 NonCon=     1 RMS=8.94D-04 Max=4.06D-03 NDo=     1
+ LinEq1:  Iter=  3 NonCon=     1 RMS=1.55D-04 Max=7.82D-04 NDo=     1
+ LinEq1:  Iter=  4 NonCon=     1 RMS=1.15D-05 Max=4.67D-05 NDo=     1
+ LinEq1:  Iter=  5 NonCon=     1 RMS=1.27D-06 Max=4.79D-06 NDo=     1
+ LinEq1:  Iter=  6 NonCon=     1 RMS=2.17D-07 Max=1.10D-06 NDo=     1
+ LinEq1:  Iter=  7 NonCon=     1 RMS=1.88D-08 Max=7.15D-08 NDo=     1
+ LinEq1:  Iter=  8 NonCon=     1 RMS=1.28D-09 Max=4.78D-09 NDo=     1
+ LinEq1:  Iter=  9 NonCon=     1 RMS=1.16D-10 Max=4.62D-10 NDo=     1
+ LinEq1:  Iter= 10 NonCon=     0 RMS=7.90D-12 Max=3.32D-11 NDo=     1
+ Linear equations converged to 1.000D-10 1.000D-09 after    10 iterations.
+ End of Minotr F.D. properties file   721 does not exist.
+ End of Minotr F.D. properties file   722 does not exist.
+ End of Minotr F.D. properties file   788 does not exist.
+ Leave Link 1002 at Tue Dec 14 23:09:08 2021, MaxMem=   536870912 cpu:               1.9 elap:               0.5
+ (Enter /opt/gaussian/g16/sse4/g16/l601.exe)
+ Copying SCF densities to generalized density rwf, IOpCl= 0 IROHF=0.
+
+ **********************************************************************
+
+            Population analysis using the QCI/CC density.
+
+ **********************************************************************
+
+ Orbital symmetries:
+       Occupied  (A') (A') (A') (A') (A")
+       Virtual   (A') (A') (A') (A') (A') (A") (A') (A') (A") (A")
+                 (A') (A') (A') (A') (A") (A") (A') (A') (A')
+ The electronic state is 1-A'.
+ Alpha  occ. eigenvalues --  -20.55304  -1.33471  -0.69080  -0.56994  -0.49346
+ Alpha virt. eigenvalues --    0.18380   0.25537   0.77618   0.85751   1.16610
+ Alpha virt. eigenvalues --    1.19965   1.25624   1.42394   1.48209   1.66018
+ Alpha virt. eigenvalues --    1.86399   1.94024   2.42934   2.47582   3.29081
+ Alpha virt. eigenvalues --    3.32268   3.50806   3.84161   4.15157
+          Condensed to atoms (all electrons):
+               1          2          3
+     1  O    8.074801  -0.260462  -0.260462
+     2  H   -0.260462   1.108819   0.374705
+     3  H   -0.260462   0.374705   1.108819
+ Mulliken charges:
+               1
+     1  O    0.446123
+     2  H   -0.223062
+     3  H   -0.223062
+ Sum of Mulliken charges =  -0.00000
+ Mulliken charges with hydrogens summed into heavy atoms:
+               1
+     1  O   -0.000000
+ Electronic spatial extent (au):  <R**2>=             25.9247
+ Charge=             -0.0000 electrons
+ Dipole moment (field-independent basis, Debye):
+    X=              0.0000    Y=              0.5869    Z=             -0.0000  Tot=              0.5869
+ Quadrupole moment (field-independent basis, Debye-Ang):
+   XX=             -8.9720   YY=             -9.6452   ZZ=             -8.0147
+   XY=             -0.0000   XZ=             -0.0000   YZ=              0.0000
+ Traceless Quadrupole moment (field-independent basis, Debye-Ang):
+   XX=             -0.0947   YY=             -0.7679   ZZ=              0.8627
+   XY=             -0.0000   XZ=             -0.0000   YZ=              0.0000
+ Octapole moment (field-independent basis, Debye-Ang**2):
+  XXX=              0.0000  YYY=              5.0793  ZZZ=             -0.0000  XYY=              0.0000
+  XXY=              1.8251  XXZ=             -0.0000  XZZ=              0.0000  YZZ=              1.6085
+  YYZ=             -0.0000  XYZ=             -0.0000
+ Hexadecapole moment (field-independent basis, Debye-Ang**3):
+ XXXX=            -22.7079 YYYY=            -18.4263 ZZZZ=             -9.2079 XXXY=             -0.0000
+ XXXZ=             -0.0000 YYYX=             -0.0000 YYYZ=              0.0000 ZZZX=             -0.0000
+ ZZZY=              0.0000 XXYY=             -6.7986 XXZZ=             -5.2825 YYZZ=             -4.5649
+ XXYZ=              0.0000 YYXZ=             -0.0000 ZZXY=             -0.0000
+ N-N= 9.127518549082D+00 E-N=-1.973774020323D+02  KE= 7.636848553950D+01
+ Symmetry A'   KE= 7.371419034270D+01
+ Symmetry A"   KE= 2.654295196808D+00
+ No NMR shielding tensors so no spin-rotation constants.
+ Leave Link  601 at Tue Dec 14 23:09:08 2021, MaxMem=   536870912 cpu:               0.5 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l106.exe)
+ NDeriv=      3 NFrqRd=  0 NDerD0=      0 MskFDP=       0 MskDFD=       0 MskDF0=       0
+ At 1st pt F.D. properties file   721 does not exist.
+ At 1st pt F.D. properties file   722 does not exist.
+ D2Numr ... symmetry will be used.
+ Leave Link  106 at Tue Dec 14 23:09:08 2021, MaxMem=   536870912 cpu:               0.2 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l301.exe)
+ Standard basis: CC-pVDZ (5D, 7F)
+ Ernie: Thresh=  0.10000D-02 Tol=  0.10000D-05 Strict=F.
+ Ernie:  2 primitive shells out of 32 were deleted.
+ The following finite field(s) will be applied:
+ An electric field of              0.0003  0.0000  0.0000
+    24 basis functions,    47 primitive gaussians,    25 cartesian basis functions
+     5 alpha electrons        5 beta electrons
+       nuclear repulsion energy         9.1275185491 Hartrees.
+ IExCor=    0 DFT=F Ex=HF Corr=None ExCW=0 ScaHFX=  1.000000
+ ScaDFX=  1.000000  1.000000  1.000000  1.000000 ScalE2=  1.000000  1.000000
+ IRadAn=      5 IRanWt=     -1 IRanGd=            0 ICorTp=0 IEmpDi=  4
+ NAtoms=    3 NActive=    3 NUniq=    3 SFac= 1.00D+00 NAtFMM=   60 NAOKFM=F Big=F
+ Integral buffers will be    131072 words long.
+ Raffenetti 1 integral format.
+ Two-electron integral symmetry is turned off.
+ Leave Link  301 at Tue Dec 14 23:09:08 2021, MaxMem=   536870912 cpu:               0.2 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l302.exe)
+ NPDir=0 NMtPBC=     1 NCelOv=     1 NCel=       1 NClECP=     1 NCelD=      1
+         NCelK=      1 NCelE2=     1 NClLst=     1 CellRange=     0.0.
+ One-electron integrals computed using PRISM.
+ NBasis=    24 RedAO= T EigKep=  3.48D-02  NBF=    24
+ NBsUse=    24 1.00D-06 EigRej= -1.00D+00 NBFU=    24
+ Leave Link  302 at Tue Dec 14 23:09:09 2021, MaxMem=   536870912 cpu:               0.5 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l303.exe)
+ DipDrv:  MaxL=1.
+ The nuclear repulsion energy is now         9.1275185491 hartrees.
+ Leave Link  303 at Tue Dec 14 23:09:09 2021, MaxMem=   536870912 cpu:               0.1 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l308.exe)
+ Leave Link  308 at Tue Dec 14 23:09:09 2021, MaxMem=   536870912 cpu:               0.1 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l401.exe)
+ Initial guess from the checkpoint file:  "CCSD_Water_gaus.chk"
+ B after Tr=     0.000000    0.000000    0.000000
+         Rot=    1.000000    0.000000    0.000000    0.000000 Ang=   0.00 deg.
+ Guess basis will be translated and rotated to current coordinates.
+ JPrj=2 DoOrth=T DoCkMO=T.
+ Leave Link  401 at Tue Dec 14 23:09:09 2021, MaxMem=   536870912 cpu:               0.3 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l502.exe)
+ Keep R1 ints in memory in canonical form, NReq=877153.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=       600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    300 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Symmetry not used in FoFCou.
+ Two-electron integral symmetry not used.
+ Closed shell SCF:
+ Using DIIS extrapolation, IDIIS=  1040.
+ NGot=   536870912 LenX=   536823984 LenY=   536822918
+ Requested convergence on RMS density matrix=1.00D-08 within 128 cycles.
+ Requested convergence on MAX density matrix=1.00D-06.
+ Requested convergence on             energy=1.00D-06.
+ No special actions if energy rises.
+
+ Cycle   1  Pass 1  IDiag  1:
+ E= -76.0262474018487    
+ DIIS: error= 1.29D-04 at cycle   1 NSaved=   1.
+ NSaved= 1 IEnMin= 1 EnMin= -76.0262474018487     IErMin= 1 ErrMin= 1.29D-04
+ ErrMax= 1.29D-04  0.00D+00 EMaxC= 1.00D-01 BMatC= 2.12D-07 BMatP= 2.12D-07
+ IDIUse=3 WtCom= 9.99D-01 WtEn= 1.29D-03
+ Coeff-Com:  0.100D+01
+ Coeff-En:   0.100D+01
+ Coeff:      0.100D+01
+ Gap=     1.143 Goal=   None    Shift=    0.000
+ RMSDP=2.60D-05 MaxDP=1.44D-04              OVMax= 2.77D-04
+
+ Cycle   2  Pass 1  IDiag  1:
+ E= -76.0262477568829     Delta-E=       -0.000000355034 Rises=F Damp=F
+ DIIS: error= 3.14D-05 at cycle   2 NSaved=   2.
+ NSaved= 2 IEnMin= 2 EnMin= -76.0262477568829     IErMin= 2 ErrMin= 3.14D-05
+ ErrMax= 3.14D-05  0.00D+00 EMaxC= 1.00D-01 BMatC= 1.47D-08 BMatP= 2.12D-07
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com:  0.168D-01 0.983D+00
+ Coeff:      0.168D-01 0.983D+00
+ Gap=     0.677 Goal=   None    Shift=    0.000
+ RMSDP=5.95D-06 MaxDP=3.45D-05 DE=-3.55D-07 OVMax= 8.10D-05
+
+ Cycle   3  Pass 1  IDiag  1:
+ E= -76.0262477853173     Delta-E=       -0.000000028434 Rises=F Damp=F
+ DIIS: error= 1.19D-05 at cycle   3 NSaved=   3.
+ NSaved= 3 IEnMin= 3 EnMin= -76.0262477853173     IErMin= 3 ErrMin= 1.19D-05
+ ErrMax= 1.19D-05  0.00D+00 EMaxC= 1.00D-01 BMatC= 1.75D-09 BMatP= 1.47D-08
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com: -0.464D-01-0.237D+00 0.128D+01
+ Coeff:     -0.464D-01-0.237D+00 0.128D+01
+ Gap=     0.677 Goal=   None    Shift=    0.000
+ RMSDP=3.43D-06 MaxDP=1.92D-05 DE=-2.84D-08 OVMax= 4.52D-05
+
+ Cycle   4  Pass 1  IDiag  1:
+ E= -76.0262477904759     Delta-E=       -0.000000005159 Rises=F Damp=F
+ DIIS: error= 1.66D-06 at cycle   4 NSaved=   4.
+ NSaved= 4 IEnMin= 4 EnMin= -76.0262477904759     IErMin= 4 ErrMin= 1.66D-06
+ ErrMax= 1.66D-06  0.00D+00 EMaxC= 1.00D-01 BMatC= 8.45D-11 BMatP= 1.75D-09
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com:  0.119D-01 0.254D-01-0.361D+00 0.132D+01
+ Coeff:      0.119D-01 0.254D-01-0.361D+00 0.132D+01
+ Gap=     0.677 Goal=   None    Shift=    0.000
+ RMSDP=7.21D-07 MaxDP=5.62D-06 DE=-5.16D-09 OVMax= 8.80D-06
+
+ Cycle   5  Pass 1  IDiag  1:
+ E= -76.0262477906912     Delta-E=       -0.000000000215 Rises=F Damp=F
+ DIIS: error= 3.08D-07 at cycle   5 NSaved=   5.
+ NSaved= 5 IEnMin= 5 EnMin= -76.0262477906912     IErMin= 5 ErrMin= 3.08D-07
+ ErrMax= 3.08D-07  0.00D+00 EMaxC= 1.00D-01 BMatC= 1.81D-12 BMatP= 8.45D-11
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com: -0.218D-02-0.901D-02 0.965D-01-0.410D+00 0.132D+01
+ Coeff:     -0.218D-02-0.901D-02 0.965D-01-0.410D+00 0.132D+01
+ Gap=     0.677 Goal=   None    Shift=    0.000
+ RMSDP=8.15D-08 MaxDP=7.32D-07 DE=-2.15D-10 OVMax= 1.20D-06
+
+ Cycle   6  Pass 1  IDiag  1:
+ E= -76.0262477906948     Delta-E=       -0.000000000004 Rises=F Damp=F
+ DIIS: error= 4.66D-08 at cycle   6 NSaved=   6.
+ NSaved= 6 IEnMin= 6 EnMin= -76.0262477906948     IErMin= 6 ErrMin= 4.66D-08
+ ErrMax= 4.66D-08  0.00D+00 EMaxC= 1.00D-01 BMatC= 3.86D-14 BMatP= 1.81D-12
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com:  0.386D-03 0.125D-02-0.166D-01 0.816D-01-0.363D+00 0.130D+01
+ Coeff:      0.386D-03 0.125D-02-0.166D-01 0.816D-01-0.363D+00 0.130D+01
+ Gap=     0.677 Goal=   None    Shift=    0.000
+ RMSDP=1.58D-08 MaxDP=9.20D-08 DE=-3.57D-12 OVMax= 1.91D-07
+
+ Cycle   7  Pass 1  IDiag  1:
+ E= -76.0262477906946     Delta-E=        0.000000000000 Rises=F Damp=F
+ DIIS: error= 8.50D-09 at cycle   7 NSaved=   7.
+ NSaved= 7 IEnMin= 6 EnMin= -76.0262477906948     IErMin= 7 ErrMin= 8.50D-09
+ ErrMax= 8.50D-09  0.00D+00 EMaxC= 1.00D-01 BMatC= 2.96D-15 BMatP= 3.86D-14
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com:  0.168D-03 0.554D-03-0.715D-02 0.336D-01-0.135D+00 0.304D+00
+ Coeff-Com:  0.803D+00
+ Coeff:      0.168D-03 0.554D-03-0.715D-02 0.336D-01-0.135D+00 0.304D+00
+ Coeff:      0.803D+00
+ Gap=     0.677 Goal=   None    Shift=    0.000
+ RMSDP=2.50D-09 MaxDP=1.45D-08 DE= 1.99D-13 OVMax= 2.82D-08
+
+ SCF Done:  E(RHF) =  -76.0262477907     A.U. after    7 cycles
+            NFock=  7  Conv=0.25D-08     -V/T= 2.0008
+ KE= 7.596319314650D+01 PE=-1.989868259884D+02 EE= 3.786986650214D+01
+ Leave Link  502 at Tue Dec 14 23:09:09 2021, MaxMem=   536870912 cpu:               0.6 elap:               0.2
+ (Enter /opt/gaussian/g16/sse4/g16/l801.exe)
+ Windowed orbitals will be sorted by symmetry type.
+ Range of M.O.s used for correlation:     2    24
+ NBasis=    24 NAE=     5 NBE=     5 NFC=     1 NFV=     0
+ NROrb=     23 NOA=     4 NOB=     4 NVA=    19 NVB=    19
+ MOs do not have abelian symmetry and doing EOM, so symmetry turned off.
+ Leave Link  801 at Tue Dec 14 23:09:09 2021, MaxMem=   536870912 cpu:               0.1 elap:               0.0
+ (Enter /opt/gaussian/g16/sse4/g16/l804.exe)
+ Closed-shell transformation, MDV=   536870912 ITran=4 ISComp=1.
+ Semi-Direct transformation.
+ ModeAB=           2 MOrb=             4 LenV=     536684961
+ LASXX=        20275 LTotXX=       20275 LenRXX=       20275
+ LTotAB=       22976 MaxLAS=       29900 LenRXY=       29900
+ NonZer=       40550 LenScr=      785920 LnRSAI=           0
+ LnScr1=           0 LExtra=           0 Total=       836095
+ MaxDsk=          -1 SrtSym=           F ITran=            4
+ DoSDTr:  NPSUse=  4
+ JobTyp=0 Pass  1:  I=   1 to   4.
+ (rs|ai) integrals will be sorted in core.
+ Complete sort for first half transformation.
+ First half transformation complete.
+ Complete sort for second half transformation.
+ Second half transformation complete.
+ Spin components of T(2) and E(2):
+     alpha-alpha T2 =       0.6321441429D-02 E2=     -0.2543572868D-01
+     alpha-beta  T2 =       0.3791044441D-01 E2=     -0.1515456075D+00
+     beta-beta   T2 =       0.6321441429D-02 E2=     -0.2543572868D-01
+ ANorm=    0.1024965037D+01
+ E2 =    -0.2024170649D+00 EUMP2 =    -0.76228664855595D+02
+ Reading number of states per Irrep for EOM-CCSD
+ List of states:
+ Singlets   10
+ Triplets    0
+ Recovering and transforming amplitudes from chk file.
+ Old Z-amplitudes found on chk file.
+ B after Tr=     0.000000    0.000000    0.000000
+         Rot=    1.000000    0.000000    0.000000    0.000000 Ang=   0.00 deg.
+ Alpha occ  Sing. vals= 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 9.999999D-01
+ Alpha occ  NOrbO=     5 NOrbN=     5 NSVal=     5 ThrEig=  0.900000.
+ TrMax= 1.000000D+00 PrMax= 1.000000D+00 Trace(Pr)= 4.000000D+00
+ B after Tr=     0.000000    0.000000    0.000000
+         Rot=    1.000000    0.000000    0.000000    0.000000 Ang=   0.00 deg.
+ Alpha virt Sing. vals= 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00
+ Alpha virt Sing. vals= 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 1.000000D+00 9.999999D-01
+ Alpha virt NOrbO=    19 NOrbN=    19 NSVal=    19 ThrEig=  0.900000.
+ TrMax= 1.000000D+00 PrMax= 1.000000D+00 Trace(Pr)= 1.900000D+01
+ SameBS:  scalars match.
+ SameBS:  integer vectors match.
+ SameBS:  real vectors match.
+ Recover EOM right eigenvectors from chk file.
+ Recover EOM left eigenvectors from chk file.
+ Leave Link  804 at Tue Dec 14 23:09:10 2021, MaxMem=   536870912 cpu:               0.5 elap:               0.1
+ (Enter /opt/gaussian/g16/sse4/g16/l913.exe)
+ CIDS:  MDV=   536870912.
+ Frozen-core window:  NFC=   1 NFV=   0.
+ IFCWin=0 IBDFC=1 NFBD=     0     0 NFCmp=     0     0 NFFFC=     0     0
+ Amplitudes recovered.
+ Z-Amplitudes recovered.
+ Using DD4RQ for all iterations.
+ Keep R2 and R3 ints in memory in canonical form, NReq=924921.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=       600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    300 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Symmetry not used in FoFCou.
+ Two-electron integral symmetry not used.
+ CIDS: In Core Option IDoMem=           1.
+ Coupled Cluster theory with single and double substitutions
+ ===========================================================
+ Iterations=  50 Convergence= 0.100D-07
+ Produce multiple copies of IABC intergrals
+ Iteration Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Maximum subspace dimension=  5
+ A-vector RMS=  1.4751304D-05 Max=  3.5083024D-05 conv= 1.00D-06.
+ RLE energy=       -0.2119587130
+ DE(Corr)= -0.21195872     E(Corr)=     -76.238206506    
+ NORM(A)=   0.10283855D+01
+ Iteration Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  7.3594759D-06 Max=  2.0156840D-05 conv= 1.00D-06.
+ RLE energy=       -0.2119587120
+ DE(Corr)= -0.21195871     E(CORR)=     -76.238206503     Delta= 3.19D-09
+ NORM(A)=   0.10283855D+01
+ Iteration Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  2.1131922D-06 Max=  5.9268563D-06 conv= 1.00D-06.
+ RLE energy=       -0.2119587128
+ DE(Corr)= -0.21195871     E(CORR)=     -76.238206503     Delta=-6.84D-10
+ NORM(A)=   0.10283855D+01
+ Iteration Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  6.3753839D-07 Max=  2.0243753D-06 conv= 1.00D-06.
+ RLE energy=       -0.2119587125
+ DE(Corr)= -0.21195871     E(CORR)=     -76.238206503     Delta= 1.81D-10
+ NORM(A)=   0.10283855D+01
+ Iteration Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.1759194D-07 Max=  3.3544815D-07 conv= 1.00D-06.
+ RLE energy=       -0.2119587127
+ DE(Corr)= -0.21195871     E(CORR)=     -76.238206503     Delta=-9.36D-11
+ NORM(A)=   0.10283855D+01
+ CI/CC converged in    5 iterations to DelEn=-9.36D-11 Conv= 1.00D-08 ErrA1= 1.18D-07 Conv= 1.00D-06
+ Wavefunction amplitudes converged. E(Corr)=     -76.238206503    
+ Largest amplitude= 5.14D-02
+
+ Z-amplitude iterations
+
+ Iteration Nr.   1
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ Restarting extrapolation.
+ Maximum subspace dimension=  5
+ A-vector RMS=  1.4039499D-05 Max=  3.3381891D-05 conv= 1.00D-06.
+ RLE energy=       -0.2088401672
+ DE(Z)= -0.20884017     E(Z)=     -76.235087959     Delta= 3.12D-03
+ NORM(A)=   0.10274326D+01
+ Iteration Nr.   2
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  6.4876273D-06 Max=  1.7749540D-05 conv= 1.00D-06.
+ RLE energy=       -0.2088401671
+ DE(Z)= -0.20884017     E(Z)=     -76.235087958     Delta= 1.06D-09
+ NORM(A)=   0.10274326D+01
+ Iteration Nr.   3
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.8868677D-06 Max=  5.2316374D-06 conv= 1.00D-06.
+ RLE energy=       -0.2088401690
+ DE(Z)= -0.20884017     E(Z)=     -76.235087959     Delta=-1.34D-09
+ NORM(A)=   0.10274326D+01
+ Iteration Nr.   4
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  5.7680527D-07 Max=  1.8082341D-06 conv= 1.00D-06.
+ RLE energy=       -0.2088401685
+ DE(Z)= -0.20884017     E(Z)=     -76.235087959     Delta=-5.04D-11
+ NORM(A)=   0.10274326D+01
+ Iteration Nr.   5
+ **********************
+ DD1Dir will call FoFMem   1 times, MxPair=        20
+ NAB=    10 NAA=     0 NBB=     0.
+ A-vector RMS=  1.0583528D-07 Max=  3.0719021D-07 conv= 1.00D-06.
+ RLE energy=       -0.2088401685
+ DE(Z)= -0.20884017     E(Z)=     -76.235087959     Delta=-6.71D-11
+ NORM(A)=   0.10274326D+01
+ CI/CC converged in    5 iterations to DelEn=-6.71D-11 Conv= 1.00D-08 ErrA1= 1.06D-07 Conv= 1.00D-06
+ Z-amplitudes converged.
+
+ ======================================
+
+                EOM-CCSD               
+
+ ======================================
+
+ Processing Closed Shell Singlets
+
+ *****************************************************
+ Starting Irrep 1
+ Dimension of the space: 
+ Singles AA=      76, Singles BB=      76, Doubles AA=       1026,
+ Doubles AB=        5776, Doubles BB=       1026, Total=        5852
+ EnOnly = F DoTwo = F, DoSame = F, DoRgt = T, DoLft = F, DoTrip = F,
+ MSek =  20, InMSek =  20, MConv =  20, MaxMI =  200, Conv =  1.00D-06
+  NNew smaller than MConv
+ Error termination via Lnk1e in /opt/gaussian/g16/sse4/g16/l913.exe at Tue Dec 14 23:09:10 2021.
+ Job cpu time:       0 days  0 hours  0 minutes 28.9 seconds.
+ Elapsed time:       0 days  0 hours  0 minutes  7.6 seconds.
+ File lengths (MBytes):  RWF=     69 Int=      0 D2E=      0 Chk=     39 Scr=      1

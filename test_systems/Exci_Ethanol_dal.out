@@ -1,0 +1,1669 @@
+
+
+     ************************************************************************
+     *************** Dalton - An Electronic Structure Program ***************
+     ************************************************************************
+
+    This is output from DALTON release Dalton2016.1 (2016)
+         ( Web site: http://daltonprogram.org )
+
+   ----------------------------------------------------------------------------
+
+    NOTE:
+     
+    Dalton is an experimental code for the evaluation of molecular
+    properties using (MC)SCF, DFT, CI, and CC wave functions.
+    The authors accept no responsibility for the performance of
+    the code or for the correctness of the results.
+     
+    The code (in whole or part) is provided under a licence and
+    is not to be reproduced for further distribution without
+    the written permission of the authors or their representatives.
+     
+    See the home page "http://daltonprogram.org" for further information.
+     
+    If results obtained with this code are published,
+    the appropriate citations would be both of:
+     
+       K. Aidas, C. Angeli, K. L. Bak, V. Bakken, R. Bast,
+       L. Boman, O. Christiansen, R. Cimiraglia, S. Coriani,
+       P. Dahle, E. K. Dalskov, U. Ekstroem,
+       T. Enevoldsen, J. J. Eriksen, P. Ettenhuber, B. Fernandez,
+       L. Ferrighi, H. Fliegl, L. Frediani, K. Hald, A. Halkier,
+       C. Haettig, H. Heiberg, T. Helgaker, A. C. Hennum,
+       H. Hettema, E. Hjertenaes, S. Hoest, I.-M. Hoeyvik,
+       M. F. Iozzi, B. Jansik, H. J. Aa. Jensen, D. Jonsson,
+       P. Joergensen, J. Kauczor, S. Kirpekar,
+       T. Kjaergaard, W. Klopper, S. Knecht, R. Kobayashi, H. Koch,
+       J. Kongsted, A. Krapp, K. Kristensen, A. Ligabue,
+       O. B. Lutnaes, J. I. Melo, K. V. Mikkelsen, R. H. Myhre,
+       C. Neiss, C. B. Nielsen, P. Norman, J. Olsen,
+       J. M. H. Olsen, A. Osted, M. J. Packer, F. Pawlowski,
+       T. B. Pedersen, P. F. Provasi, S. Reine, Z. Rinkevicius,
+       T. A. Ruden, K. Ruud, V. Rybkin, P. Salek, C. C. M. Samson,
+       A. Sanchez de Meras, T. Saue, S. P. A. Sauer,
+       B. Schimmelpfennig, K. Sneskov, A. H. Steindal,
+       K. O. Sylvester-Hvid, P. R. Taylor, A. M. Teale,
+       E. I. Tellgren, D. P. Tew, A. J. Thorvaldsen, L. Thoegersen,
+       O. Vahtras, M. A. Watson, D. J. D. Wilson, M. Ziolkowski
+       and H. Agren,
+       "The Dalton quantum chemistry program system",
+       WIREs Comput. Mol. Sci. 2014, 4:269–284 (doi: 10.1002/wcms.1172)
+     
+    and
+     
+       Dalton, a Molecular Electronic Structure Program,
+       Release Dalton2016.1 (2016), see http://daltonprogram.org
+   ----------------------------------------------------------------------------
+
+    Authors in alphabetical order (major contribution(s) in parenthesis):
+
+  Kestutis Aidas,           Vilnius University,           Lithuania   (QM/MM)
+  Celestino Angeli,         University of Ferrara,        Italy       (NEVPT2)
+  Keld L. Bak,              UNI-C,                        Denmark     (AOSOPPA, non-adiabatic coupling, magnetic properties)
+  Vebjoern Bakken,          University of Oslo,           Norway      (DALTON; geometry optimizer, symmetry detection)
+  Radovan Bast,             UiT The Arctic U. of Norway,  Norway      (DALTON installation and execution frameworks)
+  Pablo Baudin,             University of Valencia,       Spain       (Cholesky excitation energies)
+  Linus Boman,              NTNU,                         Norway      (Cholesky decomposition and subsystems)
+  Ove Christiansen,         Aarhus University,            Denmark     (CC module)
+  Renzo Cimiraglia,         University of Ferrara,        Italy       (NEVPT2)
+  Sonia Coriani,            University of Trieste,        Italy       (CC module, MCD in RESPONS)
+  Janusz Cukras,            University of Trieste,        Italy       (MChD in RESPONS)
+  Paal Dahle,               University of Oslo,           Norway      (Parallelization)
+  Erik K. Dalskov,          UNI-C,                        Denmark     (SOPPA)
+  Thomas Enevoldsen,        Univ. of Southern Denmark,    Denmark     (SOPPA)
+  Janus J. Eriksen,         Aarhus University,            Denmark     (Polarizable embedding model, TDA)
+  Rasmus Faber,             University of Copenhagen,     Denmark     (Vib.avg. NMR with SOPPA, parallel AO-SOPPA)
+  Berta Fernandez,          U. of Santiago de Compostela, Spain       (doublet spin, ESR in RESPONS)
+  Lara Ferrighi,            Aarhus University,            Denmark     (PCM Cubic response)
+  Heike Fliegl,             University of Oslo,           Norway      (CCSD(R12))
+  Luca Frediani,            UiT The Arctic U. of Norway,  Norway      (PCM)
+  Bin Gao,                  UiT The Arctic U. of Norway,  Norway      (Gen1Int library)
+  Christof Haettig,         Ruhr-University Bochum,       Germany     (CC module)
+  Kasper Hald,              Aarhus University,            Denmark     (CC module)
+  Asger Halkier,            Aarhus University,            Denmark     (CC module)
+  Frederik Beyer Hansen,    University of Copenhagen,     Denmark     (Parallel AO-SOPPA)
+  Erik D. Hedegaard,        Univ. of Southern Denmark,    Denmark     (Polarizable embedding model, QM/MM)
+  Hanne Heiberg,            University of Oslo,           Norway      (geometry analysis, selected one-electron integrals)
+  Trygve Helgaker,          University of Oslo,           Norway      (DALTON; ABACUS, ERI, DFT modules, London, and much more)
+  Alf Christian Hennum,     University of Oslo,           Norway      (Parity violation)
+  Hinne Hettema,            University of Auckland,       New Zealand (quadratic response in RESPONS; SIRIUS supersymmetry)
+  Eirik Hjertenaes,         NTNU,                         Norway      (Cholesky decomposition)
+  Maria Francesca Iozzi,    University of Oslo,           Norway      (RPA)
+  Brano Jansik              Technical Univ. of Ostrava    Czech Rep.  (DFT cubic response)
+  Hans Joergen Aa. Jensen,  Univ. of Southern Denmark,    Denmark     (DALTON; SIRIUS, RESPONS, ABACUS modules, London, and much more)
+  Dan Jonsson,              UiT The Arctic U. of Norway,  Norway      (cubic response in RESPONS module)
+  Poul Joergensen,          Aarhus University,            Denmark     (RESPONS, ABACUS, and CC modules)
+  Maciej Kaminski,          University of Warsaw,         Poland      (CPPh in RESPONS)
+  Joanna Kauczor,           Linkoeping University,        Sweden      (Complex polarization propagator (CPP) module)
+  Sheela Kirpekar,          Univ. of Southern Denmark,    Denmark     (Mass-velocity & Darwin integrals)
+  Wim Klopper,              KIT Karlsruhe,                Germany     (R12 code in CC, SIRIUS, and ABACUS modules)
+  Stefan Knecht,            ETH Zurich,                   Switzerland (Parallel CI and MCSCF)
+  Rika Kobayashi,           Australian National Univ.,    Australia   (DIIS in CC, London in MCSCF)
+  Henrik Koch,              NTNU,                         Norway      (CC module, Cholesky decomposition)
+  Jacob Kongsted,           Univ. of Southern Denmark,    Denmark     (Polarizable embedding model, QM/MM)
+  Andrea Ligabue,           University of Modena,         Italy       (CTOCD, AOSOPPA)
+  Nanna H. List             Univ. of Southern Denmark,    Denmark     (Polarizable embedding model)
+  Ola B. Lutnaes,           University of Oslo,           Norway      (DFT Hessian)
+  Juan I. Melo,             University of Buenos Aires,   Argentina   (LRESC, Relativistic Effects on NMR Shieldings)
+  Kurt V. Mikkelsen,        University of Copenhagen,     Denmark     (MC-SCRF and QM/MM)
+  Rolf H. Myhre,            NTNU,                         Norway      (Cholesky, subsystems and ECC2)
+  Christian Neiss,          Univ. Erlangen-Nuernberg,     Germany     (CCSD(R12))
+  Christian B. Nielsen,     University of Copenhagen,     Denmark     (QM/MM)
+  Patrick Norman,           Linkoeping University,        Sweden      (Cubic response and complex frequency response in RESPONS)
+  Jeppe Olsen,              Aarhus University,            Denmark     (SIRIUS CI/density modules)
+  Jogvan Magnus H. Olsen,   Univ. of Southern Denmark,    Denmark     (Polarizable embedding model, QM/MM)
+  Anders Osted,             Copenhagen University,        Denmark     (QM/MM)
+  Martin J. Packer,         University of Sheffield,      UK          (SOPPA)
+  Filip Pawlowski,          Kazimierz Wielki University,  Poland      (CC3)
+  Morten N. Pedersen,       Univ. of Southern Denmark,    Denmark     (Polarizable embedding model)
+  Thomas B. Pedersen,       University of Oslo,           Norway      (Cholesky decomposition)
+  Patricio F. Provasi,      University of Northeastern,   Argentina   (Analysis of coupling constants in localized orbitals)
+  Zilvinas Rinkevicius,     KTH Stockholm,                Sweden      (open-shell DFT, ESR)
+  Elias Rudberg,            KTH Stockholm,                Sweden      (DFT grid and basis info)
+  Torgeir A. Ruden,         University of Oslo,           Norway      (Numerical derivatives in ABACUS)
+  Kenneth Ruud,             UiT The Arctic U. of Norway,  Norway      (DALTON; ABACUS magnetic properties and much more)
+  Pawel Salek,              KTH Stockholm,                Sweden      (DALTON; DFT code)
+  Claire C. M. Samson       University of Karlsruhe       Germany     (Boys localization, r12 integrals in ERI)
+  Alfredo Sanchez de Meras, University of Valencia,       Spain       (CC module, Cholesky decomposition)
+  Trond Saue,               Paul Sabatier University,     France      (direct Fock matrix construction)
+  Stephan P. A. Sauer,      University of Copenhagen,     Denmark     (SOPPA(CCSD), SOPPA prop., AOSOPPA, vibrational g-factors)
+  Bernd Schimmelpfennig,    Forschungszentrum Karlsruhe,  Germany     (AMFI module)
+  Kristian Sneskov,         Aarhus University,            Denmark     (Polarizable embedding model, QM/MM)
+  Arnfinn H. Steindal,      UiT The Arctic U. of Norway,  Norway      (parallel QM/MM, Polarizable embedding model)
+  Casper Steinmann,         Univ. of Southern Denmark,    Denmark     (QFIT, Polarizable embedding model)
+  K. O. Sylvester-Hvid,     University of Copenhagen,     Denmark     (MC-SCRF)
+  Peter R. Taylor,          VLSCI/Univ. of Melbourne,     Australia   (Symmetry handling ABACUS, integral transformation)
+  Andrew M. Teale,          University of Nottingham,     England     (DFT-AC, DFT-D)
+  David P. Tew,             University of Bristol,        England     (CCSD(R12))
+  Olav Vahtras,             KTH Stockholm,                Sweden      (triplet response, spin-orbit, ESR, TDDFT, open-shell DFT)
+  David J. Wilson,          La Trobe University,          Australia   (DFT Hessian and DFT magnetizabilities)
+  Hans Agren,               KTH Stockholm,                Sweden      (SIRIUS module, RESPONS, MC-SCRF solvation model)
+ --------------------------------------------------------------------------------
+
+     Date and time (Linux)  : Tue Dec 14 17:35:37 2021
+     Host name              : node653                                 
+
+ * Work memory size             :   512000000 =  3.815 gigabytes.
+
+ * Directories for basis set searches:
+   1) /home/magbuk/bin/UCPH-KVM/test_systems
+   2) /home/sauer/source/DALTON-2016/build/basis
+
+
+Compilation information
+-----------------------
+
+ Who compiled             | sauer
+ Host                     | sunray
+ System                   | Linux-3.16.0-4-amd64
+ CMake generator          | Unix Makefiles
+ Processor                | x86_64
+ 64-bit integers          | OFF
+ MPI                      | OFF
+ Fortran compiler         | /opt/intel/bin/ifort
+ Fortran compiler version | ifort (IFORT) 13.0.1 20121010
+ C compiler               | /opt/intel/bin/icc
+ C compiler version       | icc (ICC) 13.0.1 20121010
+ C++ compiler             | /opt/intel/bin/icpc
+ C++ compiler version     | icpc (ICC) 13.0.1 20121010
+ BLAS                     | /opt/intel/mkl/lib/intel64/libmkl_intel_lp64.so;/o
+                          | pt/intel/mkl/lib/intel64/libmkl_sequential.so;/opt
+                          | /intel/mkl/lib/intel64/libmkl_core.so;/usr/lib/x86
+                          | _64-linux-gnu/libpthread.so;/usr/lib/x86_64-linux-
+                          | gnu/libm.so
+ LAPACK                   | /opt/intel/mkl/lib/intel64/libmkl_lapack95_lp64.a;
+                          | /opt/intel/mkl/lib/intel64/libmkl_intel_lp64.so
+ Static linking           | OFF
+ Last Git revision        | a10ef0cf7cc62686ecfeaafb7364c9b014fdc003
+ Configuration time       | 2016-10-13 16:30:54.213896
+
+
+   Content of the .dal input file
+ ----------------------------------
+
+**DALTON                                          
+.DIRECT                                           
+.RUN RESPONSE                                     
+.RUN PROPERTIES                                   
+**INTEGRALS                                       
+.DIPLEN                                           
+**WAVE FUNCTIONS                                  
+.DFT                                              
+B3LYP                                             
+*SCF INP                                          
+.MAX DIIS                                         
+300                                               
+.THRESH                                           
+1.0D-06                                           
+**RESPONSE                                        
+*LINEAR                                           
+.DIPLEN                                           
+.SINGLE RESIDUE                                   
+.ROOTS                                            
+ 10                                               
+*END OF                                           
+
+
+   Content of the .mol file
+ ----------------------------
+
+ATOMBASIS                                                                      
+./Ethanol.xyz                                                                  
+Hej Magnus                                                                     
+Atomtypes=3 Charge=0 NoSymmetry Angstrom                                       
+  6.0000     2 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                      
+C     1.011100000         0.077080000        -0.059530000                      
+C     2.525690000         0.079850000        -0.066400000                      
+  8.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                      
+O     3.005810000         1.243650000        -0.723650000                      
+  1.0000     6 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                      
+H     0.625160000        -0.805710000         0.457800000                      
+H     0.619370000         0.085560000        -1.081990000                      
+H     0.626450000         0.974410000         0.436200000                      
+H     2.917510000        -0.801850000        -0.582510000                      
+H     2.913160000         0.081420000         0.956540000                      
+H     2.664530000         1.228020000        -1.634070000                      
+
+
+       *******************************************************************
+       *********** Output from DALTON general input processing ***********
+       *******************************************************************
+
+ --------------------------------------------------------------------------------
+   Overall default print level:    0
+   Print level for DALTON.STAT:    1
+
+    AO-direct calculation (in sections where implemented)
+    HERMIT 1- and 2-electron integral sections will be executed
+    "Old" integral transformation used (limited to max 255 basis functions)
+    Wave function sections will be executed (SIRIUS module)
+    Dynamic molecular response properties section will be executed (RESPONSE module)
+    Static molecular property section will be executed (ABACUS module)
+ --------------------------------------------------------------------------------
+
+
+   ****************************************************************************
+   *************** Output of molecule and basis set information ***************
+   ****************************************************************************
+
+
+    The two title cards from your ".mol" input:
+    ------------------------------------------------------------------------
+ 1: ./Ethanol.xyz                                                           
+ 2: Hej Magnus                                                              
+    ------------------------------------------------------------------------
+
+  Coordinates are entered in Angstrom and converted to atomic units.
+          - Conversion factor : 1 bohr = 0.52917721 A
+
+  Atomic type no.    1
+  --------------------
+  Nuclear charge:   6.00000
+  Number of symmetry independent centers:    2
+  Number of basis sets to read;    2
+  The basis set is "cc-pVDZ Aux=cc-pVDZ-RI" from the basis set library.
+  Basis set file used for this atomic type with Z =   6 :
+     "/home/sauer/source/DALTON-2016/build/basis/cc-pVDZ"
+
+  Atomic type no.    2
+  --------------------
+  Nuclear charge:   8.00000
+  Number of symmetry independent centers:    1
+  Number of basis sets to read;    2
+  The basis set is "cc-pVDZ Aux=cc-pVDZ-RI" from the basis set library.
+  Basis set file used for this atomic type with Z =   8 :
+     "/home/sauer/source/DALTON-2016/build/basis/cc-pVDZ"
+
+  Atomic type no.    3
+  --------------------
+  Nuclear charge:   1.00000
+  Number of symmetry independent centers:    6
+  Number of basis sets to read;    2
+  The basis set is "cc-pVDZ Aux=cc-pVDZ-RI" from the basis set library.
+  Basis set file used for this atomic type with Z =   1 :
+     "/home/sauer/source/DALTON-2016/build/basis/cc-pVDZ"
+
+
+                         SYMGRP: Point group information
+                         -------------------------------
+
+@    Point group: C1 
+
+
+                                 Isotopic Masses
+                                 ---------------
+
+                           C          12.000000
+                           C          12.000000
+                           O          15.994915
+                           H           1.007825
+                           H           1.007825
+                           H           1.007825
+                           H           1.007825
+                           H           1.007825
+                           H           1.007825
+
+                       Total mass:    46.041865 amu
+                       Natural abundance:  97.490 %
+
+ Center-of-mass coordinates (a.u.):    4.144032    0.925249   -0.596990
+
+
+  Atoms and basis sets
+  --------------------
+
+  Number of atom types :    3
+  Total number of atoms:    9
+
+  label    atoms   charge   prim   cont     basis
+  ----------------------------------------------------------------------
+  C           2    6.0000    26    14      [9s4p1d|3s2p1d]                                    
+  O           1    8.0000    26    14      [9s4p1d|3s2p1d]                                    
+  H           6    1.0000     7     5      [4s1p|2s1p]                                        
+  ----------------------------------------------------------------------
+  total:      9   26.0000   120    72
+  ----------------------------------------------------------------------
+  Spherical harmonic basis used.
+
+  Threshold for neglecting AO integrals:  1.00D-12
+
+
+  Cartesian Coordinates (a.u.)
+  ----------------------------
+
+  Total number of coordinates:   27
+  C       :     1  x   1.9107020850    2  y   0.1456600897    3  z  -0.1124953962
+  C       :     4  x   4.7728623766    5  y   0.1508946311    6  z  -0.1254778147
+  O       :     7  x   5.6801576838    8  y   2.3501578953    9  z  -1.3675003104
+  H       :    10  x   1.1813811843   11  y  -1.5225712362   12  z   0.8651166200
+  H       :    13  x   1.1704396700   14  y   0.1616849673   15  z  -2.0446647700
+  H       :    16  x   1.1838189310   17  y   1.8413680335   18  z   0.8242985357
+  H       :    19  x   5.5132948669   20  y  -1.5152768933   21  z  -1.1007843651
+  H       :    22  x   5.5050745583   23  y   0.1538615011   24  z   1.8075986276
+  H       :    25  x   5.0352319518   26  y   2.3206214760   27  z  -3.0879447691
+
+
+   Interatomic separations (in Angstrom):
+   --------------------------------------
+
+            C           C           O           H           H           H     
+            ------      ------      ------      ------      ------      ------
+ C     :    0.000000
+ C     :    1.514608    0.000000
+ O     :    2.404331    1.420184    0.000000
+ H     :    1.093571    2.161253    3.356068    0.000000
+ H     :    1.094965    2.159980    2.676691    1.779143    0.000000
+ H     :    1.094945    2.158693    2.660657    1.780252    1.759263    0.000000
+ H     :    2.163429    1.094206    2.052264    2.517365    2.513648    3.072755
+ H     :    2.156444    1.093865    2.045092    2.504134    3.068728    2.509428
+ H     :    2.556887    1.948117    0.972410    3.559636    2.406800    2.916180
+
+            H           H           H     
+            ------      ------      ------
+ H     :    0.000000
+ H     :    1.774503    0.000000
+ H     :    2.300033    2.843900    0.000000
+
+
+  Max    interatomic separation is    3.5596 Angstrom (    6.7267 Bohr)
+  between atoms    9 and    4, "H     " and "H     ".
+
+  Min HX interatomic separation is    0.9724 Angstrom (    1.8376 Bohr)
+
+  Min YX interatomic separation is    1.4202 Angstrom (    2.6838 Bohr)
+
+
+  Bond distances (Angstrom):
+  --------------------------
+
+                  atom 1     atom 2       distance
+                  ------     ------       --------
+  bond distance:  C          C            1.514608
+  bond distance:  O          C            1.420184
+  bond distance:  H          C            1.093571
+  bond distance:  H          C            1.094965
+  bond distance:  H          C            1.094945
+  bond distance:  H          C            1.094206
+  bond distance:  H          C            1.093865
+  bond distance:  H          O            0.972410
+
+
+  Bond angles (degrees):
+  ----------------------
+
+                  atom 1     atom 2     atom 3         angle
+                  ------     ------     ------         -----
+  bond angle:     C          C          H            110.888
+  bond angle:     C          C          H            110.702
+  bond angle:     C          C          H            110.600
+  bond angle:     H          C          H            108.768
+  bond angle:     H          C          H            108.869
+  bond angle:     H          C          H            106.902
+  bond angle:     C          C          O            109.978
+  bond angle:     C          C          H            111.023
+  bond angle:     C          C          H            110.486
+  bond angle:     O          C          H            108.722
+  bond angle:     O          C          H            108.171
+  bond angle:     H          C          H            108.385
+  bond angle:     C          O          H            107.546
+
+
+
+
+ Principal moments of inertia (u*A**2) and principal axes
+ --------------------------------------------------------
+
+   IA      15.174894          0.828122    0.477066   -0.294314
+   IB      52.969915         -0.559862    0.677977   -0.476342
+   IC      60.728626         -0.027709    0.559245    0.828539
+
+
+ Rotational constants
+ --------------------
+
+               A                   B                   C
+
+          33303.6263           9540.8687           8321.9239 MHz
+            1.110889            0.318249            0.277590 cm-1
+
+
+@  Nuclear repulsion energy :   82.024065349357 Hartree
+
+
+                     .---------------------------------------.
+                     | Starting in Integral Section (HERMIT) |
+                     `---------------------------------------'
+
+
+
+ ***************************************************************************************
+ ****************** Output from **INTEGRALS input processing (HERMIT) ******************
+ ***************************************************************************************
+
+
+
+    *************************************************************************
+    ****************** Output from HERMIT input processing ******************
+    *************************************************************************
+
+
+ Default print level:        1
+
+ * Nuclear model: Point charge
+
+ Calculation of one-electron Hamiltonian integrals.
+
+ The following one-electron property integrals are calculated as requested:
+          - overlap integrals
+          - dipole length integrals
+
+ Center of mass  (bohr):      4.144031521145      0.925248919173     -0.596989762531
+ Operator center (bohr):      0.000000000000      0.000000000000      0.000000000000
+ Gauge origin    (bohr):      0.000000000000      0.000000000000      0.000000000000
+ Dipole origin   (bohr):      0.000000000000      0.000000000000      0.000000000000
+
+
+     ************************************************************************
+     ************************** Output from HERINT **************************
+     ************************************************************************
+
+  Total CPU  time used in HERMIT:   0.09 seconds
+  Total wall time used in HERMIT:   0.09 seconds
+
+
+                        .----------------------------------.
+                        | End of Integral Section (HERMIT) |
+                        `----------------------------------'
+
+
+
+                   .--------------------------------------------.
+                   | Starting in Wave Function Section (SIRIUS) |
+                   `--------------------------------------------'
+
+
+ *** Output from Huckel module :
+
+     Using EWMO model:          T
+     Using EHT  model:          F
+     Number of Huckel orbitals each symmetry:   21
+
+ EWMO - Energy Weighted Maximum Overlap - is a Huckel type method,
+        which normally is better than Extended Huckel Theory.
+ Reference: Linderberg and Ohrn, Propagators in Quantum Chemistry (Wiley, 1973)
+
+ Huckel EWMO eigenvalues for symmetry :  1
+          -20.684732     -11.354120     -11.348050      -1.855220      -1.404282
+           -1.089292      -0.891713      -0.742681      -0.674745      -0.612968
+           -0.565324      -0.493247      -0.468582      -0.233923      -0.176539
+           -0.133896      -0.127474      -0.126197      -0.117270      -0.112503
+           -0.109542
+
+ **********************************************************************
+ *SIRIUS* a direct, restricted step, second order MCSCF program       *
+ **********************************************************************
+
+ 
+     Date and time (Linux)  : Tue Dec 14 17:35:38 2021
+     Host name              : node653                                 
+
+ Title lines from ".mol" input file:
+     ./Ethanol.xyz                                                           
+     Hej Magnus                                                              
+
+ Print level on unit LUPRI =   2 is   0
+ Print level on unit LUW4  =   2 is   5
+
+@    Restricted, closed shell Kohn-Sham DFT calculation.
+
+@    Time-dependent Kohn-Sham DFT calculation (TD-DFT).
+ Fock matrices are calculated directly without use of integrals on disk.
+
+ Initial molecular orbitals are obtained according to
+ ".MOSTART EWMO  " input option
+
+     Wave function specification
+     ============================
+@    Wave function type        --- KS-DFT ---
+@    Number of closed shell electrons          26
+@    Number of electrons in active shells       0
+@    Total charge of the molecule               0
+
+@    Spin multiplicity and 2 M_S                1         0
+@    Total number of symmetries                 1 (point group: C1 )
+@    Reference state symmetry                   1 (irrep name : A  )
+ 
+     This is a DFT calculation of type: B3LYP
+ Weighted mixed functional:
+               HF exchange:    0.20000
+                       VWN:    0.19000
+                       LYP:    0.81000
+                     Becke:    0.72000
+                    Slater:    0.80000
+
+     Orbital specifications
+     ======================
+@    Abelian symmetry species          All |    1
+@                                          |  A  
+                                       --- |  ---
+@    Occupied SCF orbitals              13 |   13
+@    Secondary orbitals                 59 |   59
+@    Total number of orbitals           72 |   72
+@    Number of basis functions          72 |   72
+
+     Optimization information
+     ========================
+@    Number of configurations                 1
+@    Number of orbital rotations            767
+     ------------------------------------------
+@    Total number of variables              768
+
+     Maximum number of Fock   iterations      0
+     Maximum number of DIIS   iterations    300
+     Maximum number of QC-SCF iterations     60
+     Threshold for SCF convergence     1.00D-06
+ 
+     This is a DFT calculation of type: B3LYP
+ Weighted mixed functional:
+               HF exchange:    0.20000
+                       VWN:    0.19000
+                       LYP:    0.81000
+                     Becke:    0.72000
+                    Slater:    0.80000
+
+
+ ***********************************************
+ ***** DIIS acceleration of SCF iterations *****
+ ***********************************************
+
+ C1-DIIS algorithm; max error vectors =    8
+
+ Iter      Total energy        Error norm    Delta(E)  DIIS dim.
+ -----------------------------------------------------------------------------
+   1  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)   -7    1    F  1.54D+00  1.54D+00
+      K-S energy, electrons, error :    -17.107923370206  25.9999950891   -4.91D-06
+@  1    -154.352485364        2.95732D+00   -1.54D+02    1
+      Virial theorem: -V/T =      2.013289
+@      MULPOP C       0.42; C       0.86; O      -0.68; H      -0.12; H      -0.14; H      -0.15; H      -0.21; H      -0.21; H       0.24; 
+   1  Level shift: doubly occupied orbital energies shifted by -2.00D-01
+ -----------------------------------------------------------------------------
+   2  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)   -8    2    F  1.59D+00  1.60D+00
+      K-S energy, electrons, error :    -17.574444152823  25.9999942573   -5.74D-06
+@  2    -154.653059199        2.34502D+00   -3.01D-01    2
+      Virial theorem: -V/T =      2.000146
+@      MULPOP C      -0.46; C      -0.57; O       0.20; H       0.14; H       0.15; H       0.17; H       0.15; H       0.17; H       0.05; 
+   2  Level shift: doubly occupied orbital energies shifted by -2.00D-01
+ -----------------------------------------------------------------------------
+   3  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)   -8    3    F  1.61D+00  1.61D+00
+      K-S energy, electrons, error :    -17.557524701915  25.9999945955   -5.40D-06
+@  3    -154.938485017        3.70766D-01   -2.85D-01    3
+      Virial theorem: -V/T =      2.001845
+@      MULPOP C      -0.13; C       0.05; O      -0.27; H       0.04; H       0.04; H       0.06; H       0.03; H       0.05; H       0.14; 
+   3  Level shift: doubly occupied orbital energies shifted by -5.00D-02
+ -----------------------------------------------------------------------------
+   4  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)   -9    4    F  1.62D+00  1.62D+00
+      K-S energy, electrons, error :    -17.422548442840  25.9999945870   -5.41D-06
+@  4    -154.943720159        2.55652D-01   -5.24D-03    4
+      Virial theorem: -V/T =      2.008833
+@      MULPOP C       0.01; C       0.14; O      -0.23; H      -0.01; H      -0.01; H       0.01; H      -0.02; H       0.01; H       0.11; 
+   4  Level shift: doubly occupied orbital energies shifted by -5.00D-02
+ -----------------------------------------------------------------------------
+   5  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)   -9    5    F  1.61D+00  1.62D+00
+      K-S energy, electrons, error :    -17.476200928839  25.9999946024   -5.40D-06
+@  5    -154.946914193        2.88006D-02   -3.19D-03    5
+      Virial theorem: -V/T =      2.005867
+@      MULPOP C      -0.04; C       0.13; O      -0.28; H       0.01; H       0.01; H       0.02; H      -0.00; H       0.02; H       0.14; 
+   5  Level shift: doubly occupied orbital energies shifted by -1.25D-02
+ -----------------------------------------------------------------------------
+   6  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -10    6    F  1.62D+00  1.62D+00
+      K-S energy, electrons, error :    -17.474628088455  25.9999946039   -5.40D-06
+@  6    -154.946954817        5.98775D-03   -4.06D-05    6
+      Virial theorem: -V/T =      2.005978
+@      MULPOP C      -0.04; C       0.13; O      -0.28; H       0.01; H       0.01; H       0.03; H      -0.00; H       0.02; H       0.13; 
+ -----------------------------------------------------------------------------
+   7  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -10    7    F  1.58D+00  1.58D+00
+      K-S energy, electrons, error :    -17.474852292186  25.9999946036   -5.40D-06
+@  7    -154.946956656        2.10735D-03   -1.84D-06    7
+      Virial theorem: -V/T =      2.005968
+@      MULPOP C      -0.04; C       0.12; O      -0.28; H       0.01; H       0.01; H       0.03; H      -0.00; H       0.02; H       0.13; 
+ -----------------------------------------------------------------------------
+   8  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -11    8    F  1.58D+00  1.58D+00
+      K-S energy, electrons, error :    -17.474876144655  25.9999946033   -5.40D-06
+@  8    -154.946956917        4.77532D-04   -2.61D-07    8
+      Virial theorem: -V/T =      2.005968
+@      MULPOP C      -0.04; C       0.12; O      -0.28; H       0.01; H       0.01; H       0.03; H      -0.00; H       0.02; H       0.13; 
+ -----------------------------------------------------------------------------
+   9  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -12    9    F  1.58D+00  1.59D+00
+      K-S energy, electrons, error :    -17.474878470557  25.9999946034   -5.40D-06
+@  9    -154.946956931        7.68779D-05   -1.44D-08    8
+      Virial theorem: -V/T =      2.005967
+@      MULPOP C      -0.04; C       0.12; O      -0.28; H       0.01; H       0.01; H       0.03; H      -0.00; H       0.02; H       0.13; 
+ -----------------------------------------------------------------------------
+  10  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -12   10    F  1.58D+00  1.58D+00
+      K-S energy, electrons, error :    -17.474877122675  25.9999946034   -5.40D-06
+@ 10    -154.946956931        7.83192D-06   -4.21D-10    8
+      Virial theorem: -V/T =      2.005967
+@      MULPOP C      -0.04; C       0.12; O      -0.28; H       0.01; H       0.01; H       0.03; H      -0.00; H       0.02; H       0.13; 
+ -----------------------------------------------------------------------------
+  11  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -12   11    F  1.58D+00  1.58D+00
+      K-S energy, electrons, error :    -17.474876390868  25.9999946034   -5.40D-06
+@ 11    -154.946956931        2.90189D-06   -4.32D-12    8
+      Virial theorem: -V/T =      2.005967
+@      MULPOP C      -0.04; C       0.12; O      -0.28; H       0.01; H       0.01; H       0.03; H      -0.00; H       0.02; H       0.13; 
+ -----------------------------------------------------------------------------
+  12  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -12   12    F  1.58D+00  1.59D+00
+      K-S energy, electrons, error :    -17.474876519585  25.9999946034   -5.40D-06
+@ 12    -154.946956931        4.71314D-07   -2.56D-13    8
+
+@ *** DIIS converged in  12 iterations !
+@     Converged SCF energy, gradient:   -154.946956931442    4.71D-07
+    - total time used in SIRFCK :              0.00 seconds
+
+
+ *** SCF orbital energy analysis ***
+
+ Only the 20 lowest virtual orbital energies printed in each symmetry.
+
+ Number of electrons :   26
+ Orbital occupations :   13
+
+ Sym       Kohn-Sham orbital energies
+
+1 A     -19.12245235   -10.22277656   -10.17471245    -1.00666585    -0.74199922
+         -0.61721451    -0.49283086    -0.44824312    -0.42450261    -0.37735298
+         -0.36411790    -0.31486650    -0.25841095     0.05485540     0.09233938
+          0.11141681     0.12669730     0.13908999     0.16080099     0.21187789
+          0.23898092     0.41756297     0.43860722     0.47296634     0.50348035
+          0.54479115     0.57735215     0.61674428     0.65378063     0.65864380
+          0.66356577     0.66745133     0.69769560
+
+    E(LUMO) :     0.05485540 au (symmetry 1)
+  - E(HOMO) :    -0.25841095 au (symmetry 1)
+  ------------------------------------------
+    gap     :     0.31326635 au
+
+ --- Writing SIRIFC interface file
+
+ CPU and wall time for SCF :      38.704      38.923
+
+
+                       .-----------------------------------.
+                       | --- Final results from SIRIUS --- |
+                       `-----------------------------------'
+
+
+@    Spin multiplicity:           1
+@    Spatial symmetry:            1 ( irrep  A   in C1  )
+@    Total charge of molecule:    0
+
+@    Final DFT energy:           -154.946956931442                 
+@    Nuclear repulsion:            82.024065349357
+@    Electronic energy:          -236.971022280799
+
+@    Final gradient norm:           0.000000471314
+
+ 
+     Date and time (Linux)  : Tue Dec 14 17:36:17 2021
+     Host name              : node653                                 
+
+File label for MO orbitals:  14Dec21   FOCKDIIS
+
+ (Only coefficients > 0.0100 are printed.)
+
+ Molecular orbitals for symmetry species 1  (A  )
+ ------------------------------------------------
+
+    Orbital         4        5        6        7        8        9       10
+   1 C   :1s     0.0044   0.0191  -0.0090  -0.0003   0.0024  -0.0015   0.0010
+   2 C   :1s    -0.0660  -0.6237   0.4386  -0.0776   0.0094   0.0376   0.0318
+   3 C   :1s     0.0083   0.1984  -0.1504   0.0248  -0.0242  -0.0182   0.0034
+   4 C   :2px   -0.0393  -0.0882  -0.1707   0.1271   0.0028  -0.4104   0.2974
+   5 C   :2py   -0.0097   0.0090   0.0125  -0.1844   0.1055  -0.3184  -0.5092
+   6 C   :2pz    0.0075  -0.0036  -0.0228  -0.0951  -0.3865  -0.0224   0.0196
+   7 C   :2px    0.0031   0.0319   0.0289  -0.0242  -0.0118   0.0792  -0.0491
+   8 C   :2py   -0.0036   0.0039   0.0047   0.0487  -0.0300   0.0502   0.1084
+   9 C   :2pz   -0.0023  -0.0026   0.0022   0.0233   0.0854   0.0029  -0.0204
+  10 C   :3d2-  -0.0021   0.0018   0.0010  -0.0083   0.0004   0.0010   0.0125
+  11 C   :3d1-  -0.0008  -0.0003  -0.0012  -0.0028   0.0030  -0.0050  -0.0120
+  14 C   :3d2+  -0.0063  -0.0095  -0.0105   0.0054   0.0033  -0.0110   0.0062
+  15 C   :1s     0.0094   0.0127   0.0017  -0.0012   0.0004  -0.0030   0.0010
+  16 C   :1s    -0.3035  -0.4742  -0.5471   0.1354   0.0151  -0.1435  -0.0017
+  17 C   :1s     0.1311   0.1113   0.1939  -0.0579   0.0270   0.0400   0.0252
+  18 C   :2px   -0.0402   0.1507  -0.1958  -0.0665  -0.0044   0.4103  -0.3402
+  19 C   :2py   -0.1345   0.0542   0.0170  -0.4449   0.1460  -0.1400   0.1506
+  20 C   :2pz    0.0873  -0.0425  -0.0522  -0.1433  -0.4834  -0.1072  -0.0656
+  21 C   :2px    0.0145  -0.0208   0.0370   0.0045  -0.0110  -0.0780   0.0697
+  22 C   :2py    0.0531  -0.0169  -0.0016   0.0855  -0.0265   0.0514  -0.0322
+  23 C   :2pz   -0.0232   0.0157   0.0101   0.0255   0.0940   0.0298   0.0227
+  24 C   :3d2-  -0.0105   0.0008  -0.0068  -0.0135   0.0031   0.0214   0.0203
+  25 C   :3d1-   0.0222  -0.0035  -0.0011   0.0081  -0.0115   0.0035  -0.0093
+  26 C   :3d0    0.0016   0.0087  -0.0016   0.0154  -0.0064  -0.0042  -0.0118
+  28 C   :3d2+   0.0112  -0.0146   0.0117   0.0097  -0.0083  -0.0043  -0.0031
+  30 O   :1s    -0.8218   0.2534   0.1303  -0.1533  -0.0900   0.1465   0.0887
+  31 O   :1s     0.0859  -0.0175  -0.0279  -0.0400  -0.0392   0.0418   0.0319
+  32 O   :2px    0.0936   0.0193  -0.0383  -0.0283  -0.1341   0.3567  -0.1309
+  33 O   :2py    0.1195   0.0615   0.1835   0.0585  -0.3396  -0.0976   0.0562
+  34 O   :2pz    0.0505  -0.1190  -0.2701  -0.5150   0.1816   0.1547   0.2110
+  35 O   :2px   -0.0321   0.0043   0.0161   0.0100   0.0021  -0.0094   0.0057
+  36 O   :2py   -0.0273  -0.0006  -0.0133  -0.0291   0.0282   0.0145   0.0137
+  37 O   :2pz   -0.0401   0.0324   0.0551   0.0836  -0.0400  -0.0318  -0.0208
+  40 O   :3d0   -0.0014   0.0039   0.0053   0.0037  -0.0114  -0.0011  -0.0034
+  43 H   :1s    -0.0130  -0.2275   0.2214   0.0087  -0.2377   0.3911   0.3485
+  44 H   :1s     0.0024   0.1014  -0.0805  -0.0036   0.0635  -0.1066  -0.0690
+  45 H   :2px   -0.0012  -0.0074   0.0025   0.0020  -0.0046   0.0006   0.0115
+  46 H   :2py   -0.0012  -0.0153   0.0124  -0.0035  -0.0074   0.0085   0.0004
+  48 H   :1s    -0.0184  -0.2202   0.2528   0.0053   0.3228   0.1769  -0.1258
+  49 H   :1s     0.0091   0.0916  -0.0972   0.0048  -0.0860  -0.0563   0.0179
+  51 H   :2py   -0.0004  -0.0001   0.0000  -0.0038   0.0030  -0.0072  -0.0126
+  52 H   :2pz   -0.0015  -0.0167   0.0155  -0.0020   0.0072   0.0085  -0.0044
+  53 H   :1s    -0.0142  -0.2185   0.2300  -0.2331  -0.0779  -0.0903  -0.5058
+  54 H   :1s     0.0077   0.0956  -0.0909   0.0701   0.0182   0.0316   0.1228
+  56 H   :2py    0.0012   0.0147  -0.0134   0.0073   0.0064  -0.0035   0.0068
+  57 H   :2pz    0.0011   0.0083  -0.0073   0.0049  -0.0064   0.0012   0.0109
+  58 H   :1s    -0.0678  -0.1623  -0.2680   0.3912   0.0966   0.2034  -0.2209
+  59 H   :1s     0.0333   0.0714   0.1044  -0.1300  -0.0313  -0.0381   0.0462
+  61 H   :2py   -0.0085  -0.0092  -0.0132   0.0095   0.0051   0.0052  -0.0036
+  63 H   :1s    -0.0651  -0.1712  -0.3048  -0.0450  -0.3895  -0.0420  -0.1967
+  64 H   :1s     0.0272   0.0722   0.1214   0.0188   0.1194   0.0142   0.0433
+  67 H   :2pz    0.0074   0.0121   0.0179  -0.0002   0.0100  -0.0016   0.0066
+  68 H   :1s    -0.3043   0.1713   0.2827   0.4147  -0.1734  -0.2075  -0.1365
+  69 H   :1s     0.1438  -0.0706  -0.1051  -0.1329   0.0349   0.0690   0.0243
+  70 H   :2px   -0.0106   0.0068   0.0063   0.0098  -0.0112   0.0063  -0.0076
+  71 H   :2py    0.0028   0.0007   0.0031  -0.0022  -0.0136  -0.0025   0.0012
+  72 H   :2pz   -0.0337   0.0143   0.0189   0.0196  -0.0054  -0.0111  -0.0016
+
+    Orbital        11       12       13       14       15       16       17
+   1 C   :1s     0.0018   0.0007  -0.0011  -0.0303  -0.0302  -0.0446  -0.0039
+   2 C   :1s     0.0168  -0.0666  -0.1343   0.1421   0.1540   0.2019   0.0126
+   3 C   :1s    -0.0208  -0.0418  -0.0809   0.8336   1.0762   1.4427   0.1814
+   4 C   :2px   -0.0208  -0.2291  -0.2819  -0.1812  -0.1316  -0.0759  -0.0054
+   5 C   :2py    0.0343  -0.1777  -0.0370  -0.0179  -0.0379   0.1222  -0.2298
+   6 C   :2pz    0.5155  -0.0737   0.0559  -0.1065   0.1907  -0.1177  -0.2650
+   7 C   :2px   -0.0145   0.0244   0.0487  -0.2708  -0.1564   0.0052   0.0260
+   8 C   :2py   -0.0013   0.0824   0.0433   0.0486  -0.0260   0.1489  -0.3042
+   9 C   :2pz   -0.0977   0.0477  -0.0770  -0.1439   0.1860  -0.1736  -0.3349
+  10 C   :3d2-  -0.0001   0.0141  -0.0018  -0.0084   0.0093   0.0099   0.0013
+  12 C   :3d0   -0.0118   0.0064  -0.0009   0.0011  -0.0063   0.0053  -0.0002
+  13 C   :3d1+  -0.0188   0.0105  -0.0060   0.0073  -0.0055  -0.0049  -0.0178
+  15 C   :1s     0.0002   0.0018  -0.0011  -0.0302  -0.0099   0.0382  -0.0040
+  16 C   :1s     0.0048   0.0335  -0.0162   0.0502   0.2125  -0.1798   0.0931
+  17 C   :1s     0.0219  -0.0301  -0.0174   0.8377   0.6378  -1.3494   0.2255
+  18 C   :2px    0.0157   0.2368   0.2230   0.0537   0.2011  -0.0153   0.1036
+  19 C   :2py    0.0641   0.3055  -0.1301  -0.2220   0.0667   0.2553  -0.1326
+  20 C   :2pz   -0.3289   0.2260  -0.0954   0.0408   0.1362  -0.1265  -0.3927
+  21 C   :2px   -0.0238  -0.0907  -0.0911   0.0651   0.2660   0.0105   0.1551
+  22 C   :2py   -0.0248  -0.1390   0.0186  -0.1586  -0.0252   0.3160  -0.2228
+  23 C   :2pz    0.0659  -0.0872   0.0771  -0.0336   0.3134  -0.1478  -0.5127
+  24 C   :3d2-   0.0010   0.0041  -0.0178  -0.0008  -0.0032  -0.0086   0.0053
+  25 C   :3d1-  -0.0119  -0.0206   0.0052  -0.0115   0.0140   0.0012   0.0096
+  26 C   :3d0   -0.0013   0.0238  -0.0050  -0.0013  -0.0017  -0.0038   0.0020
+  27 C   :3d1+  -0.0274   0.0084   0.0100  -0.0010   0.0021   0.0074   0.0140
+  28 C   :3d2+  -0.0050  -0.0026  -0.0302  -0.0034   0.0070   0.0060   0.0030
+  29 O   :1s     0.0025   0.0037  -0.0029  -0.0118   0.0142   0.0018   0.0108
+  30 O   :1s    -0.0811  -0.2079  -0.0075   0.1778  -0.1504  -0.0637  -0.1284
+  31 O   :1s    -0.0387  -0.0994   0.0379   0.3793  -0.4018  -0.1063  -0.3463
+  32 O   :2px   -0.1075  -0.3723  -0.6957  -0.1535   0.0407  -0.0231   0.0635
+  33 O   :2py   -0.3861  -0.4346   0.4086  -0.0034   0.1111   0.0519   0.1005
+  34 O   :2pz   -0.0672  -0.2488   0.2552  -0.2523   0.1826  -0.0073   0.1046
+  35 O   :2px    0.0057  -0.0030  -0.0457  -0.0540   0.0004   0.0117   0.0246
+  36 O   :2py    0.0069  -0.0204   0.0153   0.0532   0.0056  -0.0018   0.0809
+  37 O   :2pz   -0.0108   0.0321   0.0181  -0.1470   0.0924  -0.0042   0.1064
+  42 O   :3d2+  -0.0059  -0.0015   0.0102   0.0000  -0.0025   0.0028  -0.0031
+  43 H   :1s     0.2504   0.1910   0.1355  -0.0982   0.0494   0.0604   0.0774
+  44 H   :1s    -0.0534  -0.0205   0.0341  -0.3531  -0.8274  -0.1443  -0.2262
+  48 H   :1s    -0.5083   0.1571  -0.0383  -0.0062  -0.0459  -0.0870  -0.1519
+  49 H   :1s     0.1056   0.0244   0.0051  -0.7006  -0.0331  -1.0172  -0.8813
+  53 H   :1s     0.2870  -0.1788   0.0557  -0.0056  -0.0967  -0.0758   0.0763
+  54 H   :1s    -0.0752  -0.0105   0.0541  -0.3059  -0.6501  -0.7820   0.9497
+  58 H   :1s     0.1077  -0.3114   0.3379  -0.0421   0.0400   0.0855  -0.1161
+  59 H   :1s    -0.0202   0.0204  -0.0333  -0.5956  -0.2401   0.9592  -1.2769
+  60 H   :2px   -0.0011   0.0115   0.0002   0.0021   0.0057   0.0059  -0.0003
+  63 H   :1s    -0.3137   0.3886  -0.0280   0.0293  -0.1064   0.1010   0.1069
+  64 H   :1s     0.0667  -0.0528  -0.0107  -0.2511  -1.0121   0.8709   0.8347
+  68 H   :1s     0.0274   0.3213  -0.0044  -0.1627   0.1923   0.0238   0.0966
+  69 H   :1s    -0.0435  -0.1157  -0.0010  -0.7505   0.7362   0.0230   0.4585
+  70 H   :2px   -0.0007  -0.0050  -0.0257  -0.0004   0.0034   0.0031   0.0027
+  71 H   :2py   -0.0144  -0.0126   0.0143   0.0015   0.0114  -0.0013   0.0058
+  72 H   :2pz    0.0023   0.0109   0.0081   0.0052  -0.0036   0.0004   0.0051
+
+    Orbital        18       19       20       21       22       23
+   1 C   :1s     0.0097   0.0041   0.0332   0.0486  -0.0039   0.0313
+   2 C   :1s    -0.0515  -0.0128   0.0026  -0.0216  -0.0147   0.1954
+   3 C   :1s    -0.2824  -0.1059  -0.7330  -1.3991  -0.0261   0.5586
+   4 C   :2px    0.0572   0.0242   0.0135  -0.4492  -0.0221   0.5955
+   5 C   :2py    0.4496  -0.2226  -0.0255   0.0693   0.1605  -0.2323
+   6 C   :2pz   -0.2503  -0.3526   0.0855  -0.0734   0.2305   0.1468
+   7 C   :2px    0.0519  -0.0018  -0.4835  -1.7779   0.0729  -0.7963
+   8 C   :2py    0.8649  -0.5452  -0.4568  -0.0448  -0.4883   0.7446
+   9 C   :2pz   -0.5051  -0.8332   0.3904  -0.0045  -0.6637  -0.5037
+  10 C   :3d2-   0.0071   0.0062   0.0307  -0.0104  -0.0500   0.0157
+  11 C   :3d1-  -0.0048   0.0036   0.0031   0.0090   0.0646  -0.0531
+  12 C   :3d0   -0.0040  -0.0053  -0.0008  -0.0094  -0.0835  -0.0806
+  13 C   :3d1+  -0.0046   0.0083  -0.0091   0.0021  -0.0878  -0.0220
+  14 C   :3d2+   0.0044  -0.0037   0.0088   0.0231  -0.0576   0.0565
+  15 C   :1s    -0.0066   0.0007  -0.0271  -0.0338  -0.0091   0.0521
+  16 C   :1s     0.1795   0.0311   0.2404   0.0996  -0.0365   0.1789
+  17 C   :1s     0.5527   0.0603   1.1385   1.4347   0.0509  -0.1179
+  18 C   :2px    0.0820   0.0125   0.0056  -0.5966   0.0636  -0.6367
+  19 C   :2py    0.0502   0.2199   0.4398   0.0207  -0.0249   0.0516
+  20 C   :2pz   -0.0134   0.3604  -0.2182  -0.0100  -0.0435  -0.0671
+  21 C   :2px    0.1923   0.0184  -0.0805  -1.6167  -0.0682   1.3665
+  22 C   :2py   -0.2582   0.4530   1.0639   0.0259   0.1038  -0.6250
+  23 C   :2pz    0.2023   0.7777  -0.5758  -0.0555  -0.0542   0.4509
+  24 C   :3d2-  -0.0186   0.0084  -0.0170   0.0079   0.0443  -0.0128
+  25 C   :3d1-   0.0053   0.0020   0.0253   0.0023  -0.0310  -0.0460
+  26 C   :3d0    0.0001  -0.0025   0.0098   0.0087   0.0616  -0.0535
+  27 C   :3d1+   0.0116   0.0104   0.0012   0.0027   0.0898   0.0171
+  28 C   :3d2+   0.0064   0.0016   0.0156  -0.0103   0.0298   0.0587
+  29 O   :1s    -0.0047   0.0004   0.0274   0.0073   0.0055  -0.0190
+  30 O   :1s    -0.1012  -0.0405  -0.1249   0.0386   0.0411  -0.0484
+  31 O   :1s    -0.0260  -0.0526  -0.6808  -0.0800  -0.0208   0.2481
+  32 O   :2px    0.1113   0.0114   0.0997   0.1056   0.0031  -0.0475
+  33 O   :2py    0.1110  -0.0658   0.3940  -0.0714   0.0975  -0.0203
+  34 O   :2pz   -0.0425  -0.0719  -0.3697   0.1400   0.0435  -0.0096
+  35 O   :2px    0.0080   0.0064   0.1478   0.1667   0.0218  -0.2119
+  36 O   :2py    0.0215  -0.0387   0.3537  -0.0687   0.0009  -0.0136
+  37 O   :2pz   -0.0090  -0.0837  -0.3235   0.0894   0.0014  -0.0312
+  38 O   :3d2-   0.0004  -0.0029  -0.0003   0.0103   0.0045  -0.0010
+  42 O   :3d2+   0.0003   0.0017  -0.0015  -0.0020  -0.0021   0.0100
+  43 H   :1s     0.2105  -0.0036   0.0882  -0.2264  -0.0154   0.2278
+  44 H   :1s     1.9032  -0.0018  -0.3711  -0.0935   0.0023  -0.0983
+  45 H   :2px   -0.0009  -0.0006  -0.0284  -0.0110  -0.0026   0.0068
+  46 H   :2py    0.0013  -0.0067   0.0000   0.0077  -0.0224  -0.0031
+  47 H   :2pz   -0.0005  -0.0093  -0.0004  -0.0047  -0.0383  -0.0026
+  48 H   :1s    -0.0855  -0.1181  -0.0371  -0.1323  -0.9905  -0.6443
+  49 H   :1s    -0.6550  -1.1874   0.5802  -0.4810   0.8582   0.3617
+  50 H   :2px   -0.0011  -0.0041   0.0050  -0.0079   0.0339  -0.0218
+  51 H   :2py    0.0069  -0.0041  -0.0048   0.0015  -0.0259   0.0197
+  52 H   :2pz   -0.0010  -0.0003   0.0006   0.0076   0.0261   0.0101
+  53 H   :1s    -0.0930   0.1326  -0.1234  -0.0871   1.0636  -0.4958
+  54 H   :1s    -0.6776   1.3536   0.1898  -0.3262  -0.8445   0.2443
+  55 H   :2px   -0.0013   0.0054   0.0151  -0.0135  -0.0290  -0.0252
+  56 H   :2py    0.0031   0.0023  -0.0004  -0.0052   0.0329   0.0077
+  57 H   :2pz   -0.0045  -0.0041   0.0016  -0.0040  -0.0024  -0.0209
+  58 H   :1s    -0.0209   0.0122   0.1699   0.0518  -0.5981  -0.4415
+  59 H   :1s    -0.4336   1.1657   0.1568   0.3616   0.5693   0.1895
+  60 H   :2px    0.0046  -0.0061   0.0065  -0.0149  -0.0647   0.0278
+  61 H   :2py    0.0023   0.0016   0.0074  -0.0043   0.0305  -0.0037
+  62 H   :2pz   -0.0012   0.0013  -0.0177  -0.0081   0.0008   0.0205
+  63 H   :1s    -0.0400  -0.0306   0.1347   0.1190   0.6687  -0.3437
+  64 H   :1s    -0.5219  -1.2680  -0.0228   0.3934  -0.5927   0.0439
+  65 H   :2px    0.0048   0.0052   0.0009  -0.0122   0.0657   0.0382
+  66 H   :2py    0.0012   0.0031   0.0196   0.0032  -0.0109  -0.0266
+  67 H   :2pz   -0.0006   0.0007   0.0026   0.0085   0.0290   0.0038
+  68 H   :1s     0.0009   0.0534  -0.0664   0.0480   0.0375  -0.1798
+  69 H   :1s     0.1334   0.0466  -0.7370   0.3617  -0.1896   0.1701
+  70 H   :2px   -0.0011   0.0096   0.0130   0.0177  -0.0254  -0.0119
+  71 H   :2py    0.0089   0.0027   0.0057  -0.0060  -0.0260   0.0116
+
+  Total CPU  time used in SIRIUS :  38.75 seconds
+  Total wall time used in SIRIUS :  39.43 seconds
+
+ 
+     Date and time (Linux)  : Tue Dec 14 17:36:17 2021
+     Host name              : node653                                 
+
+
+                     .---------------------------------------.
+                     | End of Wave Function Section (SIRIUS) |
+                     `---------------------------------------'
+
+
+
+                 .------------------------------------------------.
+                 | Starting in Dynamic Property Section (RESPONS) |
+                 `------------------------------------------------'
+
+
+ ------------------------------------------------------------------------------
+  RESPONSE  -  an MCSCF, MC-srDFT, DFT, and SOPPA response property program
+ ------------------------------------------------------------------------------
+
+
+ -------- OUTPUT FROM RESPONSE INPUT PROCESSING --------
+
+
+
+
+  Linear Response single residue calculation
+ -------------------------------------------
+
+
+    3 input options by user.
+
+ Print level                                    : IPRPP  =   2
+ Maximum number of iterations for eigenval.eqs. : MAXITP =  60
+ Threshold for convergence of eigenvalue eqs.   : THCPP  = 1.000D-03
+ Maximum iterations in optimal orbital algorithm: MAXITO =   5
+
+     10 Excitation energies are calculated for symmetry no.    1
+
+      3 property residues are calculated with labels:
+
+               XDIPLEN 
+               YDIPLEN 
+               ZDIPLEN 
+
+
+   SCF energy         :     -154.946956931441889
+ -- inactive part     :     -236.971022280799247
+ -- nuclear repulsion :       82.024065349357357
+
+
+                    *****************************************
+                    *** DFT response calculation (TD-DFT) ***
+                    *****************************************
+
+ ----------------------------------------------------------------
+ ----- Linear response calculation
+ ----- Symmetry of excitation/property operator(s)    1  ( A  )
+ ----------------------------------------------------------------
+
+ Number of excitations of this symmetry           10
+ Number of response properties of this symmetry    0
+ Number of C6/C8 properties of this symmetry       0
+
+
+ Perturbation symmetry.     KSYMOP:       1
+ Perturbation spin symmetry.TRPLET:       F
+ Orbital variables.         KZWOPT:     767
+ Configuration variables.   KZCONF:       0
+ Total number of variables. KZVAR :     767
+ Electrons in DFTMOMO:   25.99999460338035
+
+
+
+ --- EXCITATION ENERGIES AND TRANSITION MOMENT CALCULATION (MCTDHF) ---
+
+ Operator symmetry = 1  ( A  ); triplet =   F
+
+
+ *** THE REQUESTED   10 SOLUTION VECTORS CONVERGED
+
+ Convergence of RSP solution vectors, threshold = 1.00D-03
+ ---------------------------------------------------------------
+ (dimension of paired reduced space:   98)
+ RSP solution vector no.    1; norm of residual   2.03D-04
+ RSP solution vector no.    2; norm of residual   3.31D-04
+ RSP solution vector no.    3; norm of residual   1.26D-04
+ RSP solution vector no.    4; norm of residual   3.63D-04
+ RSP solution vector no.    5; norm of residual   2.05D-04
+ RSP solution vector no.    6; norm of residual   2.37D-04
+ RSP solution vector no.    7; norm of residual   5.00D-04
+ RSP solution vector no.    8; norm of residual   3.74D-04
+ RSP solution vector no.    9; norm of residual   3.16D-04
+ RSP solution vector no.   10; norm of residual   2.62D-04
+
+ *** RSPCTL MICROITERATIONS CONVERGED
+
+@ Transition operator type:    XDIPLEN 
+@ STATE NO:    1 *TRANSITION MOMENT:  0.15172482     *ENERGY(eV):   7.1384133    
+@ STATE NO:    2 *TRANSITION MOMENT: -0.10840516     *ENERGY(eV):   8.3995719    
+@ STATE NO:    3 *TRANSITION MOMENT: -0.19391397     *ENERGY(eV):   8.8339571    
+@ STATE NO:    4 *TRANSITION MOMENT:  0.33386758     *ENERGY(eV):   8.9837627    
+@ STATE NO:    5 *TRANSITION MOMENT: -0.27246129     *ENERGY(eV):   9.3505488    
+@ STATE NO:    6 *TRANSITION MOMENT: -0.21330265     *ENERGY(eV):   9.8137175    
+@ STATE NO:    7 *TRANSITION MOMENT: -0.12950823     *ENERGY(eV):   9.9367410    
+@ STATE NO:    8 *TRANSITION MOMENT:  2.84562692E-02 *ENERGY(eV):   10.251263    
+@ STATE NO:    9 *TRANSITION MOMENT:  9.95048123E-02 *ENERGY(eV):   10.285108    
+@ STATE NO:   10 *TRANSITION MOMENT:  0.23134578     *ENERGY(eV):   10.516718    
+
+@ Transition operator type:    YDIPLEN 
+@ STATE NO:    1 *TRANSITION MOMENT:  9.93638754E-02 *ENERGY(eV):   7.1384133    
+@ STATE NO:    2 *TRANSITION MOMENT: -0.21380582     *ENERGY(eV):   8.3995719    
+@ STATE NO:    3 *TRANSITION MOMENT: -5.07099294E-02 *ENERGY(eV):   8.8339571    
+@ STATE NO:    4 *TRANSITION MOMENT: -0.18448361     *ENERGY(eV):   8.9837627    
+@ STATE NO:    5 *TRANSITION MOMENT:  0.42208389     *ENERGY(eV):   9.3505488    
+@ STATE NO:    6 *TRANSITION MOMENT: -0.23821011     *ENERGY(eV):   9.8137175    
+@ STATE NO:    7 *TRANSITION MOMENT:  1.70272943E-02 *ENERGY(eV):   9.9367410    
+@ STATE NO:    8 *TRANSITION MOMENT: -0.18388108     *ENERGY(eV):   10.251263    
+@ STATE NO:    9 *TRANSITION MOMENT:  8.30301770E-02 *ENERGY(eV):   10.285108    
+@ STATE NO:   10 *TRANSITION MOMENT:  0.26560879     *ENERGY(eV):   10.516718    
+
+@ Transition operator type:    ZDIPLEN 
+@ STATE NO:    1 *TRANSITION MOMENT: -3.88099061E-02 *ENERGY(eV):   7.1384133    
+@ STATE NO:    2 *TRANSITION MOMENT:  7.82695057E-02 *ENERGY(eV):   8.3995719    
+@ STATE NO:    3 *TRANSITION MOMENT: -0.12828716     *ENERGY(eV):   8.8339571    
+@ STATE NO:    4 *TRANSITION MOMENT: -9.13219652E-02 *ENERGY(eV):   8.9837627    
+@ STATE NO:    5 *TRANSITION MOMENT:  0.15958926     *ENERGY(eV):   9.3505488    
+@ STATE NO:    6 *TRANSITION MOMENT:  0.16357775     *ENERGY(eV):   9.8137175    
+@ STATE NO:    7 *TRANSITION MOMENT: -0.26303346     *ENERGY(eV):   9.9367410    
+@ STATE NO:    8 *TRANSITION MOMENT:  0.38642443     *ENERGY(eV):   10.251263    
+@ STATE NO:    9 *TRANSITION MOMENT: -0.10771041     *ENERGY(eV):   10.285108    
+@ STATE NO:   10 *TRANSITION MOMENT:  0.36944168     *ENERGY(eV):   10.516718    
+
+
+ **************************************************************************************
+ *** @ Excit. operator sym 1 & ref. state sym 1 => excited state symmetry 1  ( A  ) ***
+ **************************************************************************************
+
+
+
+ @ Excited state no:    1 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.26233187     au
+@                      7.1384133     eV;   57575.190     cm-1;   688.75222     kJ / mol
+
+@ Total energy :      -154.68463     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  4.02599331E-03  (Transition moment :  0.15172482     )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.72669981E-03  (Transition moment :  9.93638754E-02 )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  2.63417716E-04  (Transition moment : -3.88099061E-02 )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     1.0235
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     13   14  0.691146  0.008188  0.423869  0.261532  0.466431  0.197705
+     13   15 -0.132416 -0.003629  0.371182  0.220774  0.016586  0.006156
+
+@ Overlap diagnostic LAMBDA =    0.4222
+
+
+ @ Excited state no:    2 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.30867860     au
+@                      8.3995719     eV;   67747.121     cm-1;   810.43553     kJ / mol
+
+@ Total energy :      -154.63828     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  2.41832763E-03  (Transition moment : -0.10840516     )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  9.40706817E-03  (Transition moment : -0.21380582     )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.26066716E-03  (Transition moment :  7.82695057E-02 )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     1.1386
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     13   14 -0.128521  0.001105  0.423869  0.261532  0.016803  0.007122
+     13   15 -0.686061 -0.005526  0.371182  0.220774  0.463128  0.171905
+
+@ Overlap diagnostic LAMBDA =    0.3740
+
+
+ @ Excited state no:    3 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.32464196     au
+@                      8.8339571     eV;   71250.674     cm-1;   852.34733     kJ / mol
+
+@ Total energy :      -154.62231     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  8.13826067E-03  (Transition moment : -0.19391397     )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  5.56543869E-04  (Transition moment : -5.07099294E-02 )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  3.56188394E-03  (Transition moment : -0.12828716     )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     1.0256
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     12   14 -0.695869 -0.006820  0.501242  0.287571  0.474789  0.237984
+
+@ Overlap diagnostic LAMBDA =    0.4990
+
+
+ @ Excited state no:    4 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.33014722     au
+@                      8.9837627     eV;   72458.938     cm-1;   866.80138     kJ / mol
+
+@ Total energy :      -154.61681     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  2.45338037E-02  (Transition moment :  0.33386758     )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  7.49086438E-03  (Transition moment : -0.18448361     )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.83555278E-03  (Transition moment : -9.13219652E-02 )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     1.3620
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     13   16  0.694738  0.002895  0.312359  0.067289  0.478647  0.149510
+
+@ Overlap diagnostic LAMBDA =    0.3169
+
+
+ @ Excited state no:    5 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.34362636     au
+@                      9.3505488     eV;   75417.267     cm-1;   902.19086     kJ / mol
+
+@ Total energy :      -154.60333     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.70061044E-02  (Transition moment : -0.27246129     )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  4.08124593E-02  (Transition moment :  0.42208389     )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  5.83448538E-03  (Transition moment :  0.15958926     )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     1.1580
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     13   17  0.692768  0.006324  0.413830  0.169758  0.471206  0.194999
+
+@ Overlap diagnostic LAMBDA =    0.4126
+
+
+ @ Excited state no:    6 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.36064749     au
+@                      9.8137175     eV;   79152.975     cm-1;   946.87985     kJ / mol
+
+@ Total energy :      -154.58631     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.09391642E-02  (Transition moment : -0.21330265     )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.36430675E-02  (Transition moment : -0.23821011     )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  6.43339357E-03  (Transition moment :  0.16357775     )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     2.5343
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     13   18  0.686667  0.002782  0.334104  0.083852  0.467698  0.156260
+
+@ Overlap diagnostic LAMBDA =    0.3417
+
+
+ @ Excited state no:    7 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.36516853     au
+@                      9.9367410     eV;   80145.227     cm-1;   958.74981     kJ / mol
+
+@ Total energy :      -154.58179     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  4.08316410E-03  (Transition moment : -0.12950823     )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  7.05819029E-05  (Transition moment :  1.70272943E-02 )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.68431794E-02  (Transition moment : -0.26303346     )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     0.8253
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     11   14 -0.214321 -0.002604  0.478275  0.258714  0.044824  0.021438
+     12   15  0.658504  0.006283  0.499138  0.281892  0.425392  0.212329
+
+@ Overlap diagnostic LAMBDA =    0.4943
+
+
+ @ Excited state no:    8 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.37672700     au
+@                      10.251263     eV;   82682.018     cm-1;   989.09658     kJ / mol
+
+@ Total energy :      -154.57023     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  2.03372116E-04  (Transition moment :  2.84562692E-02 )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  8.49199168E-03  (Transition moment : -0.18388108     )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  3.75028815E-02  (Transition moment :  0.38642443     )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     0.9788
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     11   14 -0.654314 -0.004211  0.478275  0.258714  0.422634  0.202135
+     12   15 -0.226125 -0.000988  0.499138  0.281892  0.050687  0.025300
+
+@ Overlap diagnostic LAMBDA =    0.4784
+
+
+ @ Excited state no:    9 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.37797076     au
+@                      10.285108     eV;   82954.992     cm-1;   992.36207     kJ / mol
+
+@ Total energy :      -154.56899     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  2.49491131E-03  (Transition moment :  9.95048123E-02 )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.73715620E-03  (Transition moment :  8.30301770E-02 )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  2.92336011E-03  (Transition moment : -0.10771041     )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     1.4563
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     13   19 -0.694220 -0.001730  0.314584  0.073930  0.479542  0.150856
+
+@ Overlap diagnostic LAMBDA =    0.3204
+
+
+ @ Excited state no:   10 in symmetry 1  ( A  )
+ ----------------------------------------------
+
+@ Excitation energy :  0.38648229     au
+@                      10.516718     eV;   84823.058     cm-1;   1014.7091     kJ / mol
+
+@ Total energy :      -154.56047     au
+
+@ Operator type:    XDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.37899119E-02  (Transition moment :  0.23134578     )
+
+@ Operator type:    YDIPLEN 
+@ Oscillator strength (LENGTH)   :  1.81770433E-02  (Transition moment :  0.26560879     )
+
+@ Operator type:    ZDIPLEN 
+@ Oscillator strength (LENGTH)   :  3.51665783E-02  (Transition moment :  0.36944168     )
+
+
+                              MO Overlap Diagnostic
+                              ---------------------
+
+ 
+
+Delta_R Diagnostic (Aa):     1.0744
+ 
+
+
+                            PBHT MO Overlap Diagnostic
+                            --------------------------
+
+  Reference: MJG Peach, P Benfield, T Helgaker, and DJ Tozer.
+             J Chem Phys 128, 044118 (2008)
+
+
+  The dominant contributions:
+
+      I    A    K_IA      K_AI   <|I|*|A|> <I^2*A^2>    Weight   Contrib
+
+     10   14  0.228171  0.001350  0.467602  0.208630  0.051447  0.024057
+     12   16  0.660568  0.004151  0.436969  0.138898  0.430884  0.188283
+
+@ Overlap diagnostic LAMBDA =    0.4426
+
+
+ Time used in polarization propagator calculation is    118.15 CPU seconds for symmetry 1
+
+  Total CPU  time used in RESPONSE:  1 minute  58 seconds
+  Total wall time used in RESPONSE:  1 minute  59 seconds
+
+
+                   .-------------------------------------------.
+                   | End of Dynamic Property Section (RESPONS) |
+                   `-------------------------------------------'
+
+
+ Center of mass dipole origin  :    4.144032    0.925249   -0.596990
+
+ Center of mass gauge origin   :    4.144032    0.925249   -0.596990
+
+
+                 .------------------------------------------------.
+                 | Starting in Static Property Section (ABACUS) - |
+                 `------------------------------------------------'
+
+
+ 
+     Date and time (Linux)  : Tue Dec 14 17:38:16 2021
+     Host name              : node653                                 
+
+
+   ***************************************************************************
+   ************************ FINAL RESULTS from ABACUS ************************
+   ***************************************************************************
+
+
+ 
+     Date and time (Linux)  : Tue Dec 14 17:38:16 2021
+     Host name              : node653                                 
+
+
+                             Molecular geometry (au)
+                             -----------------------
+
+ C          1.9107020850            0.1456600897           -0.1124953962
+ C          4.7728623766            0.1508946311           -0.1254778147
+ O          5.6801576838            2.3501578953           -1.3675003104
+ H          1.1813811843           -1.5225712362            0.8651166200
+ H          1.1704396700            0.1616849673           -2.0446647700
+ H          1.1838189310            1.8413680335            0.8242985357
+ H          5.5132948669           -1.5152768933           -1.1007843651
+ H          5.5050745583            0.1538615011            1.8075986276
+ H          5.0352319518            2.3206214760           -3.0879447691
+
+
+
+
+
+                        Molecular wave function and energy
+                        ----------------------------------
+
+     Spatial symmetry   1 ( A   )
+     Spin multiplicity  1
+     2 * M_S            0
+     State number       1
+     Total charge       0
+
+     Total energy       -154.9469569314 au (Hartrees)
+                         -4216.32117723 eV
+                           -406813.1727 kJ/mol
+                            -97230.6818 kcal/mol
+
+
+                   Scalar Breit-Pauli relativistic corrections
+                   -------------------------------------------
+
+     Darwin correction:                          0.3198320139 au
+     Mass-velocity correction:                  -0.4006853130 au
+
+     Total relativistic correction:             -0.0808532991 au ( 0.0522%)
+     Non-relativistic + relativistic energy:  -155.0278102306 au
+
+
+
+      (Note that these corrections are NOT included in the results below.)
+
+
+                                  Dipole moment
+                                  -------------
+
+                 au               Debye          C m (/(10**-30)
+              0.595298           1.513095           5.047142
+
+
+                             Dipole moment components
+                             ------------------------
+
+                 au               Debye          C m (/(10**-30)
+
+      x     -0.36195505        -0.91999791        -3.06878269
+      y     -0.39332029        -0.99972040        -3.33470829
+      z     -0.26204355        -0.66604821        -2.22169770
+
+
+   Units:   1 a.u. =   2.54175 Debye 
+            1 a.u. =   8.47835 (10**-30) C m (SI)
+
+
+
+
+   Interatomic separations (in Angstrom):
+   --------------------------------------
+
+            C           C           O           H           H           H     
+            ------      ------      ------      ------      ------      ------
+ C     :    0.000000
+ C     :    1.514608    0.000000
+ O     :    2.404331    1.420184    0.000000
+ H     :    1.093571    2.161253    3.356068    0.000000
+ H     :    1.094965    2.159980    2.676691    1.779143    0.000000
+ H     :    1.094945    2.158693    2.660657    1.780252    1.759263    0.000000
+ H     :    2.163429    1.094206    2.052264    2.517365    2.513648    3.072755
+ H     :    2.156444    1.093865    2.045092    2.504134    3.068728    2.509428
+ H     :    2.556887    1.948117    0.972410    3.559636    2.406800    2.916180
+
+            H           H           H     
+            ------      ------      ------
+ H     :    0.000000
+ H     :    1.774503    0.000000
+ H     :    2.300033    2.843900    0.000000
+
+
+  Max    interatomic separation is    3.5596 Angstrom (    6.7267 Bohr)
+  between atoms    9 and    4, "H     " and "H     ".
+
+  Min HX interatomic separation is    0.9724 Angstrom (    1.8376 Bohr)
+
+  Min YX interatomic separation is    1.4202 Angstrom (    2.6838 Bohr)
+
+
+  Bond distances (Angstrom):
+  --------------------------
+
+                  atom 1     atom 2       distance
+                  ------     ------       --------
+  bond distance:  C          C            1.514608
+  bond distance:  O          C            1.420184
+  bond distance:  H          C            1.093571
+  bond distance:  H          C            1.094965
+  bond distance:  H          C            1.094945
+  bond distance:  H          C            1.094206
+  bond distance:  H          C            1.093865
+  bond distance:  H          O            0.972410
+
+
+  Bond angles (degrees):
+  ----------------------
+
+                  atom 1     atom 2     atom 3         angle
+                  ------     ------     ------         -----
+  bond angle:     C          C          H            110.888
+  bond angle:     C          C          H            110.702
+  bond angle:     C          C          H            110.600
+  bond angle:     H          C          H            108.768
+  bond angle:     H          C          H            108.869
+  bond angle:     H          C          H            106.902
+  bond angle:     C          C          O            109.978
+  bond angle:     C          C          H            111.023
+  bond angle:     C          C          H            110.486
+  bond angle:     O          C          H            108.722
+  bond angle:     O          C          H            108.171
+  bond angle:     H          C          H            108.385
+  bond angle:     C          O          H            107.546
+
+
+
+
+ CPU time statistics for ABACUS
+ ------------------------------
+
+
+
+
+  Total CPU  time used in ABACUS:   0.05 seconds
+  Total wall time used in ABACUS:   0.05 seconds
+
+
+                   .-------------------------------------------.
+                   | End of Static Property Section (ABACUS) - |
+                   `-------------------------------------------'
+
+  Total CPU  time used in DALTON:  2 minutes 37 seconds
+  Total wall time used in DALTON:  2 minutes 38 seconds
+
+ 
+     Date and time (Linux)  : Tue Dec 14 17:38:16 2021
+     Host name              : node653                                 
