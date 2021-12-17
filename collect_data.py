@@ -263,7 +263,7 @@ class gaus:
         
     def _Excitation_energies(self):
         self.exc_energies = []
-        linenumber = Forward_search_last(self.file, 'Excitation energies and oscillator strengths:', 'excitation energies')
+        linenumber = Forward_search_last(self.file, 'Excitation energies and oscillator strengths:', 'excitation energies', err=False)
         linenumbers = Forward_search_all(self.file, 'Excited State', 'excitation energies')
         if type(linenumber) == int:
             linenumbers = [i for i in linenumbers if i > linenumber]
@@ -277,10 +277,12 @@ class gaus:
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
+        linenumber = Forward_search_last(self.file, 'Excitation energies and oscillator strengths:', 'oscillator strengths', err=False)
         linenumbers = Forward_search_all(self.file, 'Excited State', 'oscillator strengths')
-        if type(linenumbers) == list:
+        if type(linenumber) == int:
+            linenumbers = [i for i in linenumbers if i > linenumber]
             for i in linenumbers:
-                self.osc_strengths.append(float(self.lines[i].split()[-2].replace('f=','')))
+                self.osc_strengths.append(float(self.lines[i].split()[-1].replace('f=','')))
         if len(self.osc_strengths) == 0:
             if Arguments['_Excitation_energies'] == -1:
                 self.osc_strengths = ['NaN'] * abs(Arguments['_Excitation_energies'])
@@ -437,8 +439,9 @@ class orca:
         if type(linenumbers) == list:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[3]))
-        if Arguments['_Excitation_energies'] == -1:
-            self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies']  )
+        if len(self.exc_energies) == 0:
+            if Arguments['_Excitation_energies'] == -1:
+                self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies']  )
         if len(self.exc_energies) < Arguments['_Excitation_energies']:
             self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
 
@@ -447,7 +450,10 @@ class orca:
         linenumber = Forward_search_last(self.file, 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS', 'oscillator strengths')
         if type(linenumber) == int:
             for i in range(len(self.exc_energies)):
-                self.osc_strengths.append(float(self.lines[linenumber+5+i].split()[3]))
+                if len(self.lines[linenumber+5+i].split()) > 6:
+                    self.osc_strengths.append(float(self.lines[linenumber+5+i].split()[3]))
+                else:
+                    self.osc_strengths.append('NaN')
         if len(self.osc_strengths) == 0:
             if Arguments['_Excitation_energies'] == -1:
                 self.osc_strengths = ['NaN'] * abs(Arguments['_Excitation_energies'])
@@ -536,11 +542,6 @@ class dal:
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
-        if self.exc_type == 'MCTDHF':
-            linenumbers = Forward_search_all(self.file, '@ Oscillator strength (LENGTH)', 'oscillator strengths')
-            if type(linenumbers) == list:
-                for i in linenumbers:
-                    self.osc_strengths.append(float(self.lines[i].split()[5]))
         if self.exc_type == '.EXCITA':
             linenumber = Forward_search_last(self.file, '@  Oscillator strengths are dimensionless.', 'oscillator strengths')
             if type(linenumber) == int:
@@ -549,6 +550,15 @@ class dal:
                         self.osc_strengths.append(float(i.split()[-1]))
                     else:
                         break
+        if self.exc_type == 'MCTDHF':
+            linenumbers = Forward_search_all(self.file, '@ Excitation energy', 'oscillator strengths')
+            if type(linenumbers) == list:
+                for i in linenumbers:
+                    osc = 0
+                    for j in self.lines[i:i+15]:
+                        if '@ Oscillator strength' in j:
+                            osc += float(j.split()[5])**2
+                    self.osc_strengths.append(osc**0.5)
         if len(self.osc_strengths) == 0:
             self.osc_strengths = ['NaN'] * len(self.exc_energies)
             return
@@ -579,6 +589,46 @@ class lsdal:
                 else:
                     return
         self.tot_energy = 'NaN'
+
+    def _Dipole_moments(self):
+        linenumber = Forward_search_last(self.file, 'Permanent dipole moment', 'dipole moment')
+        if type(linenumber) == int:
+            self.dipolex, self.dipoley, self.dipolez, self.total_dipole = self.lines[linenumber+9].split()[1], self.lines[linenumber+10].split()[1], self.lines[linenumber+11].split()[1], self.lines[linenumber+3].split()[0]
+            return
+        self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
+
+    def _Polarizabilities(self):
+        linenumber = Forward_search_last(self.file, '*          POLARIZABILITY TENSOR RESULTS (in a.u.)          *', 'polarizability')
+        if type(linenumber) == int:
+            self.polx, self.poly, self.polz, self.iso_polar = self.lines[linenumber+10].split()[-3], self.lines[linenumber+11].split()[-2], self.lines[linenumber+12].split()[-1], self.lines[linenumber+14].split()[-1]
+            return
+        self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
+
+    def _Excitation_energies(self):
+        self.exc_energies = []
+        linenumber = Forward_search_last(self.file, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'excitation energies')
+        if type(linenumber) == int:
+            for i in range(linenumber+8,self.end):
+                if len(self.lines[i].split()) < 1:
+                    break
+                self.exc_energies.append(self.lines[i].split()[0])
+        if len(self.exc_energies) == 0:
+            if Arguments['_Excitation_energies'] == -1:
+                self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies']  )
+        if len(self.exc_energies) < Arguments['_Excitation_energies']:
+            self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
+
+    def _Oscillator_strengths(self):
+        self.osc_strengths = []
+        linenumber = Forward_search_last(self.file, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'oscillator strengths')
+        if type(linenumber) == int:
+            for i in range(len(self.exc_energies)):
+                self.osc_strengths.append(self.lines[linenumber+8+i].split()[-1])
+        if len(self.osc_strengths) == 0:
+            if Arguments['_Excitation_energies'] == -1:
+                self.osc_strengths = ['NaN'] * abs(Arguments['_Excitation_energies'])
+        if len(self.osc_strengths) < Arguments['_Excitation_energies']:
+            self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
 
 
 #**************************** FUNCTIONS *******************************
