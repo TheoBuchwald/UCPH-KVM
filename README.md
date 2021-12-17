@@ -13,10 +13,10 @@ This repository was created to collect all the scripts and programs developed an
   | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
   | Entropies                       |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
   | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
   | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
   | Partition functions             |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
 
