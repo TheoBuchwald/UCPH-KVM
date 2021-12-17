@@ -9,16 +9,16 @@ This repository was created to collect all the scripts and programs developed an
   | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |
   |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|
   | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
   | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
   | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
   | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
   | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
 
   Some more advanced functions are:
   - UV/VIS Spectra
