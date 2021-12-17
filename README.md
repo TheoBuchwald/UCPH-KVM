@@ -1,35 +1,35 @@
 # Quantum-chemistry-output-parser
-This repository was created to collect all the scripts and programs developed and usen in Proffessor Kurt V. Mikkelsens group at the University of Copenhagen.
+This repository was created to collect all the scripts and programs developed and used in Professor Kurt V. Mikkelsens group at the University of Copenhagen.
 ## [collect_data.py](./collect_data.py)
 <details><summary> Program information </summary>
 <p>
-  A script designed to make it easier to extract data from .out files
+  A script designed to make it easier to extract data from output files
 
   Currently the following has been implemented:<br/>
   | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |
   |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|
   | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Entropies                       |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
-  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
   | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
   | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
   | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
   | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Partition functions             |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
+  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
 
   Some more advanced functions are:
   - UV/VIS Spectra
-    - Requires excitation energies and oscillator strengths in the .out file
+    - Requires excitation energies and oscillator strengths in the output file
 </p>
 </details>
 
 ## [sandwich.py](./sandwich.py)
 <details><summary> Program information </summary>
 <p>
-  A script designed to make nanoparticles on either side of a molecule
+  A script designed to place nanoparticles on either side of a molecule
   
   Takes the molecule as a xyz file, the two atoms the nanoparticles will be aligned with and the diameter of the particles (in that order).
   
