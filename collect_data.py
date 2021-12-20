@@ -631,6 +631,18 @@ class dal:
         if len(self.osc_strengths) < Arguments['_Excitation_energies']:
             self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
 
+    def _Frequencies(self):
+        self.freq = []
+        linenumber = Forward_search_last(self.file, 'Vibrational Frequencies and IR Intensities', 'frequencies')
+        if type(linenumber) == int:
+            for i in self.lines[linenumber+7: self.end]:
+                if len(i.split()) < 1:
+                    break
+                self.freq.append(float(i.split()[3]))
+        if len(self.freq) == 0:
+            self.freq = ['NaN'] * abs(Arguments['_Frequencies'])
+        if len(self.freq) < Arguments['_Frequencies']:
+            self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
 
 
 
