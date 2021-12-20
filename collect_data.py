@@ -411,18 +411,31 @@ class orca:
         self.zpv = 'NaN'
         
     def _Enthalpy(self):
-        linenumber = Forward_search_last(self.file, 'Total Enthalpy', 'enthalpy')
-        if type(linenumber) == int:
-            self.enthalpy = float(self.lines[linenumber].split()[-2])
+        if CheckForOnlyNans(np.array(self.freq)) == True:
+            if suppressed == False:
+                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+            self.enthalpy = 'NaN'
             return
-        self.enthalpy = 'NaN'
+        self._RotationalConsts()
+        self._Energy()
+        self.E_T = 3/2 * T * gas_constant
+        if len(self.rots) == 1:
+            self.E_R = T * gas_constant
+        else:
+            self.E_R = 3/2 * T * gas_constant
+        realfreq = np.array([x for x in self.freq if x != 'NaN'])
+        realfreq = realfreq[realfreq > 0.0]
+        self.E_V = gas_constant * np.sum(vib_const * realfreq * (1/2 + 1 / (np.exp(vib_const * realfreq / T) - 1)))
+        self.E_e = 0 #Good approximation for most closed-shell molecules
+        self.enthalpy = (self.E_T+self.E_R+self.E_V+gas_constant * T) / au_to_kJmol + self.tot_energy
 
     def _Gibbs(self):
-        linenumber = Forward_search_last(self.file, 'Final Gibbs free energy', 'Gibbs free energy')
-        if type(linenumber) == int:
-            self.gibbs = float(self.lines[linenumber].split()[-2])
+        if CheckForOnlyNans(np.array(self.freq)) == True:
+            if suppressed == False:
+                print(f"No frequencies found in {infile}, skipping free energy calculation")
+            self.gibbs = 'NaN'
             return
-        self.gibbs = 'NaN'
+        self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
 
     def _Dipole_moments(self):
         linenumber = Forward_search_last(self.file, 'Total Dipole Moment', 'dipole moment')
