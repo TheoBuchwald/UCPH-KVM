@@ -1,0 +1,753 @@
+  
+     ******************************************************************    
+     **********  LSDalton - An electronic structure program  **********    
+     ******************************************************************    
+  
+  
+    This is output from LSDalton v2020.0
+  
+  
+     IF RESULTS OBTAINED WITH THIS CODE ARE PUBLISHED,
+     THE FOLLOWING PAPER SHOULD BE CITED:
+     
+     K. Aidas, C. Angeli, K. L. Bak, V. Bakken, R. Bast,
+     L. Boman, O. Christiansen, R. Cimiraglia, S. Coriani,
+     P. Dahle, E. K. Dalskov, U. Ekstroem, T. Enevoldsen,
+     J. J. Eriksen, P. Ettenhuber, B. Fernandez,
+     L. Ferrighi, H. Fliegl, L. Frediani, K. Hald,
+     A. Halkier, C. Haettig, H. Heiberg,
+     T. Helgaker, A. C. Hennum, H. Hettema,
+     E. Hjertenaes, S. Hoest, I.-M. Hoeyvik,
+     M. F. Iozzi, B. Jansik, H. J. Aa. Jensen,
+     D. Jonsson, P. Joergensen, J. Kauczor,
+     S. Kirpekar, T. Kjaergaard, W. Klopper,
+     S. Knecht, R. Kobayashi, H. Koch, J. Kongsted,
+     A. Krapp, K. Kristensen, A. Ligabue,
+     O. B. Lutnaes, J. I. Melo, K. V. Mikkelsen, R. H. Myhre,
+     C. Neiss, C. B. Nielsen, P. Norman,
+     J. Olsen, J. M. H. Olsen, A. Osted,
+     M. J. Packer, F. Pawlowski, T. B. Pedersen,
+     P. F. Provasi, S. Reine, Z. Rinkevicius,
+     T. A. Ruden, K. Ruud, V. Rybkin,
+     P. Salek, C. C. M. Samson, A. Sanchez de Meras,
+     T. Saue, S. P. A. Sauer, B. Schimmelpfennig,
+     K. Sneskov, A. H. Steindal, K. O. Sylvester-Hvid,
+     P. R. Taylor, A. M. Teale, E. I. Tellgren,
+     D. P. Tew, A. J. Thorvaldsen, L. Thoegersen,
+     O. Vahtras, M. A. Watson, D. J. D. Wilson,
+     M. Ziolkowski, and H. AAgren,
+     "The Dalton quantum chemistry program system",
+     WIREs Comput. Mol. Sci. (doi: 10.1002/wcms.1172)
+  
+  
+                                               
+    LSDalton authors in alphabetical order (main contribution(s) in parenthesis)
+    ----------------------------------------------------------------------------
+    Vebjoern Bakken,        University of Oslo,                    Norway   (Geometry optimizer)
+    Ashleigh Barnes,        Oak Ridge National Laboratory,         USA      (ML-DEC)
+    Radovan Bast,           UiT The Arctic University of Norway,   Norway   (CMake, Testing)
+    Pablo Baudin,           Aarhus University,                     Denmark  (DEC,CCSD)
+    Dmytro Bykov,           Oak Ridge National Laboratory,         USA      (ML-DEC)
+    Sonia Coriani,          Technical University of Denmark,       Denmark  (Response)
+    Roberto Di Remigio,     UiT The Arctic University of Norway,   Norway   (PCM)
+    Karen Dundas,           UiT The Arctic University of Norway,   Norway   (OpenRSP)
+    Patrick Ettenhuber,     Aarhus University,                     Denmark  (CCSD)
+    Janus Juul Eriksen,     Aarhus University,                     Denmark  (CCSD(T), DEC)
+    Luca Frediani,          UiT The Arctic University of Norway,   Norway   (PCM, Supervision)
+    Daniel Henrik Friese,   Heinrich-Heine-Universitat Dusseldorf, Germany  (OpenRSP)
+    Bin Gao,                UiT The Arctic University of Norway,   Norway   (OpenRSP, QcMatrix)
+    Trygve Helgaker,        University of Oslo,                    Norway   (Supervision)
+    Stinne Hoest,           Aarhus University,                     Denmark  (SCF optimization)
+    Ida-Marie Hoeyvik,      Aarhus University,                     Denmark  (Orbital localization, SCF opt)
+    Robert Izsak,           University of Oslo,                    Norway   (ADMM)
+    Branislav Jansik,       Aarhus University,                     Denmark  (Trilevel, orbital localization)
+    Frank Jensen,           Aarhus University,                     Denmark  (ADMM basis sets)
+    Poul Joergensen,        Aarhus University,                     Denmark  (Supervision)
+    Joanna Kauczor,         Aarhus University,                     Denmark  (Response solver)
+    Thomas Kjaergaard,      Aarhus University,                     Denmark  (RSP, INT, DEC, SCF, Input, MPI, 
+                                                                             MAT)
+    Andreas Krapp,          University of Oslo,                    Norway   (FMM, dispersion-corrected DFT)
+    Kasper Kristensen,      Aarhus University,                     Denmark  (Response, DEC)
+    Chandan Kumar,          University of Oslo,                    Norway   (Nuclei-selected NMR shielding)
+    Patrick Merlot,         University of Oslo,                    Norway   (ADMM)
+    Cecilie Nygaard,        Aarhus University,                     Denmark  (SOEO)
+    Jeppe Olsen,            Aarhus University,                     Denmark  (Supervision)
+    Elisa Rebolini,         University of Oslo,                    Norway   (MO-PARI-K)
+    Simen Reine,            University of Oslo,                    Norway   (Integrals and approximations, 
+                                                                             XC, MPI, OpenMP, geo.opt.)
+    Magnus Ringholm,        UiT The Arctic University of Norway,   Norway   (OpenRSP)
+    Kenneth Ruud,           UiT The Arctic University of Norway,   Norway   (OpenRSP, Supervision)
+    Vladimir Rybkin,        University of Oslo,                    Norway   (Geometry optimizer, dynamics)
+    Pawel Salek,            KTH Stockholm,                         Sweden   (FMM, DFT functionals)
+    Andrew M. Teale,        University of Nottingham               England  (E-coefficients)
+    Erik Tellgren,          University of Oslo,                    Norway   (Density fitting, E-coefficients)
+    Andreas J. Thorvaldsen, University of Tromsoe,                 Norway   (Response)
+    Lea Thoegersen,         Aarhus University,                     Denmark  (SCF optimization)
+    Mark Watson,            University of Oslo,                    Norway   (FMM)
+    Lukas Wirz,             University of Oslo,                    Norway   (NR-PARI)
+    Marcin Ziolkowski,      Aarhus University,                     Denmark  (DEC)
+  
+  
+     NOTE:
+      
+     This is an experimental code for the evaluation of molecular
+     energies and properties using various electronic structure models.
+     The authors accept no responsibility for the performance of the code or
+     for the correctness of the results.
+      
+     The code (in whole or part) is provided under a licence and
+     is not to be reproduced for further distribution without
+     the written permission of the authors or their representatives.
+      
+     See the home page "http://daltonprogram.org"
+     for further information.
+  
+  
+ ================================================================
+Version information
+-------------------
+Version       | v2020.0-124-gc501620-dirty
+Commit hash   | c50162019b4c3495703af4da3dfa0137916f5b4f
+Commit author | andreasbendtsen
+Commit date   | Wed Oct 13 15:09:15 2021 +0200
+Branch        | CPSD4
+
+Configuration and build information
+-----------------------------------
+Who compiled             | andreasb
+Compilation hostname     | fend04.cluster
+Operating system         | Linux-3.10.0-1160.11.1.el7.x86_64
+Processor                | x86_64
+CMake version            | 3.14.7
+CMake generator          | Unix Makefiles
+Build type               | RELEASE
+Configuration time       | 2021-11-03 11:05:42
+Fortran compiler         | /usr/bin/gfortran
+Fortran compiler version | 4.8.5
+C compiler               | /usr/bin/gcc
+C compiler version       | 4.8.5
+C++ compiler             | /usr/bin/g++
+C++ compiler version     | 4.8.5
+64-bit integers          | OFF
+MPI parallelization      | OFF
+OpenMP parallelization   | ON
+
+Further components
+------------------
+
+Runtime information
+-------------------
+Hostname:
+    node350.cluster
+Current working dir:
+    /data/scratch/29473608/DALTON_scratch_qhw298/HF_Water_exci_33314
+  
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  8.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  1.0000     2 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+ This is a CAM functional with
+ config%integral%CAMalpha  0.19000000000000000     
+ config%integral%CAMbeta  0.46000000000000002     
+ config%integral%CAMmu  0.33000000000000002     
+    The Functional chosen is a GGA type functional
+    The Functional chosen contains an exact exchange contribution
+    with the weight:  1.00000000E+00
+
+         Start simulation
+     Date and time (Linux)  : Thu Dec 16 16:12:51 2021
+     Host name              : node350.cluster                         
+                      
+    ---------------------------------------------------
+             PRINTING THE MOLECULE.INP FILE 
+    ---------------------------------------------------
+                      
+    ATOMBASIS                               
+    ./Water.xyz                             
+    Hej Magnus                              
+    Atomtypes=2 Charge=0 NoSymmetry Angstrom                                                                                
+      8.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+    O     0.906440000        -0.069780000         0.021830000                                                               
+      1.0000     2 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+    H     1.874330000        -0.048440000        -0.019410000                                                               
+    H     0.627590000         0.356710000        -0.802370000                                                               
+                      
+    ---------------------------------------------------
+             PRINTING THE LSDALTON.INP FILE 
+    ---------------------------------------------------
+                      
+    **WAVE FUNCTIONS
+    .DFT
+    CAMB3LYP
+    **RESPONS
+    .NEXCIT
+    10
+    *END OF INPUT
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  8.0000     1 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+
+
+
+ WARNING - deprecated old .mol fixed format input has been detected:
+  1.0000     2 Bas=cc-pVDZ Aux=cc-pVDZ-RI                                                                               
+ WARNING - this input format may not be supported in future releases.
+
+
+
+ New recommended format looks like
+ Charge=6.0 Atoms=2 Basis=cc-pVDZ
+ Using an example of 2 Carbon atoms of this type
+ Note only integer charges are allowed in current LsDalton ve
+ 
+ 
+Using basis set library located: /groups/kemi/qhw298/bin/UCPH-KVM/test_systems/lsdalton_input:/lustre/hpc/kemi/andreasb/Applications/lsdalton_batching/build_final/bin/../share/lsdalton/basis
+Using basis set library located: /groups/kemi/qhw298/bin/UCPH-KVM/test_systems/lsdalton_input:/lustre/hpc/kemi/andreasb/Applications/lsdalton_batching/build_final/bin/../share/lsdalton/basis
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+ WARNING This basis format violate the old dalton basis format
+ Which consist of 1 Exponent F16.9 and up to 6 contraction
+ coefficients on the first line followed by a up to 7 contraction coefficients
+ on the following lines until the full number of contraction coefficients are given
+ We will try to this basis set, but this code is not very well testet. TK
+                      
+    Atoms and basis sets
+      Total number of atoms        :      3
+      THE  REGULAR   is on R =   1
+    ---------------------------------------------------------------------
+      atom label  charge basisset                prim     cont   basis
+    ---------------------------------------------------------------------
+          1 O      8.000 cc-pVDZ                   26       14 [9s4p1d|3s2p1d]                              
+          2 H      1.000 cc-pVDZ                    7        5 [4s1p|2s1p]                                  
+          3 H      1.000 cc-pVDZ                    7        5 [4s1p|2s1p]                                  
+    ---------------------------------------------------------------------
+    total         10                               40       24
+    ---------------------------------------------------------------------
+                      
+                      
+    Atoms and basis sets
+      Total number of atoms        :      3
+      THE  AUXILIARY is on R =   2
+    ---------------------------------------------------------------------
+      atom label  charge basisset                prim     cont   basis
+    ---------------------------------------------------------------------
+          1 O      8.000 cc-pVDZ-RI                56       56 [7s5p4d2f|7s5p4d2f]                          
+          2 H      1.000 cc-pVDZ-RI                14       14 [3s2p1d|3s2p1d]                              
+          3 H      1.000 cc-pVDZ-RI                14       14 [3s2p1d|3s2p1d]                              
+    ---------------------------------------------------------------------
+    total         10                               84       84
+    ---------------------------------------------------------------------
+                      
+                      
+    Basic Molecule/Basis information
+    --------------------------------------------------------------------
+      Molecular Charge                   :    0.0000
+      Regular basisfunctions             :       24
+      Auxiliary basisfunctions           :       84
+      Primitive Regular basisfunctions   :       40
+      Primitive Auxiliary basisfunctions :       84
+    --------------------------------------------------------------------
+                      
+    Configuration:
+    ==============
+    This is an OpenMP calculation using   2 threads.
+    This is a serial calculation (no MPI)
+    The Functional chosen is a GGA type functional
+    The Functional chosen contains a exact exchange contribution
+    with the weight:  1.00000000E+00
+     
+    The Exchange-Correlation Grid specifications:
+    Radial Quadrature : Treutler-Ahlrichs M4-T2 scheme
+                        (J. Chem. Phys. (1995) 102, 346).
+                        Implies also that the angular integration quality becomes Z-dependant
+    Space partitioning: Stratmann-Scuseria-Frisch partitioning scheme
+                        Chem. Phys. Lett. (1996) vol. 213 page 257,
+                        Combined with a blockwise handling of grid points
+                        J. Chem. Phys. (2004) vol 121, page 2915.
+                        Useful for large molecules.
+
+    We use grid pruning according to Mol. Phys. (1993) vol 78 page 997
+
+     DFT LSint Radial integration threshold:   0.5012D-13
+     DFT LSint integration order range     :   [  5:  35]
+     Hardness of the partioning function   :   3
+     DFT LSint screening thresholds        :   0.10D-08   0.20D-09   0.20D-11
+     Threshold for number of electrons     :   0.10D-02
+     The Exact Exchange Factor             : 0.1000D+01
+
+    You have requested Augmented Roothaan-Hall optimization
+    => explicit averaging is turned off!
+
+    Expand trust radius if ratio is larger than:            0.75
+    Contract trust radius if ratio is smaller than:         0.25
+    On expansion, trust radius is expanded by a factor      1.20
+    On contraction, trust radius is contracted by a factor  0.70
+
+    Maximum size of subspace in ARH linear equations:       2
+
+    Density subspace min. method    : None                    
+    Density optimization            : Augmented RH optimization          
+
+    Maximum size of Fock/density queue in averaging:    7
+
+    Convergence threshold for gradient        :   0.10E-03
+    We have detected a Dunnings Basis set so we deactivate the
+    use of the Grand Canonical basis, which is normally default.
+    The use of Grand Canonical basis can be enforced using the FORCEGCBASIS keyword
+    We perform the calculation in the standard input basis
+     
+    The Overall Screening threshold is set to              :  1.0000E-08
+    The Screening threshold used for Coulomb               :  1.0000E-10
+    The Screening threshold used for Exchange              :  1.0000E-08
+    The Screening threshold used for One-electron operators:  1.0000E-15
+    The SCF Convergence Criteria is applied to the gradnorm in OAO basis
+
+    End of configuration!
+
+ Using 64-bit integers!
+ ndim =                   24
+
+    First density: Atoms in molecule guess
+
+    This is an OpenMP Gridgeneration calculation using  2 threads.
+    Total Number of grid points:       34420
+
+    Max allocated memory, Grid                    2.442 MB
+
+    Iteration 0 energy:      -76.335877980877
+ 
+    Diagonalize the Atoms in Molecule Fock Matrix to obtain Initial Density
+    Preparing to do S^1/2 decomposition...
+  
+    Relative convergence threshold for solver:  1.00000000E-02
+    SCF Convergence criteria for gradient norm:  9.99999975E-05
+    ******************************************************************************** ###
+     it            E(SCF)          dE(SCF)    exit        alpha RHshift OAO gradient ###
+    ******************************************************************************** ###
+      1    -76.3335202680    0.00000000000    0.00      0.00000    0.00    3.944E-01 ###
+      2    -76.3335202680    0.00000000000    0.00      0.00000   -0.00    4.526E-01 ###
+      3    -76.3335202680    0.00000000000    0.00      0.00000    0.10    4.537E-01 ###
+      4    -76.3420844862   -0.00856421812    0.00      0.00000    0.20    3.842E-01 ###
+      5    -76.3916489196   -0.04956443341    0.00      0.00000   -0.00    2.877E-02 ###
+      6    -76.3919334319   -0.00028451233    0.00      0.00000   -0.00    2.696E-03 ###
+      7    -76.3919368149   -0.00000338296    0.00      0.00000   -0.00    2.324E-04 ###
+      8    -76.3919368385   -0.00000002366    0.00      0.00000   -0.00    1.586E-05 ###
+    SCF converged in      8 iterations
+    >>>  CPU Time used in SCF iterations is   5.33 seconds
+    >>> wall Time used in SCF iterations is   2.73 seconds
+
+    Total no. of matmuls in SCF optimization:        614
+ Postponing calculation of HOMO-LUMO gap to response part...
+
+    ********************************************************
+     it       dE(HF)          exit   RHshift    RHinfo 
+    ********************************************************
+      1    0.00000000000    0.0000    0.0000    0.0000000
+      2    0.00000000000    0.0000   -0.0000    0.0000000
+      3    0.00000000000    0.0000    0.1000    0.0000000
+      4   -0.00856421812    0.0000    0.2000    0.0000000
+      5   -0.04956443341    0.0000   -0.0000    0.0000000
+      6   -0.00028451233    0.0000   -0.0000    0.0000000
+      7   -0.00000338296    0.0000   -0.0000    0.0000000
+      8   -0.00000002366    0.0000   -0.0000    0.0000000
+
+    ======================================================================
+                       LINSCF ITERATIONS:
+      It.nr.               Energy                 OAO Gradient norm
+    ======================================================================
+        1           -76.33352026804563195128      0.394402203581432D+00
+        2           -76.33352026804563195128      0.452649010673615D+00
+        3           -76.33352026804563195128      0.453701792890079D+00
+        4           -76.34208448616531939024      0.384239649656746D+00
+        5           -76.39164891957904046649      0.287738361588545D-01
+        6           -76.39193343190537177634      0.269602151688707D-02
+        7           -76.39193681486239029255      0.232415544767012D-03
+        8           -76.39193683851962646258      0.158570494713328D-04
+
+          SCF converged !!!! 
+             >>> Final SCF results from LSDALTON <<<
+
+
+          Final DFT energy:                      -76.391936838520
+          Nuclear repulsion:                       9.084261304510
+          Electronic energy:                     -85.476198143029
+
+
+
+
+                       Permanent dipole moment
+                       -----------------------
+               au              Debye           10**-30 C m
+           0.769904           1.95690           6.52751    
+
+
+                       Dipole moment components
+                       ------------------------
+               au              Debye           10**-30 C m
+ x         0.444499           1.12980           3.76861    
+ y         0.288892          0.734292           2.44933    
+ z        -0.558314          -1.41909          -4.73358    
+
+
+
+
+
+
+ <<< EXCITATION ENERGIES AND TRANSITION MOMENT CALCULATION (LSTDHF) >>>
+
+
+ Use MO orbital energy differences to find  first guess for eigenvectors/values
+  ** RSP_SOLVER MICROITERATION NUMBER                    1
+ Response convergence threshold is   1.0000000000000000E-004
+Residual norm for vector   1 is:   0.156072E+00    and eigenvalue =   0.28081133   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector   2 is:   0.714616E-01    and eigenvalue =   0.35047313   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector   3 is:   0.153048E+00    and eigenvalue =   0.37186491   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector   4 is:   0.219513E+00    and eigenvalue =   0.44588249   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector   5 is:   0.842776E-01    and eigenvalue =   0.51140173   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector   6 is:   0.377731E+00    and eigenvalue =   0.65665977   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector   7 is:   0.853798E-01    and eigenvalue =   0.76482326   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector   8 is:   0.283735E+00    and eigenvalue =   0.83741508   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.449163E+00    and eigenvalue =   0.90885462   It =   1 CONV = F
+ MO preconditioning
+Residual norm for vector  10 is:   0.354121E+00    and eigenvalue =   0.94879177   It =   1 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                    2
+Residual norm for vector   1 is:   0.167038E-01    and eigenvalue =   0.27887852   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector   2 is:   0.243539E-01    and eigenvalue =   0.34921029   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector   3 is:   0.248330E-01    and eigenvalue =   0.36650412   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector   4 is:   0.432348E-01    and eigenvalue =   0.44105691   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector   5 is:   0.378750E-01    and eigenvalue =   0.50977073   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector   6 is:   0.619231E-01    and eigenvalue =   0.62200207   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector   7 is:   0.483723E-01    and eigenvalue =   0.76431904   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector   8 is:   0.485416E-01    and eigenvalue =   0.83170898   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.824892E-01    and eigenvalue =   0.88391062   It =   2 CONV = F
+ MO preconditioning
+Residual norm for vector  10 is:   0.702335E-01    and eigenvalue =   0.91500009   It =   2 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                    3
+Residual norm for vector   1 is:   0.362033E-02    and eigenvalue =   0.27879898   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector   2 is:   0.502776E-02    and eigenvalue =   0.34909623   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector   3 is:   0.841012E-02    and eigenvalue =   0.36637002   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector   4 is:   0.102860E-01    and eigenvalue =   0.44065521   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector   5 is:   0.156864E-01    and eigenvalue =   0.50933491   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector   6 is:   0.424025E-01    and eigenvalue =   0.62071818   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector   7 is:   0.192646E-01    and eigenvalue =   0.76404718   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector   8 is:   0.278134E-01    and eigenvalue =   0.83056010   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.565306E-01    and eigenvalue =   0.88291054   It =   3 CONV = F
+ MO preconditioning
+Residual norm for vector  10 is:   0.390226E-01    and eigenvalue =   0.91339985   It =   3 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                    4
+Residual norm for vector   1 is:   0.924250E-03    and eigenvalue =   0.27879654   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector   2 is:   0.767279E-03    and eigenvalue =   0.34909383   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector   3 is:   0.257778E-02    and eigenvalue =   0.36636004   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector   4 is:   0.271770E-02    and eigenvalue =   0.44063820   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector   5 is:   0.465813E-02    and eigenvalue =   0.50928524   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector   6 is:   0.185945E-01    and eigenvalue =   0.62041287   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector   7 is:   0.315081E-02    and eigenvalue =   0.76402739   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector   8 is:   0.154753E-01    and eigenvalue =   0.83041860   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.277759E-01    and eigenvalue =   0.88250881   It =   4 CONV = F
+ MO preconditioning
+Residual norm for vector  10 is:   0.253655E-01    and eigenvalue =   0.91301706   It =   4 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                    5
+Residual norm for vector   1 is:   0.881251E-04    and eigenvalue =   0.27879641   It =   5 CONV = T
+Residual norm for vector   2 is:   0.346773E-04    and eigenvalue =   0.34909377   It =   5 CONV = T
+Residual norm for vector   3 is:   0.525987E-03    and eigenvalue =   0.36635898   It =   5 CONV = F
+ MO preconditioning
+Residual norm for vector   4 is:   0.684490E-03    and eigenvalue =   0.44063721   It =   5 CONV = F
+ MO preconditioning
+Residual norm for vector   5 is:   0.145435E-02    and eigenvalue =   0.50928128   It =   5 CONV = F
+ MO preconditioning
+Residual norm for vector   6 is:   0.548857E-02    and eigenvalue =   0.62037494   It =   5 CONV = F
+ MO preconditioning
+Residual norm for vector   7 is:   0.282341E-03    and eigenvalue =   0.76402650   It =   5 CONV = F
+ MO preconditioning
+Residual norm for vector   8 is:   0.579497E-02    and eigenvalue =   0.83037778   It =   5 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.945525E-02    and eigenvalue =   0.88239887   It =   5 CONV = F
+ MO preconditioning
+Residual norm for vector  10 is:   0.150137E-01    and eigenvalue =   0.91296341   It =   5 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                    6
+Residual norm for vector   1 is:   0.468610E-04    and eigenvalue =   0.27879640   It =   6 CONV = T
+Residual norm for vector   2 is:   0.246455E-04    and eigenvalue =   0.34909377   It =   6 CONV = T
+Residual norm for vector   3 is:   0.915422E-04    and eigenvalue =   0.36635896   It =   6 CONV = T
+Residual norm for vector   4 is:   0.885848E-04    and eigenvalue =   0.44063713   It =   6 CONV = T
+Residual norm for vector   5 is:   0.244570E-03    and eigenvalue =   0.50928109   It =   6 CONV = F
+ MO preconditioning
+Residual norm for vector   6 is:   0.251939E-02    and eigenvalue =   0.62037037   It =   6 CONV = F
+ MO preconditioning
+Residual norm for vector   7 is:   0.115547E-03    and eigenvalue =   0.76402650   It =   6 CONV = F
+ MO preconditioning
+Residual norm for vector   8 is:   0.471459E-02    and eigenvalue =   0.83036909   It =   6 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.356289E-02    and eigenvalue =   0.88238892   It =   6 CONV = F
+ MO preconditioning
+Residual norm for vector  10 is:   0.773765E-02    and eigenvalue =   0.91292667   It =   6 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                    7
+Residual norm for vector   1 is:   0.428185E-04    and eigenvalue =   0.27879640   It =   7 CONV = T
+Residual norm for vector   2 is:   0.213244E-04    and eigenvalue =   0.34909377   It =   7 CONV = T
+Residual norm for vector   3 is:   0.390048E-04    and eigenvalue =   0.36635896   It =   7 CONV = T
+Residual norm for vector   4 is:   0.504892E-04    and eigenvalue =   0.44063713   It =   7 CONV = T
+Residual norm for vector   5 is:   0.908220E-04    and eigenvalue =   0.50928108   It =   7 CONV = T
+Residual norm for vector   6 is:   0.103111E-02    and eigenvalue =   0.62036961   It =   7 CONV = F
+ MO preconditioning
+Residual norm for vector   7 is:   0.342978E-04    and eigenvalue =   0.76402649   It =   7 CONV = T
+Residual norm for vector   8 is:   0.222896E-02    and eigenvalue =   0.83036583   It =   7 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.130336E-02    and eigenvalue =   0.88238746   It =   7 CONV = F
+ MO preconditioning
+Residual norm for vector  10 is:   0.238725E-02    and eigenvalue =   0.91292201   It =   7 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                    8
+Residual norm for vector   1 is:   0.406735E-04    and eigenvalue =   0.27879640   It =   8 CONV = T
+Residual norm for vector   2 is:   0.213244E-04    and eigenvalue =   0.34909377   It =   8 CONV = T
+Residual norm for vector   3 is:   0.298853E-04    and eigenvalue =   0.36635896   It =   8 CONV = T
+Residual norm for vector   4 is:   0.353003E-04    and eigenvalue =   0.44063713   It =   8 CONV = T
+Residual norm for vector   5 is:   0.812864E-04    and eigenvalue =   0.50928108   It =   8 CONV = T
+Residual norm for vector   6 is:   0.134541E-03    and eigenvalue =   0.62036953   It =   8 CONV = F
+ MO preconditioning
+Residual norm for vector   7 is:   0.342975E-04    and eigenvalue =   0.76402649   It =   8 CONV = T
+Residual norm for vector   8 is:   0.107966E-02    and eigenvalue =   0.83036542   It =   8 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.468214E-03    and eigenvalue =   0.88238731   It =   8 CONV = F
+ MO preconditioning
+Residual norm for vector  10 is:   0.103395E-02    and eigenvalue =   0.91292143   It =   8 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                    9
+Residual norm for vector   1 is:   0.392509E-04    and eigenvalue =   0.27879640   It =   9 CONV = T
+Residual norm for vector   2 is:   0.213244E-04    and eigenvalue =   0.34909377   It =   9 CONV = T
+Residual norm for vector   3 is:   0.324275E-04    and eigenvalue =   0.36635896   It =   9 CONV = T
+Residual norm for vector   4 is:   0.306329E-04    and eigenvalue =   0.44063713   It =   9 CONV = T
+Residual norm for vector   5 is:   0.250194E-04    and eigenvalue =   0.50928108   It =   9 CONV = T
+Residual norm for vector   6 is:   0.287583E-04    and eigenvalue =   0.62036953   It =   9 CONV = T
+Residual norm for vector   7 is:   0.342975E-04    and eigenvalue =   0.76402649   It =   9 CONV = T
+Residual norm for vector   8 is:   0.253970E-03    and eigenvalue =   0.83036530   It =   9 CONV = F
+ MO preconditioning
+Residual norm for vector   9 is:   0.999717E-04    and eigenvalue =   0.88238729   It =   9 CONV = T
+Residual norm for vector  10 is:   0.361966E-03    and eigenvalue =   0.91292132   It =   9 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                   10
+Residual norm for vector   1 is:   0.379820E-04    and eigenvalue =   0.27879640   It =  10 CONV = T
+Residual norm for vector   2 is:   0.213244E-04    and eigenvalue =   0.34909377   It =  10 CONV = T
+Residual norm for vector   3 is:   0.226180E-04    and eigenvalue =   0.36635896   It =  10 CONV = T
+Residual norm for vector   4 is:   0.306329E-04    and eigenvalue =   0.44063713   It =  10 CONV = T
+Residual norm for vector   5 is:   0.250194E-04    and eigenvalue =   0.50928108   It =  10 CONV = T
+Residual norm for vector   6 is:   0.294856E-04    and eigenvalue =   0.62036953   It =  10 CONV = T
+Residual norm for vector   7 is:   0.342975E-04    and eigenvalue =   0.76402649   It =  10 CONV = T
+Residual norm for vector   8 is:   0.986319E-04    and eigenvalue =   0.83036529   It =  10 CONV = T
+Residual norm for vector   9 is:   0.999717E-04    and eigenvalue =   0.88238729   It =  10 CONV = T
+Residual norm for vector  10 is:   0.105613E-03    and eigenvalue =   0.91292131   It =  10 CONV = F
+ MO preconditioning
+  ** RSP_SOLVER MICROITERATION NUMBER                   11
+Residual norm for vector   1 is:   0.379820E-04    and eigenvalue =   0.27879640   It =  11 CONV = T
+Residual norm for vector   2 is:   0.213244E-04    and eigenvalue =   0.34909377   It =  11 CONV = T
+Residual norm for vector   3 is:   0.163682E-04    and eigenvalue =   0.36635896   It =  11 CONV = T
+Residual norm for vector   4 is:   0.306329E-04    and eigenvalue =   0.44063713   It =  11 CONV = T
+Residual norm for vector   5 is:   0.250194E-04    and eigenvalue =   0.50928108   It =  11 CONV = T
+Residual norm for vector   6 is:   0.310971E-04    and eigenvalue =   0.62036953   It =  11 CONV = T
+Residual norm for vector   7 is:   0.342975E-04    and eigenvalue =   0.76402649   It =  11 CONV = T
+Residual norm for vector   8 is:   0.986319E-04    and eigenvalue =   0.83036529   It =  11 CONV = T
+Residual norm for vector   9 is:   0.999717E-04    and eigenvalue =   0.88238729   It =  11 CONV = T
+Residual norm for vector  10 is:   0.171682E-04    and eigenvalue =   0.91292131   It =  11 CONV = T
+
+ *** THE REQUESTED             10 SOLUTION VECTORS CONVERGED
+Write    10 excitation vectors to disk
+
+ The following excitation energies are used for the response calculation:
+
+                    1  0.27879640473183587     
+                    2  0.34909377067168612     
+                    3  0.36635896251847039     
+                    4  0.44063713414225814     
+                    5  0.50928108339475120     
+                    6  0.62036952548755542     
+                    7  0.76402649444514426     
+                    8  0.83036529301031459     
+                    9  0.88238728934500221     
+                   10  0.91292131046433489     
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+ Starting linear response function calculation for: << EL  ; EXCI>>
+
+
+
+
+
+  ******************************************************************************
+  *                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *
+  ******************************************************************************
+
+
+
+      Excitation              Transition Dipole Moments               Oscillator
+       Energies            x               y               z           Strengths
+ ===============================================================================
+      0.27879640     -0.00000237      0.30659696      0.15863531      0.02214886
+      0.34909377      0.00001594     -0.00000787      0.00000902      0.00000000
+      0.36635896      0.33189657      0.21571577     -0.41686752      0.08071307
+      0.44063713      0.35838273     -0.11646519      0.22506933      0.05659500
+      0.50928108     -0.75262850      0.24457957     -0.47265408      0.28848081
+      0.62036953      0.31734221      0.20624841     -0.39857931      0.12494654
+      0.76402649     -0.00000735     -0.00000276     -0.00000771      0.00000000
+      0.83036529      0.00000063      0.30283128      0.15669799      0.06435942
+      0.88238729     -0.37430847      0.12163885     -0.23507116      0.12362910
+      0.91292131      0.04211334      0.02735904     -0.05287283      0.00323636
+
+
+
+
+  End of excitation energy calculation
+    >>>  CPU Time used in LSDALTON RSP is  33.43 seconds
+    >>> wall Time used in LSDALTON RSP is  17.34 seconds
+ *****************************************************
+ **     CPU-TIME USED IN LSDALTON RESPONSE:    33.430237000000005         **
+ *****************************************************
+    Total no. of matmuls used:                      3117
+    Total no. of Fock/KS matrix evaluations:           9
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+                      Memory statistics          
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+      Allocated memory (TOTAL):         0 byte Should be zero, otherwise a leakage is present
+ 
+      Max allocated memory, TOTAL                        293.485 MB
+      Max allocated memory, type(matrix)                 718.448 kB
+      Max allocated memory, real(realk)                  293.149 MB
+      Max allocated memory, integer                      502.768 kB
+      Max allocated memory, logical                      138.320 kB
+      Max allocated memory, character                      2.048 kB
+      Max allocated memory, AOBATCH                       41.736 kB
+      Max allocated memory, ODBATCH                        6.720 kB
+      Max allocated memory, LSAOTENSOR                     6.480 kB
+      Max allocated memory, SLSAOTENSOR                    8.112 kB
+      Max allocated memory, ATOMTYPEITEM                 161.440 kB
+      Max allocated memory, ATOMITEM                       2.688 kB
+      Max allocated memory, LSMATRIX                       3.840 kB
+      Max allocated memory, OverlapT                     187.776 kB
+      Max allocated memory, linkshell                      2.520 kB
+      Max allocated memory, integrand                      1.161 MB
+      Max allocated memory, integralitem                  16.384 MB
+      Max allocated memory, IntWork                      325.008 kB
+      Max allocated memory, Overlap                      275.056 MB
+      Max allocated memory, ODitem                         4.704 kB
+      Max allocated memory, LStensor                     193.808 kB
+    *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+
+    Allocated MPI memory a cross all slaves:          0 byte  - Should be zero - otherwise a leakage is present
+    This is a non MPI calculation so naturally no memory is allocated on slaves!
+    >>>  CPU Time used in LSDALTON is  39.46 seconds
+    >>> wall Time used in LSDALTON is  21.11 seconds
+
+    End simulation
+     Date and time (Linux)  : Thu Dec 16 16:13:12 2021
+     Host name              : node350.cluster                         
