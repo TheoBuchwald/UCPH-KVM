@@ -9,16 +9,16 @@ This repository was created to collect all the scripts and programs developed an
   | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |
   |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|
   | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
-  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
-  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
-  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
-  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
-  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|        :x:       |        N/A       |
+  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
+  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
+  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
+  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
+  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
+  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
 
   Some more advanced functions are:
   - UV/VIS Spectra
