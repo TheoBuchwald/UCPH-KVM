@@ -315,5 +315,6 @@ if __name__ == '__main__':
 
 
     _Preview()
+    root.mainloop()
 
     print(Preview)
