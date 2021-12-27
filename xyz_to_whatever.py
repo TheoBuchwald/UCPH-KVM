@@ -4,12 +4,75 @@ from tkinter import ttk as ttk
 
 
 
-# def _Preview(*args, **kwargs):
-#     global CalcType, MethodType
+def _Preview(*args, **kwargs):
+    global Preview, Method, CalcMain, CC, CCSOPPA, CalcAdd, CalcRes
+    Preview = '''**DALTON INPUT'''
+    try:
+        CalcMain
+    except NameError:
+        if CalcRes == '':
+            Preview += '''\n.RUN WAVEFUNCTIONS'''
+        else: 
+            Preview += '''\n.RUN RESPONSE'''
+    else:
+        if CalcMain == '.RUN WAVEFUNCTIONS' and CalcRes != '':
+            Preview += '''\n.RUN RESPONSE'''
+        else:
+            Preview += f'''\n{CalcMain}'''
+
+    try:
+        Method
+    except NameError:
+        Preview += '''\n**WAVEFUNCTIONS\n.HF'''
+    else:
+        Preview += '''\n**WAVEFUNCTIONS'''
+        if Method == 'HF':
+            Preview += '''\n.HF'''
+        elif Method == 'MP2':
+            Preview += '''\n.HF\n.MP2'''
+        elif Method == 'CC':
+            Preview += '''\n.HF\n.CC'''
+        elif Method == 'DFT':
+            try:
+                Functional
+            except NameError:
+                Preview += f'''\n.DFT\nLDA'''
+            else:
+                Preview += f'''\n.DFT\n{Functional}'''
+        else:
+            Preview += '''\n.HF'''
+        
+        if Method == 'CC':
+            Preview += '''\n*CC INPUT'''
+            for i in CC:
+                Preview += f'''\n{i}'''
+            try:
+                CCSOPPA
+            except NameError:
+                pass
+            else:
+                if CCSOPPA != '':
+                    Preview += f'''\n.{CCSOPPA}'''
+    
+    if '**PROPERTIES' in CalcAdd:
+        Preview += '''\n**PROPERTIES'''
+
+    if '**RESPONSE' in CalcAdd:
+        Preview += '''\n**RESPONSE'''
+    
+    Preview += '''\n*END OF INPUT'''
+    
+    _PreviewText()
+
+def _PreviewText(*args, **kwargs):
+    global PreviewLabel
+    PreviewLabel.config(font=('Times New Roman', 12), text = Preview, justify='left')
+    PreviewLabel.grid(row=0, column=0)
 
 def _CalcType(*args, **kwargs):
     global CalcMain, CalcTypeMain
     CalcMain = CalcTypeMain.get()
+    _Preview()
 
 def _CalcTypeAdd(*args, **kwargs):
     global CalcTypeProp, CalcTypeRes, CalcAdd, tabControl, CalcProp, CalcRes
@@ -23,6 +86,7 @@ def _CalcTypeAdd(*args, **kwargs):
     if CalcRes != '':
         tabControl.tab(3, state='normal')
 
+    _Preview()
 
 def _TabRemove(*args, **kwargs):
     global tabControl
@@ -79,6 +143,7 @@ def _FunctionalType(*args, **kwargs):
     global Functional
     if Method == 'DFT':
         Functional = FuncType.get()
+        _Preview()
         return
 
 # def _BasissetStyles(*args, **kwargs):
@@ -90,6 +155,7 @@ def _CCType(*args, **kwargs):
     if Method == 'CC':
         CC = [i.get() for i in [CCTypeCCS, CCTypeMP2, CCTypeCC2, CCTypeCISpD, CCTypeCCSD, CCTypeCCSDRp3, CCTypeCCSDpT, CCTypeCC3] if i.get() != '']
         CCSOPPA = CCTypeSOPPA.get()
+        _Preview()
         return
     pass
 
@@ -115,6 +181,12 @@ if __name__ == '__main__':
     tabControl.add(PreviewTab, text='Preview')
     tabControl.pack(expand=1, fill="both")
 
+    # Creation of Preview
+    Preview = '''**DALTON INPUT'''
+    PreviewLabel = Label(PreviewTab)
+    PreviewLabel.config(font=('Times New Roman', 12),text = Preview)
+    PreviewLabel.pack()
+    # _Preview()
 
     # Creation of Functional type dropdown box
     FunctionalLabel = Label(MethodTab, text='Functional', font = ("Times New Roman", 12))
@@ -242,3 +314,6 @@ if __name__ == '__main__':
     # BasissetStyles.bind("<<ComboboxSelected>>", _BasissetStyles)
 
 
+    _Preview()
+
+    print(Preview)
