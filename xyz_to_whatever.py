@@ -8,9 +8,8 @@ from tkinter import ttk as ttk
 #     global CalcType, MethodType
 
 def _CalcType(*args, **kwargs):
-    global CalcType
-    Calc = CalcType.get()
-    print(Calc)
+    global CalcMain, CalcTypeMain
+    CalcMain = CalcTypeMain.get()
 
 def _MethodType(*args, **kwargs):
     global MethodType
@@ -39,8 +38,10 @@ def _FunctionalType(*args, **kwargs):
 
 if __name__ == '__main__':
     root = Tk()
-    root.title('XYZ to DALTON')
+    root.title('XYZ to DALTON20')
     tabControl = ttk.Notebook(root)
+
+    root.geometry('800x500')
 
     # Tabs can be added here
     MainTab = Frame(tabControl)
@@ -55,10 +56,19 @@ if __name__ == '__main__':
 
     CalcType = StringVar()
 
-    CalculationTypes = ttk.Combobox(MainTab, textvariable=CalcType, values=('Energy', 'Optimization', 'Opt+Freq', 'Frequency', 'IRC'), state='readonly')
-    CalculationTypes.current(0)
-    CalculationTypes.grid(row=1, column=1)
-    CalculationTypes.bind("<<ComboboxSelected>>", _CalcType)
+    # Creation of Job type radiobuttons
+    CalcLabel = Label(MainTab, text='Calculation Type', font = ("Times New Roman", 12))
+    CalcLabel.grid(row=1, column=0, padx=10, pady=10, sticky=W)
+
+    CalcTypeMain = StringVar()
+
+    CalcTypesSingle = ttk.Radiobutton(MainTab, variable=CalcTypeMain, value='.RUN WAVEFUNCTION', text='Single Point', command=_CalcType)
+    CalcTypesOptimize = ttk.Radiobutton(MainTab, variable=CalcTypeMain, value='.OPTIMIZE', text='Optimize', command=_CalcType)
+    CalcTypeMain.set('.RUN WAVEFUNCTION')
+
+    CalcTypesSingle.grid(row=1, column=1, padx=10, pady=10)
+    CalcTypesOptimize.grid(row=1, column=2, padx=10, pady=10)
+
     
     # Creation of Method type dropdown box
     Label(MethodTab, text='Method', font = ("Times New Roman", 12)).grid(column=0, row=1, padx=10, pady=25)
