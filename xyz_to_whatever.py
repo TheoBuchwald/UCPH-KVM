@@ -11,17 +11,25 @@ def _CalcType(*args, **kwargs):
     global CalcMain, CalcTypeMain
     CalcMain = CalcTypeMain.get()
 
-def _MethodType(*args, **kwargs):
-    global MethodType
-    Method  = MethodType.get()
-    print(Method)
-    if MethodType.get() == 'DFT':
-        global FuncType
+def _CalcTypeAdd(*args, **kwargs):
+    global CalcTypeProp, CalcTypeRes, CalcAdd, tabControl, CalcProp, CalcRes
+    CalcProp = CalcTypeProp.get()
+    CalcRes = CalcTypeRes.get()
+    CalcAdd = [i.get() for i in [CalcTypeProp, CalcTypeRes] if i.get() != '']
+    _TabRemove()
 
-        # Creation of Functional tpype dropdown box
-        Label(MethodTab, text='Functional', font = ("Times New Roman", 12)).grid(column=3, row=1, padx=10, pady=25)
+    if CalcProp != '':
+        tabControl.tab(2, state='normal')
+    if CalcRes != '':
+        tabControl.tab(3, state='normal')
 
-        FuncType = StringVar()
+
+def _TabRemove(*args, **kwargs):
+    global tabControl
+    if CalcProp == '':
+        tabControl.tab(2, state='hidden')
+    if CalcRes == '':
+        tabControl.tab(3, state='hidden')
 
 def _MethodType(*args, **kwargs):
     global Method
@@ -92,9 +100,16 @@ if __name__ == '__main__':
     # Tabs can be added here
     MainTab = Frame(tabControl)
     MethodTab = Frame(tabControl)
+    PreviewTab = Frame(tabControl)
+
+    PropertiesTab = Frame(tabControl)
+    ResponseTab = Frame(tabControl)
 
     tabControl.add(MainTab, text='Main')
     tabControl.add(MethodTab, text='Method')
+    tabControl.add(PropertiesTab, text='Properties', state='hidden')
+    tabControl.add(ResponseTab, text='Response', state='hidden')
+    tabControl.add(PreviewTab, text='Preview')
     tabControl.pack(expand=1, fill="both")
 
 
@@ -149,15 +164,32 @@ if __name__ == '__main__':
     CalcTypesSingle.grid(row=1, column=1, padx=10, pady=10)
     CalcTypesOptimize.grid(row=1, column=2, padx=10, pady=10)
 
+    # Creation of additional Job type checkbuttons
+    CalcLabelAdd = Label(MainTab, text='Additional calculations', font = ("Times New Roman", 12))
+    CalcLabelAdd.grid(row=2, column=0, padx=10, pady=10)
+
+    CalcTypeProp = StringVar()
+    CalcTypeRes = StringVar()
+
+    CalcTypesProp = ttk.Checkbutton(MainTab, text='Properties', onvalue='**PROPERTIES', offvalue='', var=CalcTypeProp, command=_CalcTypeAdd)
+    CalcTypesRes = ttk.Checkbutton(MainTab, text='Response', onvalue='**RESPONSE', offvalue='', var=CalcTypeRes, command=_CalcTypeAdd)
+
+    CalcTypesProp.grid(row=2, column=1, padx=10, pady=10, sticky=W)
+    CalcTypesRes.grid(row=2, column=2, padx=10, pady=10, sticky=W)
+
+    CalcAdd = []
+    CalcRes = ''
+    CalcProp = ''
     
     # Creation of Method type dropdown box
-    Label(MethodTab, text='Method', font = ("Times New Roman", 12)).grid(column=0, row=1, padx=10, pady=25)
+    MethodLabel = Label(MethodTab, text='Method', font = ("Times New Roman", 12))
+    MethodLabel.grid(column=0, row=1, padx=10, pady=10)
 
     MethodType = StringVar()
 
-    MethodTypes = ttk.Combobox(MethodTab, textvariable=MethodType, values=('HF', 'MP2', 'CCSD', 'DFT'), state='readonly')
-    MethodTypes.current(0)
-    MethodTypes.grid(row=1, column=1)
+    MethodTypes = ttk.Combobox(MethodTab, textvariable=MethodType, values=('HF', 'MP2', 'CC', 'DFT'), state='readonly')
+    MethodTypes.set('HF')
+    MethodTypes.grid(row=1, column=1, columnspan=2)
     MethodTypes.bind("<<ComboboxSelected>>", _MethodType)
 
     root.mainloop()
