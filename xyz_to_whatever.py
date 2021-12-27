@@ -81,6 +81,9 @@ def _FunctionalType(*args, **kwargs):
         Functional = FuncType.get()
         return
 
+# def _BasissetStyles(*args, **kwargs):
+#     global BasissetStyle
+#     BasissetStyle = BasissetStyles.get()
 
 def _CCType(*args, **kwargs):
     global CC, CCSOPPA
@@ -192,4 +195,50 @@ if __name__ == '__main__':
     MethodTypes.grid(row=1, column=1, columnspan=2)
     MethodTypes.bind("<<ComboboxSelected>>", _MethodType)
 
-    root.mainloop()
+    # # Creation of Basis set type dropdown boxes
+    # global BasissetType, BasissetLabel, BasissetStyles, BasissetStyles_dict
+    # BasissetStyles_dict = {
+    # 'STO':
+    #     ('2G', '3G', '6G'),
+    # 'Pople': {
+    #     '3-21G':
+    #         (('',('','*')),
+    #         ('++',('','*'))),
+    #     '4-31G':
+    #         (('','')),
+    #     '6-31G':
+    #         (('',('','*','**','3df,3pd')),
+    #         ('+',('','*')),
+    #         ('++',('','*','**'))),
+    #     '6-311G':
+    #         (('',('','*','**', '(2df,2pd)')),
+    #         ('+',('*')),
+    #         ('++',('**','(2d,2p)','(3df,3pd)')))
+    #     },
+    # 'ano':
+    #     ('1','2','3','4'),
+    # 'Dunniger': {
+    #     'cc-pVDZ': ('','aug'),
+    #     'cc-pVTZ': ('','aug'),
+    #     'cc-pVQZ': ('','aug'),
+    #     'cc-pV5Z': ('','aug'),
+    #     'cc-pV6Z': ('','aug')
+    #     },
+    # 'pc': {
+    #     '1': ('','aug'),
+    #     '2': ('','aug'),
+    #     '3': ('','aug'),
+    #     '4': ('','aug')
+    #     }
+    # }
+    # BasissetLabel = Label(MethodTab, text='Basis set type', font = ("Times New Roman", 12))
+    # BasissetLabel.grid(row=3, column=0, padx=10, pady=10)
+
+    # BasissetType = StringVar()
+
+    # BasissetStyles = ttk.Combobox(MethodTab, textvariable=BasissetType, values=('STO', 'Pople', 'ano', 'Dunninger', 'Polarization consistent', ), state='readonly')
+    # BasissetStyles.set('STO')
+    # BasissetStyles.grid(row=3, column=1)
+    # BasissetStyles.bind("<<ComboboxSelected>>", _BasissetStyles)
+
+
