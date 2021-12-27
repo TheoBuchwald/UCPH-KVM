@@ -5,7 +5,7 @@ from tkinter import ttk as ttk
 
 
 def _Preview(*args, **kwargs):
-    global Preview, Method, CalcMain, CC, CCSOPPA, CalcAdd, CalcRes
+    global Preview, Method, CalcMain, CC, CCSOPPA, CalcAdd, CalcRes, Properties, ExcNumber
     Preview = '''**DALTON INPUT'''
     try:
         CalcMain
@@ -56,6 +56,10 @@ def _Preview(*args, **kwargs):
     
     if '**PROPERTIES' in CalcAdd:
         Preview += '''\n**PROPERTIES'''
+        for i in Properties:
+            Preview += f'''\n{i}'''
+        if '.EXCITA' in Properties:
+            Preview += f'''\n*EXCITA\n{ExcNumber}'''
 
     if '**RESPONSE' in CalcAdd:
         Preview += '''\n**RESPONSE'''
@@ -157,7 +161,28 @@ def _CCType(*args, **kwargs):
         CCSOPPA = CCTypeSOPPA.get()
         _Preview()
         return
-    pass
+
+def _Properties(*args, **kwargs):
+    global PropTypeMagnet, PropTypeShielding, PropTypeRotationalTensor, PropTypeSpinRotation, PropTypeSpinSpin
+    global PropTypeExcitation, PropTypeVibration, Properties, PropTypeSOPPA, ExcNumber
+    Properties = [i.get() for i in [PropTypeMagnet, PropTypeShielding, PropTypeRotationalTensor, PropTypeSpinRotation, PropTypeSpinSpin, PropTypeExcitation, PropTypeVibration] if i.get() != '']
+
+    PropSOPPA = PropTypeSOPPA.get()
+    _PropertyRemove()
+
+    if '.EXCITA' in Properties:
+        ExcTypes.grid(row=6, column=1, padx=3, pady=10, sticky=W)
+        ExcNumber = int(ExcType.get())
+
+    _Preview()
+
+def _PropertyRemove(*args, **kwargs):
+    if PropTypeExcitation != '.EXCITA':
+        ExcTypes.grid_remove()
+
+def _ValidateInteger(entry):
+
+    return entry.isdigit()
 
 if __name__ == '__main__':
     root = Tk()
@@ -313,8 +338,44 @@ if __name__ == '__main__':
     # BasissetStyles.grid(row=3, column=1)
     # BasissetStyles.bind("<<ComboboxSelected>>", _BasissetStyles)
 
+    # Creation of Properties section
+    PropTypeMagnet = StringVar()
+    PropTypeShielding = StringVar()
+    PropTypeRotationalTensor = StringVar()
+    PropTypeSpinRotation = StringVar()
+    PropTypeSpinSpin = StringVar()
+    PropTypeExcitation = StringVar()
+    PropTypeVibration = StringVar()
+
+    PropTypeSOPPA = StringVar()
+
+    ExcType = StringVar(value='0')
+
+    PropTypesMagnet = ttk.Checkbutton(PropertiesTab, text='Magnetizabilities', onvalue='.MAGNET', offvalue='', var=PropTypeMagnet, command=_Properties)
+    PropTypesShielding = ttk.Checkbutton(PropertiesTab, text='Nuclear shielding', onvalue='.SHIELD', offvalue='', var=PropTypeShielding, command=_Properties)
+    PropTypesRotationalTensor = ttk.Checkbutton(PropertiesTab, text='Rotational g tensor', onvalue='.MOLGFA', offvalue='', var=PropTypeRotationalTensor, command=_Properties)
+    PropTypesSpinRotation = ttk.Checkbutton(PropertiesTab, text='Nuclear spin-rotation', onvalue='.SPIN-R', offvalue='', var=PropTypeSpinRotation, command=_Properties)
+    PropTypesSpinSpin = ttk.Checkbutton(PropertiesTab, text='Nuclear Spin-Spin', onvalue='.SPIN-SPIN\n.TDA TRIPLET', offvalue='', var=PropTypeSpinSpin, command=_Properties)
+    PropTypesExcitation = ttk.Checkbutton(PropertiesTab, text='Excitation energies', onvalue='.EXCITA', offvalue='', var=PropTypeExcitation, command=_Properties)
+    PropTypesVibration = ttk.Checkbutton(PropertiesTab, text='Vibrational frequencies', onvalue='.VIBANA', offvalue='', var=PropTypeVibration, command=_Properties)
+
+    PropTypesSOPPA = ttk.Combobox(PropertiesTab, textvariable=PropTypeSOPPA, values=['', 'SOPPA', 'SOPPA(CCSD)'], state='readonly')
+
+    ExcValidation = PropertiesTab.register(_ValidateInteger)
+    ExcTypes = ttk.Entry(PropertiesTab, textvariable=ExcType, validate='key', validatecommand=(ExcValidation, '%P'))
+    ExcTypes.bind('<KeyRelease>', _Properties)
+
+    PropTypesMagnet.grid(row=1, column=0, padx=3, pady=10, sticky=W)
+    PropTypesShielding.grid(row=2, column=0, padx=3, pady=10, sticky=W)
+    PropTypesRotationalTensor.grid(row=3, column=0, padx=3, pady=10, sticky=W)
+    PropTypesSpinRotation.grid(row=4, column=0, padx=3, pady=10, sticky=W)
+    PropTypesSpinSpin.grid(row=5, column=0, padx=3, pady=10, sticky=W)
+    PropTypesExcitation.grid(row=6, column=0, padx=3, pady=10, sticky=W)
+    PropTypesVibration.grid(row=7, column=0, padx=3, pady=10, sticky=W)
+
+    Properties = []
 
     _Preview()
     root.mainloop()
 
-    print(Preview)
+    # print(Preview)
