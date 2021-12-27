@@ -56,6 +56,8 @@ def _Preview(*args, **kwargs):
     
     if '**PROPERTIES' in CalcAdd:
         Preview += '''\n**PROPERTIES'''
+        if PropSOPPA != '':
+            Preview += f'''\n.{PropSOPPA}'''
         for i in Properties:
             Preview += f'''\n{i}'''
         if '.EXCITA' in Properties:
@@ -163,8 +165,9 @@ def _CCType(*args, **kwargs):
         return
 
 def _Properties(*args, **kwargs):
-    global PropTypeMagnet, PropTypeShielding, PropTypeRotationalTensor, PropTypeSpinRotation, PropTypeSpinSpin
-    global PropTypeExcitation, PropTypeVibration, Properties, PropTypeSOPPA, ExcNumber
+    global PropTypeMagnet, PropTypeShielding, PropTypeRotationalTensor, PropTypeSpinRotation, PropTypeSpinSpin, \
+        PropTypeExcitation, PropTypeVibration, Properties, PropTypeSOPPA, ExcNumber, Method, MethodTypes, \
+        CCTypeSOPPA, CCSOPPA, PropSOPPA
     Properties = [i.get() for i in [PropTypeMagnet, PropTypeShielding, PropTypeRotationalTensor, PropTypeSpinRotation, PropTypeSpinSpin, PropTypeExcitation, PropTypeVibration] if i.get() != '']
 
     PropSOPPA = PropTypeSOPPA.get()
@@ -173,6 +176,23 @@ def _Properties(*args, **kwargs):
     if '.EXCITA' in Properties:
         ExcTypes.grid(row=6, column=1, padx=3, pady=10, sticky=W)
         ExcNumber = int(ExcType.get())
+    
+    if PropSOPPA != '':
+        if PropSOPPA == 'SOPPA':
+            MethodTypes.set('MP2')
+            _MethodType()
+        elif PropSOPPA == 'SOPPA2':
+            MethodTypes.set('CC')
+            CCTypeSOPPA.set('SOPPA2')
+            _MethodType()
+            _CCType()
+        elif PropSOPPA == 'SOPPA(CCSD)':
+            MethodTypes.set('CC')
+            CCTypeSOPPA.set('SOPPA(CCSD)')
+            _MethodType()
+            _CCType()
+
+
 
     _Preview()
 
@@ -359,7 +379,7 @@ if __name__ == '__main__':
     PropTypesExcitation = ttk.Checkbutton(PropertiesTab, text='Excitation energies', onvalue='.EXCITA', offvalue='', var=PropTypeExcitation, command=_Properties)
     PropTypesVibration = ttk.Checkbutton(PropertiesTab, text='Vibrational frequencies', onvalue='.VIBANA', offvalue='', var=PropTypeVibration, command=_Properties)
 
-    PropTypesSOPPA = ttk.Combobox(PropertiesTab, textvariable=PropTypeSOPPA, values=['', 'SOPPA', 'SOPPA(CCSD)'], state='readonly')
+    PropTypesSOPPA = ttk.Combobox(PropertiesTab, textvariable=PropTypeSOPPA, values=['', 'SOPPA', 'SOPPA2', 'SOPPA(CCSD)'], state='readonly')
 
     ExcValidation = PropertiesTab.register(_ValidateInteger)
     ExcTypes = ttk.Entry(PropertiesTab, textvariable=ExcType, validate='key', validatecommand=(ExcValidation, '%P'))
@@ -373,9 +393,13 @@ if __name__ == '__main__':
     PropTypesExcitation.grid(row=6, column=0, padx=3, pady=10, sticky=W)
     PropTypesVibration.grid(row=7, column=0, padx=3, pady=10, sticky=W)
 
+    PropTypesSOPPA.grid(row=8, column=0, padx=3, pady=10, sticky=W)
+    PropTypesSOPPA.bind('<<ComboboxSelected>>', _Properties)
+
+    PropSOPPA = ''
     Properties = []
 
     _Preview()
     root.mainloop()
 
-    # print(Preview)
+    print(Preview)
