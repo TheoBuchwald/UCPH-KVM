@@ -42,3 +42,23 @@ This repository was created to collect all the scripts and programs developed an
   Furthermore the charge of the molecule in the junction is by default 0, this can be changed using the *--charge* keyword <\br>
 </p>
 </details>
+
+## [xyz2povray.py](./xyz2povray.py)
+<details><summary> Program information </summary>
+<p>
+  A script designed to convert a xyz file to a pov file for the programme POV-Ray which can be used ot ake visually pretty graphics
+
+  The only argument you have to provide is the xyz file
+</p>
+</details>
+
+## [pov-editor.py](./pov-editor.py)
+<details><summary> Program information </summary>
+<p>
+  A script designed to take the camera position of an existing pov file and update the graphics arguments of said file
+
+  You need to supply two arguments. The pov file wherein the camera position is located and the xyz file so the script can generate the updated graphics.
+
+  This script is especially useful in conjunction with either imol (which only exist for Mac) or Avogadro. In both programes you can export a certain view as a pov file. This is where the camera position is located.
+</p>
+</details>
