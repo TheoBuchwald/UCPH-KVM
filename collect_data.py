@@ -827,6 +827,17 @@ class lsdal:
 
 
 def Forward_search_last(file: str, text: str, error: str, err: bool =True):
+    """Searches from the beggining of the file given to the end where it returns the linenumber of the last occurence
+
+    Args:
+        file (str): The file to search in
+        text (str): The text string to search for
+        error (str): If no occurences were found it will print 'No [error] could be found in [file]
+        err (bool, optional): Whether or not to print error message if no occurences are found. Defaults to True.
+
+    Returns:
+        (int): Linenumber of last occurence
+    """
     res = os.popen(f"grep -nT '{text}' {file} | tail -n 1 | awk '{{print $1}}'").readlines()
     if len(res) == 0:
         if suppressed == False:
@@ -836,6 +847,19 @@ def Forward_search_last(file: str, text: str, error: str, err: bool =True):
     return int(res[0].replace(':\n','')) - 1
 
 def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, error: str, err: bool=True):
+    """Searches from beggining of file for last occurence of [text1] and in the following [lines] after for [text2]
+
+    Args:
+        file (str): File to search in
+        text1 (str): From the last occurence of this this function will search
+        text2 (str): This is what will be found in the lines following [text1]
+        lines (int): How many lines after [text1] should the function search for [text2]
+        error (str): If no occurences were found it will print 'No [error] could be found in [file]
+        err (bool, optional): Whether or not to print error message if no occurences are found. Defaults to True.. Defaults to True.
+
+    Returns:
+        (int): Linenumber of [text2] occurence
+    """
     res = os.popen(f"grep -nTA{lines} '{text1}' {file} | tail -n {lines + 1} | grep {text2} | awk '{{print $1}}'").readlines()
     if len(res) == 0:
         if suppressed == False:
@@ -845,6 +869,17 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     return int(res[0].replace('-\n','')) - 1
 
 def Forward_search_first(file: str, text: str, error: str, err: bool=True):
+    """Searches from beginning of file and finds the first occurence of [text]
+
+    Args:
+        file (str): File to search in
+        text (str): Text to look for
+        error (str): If no occurences were found it will print 'No [error] could be found in [file]
+        err (bool, optional): Whether or not to print error message if no occurences are found. Defaults to True.. Defaults to True.
+
+    Returns:
+        (int): Linenumber of first occurence
+    """
     res = os.popen(f"grep -nTm1 '{text}' {file} | awk '{{print $1}}'").readlines()
     if len(res) == 0:
         if suppressed == False:
@@ -854,6 +889,17 @@ def Forward_search_first(file: str, text: str, error: str, err: bool=True):
     return int(res[0].replace(':\n','')) - 1
 
 def Forward_search_all(file: str, text: str, error: str, err: bool=True):
+    """Searches from beggining of file to end of file finding all occurences of [text]
+
+    Args:
+        file (str): File to search in
+        text (str): Text to look for
+        error (str): If no occurences were found it will print 'No [error] could be found in [file]
+        err (bool, optional): Whether or not to print error message if no occurences are found. Defaults to True.. Defaults to True.
+
+    Returns:
+        (list): List of the linenumbers of all occurences
+    """
     res  = os.popen(f"grep -nT '{text}' {file} | awk '{{print $1}}'").readlines()
     if len(res) == 0:
         if suppressed == False:
@@ -863,6 +909,13 @@ def Forward_search_all(file: str, text: str, error: str, err: bool=True):
     return [int(val.replace(':\n','')) - 1 for val in res]
 
 def Resize(array: list):
+    """Takes an array of arrays with varying sizes and resizes them to the same size.
+    This is done by appending 'NaN' to the smaller lists.
+    If the first value says 'Not implemented' the remainder of the array will be filled with 'Not implemented
+
+    Args:
+        array (list): Array of arrays with varying sizes
+    """
     max_size = 0
     for i in range(len(array[:])):
         if len(array[i]) > max_size:
@@ -875,12 +928,30 @@ def Resize(array: list):
             array[i] += ['NaN'] * (max_size - len(array[i]))
 
 def CheckForOnlyNans(array: list):
+    """Function for checking if an array is fille only with the value 'NaN'
+
+    Args:
+        array (list): Array that should be looked through
+
+    Returns:
+        (bool): Returns a False/True based on whether or not the array the array only consists of 'NaN'
+    """
     for i in array:
         if i != 'NaN':
            return False
     return True
 
 def Find_output_type(infile: str):
+    """This function finds the type of programme used to generate the output file.
+    Currently it can recognize Orca, Dalton, Gaussian, and LSDalton
+
+    Args:
+        infile (str): Output file
+
+    Returns:
+        file_text (object): An object of the class that belongs to the singular output type
+        input_type (str): The name of the programme
+    """
     with open(infile,'r') as read:
         lines = read.readlines()[:10]
     if '* O   R   C   A *' in lines[4]: #File type = ORCA
