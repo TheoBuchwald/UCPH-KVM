@@ -64,9 +64,9 @@ class Bond():
 def Get_Structure(file):
     atoms = np.array([])
     with open(file) as data:
-        for line in data:
+        for linenumber, line in enumerate(data):
             text = line.split()
-            if len(text) == 4:
+            if linenumber >= 2:
                 atoms = np.append(atoms, Atom(text[0], [float(text[1]),	float(text[2]),	float(text[3])]))
     return atoms
 
@@ -123,8 +123,10 @@ if __name__ == '__main__':
 global_settings {{ assumed_gamma 1.8 }}
 background {{color rgb <0.744, 0.784, 0.896>}}
 
+#declare camera_location = <{pos1},{pos2},{pos3}> * 0.7;
+
 camera {{
-    {Camera[0][1:-1]}
+    location camera_location
     {Camera[1][1:-1]}
     {Camera[2][1:-2]}
 	up <0, 1, 0>
@@ -132,7 +134,7 @@ camera {{
 }}
 
 light_source {{
-    <{pos1*1.05}, {pos2*1.05}, {pos3*1.05}>
+    camera_location * 1.05
     color rgb <1, 1, 1>
 }}
 

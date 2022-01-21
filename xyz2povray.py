@@ -71,7 +71,7 @@ def get_structure(data):
 	with open(data) as xyz:
 		for linenumber, line in enumerate(xyz):
 			line = line.split()
-			if len(line) == 4:
+			if linenumber >= 2:
 				atoms = np.append(atoms, Atom(line[0], linenumber - 2,
 											  [float(line[1]),
 											  float(line[2]),
@@ -115,15 +115,17 @@ if __name__ == '__main__':
 global_settings {{ assumed_gamma 1.8 }}
 background {{color rgb <0.744, 0.784, 0.896>}}
 
+#declare camera_location = <{normal[0]},{normal[1]},{normal[2]}>;
+
 camera {{
     perspective
-	location <{normal[0]},{normal[1]},{normal[2]}>
+	location camera_location
 	right x*1
 	up z*3/4
 	look_at <0.0,0.0,0.0> }}
 
 light_source {{
-	<{light[0]},{light[1]},{light[2]}>
+	camera_location * 1.05
 	color rgb <1, 1, 1>
 }}
 
