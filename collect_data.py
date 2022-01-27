@@ -107,7 +107,7 @@ if __name__ == "__main__":
     UVVIS = args.uvvis
     T = args.temp
 
-    Arguments = {   #These are all the possible arguments that extract data
+    RequestedArguments = {   #These are all the possible arguments that extract data
         '_Energy' : args.energy,
         '_ZPV' : args.zpv,
         '_Dipole_moments' : args.dipole,
@@ -158,46 +158,28 @@ if __name__ == "__main__":
     quiet = args.quiet
     suppressed = args.suppress
 
-    if UVVIS == True and Arguments['_Excitation_energies'] == None:
-        if suppressed == False:
-            print('Excitation energies will be found as well, since you are trying to generate a UV-VIS spectrum')
-        Arguments['_Excitation_energies'] = -1
+    NeededArguments = RequestedArguments.copy()
 
-    if UVVIS == True and Arguments['_Oscillator_strengths'] != True:
-        if suppressed == False:
-            print('Oscillator_strengths will be found as well, since you are trying to generate a UV-VIS spectrum')
-        Arguments['_Oscillator_strengths'] = Arguments['_Excitation_energies']
+    if UVVIS:
+        NeededArguments['_Oscillator_strengths'] = NeededArguments['_Excitation_energies'] = -1
 
-    if Arguments['_Oscillator_strengths'] != False and Arguments['_Excitation_energies'] == None:   #Ensuring that excitation energies are calculated when oscillator strengths are
-        if suppressed == False:
-            print('Excitation energies will be found as well, since you are trying to extract oscillator strengths')
-        Arguments['_Excitation_energies'] = -1
+    if NeededArguments['_Oscillator_strengths']:   #Ensuring that excitation energies are calculated when oscillator strengths are
+        NeededArguments['_Oscillator_strengths'] = NeededArguments['_Excitation_energies'] = -1
 
-    if Arguments['_Oscillator_strengths'] == True:  #Makes the amount of Oscillator strengths printed equal to that of excitation energies
-        Arguments['_Oscillator_strengths'] = Arguments['_Excitation_energies']
+    if NeededArguments['_Gibbs']:
+        NeededArguments['_Enthalpy'] = True
+        NeededArguments['_Entropy'] = True
 
-    if Arguments['_Gibbs'] == True and (Arguments['_Enthalpy'] == False or Arguments['_Entropy'] == False):
-        if suppressed == False:
-            print('Entropy and enthalpy will be extracted as well, since you requested Gibbs free energies')
-        Arguments['_Enthalpy'] = True
-        Arguments['_Entropy'] = True
+    if NeededArguments['_PartitionFunctions']:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
+        NeededArguments['_Frequencies'] = -1
 
-    if Arguments['_PartitionFunctions'] == True and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
-        if suppressed == False:
-            print('Frequencies will be found as well, since you are trying to extract partition functions')
-        Arguments['_Frequencies'] = -1
+    if NeededArguments['_Enthalpy']:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
+        NeededArguments['_Frequencies'] = -1
 
-    if Arguments['_Enthalpy'] == True and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
-        if suppressed == False:
-            print('Frequencies will be found as well, since you are trying to calculate enthalpies')
-        Arguments['_Frequencies'] = -1
+    if NeededArguments['_Entropy']:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
+        NeededArguments['_Frequencies'] = -1
 
-    if Arguments['_Entropy'] == True and Arguments['_Frequencies'] == None:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
-        if suppressed == False:
-            print('Frequencies will be found as well, since you are trying to calculate entropies')
-        Arguments['_Frequencies'] = -1
-
-    Variable_arrays = dict([item for item in Arguments.items() if type(item[1]) == int])    #Dictionary of data where the amount of values printed can be changed
+    Variable_arrays = dict([item for item in NeededArguments.items() if type(item[1]) == int])    #Dictionary of data where the amount of values printed can be changed
 
 
 #******************************* CLASSES ******************************
@@ -205,9 +187,9 @@ if __name__ == "__main__":
 
 class gaus:
     def __init__(self,input):
-        file = open(input, "r")
-        self.lines = file.readlines()
-        file.close
+        with open(input, "r") as file:
+            self.lines = file.readlines()
+
         self.file = input
         self.end = len(self.lines)
 
@@ -235,7 +217,7 @@ class gaus:
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+4].split()[1].replace('D','E')), float(self.lines[linenumber+5].split()[1].replace('D','E')), float(self.lines[linenumber+6].split()[1].replace('D','E')), float(self.lines[linenumber+3].split()[1].replace('D','E'))
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
-            
+
 
     def _Polarizabilities(self):
         linenumber = ['NaN', 'NaN', 'NaN', 'NaN']
@@ -255,10 +237,10 @@ class gaus:
                 for j in self.lines[i].split()[2:]:
                     self.freq.append(float(j)*inv_cm_to_au)
         if len(self.freq) == 0:
-            self.freq = ['NaN'] * abs(Arguments['_Frequencies'])
-        if len(self.freq) < Arguments['_Frequencies']:
-            self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
-        
+            self.freq = ['NaN'] * abs(NeededArguments['_Frequencies'])
+        if len(self.freq) < NeededArguments['_Frequencies']:
+            self.freq += ['NaN'] * (NeededArguments['_Frequencies'] - len(self.freq))
+
     def _Excitation_energies(self):
         self.exc_energies = []
         linenumber = Forward_search_last(self.file, 'Excitation energies and oscillator strengths:', 'excitation energies', err=False)
@@ -268,9 +250,9 @@ class gaus:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[4])*ev_to_au)
         if len(self.exc_energies) == 0:
-            self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies'])
-        if len(self.exc_energies) < Arguments['_Excitation_energies']:
-            self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
+            self.exc_energies = ['NaN'] * abs(NeededArguments['_Excitation_energies'])
+        if len(self.exc_energies) < NeededArguments['_Excitation_energies']:
+            self.exc_energies += ['NaN'] * (NeededArguments['_Excitation_energies'] - len(self.exc_energies))
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
@@ -281,9 +263,9 @@ class gaus:
             for i in linenumbers:
                 self.osc_strengths.append(float(self.lines[i].split()[-1].replace('f=','')))
         if len(self.osc_strengths) == 0:
-            self.osc_strengths = ['NaN'] * abs(Arguments['_Excitation_energies'])
-        if len(self.osc_strengths) < Arguments['_Excitation_energies']:
-            self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
+            self.osc_strengths = ['NaN'] * abs(NeededArguments['_Excitation_energies'])
+        if len(self.osc_strengths) < NeededArguments['_Excitation_energies']:
+            self.osc_strengths += ['NaN'] * (NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
 
     def _RotationalConsts(self):
         self.rots = []
@@ -304,13 +286,13 @@ class gaus:
         linenumber = Forward_search_last(self.file, 'Rotational symmetry number', 'rotational symmetry number')
         if type(linenumber) == int:
             self.symnum = int(self.lines[linenumber].split()[-1].replace('.',''))
-    
+
     def _Multiplicity(self):
         self.multi = 0
         linenumber = Forward_search_first(self.file, 'Multiplicity', 'multiplicity')
         if type(linenumber) == int:
             self.multi = int(self.lines[linenumber].split()[-1])
-     
+
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
@@ -320,7 +302,7 @@ class gaus:
         self._RotationalConsts()
         self._Mass()
         self._SymmetryNumber()
-        self._Multiplicity()      
+        self._Multiplicity()
         self.qT = trans_const_fac * self.mass ** (1.5) * T ** (2.5)
         if len(self.rots) == 1:
             self.qR = rot_lin_const * T / (self.symnum * self.rots[0])
@@ -329,7 +311,7 @@ class gaus:
         realfreq = np.array([x for x in self.freq if x != 'NaN'])
         realfreq = realfreq[realfreq > 0.0]
         self.qV = np.prod(1 / (1 - np.exp( - vib_const * realfreq / T)))
-        self.qE = self.multi #Good approximation for most closed-shell molecules 
+        self.qE = self.multi #Good approximation for most closed-shell molecules
         self.qTotal = self.qT*self.qR*self.qV*self.qE
 
     def _Enthalpy(self):
@@ -348,9 +330,9 @@ class gaus:
         realfreq = np.array([x for x in self.freq if x != 'NaN'])
         realfreq = realfreq[realfreq > 0.0]
         self.E_V = gas_constant * np.sum(vib_const * realfreq * (1/2 + 1 / (np.exp(vib_const * realfreq / T) - 1)))
-        self.E_e = 0 #Good approximation for most closed-shell molecules 
+        self.E_e = 0 #Good approximation for most closed-shell molecules
         self.enthalpy = (self.E_T+self.E_R+self.E_V+gas_constant * T) / au_to_kJmol + self.tot_energy
-    
+
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
@@ -381,13 +363,11 @@ class gaus:
         self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
 
 
-
-
 class orca:
     def __init__(self,input):
-        file = open(input, "r")
-        self.lines = file.readlines()
-        file.close
+        with open(input, "r") as file:
+            self.lines = file.readlines()
+
         self.file = input
         self.end = len(self.lines)
 
@@ -408,7 +388,7 @@ class orca:
             self.zpv = float(self.lines[linenumber].split()[-2]) + float(self.lines[linenumber+1].split()[-4])
             return
         self.zpv = 'NaN'
-        
+
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
@@ -457,9 +437,9 @@ class orca:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[3]))
         if len(self.exc_energies) == 0:
-            self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies']  )
-        if len(self.exc_energies) < Arguments['_Excitation_energies']:
-            self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
+            self.exc_energies = ['NaN'] * abs(NeededArguments['_Excitation_energies']  )
+        if len(self.exc_energies) < NeededArguments['_Excitation_energies']:
+            self.exc_energies += ['NaN'] * (NeededArguments['_Excitation_energies'] - len(self.exc_energies))
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
@@ -471,9 +451,9 @@ class orca:
                 else:
                     self.osc_strengths.append('NaN')
         if len(self.osc_strengths) == 0:
-            self.osc_strengths = ['NaN'] * abs(Arguments['_Excitation_energies'])
-        if len(self.osc_strengths) < Arguments['_Excitation_energies']:
-            self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
+            self.osc_strengths = ['NaN'] * abs(NeededArguments['_Excitation_energies'])
+        if len(self.osc_strengths) < NeededArguments['_Excitation_energies']:
+            self.osc_strengths += ['NaN'] * (NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
 
     def _Frequencies(self):
         self.freq = []
@@ -487,10 +467,10 @@ class orca:
                 else:
                     break
         if len(self.freq) == 0:
-            self.freq = ['NaN'] * abs(Arguments['_Frequencies'])
-        if len(self.freq) < Arguments['_Frequencies']:
-            self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
-    
+            self.freq = ['NaN'] * abs(NeededArguments['_Frequencies'])
+        if len(self.freq) < NeededArguments['_Frequencies']:
+            self.freq += ['NaN'] * (NeededArguments['_Frequencies'] - len(self.freq))
+
     def _RotationalConsts(self):
         self.rots = []
         linenumbers = Forward_search_first(self.file, 'Rotational constants in MHz', 'rotational constants')
@@ -511,13 +491,13 @@ class orca:
         linenumber = Forward_search_last(self.file, 'Symmetry Number', 'rotational symmetry number')
         if type(linenumber) == int:
             self.symnum = int(self.lines[linenumber].split()[-1])
-    
+
     def _Multiplicity(self):
         self.multi = 0
         linenumber = Forward_search_first(self.file, 'Multiplicity', 'multiplicity')
         if type(linenumber) == int:
             self.multi = int(self.lines[linenumber].split()[-1])
-    
+
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
@@ -527,7 +507,7 @@ class orca:
         self._RotationalConsts()
         self._Mass()
         self._Multiplicity()
-        self._SymmetryNumber()      
+        self._SymmetryNumber()
         self.qT = trans_const_fac * self.mass ** (1.5) * T ** (2.5)
         if len(self.rots) == 1:
             self.qR = rot_lin_const * T / (self.symnum * self.rots[0])
@@ -538,7 +518,7 @@ class orca:
         self.qV = np.prod(1 / (1 - np.exp( - vib_const * realfreq / T)))
         self.qE = self.multi #Good approximation for most closed-shell molecules
         self.qTotal = self.qT*self.qR*self.qV*self.qE
-    
+
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
@@ -561,15 +541,11 @@ class orca:
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
 
 
-
-
-
-
 class dal:
     def __init__(self,input):
-        file = open(input, "r")
-        self.lines = file.readlines()
-        file.close
+        with open(input, "r") as file:
+            self.lines = file.readlines()
+
         self.file = input
         self.end = len(self.lines)
 
@@ -622,9 +598,9 @@ class dal:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[-2]))
         if len(self.exc_energies) == 0:
-            self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies'])
-        if len(self.exc_energies) < Arguments['_Excitation_energies']:
-            self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
+            self.exc_energies = ['NaN'] * abs(NeededArguments['_Excitation_energies'])
+        if len(self.exc_energies) < NeededArguments['_Excitation_energies']:
+            self.exc_energies += ['NaN'] * (NeededArguments['_Excitation_energies'] - len(self.exc_energies))
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
@@ -648,9 +624,9 @@ class dal:
         if len(self.osc_strengths) == 0:
             self.osc_strengths = ['NaN'] * len(self.exc_energies)
             return
-        if len(self.osc_strengths) < Arguments['_Excitation_energies']:
-            self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
-        
+        if len(self.osc_strengths) < NeededArguments['_Excitation_energies']:
+            self.osc_strengths += ['NaN'] * (NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
+
     def _Frequencies(self):
         self.freq = []
         linenumber = Forward_search_last(self.file, 'Vibrational Frequencies and IR Intensities', 'frequencies')
@@ -660,9 +636,9 @@ class dal:
                     break
                 self.freq.append(float(i.split()[3]))
         if len(self.freq) == 0:
-            self.freq = ['NaN'] * abs(Arguments['_Frequencies'])
-        if len(self.freq) < Arguments['_Frequencies']:
-            self.freq += ['NaN'] * (Arguments['_Frequencies'] - len(self.freq))
+            self.freq = ['NaN'] * abs(NeededArguments['_Frequencies'])
+        if len(self.freq) < NeededArguments['_Frequencies']:
+            self.freq += ['NaN'] * (NeededArguments['_Frequencies'] - len(self.freq))
 
     def _RotationalConsts(self):
         self.rots = []
@@ -686,7 +662,7 @@ class dal:
     #    linenumber = Forward_search_last(self.file, 'Symmetry Number', 'rotational symmetry number')
     #    if type(linenumber) == int:
     #        self.symnum = int(self.lines[linenumber].split()[-1])
-    
+
     def _Multiplicity(self):
         self.multi = 0
         linenumber = Forward_search_last(self.file, 'Spatial symmetry', 'multiplicity')
@@ -701,11 +677,11 @@ class dal:
             return
         self._RotationalConsts()
         self._Mass()
-        self._Multiplicity()      
+        self._Multiplicity()
         self.qT = trans_const_fac * self.mass ** (1.5) * T ** (2.5)
         #Rotational does not give the same as Dalton, due to a correction from the assymmetric top being applied: 10.1063/1.1748490
         if len(self.rots) == 1:
-            self.qR = rot_lin_const * T / (self.rots[0]) 
+            self.qR = rot_lin_const * T / (self.rots[0])
         else:
             self.qR = rot_poly_const * T ** (1.5) / (np.prod(self.rots) ** (0.5))
         realfreq = np.array([x for x in self.freq if x != 'NaN'])
@@ -759,15 +735,14 @@ class dal:
                 print(f"No frequencies found in {infile}, skipping free energy calculation")
             self.gibbs = 'NaN'
             return
-        self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol    
-
+        self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
 
 
 class lsdal:
     def __init__(self,input):
-        file = open(input, "r")
-        self.lines = file.readlines()
-        file.close
+        with open(input, "r") as file:
+            self.lines = file.readlines()
+
         self.file = input
         self.end = len(self.lines)
 
@@ -808,9 +783,9 @@ class lsdal:
                     break
                 self.exc_energies.append(self.lines[i].split()[0])
         if len(self.exc_energies) == 0:
-            self.exc_energies = ['NaN'] * abs(Arguments['_Excitation_energies']  )
-        if len(self.exc_energies) < Arguments['_Excitation_energies']:
-            self.exc_energies += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.exc_energies))
+            self.exc_energies = ['NaN'] * abs(NeededArguments['_Excitation_energies']  )
+        if len(self.exc_energies) < NeededArguments['_Excitation_energies']:
+            self.exc_energies += ['NaN'] * (NeededArguments['_Excitation_energies'] - len(self.exc_energies))
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
@@ -819,9 +794,10 @@ class lsdal:
             for i in range(len(self.exc_energies)):
                 self.osc_strengths.append(self.lines[linenumber+8+i].split()[-1])
         if len(self.osc_strengths) == 0:
-            self.osc_strengths = ['NaN'] * abs(Arguments['_Excitation_energies'])
-        if len(self.osc_strengths) < Arguments['_Excitation_energies']:
-            self.osc_strengths += ['NaN'] * (Arguments['_Excitation_energies'] - len(self.osc_strengths))
+            self.osc_strengths = ['NaN'] * abs(NeededArguments['_Excitation_energies'])
+        if len(self.osc_strengths) < NeededArguments['_Excitation_energies']:
+            self.osc_strengths += ['NaN'] * (NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
+
 
 #**************************** FUNCTIONS *******************************
 
@@ -956,8 +932,8 @@ def Find_output_type(infile: str):
         lines = read.readlines()[:10]
     if '* O   R   C   A *' in lines[4]: #File type = ORCA
         file_text = orca(infile)
-        input_type = 'ORCA'       
-    
+        input_type = 'ORCA'
+
     if '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:  #File type = DALTON
         file_text = dal(infile)
         input_type = 'DALTON'
@@ -1074,7 +1050,7 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
 
         excitations = 1E7/(excitations/inv_cm_to_au)   #From cm^-1 to nm
         span = np.linspace(min(excitations)-20, max(excitations)+20, N, endpoint=True) # exctinction coefficient (wavelength range)
-            
+
         graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
         plt.title(title)
         plt.plot(span, graph)
@@ -1091,7 +1067,8 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
 
 
 if __name__ == "__main__":
-    Wanted_Values = [item[0] for item in Arguments.items() if not(item[1] == None or item[1] == False)]
+    Wanted_Values = [item[0] for item in RequestedArguments.items() if not(item[1] == None or item[1] == False)]
+    Needed_Values = [item[0] for item in NeededArguments.items() if not(item[1] == None or item[1] == False)]
     Set_of_values = dict(item for item in Outputs.items() if item[0] in Wanted_Values)
     Extracted_values = dict()
     array_input = list()
@@ -1106,7 +1083,7 @@ if __name__ == "__main__":
     s_trans_const = 0.3160965065 #Assuming 1 bar standard pressure and molar
     au_to_kJmol = 2625.4996394799
     Barrier = '\n**********************************************\n'
-    
+
     if quiet == True:
         print('')
 
@@ -1120,11 +1097,11 @@ if __name__ == "__main__":
 
         file_text, input_type = Find_output_type(infile)    #Determining data output type
 
-        Extract_data(suppressed, Wanted_Values, infile, file_text, input_type)  #Extracting data
-        
+        Extract_data(suppressed, Needed_Values, infile, file_text, input_type)  #Extracting data
+
         dict_keys = [*file_text.__dict__.keys()]
         collection_dict = dict()
-        
+
         for i in dict_keys[1:]: #Collecting the data in dictionaries
             collection_dict[i] = file_text.__dict__[i]
 
