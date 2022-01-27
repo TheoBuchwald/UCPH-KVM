@@ -208,19 +208,19 @@ light_source {{
 union {{
 '''
 
-    newpov = open(newpovfile, 'w')
-    newpov.write(default_settings)
+    with open(newpovfile, "w") as newpov:
+        newpov.write(default_settings)
 
-    for atom in molecule:
-        newpov.write(atom.toPOV())
+        for atom in molecule:
+            newpov.write(atom.toPOV())
 
-    for i, atom1 in enumerate(molecule):
-        for atom2 in molecule[i+1:]:
-            Bond_Type = atom1.species + atom2.species
-            Bond_Length = np.linalg.norm(atom1.position - atom2.position)
-            if (Bond_Type in BondTypes) and (abs(Bond_Length) <= BondLengths[Bond_Type]):
-                bond = Bond(atom1, atom2)
-                newpov.write(bond.toPOV())
+        for i, atom1 in enumerate(molecule):
+            for atom2 in molecule[i+1:]:
+                Bond_Type = atom1.species + atom2.species
+                Bond_Length = np.linalg.norm(atom1.position - atom2.position)
+                if (Bond_Type in BondTypes) and (abs(Bond_Length) <= BondLengths[Bond_Type]):
+                    bond = Bond(atom1, atom2)
+                    newpov.write(bond.toPOV())
 
-    newpov.write('\n}')
-    newpov.close()
+        newpov.write('\n}')
+
