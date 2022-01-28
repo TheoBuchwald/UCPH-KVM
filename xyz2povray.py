@@ -71,7 +71,7 @@ def get_structure(data):
 	with open(data) as xyz:
 		for linenumber, line in enumerate(xyz):
 			line = line.split()
-			if len(line) == 4:
+			if linenumber >= 2:
 				atoms = np.append(atoms, Atom(line[0], linenumber - 2,
 											  [float(line[1]),
 											  float(line[2]),
@@ -103,115 +103,117 @@ if __name__ == '__main__':
     move2origin(molecule, CoM)
 
     file_no_ext = file.replace('.xyz','')
-    povfile = open(f'{file_no_ext}.pov', 'w')
+    with open(f'{file_no_ext}.pov', 'w') as povfile:
 
-    positions = np.array([atom.position for atom in molecule])
+        positions = np.array([atom.position for atom in molecule])
 
-    normal = np.array([0., 0., min(positions[2,:]) - 15])
+        normal = np.array([0., 0., min(positions[2,:]) - 15])
 
-    light = normal * 1.05
+        light = normal * 1.05
 
-    default_settings = f'''#version 3.7;
-global_settings {{ assumed_gamma 1.8 }}
-background {{color rgb <0.744, 0.784, 0.896>}}
+        default_settings = f'''#version 3.7;
+    global_settings {{ assumed_gamma 1.8 }}
+    background {{color rgb <0.744, 0.784, 0.896>}}
 
-camera {{
-    perspective
-	location <{normal[0]},{normal[1]},{normal[2]}>
-	right x*1
-	up z*3/4
-	look_at <0.0,0.0,0.0> }}
+    #declare camera_location = <{normal[0]},{normal[1]},{normal[2]}>;
 
-light_source {{
-	<{light[0]},{light[1]},{light[2]}>
-	color rgb <1, 1, 1>
-}}
+    camera {{
+        perspective
+        location camera_location
+        right x*1
+        up z*3/4
+        look_at <0.0,0.0,0.0> }}
 
-#macro Metal(BaseColor)
-	#local CVect3 = BaseColor - <0.00, 0.10, 0.20>;
-	#local CVect5 = BaseColor - <0.00, 0.00, 0.00>;
-	// Cast CVect as an rgb vector
-	#local P3 = rgb CVect3;
-	#local P5 = rgb CVect5;
-	// Reflection colors, derived from pigment color, 'grayed down' a touch.
-	#local RE = P5 * 0.50 + 0.25;
-	// Ambient colors, derived from base color
-	#local AE = P5 * 0.02 + 0.1;
-	// Diffuse values
-	// Calculated as 1 - (ambient+reflective+specular values)
-	#local DE = max(1-(((RE.red+RE.green+RE.blue)/3) + ((AE.red+AE.green+AE.blue)/3)),0);
-	#local F_Metal = finish {{
-		brilliance 6
-		diffuse DE
-		ambient AE
-		reflection RE
-		metallic 0.9
-		specular 0.80
-		roughness 1/120
-	}}
-	texture{{
-		pigment{{
-			P3
-		}}
-		finish{{
-			F_Metal
-		}}
-	}}
-#end
+    light_source {{
+        camera_location * 1.05
+        color rgb <1, 1, 1>
+    }}
 
-#macro Non_Metal(BaseColor)
-	texture {{
+    #macro Metal(BaseColor)
+        #local CVect3 = BaseColor - <0.00, 0.10, 0.20>;
+        #local CVect5 = BaseColor - <0.00, 0.00, 0.00>;
+        // Cast CVect as an rgb vector
+        #local P3 = rgb CVect3;
+        #local P5 = rgb CVect5;
+        // Reflection colors, derived from pigment color, 'grayed down' a touch.
+        #local RE = P5 * 0.50 + 0.25;
+        // Ambient colors, derived from base color
+        #local AE = P5 * 0.02 + 0.1;
+        // Diffuse values
+        // Calculated as 1 - (ambient+reflective+specular values)
+        #local DE = max(1-(((RE.red+RE.green+RE.blue)/3) + ((AE.red+AE.green+AE.blue)/3)),0);
+        #local F_Metal = finish {{
+            brilliance 6
+            diffuse DE
+            ambient AE
+            reflection RE
+            metallic 0.9
+            specular 0.80
+            roughness 1/120
+        }}
+        texture{{
+            pigment{{
+                P3
+            }}
+            finish{{
+                F_Metal
+            }}
+        }}
+    #end
 
-	pigment {{
-		color rgbt BaseColor
-	}}
-	finish {{
-		ambient 0.2
-		diffuse 0.8
-		specular 0.8
-	}}
-}}
-#end
+    #macro Non_Metal(BaseColor)
+        texture {{
 
-#macro Atom( position, radii, tex )
-	sphere{{ position, radii
-	texture {{ tex }}
-}}
-#end
+        pigment {{
+            color rgbt BaseColor
+        }}
+        finish {{
+            ambient 0.2
+            diffuse 0.8
+            specular 0.8
+        }}
+    }}
+    #end
 
-#macro Bond( pos1, pos2, radii, tex )
-	cylinder{{ pos1
-	pos2
-	radii
-	texture {{ tex }}
-}}
-#end
+    #macro Atom( position, radii, tex )
+        sphere{{ position, radii
+        texture {{ tex }}
+    }}
+    #end
 
-#declare H_Texture = Non_Metal(<1, 1, 1, 0.1>);
-#declare C_Texture = Non_Metal(<0.15, 0.15, 0.15, 0.1>);
-#declare N_Texture = Non_Metal(<0, 0, 1, 0.1>);
-#declare O_Texture = Non_Metal(<1, 0, 0, 0.1>);
-#declare S_Texture = Non_Metal(<1, 0.749, 0, 0.1>);
-#declare Ti_Texture = Metal(<169, 169, 169> / 255);
-#declare Cu_Texture = Metal(<184, 115, 51> / 255);
-#declare Ag_Texture = Metal(<192, 192, 192> / 255);
-#declare Au_Texture = Metal(<1.00, 0.875, 0.575>);
+    #macro Bond( pos1, pos2, radii, tex )
+        cylinder{{ pos1
+        pos2
+        radii
+        texture {{ tex }}
+    }}
+    #end
 
-union {{
-'''
+    #declare H_Texture = Non_Metal(<1, 1, 1, 0.1>);
+    #declare C_Texture = Non_Metal(<0.15, 0.15, 0.15, 0.1>);
+    #declare N_Texture = Non_Metal(<0, 0, 1, 0.1>);
+    #declare O_Texture = Non_Metal(<1, 0, 0, 0.1>);
+    #declare S_Texture = Non_Metal(<1, 0.749, 0, 0.1>);
+    #declare Ti_Texture = Metal(<169, 169, 169> / 255);
+    #declare Cu_Texture = Metal(<184, 115, 51> / 255);
+    #declare Ag_Texture = Metal(<192, 192, 192> / 255);
+    #declare Au_Texture = Metal(<1.00, 0.875, 0.575>);
 
-    povfile.write(default_settings)
+    union {{
+    '''
 
-    for atom in molecule:
-        povfile.write(atom.toPOV())
+        povfile.write(default_settings)
 
-    for i, atom1 in enumerate(molecule):
-        for atom2 in molecule[i+1:]:
-            Bond_Type = atom1.species + atom2.species
-            Bond_Length = np.linalg.norm(atom1.position - atom2.position)
-            if (Bond_Type in BondTypes) and (abs(Bond_Length) <= BondLengths[Bond_Type]):
-                bond = Bond(atom1, atom2)
-                povfile.write(bond.toPOV())
+        for atom in molecule:
+            povfile.write(atom.toPOV())
 
-    povfile.write('\n}')
-    povfile.close()
+        for i, atom1 in enumerate(molecule):
+            for atom2 in molecule[i+1:]:
+                Bond_Type = atom1.species + atom2.species
+                Bond_Length = np.linalg.norm(atom1.position - atom2.position)
+                if (Bond_Type in BondTypes) and (abs(Bond_Length) <= BondLengths[Bond_Type]):
+                    bond = Bond(atom1, atom2)
+                    povfile.write(bond.toPOV())
+
+        povfile.write('\n}')
+

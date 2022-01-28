@@ -64,9 +64,9 @@ class Bond():
 def Get_Structure(file):
     atoms = np.array([])
     with open(file) as data:
-        for line in data:
+        for linenumber, line in enumerate(data):
             text = line.split()
-            if len(text) == 4:
+            if linenumber >= 2:
                 atoms = np.append(atoms, Atom(text[0], [float(text[1]),	float(text[2]),	float(text[3])]))
     return atoms
 
@@ -123,8 +123,10 @@ if __name__ == '__main__':
 global_settings {{ assumed_gamma 1.8 }}
 background {{color rgb <0.744, 0.784, 0.896>}}
 
+#declare camera_location = <{pos1},{pos2},{pos3}> * 0.7;
+
 camera {{
-    {Camera[0][1:-1]}
+    location camera_location
     {Camera[1][1:-1]}
     {Camera[2][1:-2]}
 	up <0, 1, 0>
@@ -132,7 +134,7 @@ camera {{
 }}
 
 light_source {{
-    <{pos1*1.05}, {pos2*1.05}, {pos3*1.05}>
+    camera_location * 1.05
     color rgb <1, 1, 1>
 }}
 
@@ -206,19 +208,19 @@ light_source {{
 union {{
 '''
 
-    newpov = open(newpovfile, 'w')
-    newpov.write(default_settings)
+    with open(newpovfile, "w") as newpov:
+        newpov.write(default_settings)
 
-    for atom in molecule:
-        newpov.write(atom.toPOV())
+        for atom in molecule:
+            newpov.write(atom.toPOV())
 
-    for i, atom1 in enumerate(molecule):
-        for atom2 in molecule[i+1:]:
-            Bond_Type = atom1.species + atom2.species
-            Bond_Length = np.linalg.norm(atom1.position - atom2.position)
-            if (Bond_Type in BondTypes) and (abs(Bond_Length) <= BondLengths[Bond_Type]):
-                bond = Bond(atom1, atom2)
-                newpov.write(bond.toPOV())
+        for i, atom1 in enumerate(molecule):
+            for atom2 in molecule[i+1:]:
+                Bond_Type = atom1.species + atom2.species
+                Bond_Length = np.linalg.norm(atom1.position - atom2.position)
+                if (Bond_Type in BondTypes) and (abs(Bond_Length) <= BondLengths[Bond_Type]):
+                    bond = Bond(atom1, atom2)
+                    newpov.write(bond.toPOV())
 
-    newpov.write('\n}')
-    newpov.close()
+        newpov.write('\n}')
+
