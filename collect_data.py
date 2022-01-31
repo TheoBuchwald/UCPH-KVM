@@ -1,5 +1,6 @@
 
 import math
+from multiprocessing import Pool
 from types import FunctionType
 import numpy as np
 import argparse
@@ -298,7 +299,7 @@ class gaus:
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping partition function calculation")
+                print(f"No frequencies found in {self.file}, skipping partition function calculation")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -319,7 +320,7 @@ class gaus:
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
@@ -338,7 +339,7 @@ class gaus:
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -359,7 +360,7 @@ class gaus:
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping free energy calculation")
+                print(f"No frequencies found in {self.file}, skipping free energy calculation")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
@@ -394,7 +395,7 @@ class orca:
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
@@ -413,7 +414,7 @@ class orca:
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping free energy calculation")
+                print(f"No frequencies found in {self.file}, skipping free energy calculation")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
@@ -503,7 +504,7 @@ class orca:
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping partition function calculation")
+                print(f"No frequencies found in {self.file}, skipping partition function calculation")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -524,7 +525,7 @@ class orca:
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -674,7 +675,7 @@ class dal:
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping partition function calculation")
+                print(f"No frequencies found in {self.file}, skipping partition function calculation")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -695,7 +696,7 @@ class dal:
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -715,7 +716,7 @@ class dal:
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping enthalpy calculation")
+                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
@@ -734,7 +735,7 @@ class dal:
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)) == True:
             if suppressed == False:
-                print(f"No frequencies found in {infile}, skipping free energy calculation")
+                print(f"No frequencies found in {self.file}, skipping free energy calculation")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
@@ -820,7 +821,7 @@ def Forward_search_last(file: str, text: str, error: str, err: bool =True):
     if len(res) == 0:
         if suppressed == False:
             if err == True:
-                print(f'No {error} could be found in {infile}')
+                print(f'No {error} could be found in {file}')
         return 'NaN'
     return int(res[0].replace(':\n','')) - 1
 
@@ -842,7 +843,7 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     if len(res) == 0:
         if suppressed == False:
             if err == True:
-                print(f'No {error} could be found in {infile}')
+                print(f'No {error} could be found in {file}')
         return 'NaN'
     return int(res[0].replace('-\n','')) - 1
 
@@ -862,7 +863,7 @@ def Forward_search_first(file: str, text: str, error: str, err: bool=True):
     if len(res) == 0:
         if suppressed == False:
             if err == True:
-                print(f'No {error} could be found in {infile}')
+                print(f'No {error} could be found in {file}')
         return 'NaN'
     return int(res[0].replace(':\n','')) - 1
 
@@ -882,7 +883,7 @@ def Forward_search_all(file: str, text: str, error: str, err: bool=True):
     if len(res) == 0:
         if suppressed == False:
             if err == True:
-                print(f'No {error} could be found in {infile}')
+                print(f'No {error} could be found in {file}')
         return 'NaN'
     return [int(val.replace(':\n','')) - 1 for val in res]
 
@@ -950,6 +951,29 @@ def Find_output_type(infile: str):
 
     del lines
     return file_text, input_type
+
+def Data_Extraction(infile):
+    Extracted_values = dict()
+
+    if (quiet == True or suppressed == True) == False:
+        print(Barrier)
+        print(f'Collecting data from {infile}')
+
+    file_text, input_type = Find_output_type(infile)    #Determining data output type
+
+    Extract_data(suppressed, Needed_Values, infile, file_text, input_type)  #Extracting data
+
+    dict_keys = [*file_text.__dict__.keys()]
+    collection_dict = dict()
+
+    for i in dict_keys[1:]: #Collecting the data in dictionaries
+        collection_dict[i] = file_text.__dict__[i]
+
+    Extracted_values[infile] = collection_dict
+
+    del file_text #Removing the file text from memory
+
+    return Extracted_values
 
 def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: dict, input_type: str):
     for i in Wanted_Values:
@@ -1072,8 +1096,6 @@ if __name__ == "__main__":
     Wanted_Values = [item[0] for item in RequestedArguments.items() if not(item[1] == None or item[1] == False)]
     Needed_Values = [item[0] for item in NeededArguments.items() if not(item[1] == None or item[1] == False)]
     Set_of_values = dict(item for item in Outputs.items() if item[0] in Wanted_Values)
-    Extracted_values = dict()
-    array_input = list()
 
     ev_to_au = 0.036749405469679
     inv_cm_to_au = 1/219474.63068
@@ -1091,25 +1113,12 @@ if __name__ == "__main__":
 
     count = len(input_file)
 
-    for infile in input_file:
-        array_input.append([infile])
-        if (quiet == True or suppressed == True) == False:
-            print(Barrier)
-            print(f'Collecting data from {infile}')
+    with Pool() as pool:
+        Extracted_values = pool.map(Data_Extraction, input_file)
 
-        file_text, input_type = Find_output_type(infile)    #Determining data output type
+    Extracted_values = {key: value for dictionary in Extracted_values for key, value in dictionary.items()} # Reformatting Extracted_values
 
-        Extract_data(suppressed, Needed_Values, infile, file_text, input_type)  #Extracting data
-
-        dict_keys = [*file_text.__dict__.keys()]
-        collection_dict = dict()
-
-        for i in dict_keys[1:]: #Collecting the data in dictionaries
-            collection_dict[i] = file_text.__dict__[i]
-
-        Extracted_values[infile] = collection_dict
-
-        del file_text #Removing the file text from memory
+    array_input = [[i] for i in Extracted_values] # Creating array_input
 
     if not(quiet == False or suppressed == False) == True:
         print(Barrier)
