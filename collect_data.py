@@ -96,7 +96,7 @@ if __name__ == "__main__":
     parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
     parser.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
     parser.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
-    parser.add_argument('--uvvis', action='store_true', help='Include to calculate a UV-VIS spectrum')
+    parser.add_argument('--uvvis', const='png', type=str, help='Include to calculate a UV-VIS spectrum. Tou can give the picture format as an optional argument. Will use png as default', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
 
 
 #******************************* SETUP ********************************
@@ -1054,13 +1054,14 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
     sigmacm=0.4*8065.544
     k=(NA*e**2)/(np.log(10)*2*me*c**2*epsvac)*np.sqrt(np.log(2)/pi)*10**(-1)
         # PLOT SETUP DONE
-    for file in range(0,count):
-        filename = input_file[file].replace('.out','')
-        plotname = filename + '-uvvis.eps'
+    for file in input_file:
+        filename = file.replace('.out','')
+        plotname = f'{filename}-uvvis.{UVVIS}'
         title = filename.replace("_"," ")
 
-        excitations = np.array([x for x in Final_arrays['exc_energies'][file] if x != 'NaN' and x != 'Not implemented'])
-        oscillations = np.array([x for x in Final_arrays['osc_strengths'][file] if x != 'NaN' and x != 'Not implemented'])
+        excitations = np.array([x for x in Extracted_values[file]['exc_energies'] if x != 'NaN' and x != 'Not implemented'])
+        oscillations = np.array([x for x in Extracted_values[file]['osc_strengths'] if x != 'NaN' and x != 'Not implemented'])
+
         if len(excitations) == 0 and len(oscillations) == 0:
             if suppressed == False:
                 print(f'Excitation energies and oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
@@ -1086,7 +1087,7 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
         plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
-        plt.savefig(plotname, format='eps', dpi=600)
+        plt.savefig(plotname, format=f'{UVVIS}', dpi=600)
 
 
 #******************************* CODE *********************************
@@ -1120,7 +1121,7 @@ if __name__ == "__main__":
 
     array_input = [[i] for i in Extracted_values] # Creating array_input
 
-    if not(quiet == False or suppressed == False) == True:
+    if not(quiet or suppressed):
         print(Barrier)
 
     Check_if_Implemented(input_file, Set_of_values, Extracted_values)   #Finding functions not implemented
@@ -1136,7 +1137,7 @@ if __name__ == "__main__":
         if type(Final_arrays[key]) == list:
             Resize(Final_arrays[key])
 
-    if UVVIS == True:
+    if UVVIS:
         Make_uvvis_spectrum(input_file, suppressed, UVVIS_Spectrum, inv_cm_to_au, count, Final_arrays)
 
     Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)   #Fixing the size of variable size arrays
