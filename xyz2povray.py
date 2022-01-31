@@ -90,6 +90,18 @@ def get_CoM(Molecule):
 
 	return np.around(CoM, decimals=2)
 
+def get_C(Molecule):
+
+    C = np.array([0.0,0.0,0.0])
+
+    for atom in Molecule:
+        C += atom.position
+
+    C /= len(Molecule)
+
+    return np.around(C, decimals=2)
+
+
 def move2origin(Molecule, CoM):
 	for atom in Molecule:
 		atom.translate(CoM)
@@ -99,7 +111,7 @@ if __name__ == '__main__':
     file = sys.argv[1]
 
     molecule = get_structure(file)
-    CoM = get_CoM(molecule)
+    CoM = get_C(molecule)
     move2origin(molecule, CoM)
 
     file_no_ext = file.replace('.xyz','')
