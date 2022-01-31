@@ -221,7 +221,6 @@ class gaus:
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
-
     def _Polarizabilities(self):
         linenumber = ['NaN', 'NaN', 'NaN', 'NaN']
         searchwords = [' xx ', ' yy ', ' zz ', ' iso ']
@@ -297,8 +296,8 @@ class gaus:
             self.multi = int(self.lines[linenumber].split()[-1])
 
     def _PartitionFunctions(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping partition function calculation")
             self.qTotal = 'NaN'
             return
@@ -318,8 +317,8 @@ class gaus:
         self.qTotal = self.qT*self.qR*self.qV*self.qE
 
     def _Enthalpy(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.enthalpy = 'NaN'
             return
@@ -337,8 +336,8 @@ class gaus:
         self.enthalpy = (self.E_T+self.E_R+self.E_V+gas_constant * T) / au_to_kJmol + self.tot_energy
 
     def _Entropy(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.entropy = 'NaN'
             return
@@ -358,8 +357,8 @@ class gaus:
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
 
     def _Gibbs(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping free energy calculation")
             self.gibbs = 'NaN'
             return
@@ -393,8 +392,8 @@ class orca:
         self.zpv = 'NaN'
 
     def _Enthalpy(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.enthalpy = 'NaN'
             return
@@ -412,8 +411,8 @@ class orca:
         self.enthalpy = (self.E_T+self.E_R+self.E_V+gas_constant * T) / au_to_kJmol + self.tot_energy
 
     def _Gibbs(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping free energy calculation")
             self.gibbs = 'NaN'
             return
@@ -502,8 +501,8 @@ class orca:
             self.multi = int(self.lines[linenumber].split()[-1])
 
     def _PartitionFunctions(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping partition function calculation")
             self.qTotal = 'NaN'
             return
@@ -523,8 +522,8 @@ class orca:
         self.qTotal = self.qT*self.qR*self.qV*self.qE
 
     def _Entropy(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.entropy = 'NaN'
             return
@@ -673,8 +672,8 @@ class dal:
             self.multi = int(self.lines[linenumber].split()[2])
 
     def _PartitionFunctions(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping partition function calculation")
             self.qTotal = 'NaN'
             return
@@ -694,8 +693,8 @@ class dal:
         self.qTotal = self.qT*self.qR*self.qV*self.qE
 
     def _Entropy(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.entropy = 'NaN'
             return
@@ -714,8 +713,8 @@ class dal:
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
 
     def _Enthalpy(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
             self.enthalpy = 'NaN'
             return
@@ -733,8 +732,8 @@ class dal:
         self.enthalpy = (self.E_T+self.E_R+self.E_V+gas_constant * T) / au_to_kJmol + self.tot_energy
 
     def _Gibbs(self):
-        if CheckForOnlyNans(np.array(self.freq)) == True:
-            if suppressed == False:
+        if CheckForOnlyNans(np.array(self.freq)):
+            if not(suppressed):
                 print(f"No frequencies found in {self.file}, skipping free energy calculation")
             self.gibbs = 'NaN'
             return
@@ -819,8 +818,8 @@ def Forward_search_last(file: str, text: str, error: str, err: bool =True):
     """
     res = os.popen(f"grep -nT '{text}' {file} | tail -n 1 | awk '{{print $1}}'").readlines()
     if len(res) == 0:
-        if suppressed == False:
-            if err == True:
+        if not(suppressed):
+            if err:
                 print(f'No {error} could be found in {file}')
         return 'NaN'
     return int(res[0].replace(':\n','')) - 1
@@ -841,8 +840,8 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     """
     res = os.popen(f"grep -nTA{lines} '{text1}' {file} | tail -n {lines + 1} | grep {text2} | awk '{{print $1}}'").readlines()
     if len(res) == 0:
-        if suppressed == False:
-            if err == True:
+        if not(suppressed):
+            if err:
                 print(f'No {error} could be found in {file}')
         return 'NaN'
     return int(res[0].replace('-\n','')) - 1
@@ -861,8 +860,8 @@ def Forward_search_first(file: str, text: str, error: str, err: bool=True):
     """
     res = os.popen(f"grep -nTm1 '{text}' {file} | awk '{{print $1}}'").readlines()
     if len(res) == 0:
-        if suppressed == False:
-            if err == True:
+        if not(suppressed):
+            if err:
                 print(f'No {error} could be found in {file}')
         return 'NaN'
     return int(res[0].replace(':\n','')) - 1
@@ -881,8 +880,8 @@ def Forward_search_all(file: str, text: str, error: str, err: bool=True):
     """
     res  = os.popen(f"grep -nT '{text}' {file} | awk '{{print $1}}'").readlines()
     if len(res) == 0:
-        if suppressed == False:
-            if err == True:
+        if not(suppressed):
+            if err:
                 print(f'No {error} could be found in {file}')
         return 'NaN'
     return [int(val.replace(':\n','')) - 1 for val in res]
@@ -896,15 +895,15 @@ def Resize(array: list):
         array (list): Array of arrays with varying sizes
     """
     max_size = 0
-    for i in range(len(array[:])):
-        if len(array[i]) > max_size:
-            max_size = len(array[i])
+    for arr in array:
+        if len(arr) > max_size:
+            max_size = len(arr)
 
-    for i in range(len(array[:])):
-        if array[i] == ['Not implemented']:
+    for i, arr in enumerate(array):
+        if arr == ['Not implemented']:
             array[i] *= max_size
         else:
-            array[i] += ['NaN'] * (max_size - len(array[i]))
+            array[i] += ['NaN'] * (max_size - len(arr))
 
 def CheckForOnlyNans(array: list):
     """Function for checking if an array is fille only with the value 'NaN'
@@ -955,9 +954,9 @@ def Find_output_type(infile: str):
 def Data_Extraction(infile):
     Extracted_values = dict()
 
-    if (quiet == True or suppressed == True) == False:
-        print(Barrier)
-        print(f'Collecting data from {infile}')
+    # if not(quiet or suppressed):
+    #     print(Barrier)
+    #     print(f'Collecting data from {infile}')
 
     file_text, input_type = Find_output_type(infile)    #Determining data output type
 
@@ -981,7 +980,7 @@ def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: 
             method = getattr(type(file_text),i)
             method(file_text)
         except AttributeError:
-            if suppressed == False:
+            if not(suppressed):
                 print(f'{infile}: {i} has not been implemented for {input_type}')
 
 def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values: dict):
@@ -1059,19 +1058,19 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
         plotname = f'{filename}-uvvis.{UVVIS}'
         title = filename.replace("_"," ")
 
-        excitations = np.array([x for x in Extracted_values[file]['exc_energies'] if x != 'NaN' and x != 'Not implemented'])
-        oscillations = np.array([x for x in Extracted_values[file]['osc_strengths'] if x != 'NaN' and x != 'Not implemented'])
+        excitations = np.array([x for x in Extracted_Values[file]['exc_energies'] if x != 'NaN' and x != 'Not implemented'])
+        oscillations = np.array([x for x in Extracted_Values[file]['osc_strengths'] if x != 'NaN' and x != 'Not implemented'])
 
         if len(excitations) == 0 and len(oscillations) == 0:
-            if suppressed == False:
+            if not(suppressed):
                 print(f'Excitation energies and oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
             continue
         if len(excitations) == 0:
-            if suppressed == False:
+            if not(suppressed):
                 print(f'Excitation energies have either not been implemented for this output type, or none were found in the file {filename}')
             continue
         if len(oscillations) == 0:
-            if suppressed == False:
+            if not(suppressed):
                 print(f'Oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
             continue
 
@@ -1096,7 +1095,7 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
 if __name__ == "__main__":
     Wanted_Values = [item[0] for item in RequestedArguments.items() if not(item[1] == None or item[1] == False)]
     Needed_Values = [item[0] for item in NeededArguments.items() if not(item[1] == None or item[1] == False)]
-    Set_of_values = dict(item for item in Outputs.items() if item[0] in Wanted_Values)
+    Set_of_Values = dict(item for item in Outputs.items() if item[0] in Wanted_Values)
 
     ev_to_au = 0.036749405469679
     inv_cm_to_au = 1/219474.63068
@@ -1109,29 +1108,29 @@ if __name__ == "__main__":
     au_to_kJmol = 2625.4996394799
     Barrier = '\n**********************************************\n'
 
-    if quiet == True:
-        print('')
+    # if quiet:
+    #     print('')
 
     count = len(input_file)
 
     with Pool() as pool:
-        Extracted_values = pool.map(Data_Extraction, input_file)
+        Extracted_Values = pool.map(Data_Extraction, input_file)
 
-    Extracted_values = {key: value for dictionary in Extracted_values for key, value in dictionary.items()} # Reformatting Extracted_values
+    Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
 
-    array_input = [[i] for i in Extracted_values] # Creating array_input
+    Input_Array = [[i] for i in Extracted_Values] # Creating array_input
 
-    if not(quiet or suppressed):
-        print(Barrier)
+    # if not(quiet or suppressed):
+    #     print(Barrier)
 
-    Check_if_Implemented(input_file, Set_of_values, Extracted_values)   #Finding functions not implemented
+    Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
 
-    for key_outer in Extracted_values.keys():   # Turn everything into lists
-        for key_inner in Extracted_values[key_outer].keys():
-            if type(Extracted_values[key_outer][key_inner]) != list:
-                Extracted_values[key_outer][key_inner] = [Extracted_values[key_outer][key_inner]]
+    for key_outer in Extracted_Values.keys():   # Turn everything into lists
+        for key_inner in Extracted_Values[key_outer].keys():
+            if type(Extracted_Values[key_outer][key_inner]) != list:
+                Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
-    Final_arrays = Collect_and_sort_data(input_file, Set_of_values, Extracted_values)   #Collecting all values in arrays in a dictionary
+    Final_arrays = Collect_and_sort_data(input_file, Set_of_Values, Extracted_Values)   #Collecting all values in arrays in a dictionary
 
     for key in Final_arrays.keys(): #Resizing arrays
         if type(Final_arrays[key]) == list:
@@ -1142,19 +1141,19 @@ if __name__ == "__main__":
 
     Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)   #Fixing the size of variable size arrays
 
-    header = Create_Header(Header_text, Set_of_values, Final_arrays)    #Creation of header row
+    Header = Create_Header(Header_text, Set_of_Values, Final_arrays)    #Creation of header row
 
-    output_array = np.array([header] * (count + 1), dtype=object)   #Create output array from header row
+    Output_Array = np.array([Header] * (count + 1), dtype=object)   #Create output array from header row
 
-    Fill_output_array(Set_of_values, array_input, count, Final_arrays, output_array)    #Filling the output array with the extracted data
+    Fill_output_array(Set_of_Values, Input_Array, count, Final_arrays, Output_Array)    #Filling the output array with the extracted data
 
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
 
-    if CSV == True:
-        np.savetxt('data.csv', output_array, delimiter=',', fmt='%s')
+    if CSV:
+        np.savetxt('data.csv', Output_Array, delimiter=',', fmt='%s')
         print('Data has been saved in data.csv')
     else:
-        print(output_array)
+        print(Output_Array)
 
 #EOF
