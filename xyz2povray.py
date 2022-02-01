@@ -1,7 +1,8 @@
 
 import numpy as np
 import sys
-
+import os
+import subprocess
 
 POV_Atom_Parameters = {'H': [1, 0.324],
 					   'C': [12, 0.417],
@@ -124,95 +125,95 @@ if __name__ == '__main__':
         light = normal * 1.05
 
         default_settings = f'''#version 3.7;
-    global_settings {{ assumed_gamma 1.8 }}
-    background {{color rgb <0.744, 0.784, 0.896>}}
+global_settings {{ assumed_gamma 1.8 }}
+background {{color rgb <0.744, 0.784, 0.896>}}
 
-    #declare camera_location = <{normal[0]},{normal[1]},{normal[2]}>;
+#declare camera_location = <{normal[0]},{normal[1]},{normal[2]}>;
 
-    camera {{
-        perspective
-        location camera_location
-        right x*1
-        up z*3/4
-        look_at <0.0,0.0,0.0> }}
+camera {{
+    perspective
+    location camera_location
+    right x*1
+    up z*3/4
+    look_at <0.0,0.0,0.0> }}
 
-    light_source {{
-        camera_location * 1.05
-        color rgb <1, 1, 1>
+light_source {{
+    camera_location * 1.05
+    color rgb <1, 1, 1>
+}}
+
+#macro Metal(BaseColor)
+    #local CVect3 = BaseColor - <0.00, 0.10, 0.20>;
+    #local CVect5 = BaseColor - <0.00, 0.00, 0.00>;
+    // Cast CVect as an rgb vector
+    #local P3 = rgb CVect3;
+    #local P5 = rgb CVect5;
+    // Reflection colors, derived from pigment color, 'grayed down' a touch.
+    #local RE = P5 * 0.50 + 0.25;
+    // Ambient colors, derived from base color
+    #local AE = P5 * 0.02 + 0.1;
+    // Diffuse values
+    // Calculated as 1 - (ambient+reflective+specular values)
+    #local DE = max(1-(((RE.red+RE.green+RE.blue)/3) + ((AE.red+AE.green+AE.blue)/3)),0);
+    #local F_Metal = finish {{
+        brilliance 6
+        diffuse DE
+        ambient AE
+        reflection RE
+        metallic 0.9
+        specular 0.80
+        roughness 1/120
     }}
-
-    #macro Metal(BaseColor)
-        #local CVect3 = BaseColor - <0.00, 0.10, 0.20>;
-        #local CVect5 = BaseColor - <0.00, 0.00, 0.00>;
-        // Cast CVect as an rgb vector
-        #local P3 = rgb CVect3;
-        #local P5 = rgb CVect5;
-        // Reflection colors, derived from pigment color, 'grayed down' a touch.
-        #local RE = P5 * 0.50 + 0.25;
-        // Ambient colors, derived from base color
-        #local AE = P5 * 0.02 + 0.1;
-        // Diffuse values
-        // Calculated as 1 - (ambient+reflective+specular values)
-        #local DE = max(1-(((RE.red+RE.green+RE.blue)/3) + ((AE.red+AE.green+AE.blue)/3)),0);
-        #local F_Metal = finish {{
-            brilliance 6
-            diffuse DE
-            ambient AE
-            reflection RE
-            metallic 0.9
-            specular 0.80
-            roughness 1/120
+    texture{{
+        pigment{{
+            P3
         }}
-        texture{{
-            pigment{{
-                P3
-            }}
-            finish{{
-                F_Metal
-            }}
-        }}
-    #end
-
-    #macro Non_Metal(BaseColor)
-        texture {{
-
-        pigment {{
-            color rgbt BaseColor
-        }}
-        finish {{
-            ambient 0.2
-            diffuse 0.8
-            specular 0.8
+        finish{{
+            F_Metal
         }}
     }}
-    #end
+#end
 
-    #macro Atom( position, radii, tex )
-        sphere{{ position, radii
-        texture {{ tex }}
+#macro Non_Metal(BaseColor)
+    texture {{
+
+    pigment {{
+        color rgbt BaseColor
     }}
-    #end
-
-    #macro Bond( pos1, pos2, radii, tex )
-        cylinder{{ pos1
-        pos2
-        radii
-        texture {{ tex }}
+    finish {{
+        ambient 0.2
+        diffuse 0.8
+        specular 0.8
     }}
-    #end
+}}
+#end
 
-    #declare H_Texture = Non_Metal(<1, 1, 1, 0.1>);
-    #declare C_Texture = Non_Metal(<0.15, 0.15, 0.15, 0.1>);
-    #declare N_Texture = Non_Metal(<0, 0, 1, 0.1>);
-    #declare O_Texture = Non_Metal(<1, 0, 0, 0.1>);
-    #declare S_Texture = Non_Metal(<1, 0.749, 0, 0.1>);
-    #declare Ti_Texture = Metal(<169, 169, 169> / 255);
-    #declare Cu_Texture = Metal(<184, 115, 51> / 255);
-    #declare Ag_Texture = Metal(<192, 192, 192> / 255);
-    #declare Au_Texture = Metal(<1.00, 0.875, 0.575>);
+#macro Atom( position, radii, tex )
+    sphere{{ position, radii
+    texture {{ tex }}
+}}
+#end
 
-    union {{
-    '''
+#macro Bond( pos1, pos2, radii, tex )
+    cylinder{{ pos1
+    pos2
+    radii
+    texture {{ tex }}
+}}
+#end
+
+#declare H_Texture = Non_Metal(<1, 1, 1, 0.1>);
+#declare C_Texture = Non_Metal(<0.15, 0.15, 0.15, 0.1>);
+#declare N_Texture = Non_Metal(<0, 0, 1, 0.1>);
+#declare O_Texture = Non_Metal(<1, 0, 0, 0.1>);
+#declare S_Texture = Non_Metal(<1, 0.749, 0, 0.1>);
+#declare Ti_Texture = Metal(<169, 169, 169> / 255);
+#declare Cu_Texture = Metal(<184, 115, 51> / 255);
+#declare Ag_Texture = Metal(<192, 192, 192> / 255);
+#declare Au_Texture = Metal(<1.00, 0.875, 0.575>);
+
+union {{
+'''
 
         povfile.write(default_settings)
 
@@ -229,3 +230,10 @@ if __name__ == '__main__':
 
         povfile.write('\n}')
 
+    # Check to see if POVRAY is installed
+    Check_for_povray = os.popen("dpkg -s povray").readlines()
+    # If so generate the picture
+    if 'Status: install ok installed' in Check_for_povray[1]:
+        subprocess.run(['povray', f'{file_no_ext}.pov', '+A0.1', '+AM2', '+AG0', '+R5', '-J'])
+        # Runs with the settings, +A0.1: Antialliasing set to 0.1 threshold, +AM2: Antialiasing method 2,
+        #   +AG0: Gamma set to 0, +R5: Depth set to 5, -J: Jitter set to off

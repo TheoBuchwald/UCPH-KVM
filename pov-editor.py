@@ -1,6 +1,8 @@
 
 import numpy as np
 import sys
+import os
+import subprocess
 
 
 POV_Atom_Parameters = {'H': [1, 0.324],
@@ -224,3 +226,10 @@ union {{
 
         newpov.write('\n}')
 
+    # Check to see if POVRAY is installed
+    Check_for_povray = os.popen("dpkg -s povray").readlines()
+    # If so generate the picture
+    if 'Status: install ok installed' in Check_for_povray[1]:
+        subprocess.run(['povray', f'{newpovfile}', '+A0.1', '+AM2', '+AG0', '+R5', '-J'])
+        # Runs with the settings, +A0.1: Antialliasing set to 0.1 threshold, +AM2: Antialiasing method 2,
+        #   +AG0: Gamma set to 0, +R5: Depth set to 5, -J: Jitter set to off
