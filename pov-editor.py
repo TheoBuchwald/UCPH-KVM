@@ -227,7 +227,8 @@ union {{
         newpov.write('\n}')
 
     # Check to see if POVRAY is installed
-    Check_for_povray = os.popen("dpkg -s povray").readlines()
+    Check_for_povray = subprocess.run(['dpkg', '-s', 'povray'], capture_output=True, text=True)
+    Check_for_povray = Check_for_povray.stdout
     # If so generate the picture
     if 'Status: install ok installed' in Check_for_povray[1]:
         subprocess.run(['povray', f'{newpovfile}', '+A0.1', '+AM2', '+AG0', '+R5', '-J'])
