@@ -147,53 +147,35 @@ for line in content:
         z.append(float(line[3]))
     c += 1
 
-slutfil = open(name+'.inp', 'w')
-
+with open(name + '.inp', 'w') as slutfil:
 # Writing orca input file
 # -------------------------
 
 #Add more jobtypes if needed
 
-if jobtype=='1':
-    slutfil.write(keyword_string+'\n')
-if jobtype=='2':
-    slutfil.write(keyword_string2+'\n')
-if jobtype=='3':
-    slutfil.write(keyword_string3+'\n')
-if jobtype=='4':
-    slutfil.write(keyword_string4+'\n')
-if jobtype=='5':
-    slutfil.write(keyword_string5+'\n')
-if jobtype=='6':
-    slutfil.write(keyword_string6+'\n')
-if jobtype=='7':
-    slutfil.write(keyword_string7+'\n')
-if jobtype=='8':
-    slutfil.write(keyword_string8+'\n')
-if jobtype=='9':
-    slutfil.write(keyword_string9+'\n')
-    memory = '7000'
-if jobtype=='10':
-    slutfil.write(keyword_string10+'\n')
+    if jobtype=='1':
+        slutfil.write(keyword_string+'\n')
+    if jobtype=='2':
+        slutfil.write(keyword_string2+'\n')
+    if jobtype=='3':
+        slutfil.write(keyword_string3+'\n')
+    if jobtype=='4':
+        slutfil.write(keyword_string4+'\n')
+    if jobtype=='5':
+        slutfil.write(keyword_string5+'\n')
+    if jobtype=='6':
+        slutfil.write(keyword_string6+'\n')
+    if jobtype=='7':
+        slutfil.write(keyword_string7+'\n')
+    if jobtype=='8':
+        slutfil.write(keyword_string8+'\n')
+    if jobtype=='9':
+        slutfil.write(keyword_string9+'\n')
+        memory = '7000'
+    if jobtype=='10':
+        slutfil.write(keyword_string10+'\n')
 
-slutfil.write('%maxcore '+memory+'\n')
-slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
-
-for i in range(len(x)):
-    slutfil.write(token[i])
-    slutfil.write('  ')
-    slutfil.write('%f' % x[i])
-    slutfil.write('  ')
-    slutfil.write('%f' % y[i])
-    slutfil.write('  ')
-    slutfil.write('%f' % z[i] + '\n')
-
-slutfil.write('*'+'\n'+'\n')
-
-if extra:
-    slutfil.write(extra_calc+'\n')
-if extra2: 
-    slutfil.write(extra_calc2+'\n')
+    slutfil.write('%maxcore '+memory+'\n')
     slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
 
     for i in range(len(x)):
@@ -204,4 +186,21 @@ if extra2:
         slutfil.write('%f' % y[i])
         slutfil.write('  ')
         slutfil.write('%f' % z[i] + '\n')
+
     slutfil.write('*'+'\n'+'\n')
+
+    if extra:
+        slutfil.write(extra_calc+'\n')
+    if extra2:
+        slutfil.write(extra_calc2+'\n')
+        slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
+
+        for i in range(len(x)):
+            slutfil.write(token[i])
+            slutfil.write('  ')
+            slutfil.write('%f' % x[i])
+            slutfil.write('  ')
+            slutfil.write('%f' % y[i])
+            slutfil.write('  ')
+            slutfil.write('%f' % z[i] + '\n')
+        slutfil.write('*'+'\n'+'\n')
