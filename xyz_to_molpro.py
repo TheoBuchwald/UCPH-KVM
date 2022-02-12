@@ -9,7 +9,7 @@ import os
 
 memory = '4800' #per mpi process in Mwords
 
-keyword_string = """basis=6-311++G(D,P) 
+keyword_string = """basis=6-311++G(D,P)
 hf
 {mp2
 core,0
@@ -18,15 +18,15 @@ natorb,record=2200}
 {casscf
 start,record=2200,type=natural
 maxiter,40
-closed,29           
-occ,37          
+closed,29
+occ,37
 wf,66,1,0}
 {rs2c,shift=0.1;
-closed,29           
-occ,37          
+closed,29
+occ,37
 wf,66,1,0}"""
 
-keyword_string2 = """basis=cc-pVTZ 
+keyword_string2 = """basis=cc-pVTZ
 hf
 ccsd
 optg
@@ -68,25 +68,25 @@ for line in content:
     c += 1
 
 name, ext = os.path.splitext(xyzfile)
-slutfil = open(name+'.inp', 'w')
+with open(name + '.inp', 'w') as slutfil:
 
 # Writing molpro input file
 # -------------------------
 
-slutfil.write('***,'+name+'\n')
-slutfil.write('memory,'+memory+',m'+'\n')
-slutfil.write('file,1,'+name+'.int'+'\n')
-slutfil.write('file,2,'+name+'.wfu'+'\n')
-slutfil.write('angstrom'+'\n'+'geometry={'+'\n')
+    slutfil.write('***,'+name+'\n')
+    slutfil.write('memory,'+memory+',m'+'\n')
+    slutfil.write('file,1,'+name+'.int'+'\n')
+    slutfil.write('file,2,'+name+'.wfu'+'\n')
+    slutfil.write('angstrom'+'\n'+'geometry={'+'\n')
 
-for i in range(len(x)):
-    slutfil.write(token[i])
-    slutfil.write('  ')
-    slutfil.write('%f' % x[i])
-    slutfil.write('  ')
-    slutfil.write('%f' % y[i])
-    slutfil.write('  ')
-    slutfil.write('%f' % z[i] + '\n')
+    for i in range(len(x)):
+        slutfil.write(token[i])
+        slutfil.write('  ')
+        slutfil.write('%f' % x[i])
+        slutfil.write('  ')
+        slutfil.write('%f' % y[i])
+        slutfil.write('  ')
+        slutfil.write('%f' % z[i] + '\n')
 
-slutfil.write('}'+'\n'+'\n')
-slutfil.write(keyword_string2)
+    slutfil.write('}'+'\n'+'\n')
+    slutfil.write(keyword_string2)
