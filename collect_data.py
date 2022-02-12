@@ -1,76 +1,79 @@
 
 import math
 from multiprocessing import Pool
+import subprocess
 from types import FunctionType
 import numpy as np
 import argparse
 from csv import writer
 import matplotlib.pyplot as plt
 from matplotlib import rc
-import os
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 #*************************** INPUT PARSING ****************************
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
     A script designed to make it easier to extract data from output files
 
             Currently the output formats supported are
             ------------------------------------------
-                -  ORCA
-                -  DALTON
-                -  GAUSSIAN
-                -  LSDALTON
+                -  {Style.BRIGHT}{Fore.CYAN}ORCA{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.CYAN}DALTON{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.CYAN}GAUSSIAN{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.CYAN}LSDALTON{Style.RESET_ALL}
 
             This script can currently extract the data
             ------------------------------------------
-                -  Total energies
-                -  Zero-Point Vibrational energies
-                -  Enthalpies
-                -  Entropies
-                -  Gibbs Free energies
-                -  Dipole moments
-                -  Polarizability
-                -  Excitation energies
-                -  Oscillator strengths
-                -  Frequencies
-                -  Partition functions at a given temperature
+                -  {Style.BRIGHT}{Fore.GREEN}Total energies{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Zero-Point Vibrational energies{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Enthalpies{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Entropies{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Gibbs Free energies{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Dipole moments{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Polarizability{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Excitation energies{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Oscillator strengths{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Frequencies{Style.RESET_ALL}
+                -  {Style.BRIGHT}{Fore.GREEN}Partition functions at a given temperature{Style.RESET_ALL}
 
     Though not all data types have been implemented for all of the output formats
 
-    All values are extracted as Atomic Units where applicable'''
-    ,epilog='''
-    The following is not implemented for ORCA
-    -  Entropies
+    All values are extracted as {Style.BRIGHT}{Fore.MAGENTA}Atomic Units{Style.RESET_ALL} where applicable'''
+    ,epilog=f'''
+    The following is not implemented for {Style.BRIGHT}{Fore.CYAN}ORCA{Style.RESET_ALL}
+    -  {Fore.RED}Entropies{Style.RESET_ALL}
 
-    The following is not implemented for DALTON
-    -  Non DFT total energies
-    -  Zero-Point Vibrational energies
-    -  Enthalpies
-    -  Entropies
-    -  Gibbs Free energies
-    -  Frequencies
-    -  Partition functions with symmetry
+    The following is not implemented for {Style.BRIGHT}{Fore.CYAN}DALTON{Style.RESET_ALL}
+    -  {Fore.RED}Non DFT total energies{Style.RESET_ALL}
+    -  {Fore.RED}Zero-Point Vibrational energies{Style.RESET_ALL}
+    -  {Fore.RED}Enthalpies{Style.RESET_ALL}
+    -  {Fore.RED}Entropies{Style.RESET_ALL}
+    -  {Fore.RED}Gibbs Free energies{Style.RESET_ALL}
+    -  {Fore.RED}Frequencies{Style.RESET_ALL}
+    -  {Fore.RED}Partition functions with symmetry{Style.RESET_ALL}
 
-    The following is not implemented for GAUSSIAN
-    -  Entropies
-    -  Excitation energies
-    -  Oscillator strengths
+    The following is not implemented for {Style.BRIGHT}{Fore.CYAN}GAUSSIAN{Style.RESET_ALL}
+    -  {Fore.RED}Entropies{Style.RESET_ALL}
+    -  {Fore.RED}Excitation energies{Style.RESET_ALL}
+    -  {Fore.RED}Oscillator strengths{Style.RESET_ALL}
 
-    The following is not implemented for LSDALTON
-    -  Probably some total energies
-    -  Zero-Point Vibrational energies
-    -  Enthalpies
-    -  Gibbs Free energies
-    -  Entropies
-    -  Dipole moments
-    -  Polarizabilities
-    -  Excitation energies
-    -  Oscillator strengths
-    -  Frequencies
-    -  Partition functions
+    The following is not implemented for {Style.BRIGHT}{Fore.CYAN}LSDALTON{Style.RESET_ALL}
+    -  {Fore.RED}Probably some total energies{Style.RESET_ALL}
+    -  {Fore.RED}Zero-Point Vibrational energies{Style.RESET_ALL}
+    -  {Fore.RED}Enthalpies{Style.RESET_ALL}
+    -  {Fore.RED}Gibbs Free energies{Style.RESET_ALL}
+    -  {Fore.RED}Entropies{Style.RESET_ALL}
+    -  {Fore.RED}Dipole moments{Style.RESET_ALL}
+    -  {Fore.RED}Polarizabilities{Style.RESET_ALL}
+    -  {Fore.RED}Excitation energies{Style.RESET_ALL}
+    -  {Fore.RED}Oscillator strengths{Style.RESET_ALL}
+    -  {Fore.RED}Frequencies{Style.RESET_ALL}
+    -  {Fore.RED}Partition functions{Style.RESET_ALL}
 
     For help contact
     Theo Juncker von Buchwald
@@ -178,6 +181,7 @@ if __name__ == "__main__":
 
     if NeededArguments['_Enthalpy']:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
         NeededArguments['_Frequencies'] = -1
+        NeededArguments['_Energy'] = True
 
     if NeededArguments['_Entropy']:  #Ensuring that frequencies are calculated as these are needed to calculate the Partition Functions
         NeededArguments['_Frequencies'] = -1
@@ -298,7 +302,7 @@ class gaus:
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping partition function calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -319,11 +323,10 @@ class gaus:
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
-        self._Energy()
         self.E_T = 3/2 * T * gas_constant
         if len(self.rots) == 1:
             self.E_R = T * gas_constant
@@ -338,7 +341,7 @@ class gaus:
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -359,7 +362,7 @@ class gaus:
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping free energy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}free energy{Style.RESET_ALL} energy calculation")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
@@ -394,11 +397,10 @@ class orca:
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
-        self._Energy()
         self.E_T = 3/2 * T * gas_constant
         if len(self.rots) == 1:
             self.E_R = T * gas_constant
@@ -413,7 +415,7 @@ class orca:
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping free energy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}free energy{Style.RESET_ALL} energy calculation")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
@@ -502,7 +504,7 @@ class orca:
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping partition function calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -523,7 +525,7 @@ class orca:
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -672,7 +674,7 @@ class dal:
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping partition function calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -693,7 +695,7 @@ class dal:
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -713,11 +715,10 @@ class dal:
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping enthalpy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
-        self._Energy()
         self.E_T = 3/2 * T * gas_constant
         if len(self.rots) == 1:
             self.E_R = T * gas_constant
@@ -732,7 +733,7 @@ class dal:
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(suppressed):
-                print(f"No frequencies found in {self.file}, skipping free energy calculation")
+                print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}free energy{Style.RESET_ALL} energy calculation")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - T*self.entropy / au_to_kJmol
@@ -814,13 +815,17 @@ def Forward_search_last(file: str, text: str, error: str, err: bool =True):
     Returns:
         (int): Linenumber of last occurence
     """
-    res = os.popen(f"grep -nT '{text}' {file} | tail -n 1 | awk '{{print $1}}'").readlines()
+    ps1 = subprocess.run(['grep', '-nT', text, file], capture_output=True)
+    out = subprocess.run(['tail', '-n1'], input=ps1.stdout, capture_output=True)
+    res = out.stdout
     if len(res) == 0:
         if not(suppressed):
             if err:
-                print(f'No {error} could be found in {file}')
+                print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
-    return int(res[0].replace(':\n','')) - 1
+    res = res.split()[0]
+    res = str(res).split(':')
+    return int(res[0].replace('b\'','')) - 1
 
 def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, error: str, err: bool=True):
     """Searches from beggining of file for last occurence of [text1] and in the following [lines] after for [text2]
@@ -836,13 +841,18 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     Returns:
         (int): Linenumber of [text2] occurence
     """
-    res = os.popen(f"grep -nTA{lines} '{text1}' {file} | tail -n {lines + 1} | grep {text2} | awk '{{print $1}}'").readlines()
+    ps1 = subprocess.run(['grep', '-nTA', f'{lines}', text1, file], capture_output=True)
+    ps2 = subprocess.run(['tail', '-n', f'{lines + 1}'], input=ps1.stdout, capture_output=True)
+    out = subprocess.run(['grep', text2], input=ps2.stdout, capture_output=True)
+    res = out.stdout
     if len(res) == 0:
         if not(suppressed):
             if err:
-                print(f'No {error} could be found in {file}')
+                print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
-    return int(res[0].replace('-\n','')) - 1
+    res = res.split()[0]
+    res = str(res).split('-')
+    return int(res[0].replace('b\'','')) - 1
 
 def Forward_search_first(file: str, text: str, error: str, err: bool=True):
     """Searches from beginning of file and finds the first occurence of [text]
@@ -856,13 +866,16 @@ def Forward_search_first(file: str, text: str, error: str, err: bool=True):
     Returns:
         (int): Linenumber of first occurence
     """
-    res = os.popen(f"grep -nTm1 '{text}' {file} | awk '{{print $1}}'").readlines()
+    out = subprocess.run(['grep', '-nTm1', text, file], capture_output=True)
+    res = out.stdout
     if len(res) == 0:
         if not(suppressed):
             if err:
-                print(f'No {error} could be found in {file}')
+                print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
-    return int(res[0].replace(':\n','')) - 1
+    res = res.split()[0]
+    res = str(res).split(':')
+    return int(res[0].replace('b\'','')) - 1
 
 def Forward_search_all(file: str, text: str, error: str, err: bool=True):
     """Searches from beggining of file to end of file finding all occurences of [text]
@@ -876,13 +889,16 @@ def Forward_search_all(file: str, text: str, error: str, err: bool=True):
     Returns:
         (list): List of the linenumbers of all occurences
     """
-    res  = os.popen(f"grep -nT '{text}' {file} | awk '{{print $1}}'").readlines()
+    ps1 = subprocess.run(['grep', '-nT', text, file], capture_output=True)
+    out = subprocess.run(['awk', '{print $1}'], input=ps1.stdout, capture_output=True)
+    res = out.stdout
     if len(res) == 0:
         if not(suppressed):
             if err:
-                print(f'No {error} could be found in {file}')
+                print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
-    return [int(val.replace(':\n','')) - 1 for val in res]
+    res = str(res).split(':\\n')
+    return [int(val.replace('b\'','')) - 1 for val in res[:-1]]
 
 def Resize(array: list):
     """Takes an array of arrays with varying sizes and resizes them to the same size.
@@ -979,7 +995,7 @@ def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: 
             method(file_text)
         except AttributeError:
             if not(suppressed):
-                print(f'{infile}: {i} has not been implemented for {input_type}')
+                print(f'{Style.BRIGHT}{Fore.YELLOW}{infile}{Style.RESET_ALL}: {Fore.RED}{i}{Style.RESET_ALL} has not been implemented for {Style.BRIGHT}{Fore.CYAN}{input_type}')
 
 def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values: dict):
     for infile in input_file:
