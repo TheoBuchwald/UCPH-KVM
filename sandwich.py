@@ -34,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
     parser.add_argument('--charge', default=0, nargs='?', type=int, help='Include to specify charge - 0 if not included')
     parser.add_argument('--basis', default='pc-1', nargs='?', type=str, help='Include to specify basis set - pc-1 if not included')
-    parser.add_argument('--ribasis', default='pc-1-RI', nargs='?', type=str, help='Include to specify basis set - pc-1-RI if not included')
+    # parser.add_argument('--ribasis', default='pc-1-RI', nargs='?', type=str, help='Include to specify basis set - pc-1-RI if not included')
 
 
     args = parser.parse_args()
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     inwards = args.outwards
     charge = args.charge
     basis = args.basis
-    RIbasis = args.ribasis
+    # RIbasis = args.ribasis
     linenumber = args.linenumber
     returnxyz = args.noxyz
 
@@ -141,7 +141,7 @@ if __name__ == '__main__':
             count = list(Counter(namesmol).values())[ind]
             # atomnr = ci.AtomicInformation(i).atomnr().atomnr
             # print(atomnr)
-            lines_mol.append(f'  {ci.AtomicInformation(i).atomnr():.4f}     {count} Bas={basis} Aux={RIbasis}\n')
+            lines_mol.append(f'  {ci.AtomicInformation(i).atomnr():.4f}     {count} Bas={basis}\n')
             for j in range(len(namesmol)):
                 if namesmol[j] == i:
                     lines_mol.append(''.join([namesmol[j].ljust(2), ' ', f"{molxyz.molecule[j, 0]:.9f}".rjust(14), ' ', f"{molxyz.molecule[j, 1]:.9f}".rjust(19), ' ', f"{molxyz.molecule[j, 2]:.9f}".rjust(19) , '\n']))
