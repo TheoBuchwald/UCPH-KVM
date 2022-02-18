@@ -1,7 +1,7 @@
 
 from colorama import Fore, Style, init
 import numpy as np
-from ase.build import fcc111, bcc111, hcp0001, diamond100
+from ase.build import fcc110, bcc110, hcp0001, diamond100
 from ase.spacegroup import crystal
 import dependencies.chemical_information as ci
 
@@ -81,9 +81,9 @@ class NanoParticle():
             dim2 = int(np.ceil(diameter/self.lattice_length[1]))
 
         if self.lattice_type == 'FCC':
-            self.atoms = fcc111(symbol=self.atomtypes[0], size=(dim, dim, dim), a=self.lattice_length, orthogonal=True)
+            self.atoms = fcc110(symbol=self.atomtypes[0], size=(dim, dim, dim), a=self.lattice_length, orthogonal=True)
         elif self.lattice_type == 'BCC':
-            self.atoms = bcc111(symbol=self.atomtypes[0], size=(dim, dim, 4.5*dim), a=self.lattice_length, orthogonal=True)
+            self.atoms = bcc110(symbol=self.atomtypes[0], size=(dim, dim, 4.5*dim), a=self.lattice_length, orthogonal=True)
         elif self.lattice_type == 'HCP':
             self.atoms = hcp0001(symbol=self.atomtypes[0], size=(dim, dim, 3*dim), a=self.lattice_length[0], c=self.lattice_length[1], orthogonal=True)
         elif self.lattice_type == 'Diamond':
