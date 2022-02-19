@@ -973,7 +973,7 @@ def Data_Extraction(infile):
 
     file_text, input_type = Find_output_type(infile)    #Determining data output type
 
-    Extract_data(suppressed, Needed_Values, infile, file_text, input_type)  #Extracting data
+    Extract_data(quiet, Needed_Values, infile, file_text, input_type)  #Extracting data
 
     dict_keys = [*file_text.__dict__.keys()]
     collection_dict = dict()
@@ -1065,6 +1065,7 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
     epsvac=8.8541878176*10**(-12)
     sigmacm=0.4*8065.544
     k=(NA*e**2)/(np.log(10)*2*me*c**2*epsvac)*np.sqrt(np.log(2)/pi)*10**(-1)
+    Save_Dict = dict()
         # PLOT SETUP DONE
     for file in input_file:
         filename = file.replace('.out','')
@@ -1100,6 +1101,16 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
         plt.savefig(plotname, format=f'{UVVIS}', dpi=600)
+        plt.close()
+
+        if SAVE:
+            Save_Dict[file] = [span,graph]
+    if SAVE:
+        np.savez('UVVIS.npz', **Save_Dict)
+        print('UVVIS spectrum data has been saved in UVVIS.npz')
+
+    del Save_Dict # Deletes dictionary from memory since it is no longer needed
+
 
 
 #******************************* CODE *********************************
