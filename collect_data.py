@@ -785,7 +785,7 @@ class lsdal:
             for i in range(linenumber+8,self.end):
                 if len(self.lines[i].split()) < 1:
                     break
-                self.exc_energies.append(self.lines[i].split()[0])
+                self.exc_energies.append(float(self.lines[i].split()[0]))
         if len(self.exc_energies) == 0:
             self.exc_energies = ['NaN'] * abs(NeededArguments['_Excitation_energies']  )
         if len(self.exc_energies) < NeededArguments['_Excitation_energies']:
@@ -796,7 +796,7 @@ class lsdal:
         linenumber = Forward_search_last(self.file, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'oscillator strengths')
         if type(linenumber) == int:
             for i in range(len(self.exc_energies)):
-                self.osc_strengths.append(self.lines[linenumber+8+i].split()[-1])
+                self.osc_strengths.append(float(self.lines[linenumber+8+i].split()[-1]))
         if len(self.osc_strengths) == 0:
             self.osc_strengths = ['NaN'] * abs(NeededArguments['_Excitation_energies'])
         if len(self.osc_strengths) < NeededArguments['_Excitation_energies']:
