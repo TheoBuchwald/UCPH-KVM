@@ -84,22 +84,26 @@ if __name__ == "__main__":
 
     parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='File')
 
-    parser.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
-    parser.add_argument('-s', '--suppress', action='store_true', help='Include to suppress all print statements (including errors) except the data output')
-    parser.add_argument('-csv', action='store_true', help='Include to write the found values in csv file(s)')
-    parser.add_argument('-E', '--energy', action='store_true', help='Include to extract the Total Energy')
-    parser.add_argument('-Z', '--zpv', action='store_true', help='Include to extract the Zero-Point Vibrational Energy')
-    parser.add_argument('-H', '--enthalpy', action='store_true', help='Include to calculate molar enthalpies (kJ/mol)')
-    parser.add_argument('-S', '--entropy', action='store_true', help='Include to calculate molar entropes (kJ/(mol*K)')
-    parser.add_argument('-G', '--gibbs', action='store_true', help='Include to extract the Gibbs Free Energy')
-    parser.add_argument('-D', '--dipole', action='store_true', help='Include to extract the Dipole Moment')
-    parser.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
-    parser.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
-    parser.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
-    parser.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
-    parser.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
-    parser.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
-    parser.add_argument('--uvvis', const='png', type=str, help='Include to calculate a UV-VIS spectrum. Tou can give the picture format as an optional argument. Will use png as default', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
+    ExtractionGroup = parser.add_argument_group('Data extraction commands')
+    ExtractionGroup.add_argument('-E', '--energy', action='store_true', help='Include to extract the Total Energy')
+    ExtractionGroup.add_argument('-Z', '--zpv', action='store_true', help='Include to extract the Zero-Point Vibrational Energy')
+    ExtractionGroup.add_argument('-H', '--enthalpy', action='store_true', help='Include to calculate molar enthalpies (kJ/mol)')
+    ExtractionGroup.add_argument('-S', '--entropy', action='store_true', help='Include to calculate molar entropes (kJ/(mol*K)')
+    ExtractionGroup.add_argument('-G', '--gibbs', action='store_true', help='Include to extract the Gibbs Free Energy')
+    ExtractionGroup.add_argument('-D', '--dipole', action='store_true', help='Include to extract the Dipole Moment')
+    ExtractionGroup.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
+    ExtractionGroup.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
+    ExtractionGroup.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
+    ExtractionGroup.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
+    ExtractionGroup.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
+    ExtractionGroup.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
+
+    DataProcessingGroup = parser.add_argument_group('Data processing commands')
+    DataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
+    DataProcessingGroup.add_argument('--uvvis', const='png', type=str, help='Include to calculate a UV-VIS spectrum. Tou can give the picture format as an optional argument. Will use png as default. If \'--save\' is used togrther with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
+
+    AdditionalCommandsGroup = parser.add_argument_group('Additional commands')
+    AdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
 
 
 #******************************* SETUP ********************************
@@ -107,7 +111,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     input_file = args.infile
-    CSV = args.csv
+    SAVE = args.save
     UVVIS = args.uvvis
     T = args.temp
 
@@ -160,7 +164,6 @@ if __name__ == "__main__":
     }
 
     quiet = args.quiet
-    suppressed = args.suppress
 
     NeededArguments = RequestedArguments.copy()
 
@@ -301,7 +304,7 @@ class gaus:
 
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.qTotal = 'NaN'
             return
@@ -322,7 +325,7 @@ class gaus:
 
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.enthalpy = 'NaN'
             return
@@ -340,7 +343,7 @@ class gaus:
 
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.entropy = 'NaN'
             return
@@ -361,7 +364,7 @@ class gaus:
 
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}free energy{Style.RESET_ALL} energy calculation")
             self.gibbs = 'NaN'
             return
@@ -396,7 +399,7 @@ class orca:
 
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.enthalpy = 'NaN'
             return
@@ -414,7 +417,7 @@ class orca:
 
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}free energy{Style.RESET_ALL} energy calculation")
             self.gibbs = 'NaN'
             return
@@ -503,7 +506,7 @@ class orca:
 
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.qTotal = 'NaN'
             return
@@ -524,7 +527,7 @@ class orca:
 
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.entropy = 'NaN'
             return
@@ -673,7 +676,7 @@ class dal:
 
     def _PartitionFunctions(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.qTotal = 'NaN'
             return
@@ -694,7 +697,7 @@ class dal:
 
     def _Entropy(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.entropy = 'NaN'
             return
@@ -714,7 +717,7 @@ class dal:
 
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}partition function{Style.RESET_ALL} calculation")
             self.enthalpy = 'NaN'
             return
@@ -732,7 +735,7 @@ class dal:
 
     def _Gibbs(self):
         if CheckForOnlyNans(np.array(self.freq)):
-            if not(suppressed):
+            if not(quiet):
                 print(f"{Fore.RED}No frequencies{Style.RESET_ALL} found in {Style.BRIGHT}{Fore.YELLOW}{self.file}{Style.RESET_ALL}, skipping {Style.BRIGHT}{Fore.RED}free energy{Style.RESET_ALL} energy calculation")
             self.gibbs = 'NaN'
             return
@@ -819,7 +822,7 @@ def Forward_search_last(file: str, text: str, error: str, err: bool =True):
     out = subprocess.run(['tail', '-n1'], input=ps1.stdout, capture_output=True)
     res = out.stdout
     if len(res) == 0:
-        if not(suppressed):
+        if not(quiet):
             if err:
                 print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
@@ -846,7 +849,7 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     out = subprocess.run(['grep', text2], input=ps2.stdout, capture_output=True)
     res = out.stdout
     if len(res) == 0:
-        if not(suppressed):
+        if not(quiet):
             if err:
                 print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
@@ -869,7 +872,7 @@ def Forward_search_first(file: str, text: str, error: str, err: bool=True):
     out = subprocess.run(['grep', '-nTm1', text, file], capture_output=True)
     res = out.stdout
     if len(res) == 0:
-        if not(suppressed):
+        if not(quiet):
             if err:
                 print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
@@ -893,7 +896,7 @@ def Forward_search_all(file: str, text: str, error: str, err: bool=True):
     out = subprocess.run(['awk', '{print $1}'], input=ps1.stdout, capture_output=True)
     res = out.stdout
     if len(res) == 0:
-        if not(suppressed):
+        if not(quiet):
             if err:
                 print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
@@ -967,10 +970,6 @@ def Find_output_type(infile: str):
 
 def Data_Extraction(infile):
     Extracted_values = dict()
-
-    # if not(quiet or suppressed):
-    #     print(Barrier)
-    #     print(f'Collecting data from {infile}')
 
     file_text, input_type = Find_output_type(infile)    #Determining data output type
 
@@ -1122,20 +1121,13 @@ if __name__ == "__main__":
     au_to_kJmol = 2625.4996394799
     Barrier = '\n**********************************************\n'
 
-    # if quiet:
-    #     print('')
-
     count = len(input_file)
 
     with Pool() as pool:
         Extracted_Values = pool.map(Data_Extraction, input_file)
 
     Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
-
     Input_Array = [[i] for i in Extracted_Values] # Creating array_input
-
-    # if not(quiet or suppressed):
-    #     print(Barrier)
 
     Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
 
@@ -1151,7 +1143,7 @@ if __name__ == "__main__":
             Resize(Final_arrays[key])
 
     if UVVIS:
-        Make_uvvis_spectrum(input_file, suppressed, UVVIS_Spectrum, inv_cm_to_au, count, Final_arrays)
+        Make_uvvis_spectrum(input_file, quiet, UVVIS_Spectrum, inv_cm_to_au, count, Final_arrays)
 
     Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)   #Fixing the size of variable size arrays
 
@@ -1164,10 +1156,14 @@ if __name__ == "__main__":
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
 
-    if CSV:
+    if SAVE == 'csv':
         np.savetxt('data.csv', Output_Array, delimiter=',', fmt='%s')
         print('Data has been saved in data.csv')
+    elif SAVE == 'npz':
+        Save_Dict = {i[0]: i[1:] for i in Output_Array}
+        np.savez('data.npz', **Save_Dict)
     else:
         print(Output_Array)
+
 
 #EOF
