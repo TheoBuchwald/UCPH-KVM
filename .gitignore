@@ -1,0 +1,16 @@
+# Ignore pycache
+__pycache__
+# Ignore csv files
+*.csv
+# Ignore npz files
+*.npz
+# Ignore png files
+*.png
+# Ignore eps files
+*.eps
+# Ignore pdf files
+*.pdf
+# Ignore svg files
+*.svg
+# Ignore ps files
+*.ps
