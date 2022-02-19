@@ -1079,16 +1079,20 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
             if not(suppressed):
                 print(f'Excitation energies and oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
             continue
-        if len(excitations) == 0:
+        elif len(excitations) == 0:
             if not(suppressed):
                 print(f'Excitation energies have either not been implemented for this output type, or none were found in the file {filename}')
             continue
-        if len(oscillations) == 0:
+        elif len(oscillations) == 0:
             if not(suppressed):
                 print(f'Oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
             continue
+        elif len(excitations) > len(oscillations):
+            excitations = excitations[0:len(oscillations)]
+        elif len(oscillations) > len(excitations):
+            oscillations = oscillations[0:len(excitations)]
 
-        excitations = 1E7/(excitations/inv_cm_to_au)   #From cm^-1 to nm
+        excitations = 1E7/(excitations/inv_cm_to_au)   # From a.u. to cm^-1 to nm
         span = np.linspace(min(excitations)-20, max(excitations)+20, N, endpoint=True) # exctinction coefficient (wavelength range)
 
         graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
