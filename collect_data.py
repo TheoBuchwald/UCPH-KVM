@@ -5,7 +5,6 @@ import subprocess
 from types import FunctionType
 import numpy as np
 import argparse
-from csv import writer
 import matplotlib.pyplot as plt
 from matplotlib import rc
 from colorama import Fore, Style, init

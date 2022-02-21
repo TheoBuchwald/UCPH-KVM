@@ -1,7 +1,6 @@
 
 import numpy as np
 import sys
-import os
 import subprocess
 
 POV_Atom_Parameters = {'H': [1, 0.324],
