@@ -1,4 +1,3 @@
-import numpy as np
 import sys
 from collections import Counter #For number of unique elements
 import dependencies.chemical_information as ci
