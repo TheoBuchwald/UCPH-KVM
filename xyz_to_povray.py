@@ -1,7 +1,6 @@
 
 import numpy as np
-import sys
-import os
+import argparse
 import subprocess
 
 POV_Atom_Parameters = {'H': [1, 0.324],
@@ -109,22 +108,30 @@ def move2origin(Molecule, CoM):
 
 
 if __name__ == '__main__':
-    file = sys.argv[1]
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''A script to convert xyz files to povray''', epilog='''For help contact
+    Theo Juncker von Buchwald
+    fnc970@alumni.ku.dk''')
 
-    molecule = get_structure(file)
-    CoM = get_C(molecule)
-    move2origin(molecule, CoM)
+    parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
 
-    file_no_ext = file.replace('.xyz','')
-    with open(f'{file_no_ext}.pov', 'w') as povfile:
+    args = parser.parse_args()
+    input_files = args.infile
 
-        positions = np.array([atom.position for atom in molecule])
+    for file in input_files:
+        molecule = get_structure(file)
+        CoM = get_C(molecule)
+        move2origin(molecule, CoM)
 
-        normal = np.array([0., 0., min(positions[2,:]) - 15])
+        file_no_ext = file.replace('.xyz','')
+        with open(f'{file_no_ext}.pov', 'w') as povfile:
 
-        light = normal * 1.05
+            positions = np.array([atom.position for atom in molecule])
 
-        default_settings = f'''#version 3.7;
+            normal = np.array([0., 0., min(positions[2,:]) - 15])
+
+            light = normal * 1.05
+
+            default_settings = f'''#version 3.7;
 global_settings {{ assumed_gamma 1.8 }}
 background {{color rgb <0.744, 0.784, 0.896>}}
 
@@ -215,25 +222,27 @@ light_source {{
 union {{
 '''
 
-        povfile.write(default_settings)
+            povfile.write(default_settings)
 
-        for atom in molecule:
-            povfile.write(atom.toPOV())
+            for atom in molecule:
+                povfile.write(atom.toPOV())
 
-        for i, atom1 in enumerate(molecule):
-            for atom2 in molecule[i+1:]:
-                Bond_Type = atom1.species + atom2.species
-                Bond_Length = np.linalg.norm(atom1.position - atom2.position)
-                if (Bond_Type in BondTypes) and (abs(Bond_Length) <= BondLengths[Bond_Type]):
-                    bond = Bond(atom1, atom2)
-                    povfile.write(bond.toPOV())
+            for i, atom1 in enumerate(molecule):
+                for atom2 in molecule[i+1:]:
+                    Bond_Type = atom1.species + atom2.species
+                    Bond_Length = np.linalg.norm(atom1.position - atom2.position)
+                    if (Bond_Type in BondTypes) and (abs(Bond_Length) <= BondLengths[Bond_Type]):
+                        bond = Bond(atom1, atom2)
+                        povfile.write(bond.toPOV())
 
-        povfile.write('\n}')
+            povfile.write('\n}')
 
     # Check to see if POVRAY is installed
     Check_for_povray = subprocess.run(['dpkg', '-s', 'povray'], capture_output=True, text=True)
     Check_for_povray = Check_for_povray.stdout
     if 'Status: install ok installed' in Check_for_povray:
-        subprocess.run(['povray', f'{file_no_ext}.pov', '+A0.1', '+AM2', '+AG0', '+R5', '-J'])
-        # Runs with the settings, +A0.1: Antialliasing set to 0.1 threshold, +AM2: Antialiasing method 2,
-        #   +AG0: Gamma set to 0, +R5: Depth set to 5, -J: Jitter set to off
+        for file in input_files:
+            file_no_ext = file.replace('.xyz','')
+            subprocess.run(['povray', f'{file_no_ext}.pov', '+A0.1', '+AM2', '+AG0', '+R5', '-J'])
+            # Runs with the settings, +A0.1: Antialliasing set to 0.1 threshold, +AM2: Antialiasing method 2,
+            #   +AG0: Gamma set to 0, +R5: Depth set to 5, -J: Jitter set to off

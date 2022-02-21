@@ -27,7 +27,7 @@ This repository was created to collect all the scripts and programs developed an
     - Requires excitation energies and oscillator strengths in the output file
     - It is possible to choose between different formats for the figure
 
-  The data you want extracted is done using keywords when calling the script. The keywords you call will be printed either in the terminal or written to a csv file.
+  The data you want extracted is done using keywords when calling the script. The keywords you call will be printed either in the terminal or written to a csv or npz file.
 </p>
 </details>
 
@@ -41,25 +41,84 @@ This repository was created to collect all the scripts and programs developed an
   #### Keywords
 
   By default the atomnumbers used to choose alignment is those shown in molden. If instead you wish to choose by the linenumbers as they are in the xyz file you can use the *-l* or *--linenumber* keywords. <br/>
-  As default the basis set pc-1 and the RI basis set pc-1-RI will be used. This can be changed with the keywords *--basis and* --ribasis accordingly. <br/>
-  An xyz file containing all the information about the junvtion will also be saved, this can be turned off by supplying the keyword *--returnxyz*. <br/>
-  If the nanoparticles are spherical in nature (such as Au, Ag & Cu contrary to TiO<sub>2</sub> which is a slab) they will by default turn inwards towards the molecule. For the   nanoparticles to turn outwards the keyword *--outwards* can be supplied. <br/>
+  As default the basis set pc-1 will be used. This can be changed with the keyword *--basis*. <br/>
+  An xyz file containing all the information about the junction will also be saved, this can be turned off by supplying the keyword *--returnxyz*. <br/>
+  If the nanoparticles are spherical in nature (such as Au, Ag & Cu contrary to TiO<sub>2</sub> which is a slab) they will by default turn inwards towards the molecule. For the nanoparticles to turn outwards the keyword *--outwards* can be supplied. <br/>
   Furthermore the charge of the molecule in the junction is by default 0, this can be changed using the *--charge* keyword <\br>
 </p>
 </details>
 
-## [xyz2povray.py](./xyz2povray.py)
+## [leftright.py](./leftright.py)
+<details><summary> Program information </summary>
+<p>
+  A script designed to place nanoparticles on either side of a molecule in two separate files
+
+  Takes the molecule as a xyz file, the two atoms the nanoparticles will be aligned with and the diameter of the particles (in that order).
+
+  #### Keywords
+
+  By default the atomnumbers used to choose alignment is those shown in molden. If instead you wish to choose by the linenumbers as they are in the xyz file you can use the *-l* or *--linenumber* keywords. <br/>
+  As default the basis set pc-1 will be used on the atoms in the molecule while the LANL2DZ and LANL-ECP basis sets will be used on the atoms in the nanoparticles. This can be changed with the keywords *--basis*, *--NPbasis*, and *--ECPbasis* accordingly. <br/>
+  The CPU and memory options can be changed from the default of 16 CPU and 16 GB memory with the keywords *--cpu* and *--mem*. <br/>
+  An xyz file containing all the information about the junction will also be saved, this can be turned off by supplying the keyword *--returnxyz*. <br/>
+  If the nanoparticles are spherical in nature (such as Au, Ag & Cu contrary to TiO<sub>2</sub> which is a slab) they will by default turn inwards towards the molecule. For the nanoparticles to turn outwards the keyword *--outwards* can be supplied. <br/>
+  Furthermore the charge of the molecule in the junction is by default 0, this can be changed using the *--charge* keyword <\br>
+</p>
+</details>
+
+## [xyz_to_mol.py](./xyz_to_mol.py)
+<details><summary> Program information </summary>
+<p>
+  A script designed to convert a xyz file to a mol file for the programme DALTON
+
+  You will need to supply the xyz file
+
+  Apart from this, you can also supply a basis set, RI-basis set and the charge with the keywords *--basis*, *--RIbasis*, and *--charge*
+</p>
+</details>
+
+## [xyz_to_molpro.py](./xyz_to_molpro.py)
+<details><summary> Program information </summary>
+<p>
+  A script designed to convert a xyz file to a molpro file
+
+  You will need to supply the xyz file as well as a keywords nr. to determine the options for the programme
+</p>
+</details>
+
+## [xyz_to_orca.py](./xyz_to_orca.py)
+<details><summary> Program information </summary>
+<p>
+  A script designed to convert a xyz file to a inp file for the programme ORCA
+
+  You will need to supply the xyz file as well as a keywords nr. to determine the options for the programme
+
+  Apart from this, you can also supply a charge and memory limits with the keywords *--charge* and *--mem*
+
+  If you want extra calculations you can supply either of the keywords *--extra1* and *--extra2*
+</p>
+</details>
+
+## [xyz_to_povray.py](./xyz_to_povray.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to convert a xyz file to a pov file for the programme POV-Ray which can be used ot ake visually pretty graphics
 
-  The only argument you have to provide is the xyz file
+  The only argument you have to provide is the xyz file(s)
 
-  Apart from this the script will also automatically start generating the figures requested using some antialiasing settings applied in the script
+  Apart from this the script will also automatically start generating the figures requested using some antialiasing settings applied in the script. Those settings are:
+
+    +A0.1 +AM2 +AG0 +R5 -J
+
+  +A0.1: Antialliasing set to 0.1 threshold<br/>
+  +AM2: Antialiasing method 2<br/>
+  +AG0: Gamma set to 0<br/>
+  +R5: Depth set to 5<br/>
+  -J: Jitter set to off
 </p>
 </details>
 
-## [pov-editor.py](./pov-editor.py)
+## [pov_editor.py](./pov_editor.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to take the camera position of an existing pov file and update the graphics arguments of said file
@@ -68,6 +127,14 @@ This repository was created to collect all the scripts and programs developed an
 
   This script is especially useful in conjunction with either imol (which only exist for Mac) or Avogadro. In both programes you can export a certain view as a pov file. This is where the camera position is located.
 
-  Apart from this the script will also automatically start generating the figures requested using some antialiasing settings applied in the script
+  Apart from this the script will also automatically start generating the figures requested using some antialiasing settings applied in the script Those settings are:
+
+    +A0.1 +AM2 +AG0 +R5 -J
+
+  +A0.1: Antialliasing set to 0.1 threshold<br/>
+  +AM2: Antialiasing method 2<br/>
+  +AG0: Gamma set to 0<br/>
+  +R5: Depth set to 5<br/>
+  -J: Jitter set to off
 </p>
 </details>

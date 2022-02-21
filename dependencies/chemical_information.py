@@ -1,5 +1,6 @@
 
 from colorama import Fore, Style, init
+import requests
 
 init(autoreset=True)
 
@@ -61,4 +62,53 @@ class AtomicInformation():
             return self.pol
         except KeyError:
             print(f'{Fore.RED}{self.atom} is not an atom or has not been implemented {Style.BRIGHT}AtomicInformation.polarizability')
+
+
+class BasisSet:
+    def __init__(self):
+        self.BSE = "https://www.basissetexchange.org/"
+
+    def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list) -> str:
+        atoms = set(Atoms) # Remove duplicate atoms
+        parameters = {'elements': [atoms]}
+        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+
+        # Check for errors
+        if response.status_code != 200:
+            print(response.text)
+            raise RuntimeError("Could not obtain data from Basis Set Exchange. Check error message above")
+
+        # Format the basis set text
+        BasisSet = response.text.split('\n')
+
+        Info = ''
+        for i in BasisSet[:10]:
+            Info += f'{i}\n'
+        print(Info)
+
+        self.basis = ''
+        for i in BasisSet[12:]:
+            self.basis += f'{i}\n'
+        return self.basis
+
+    def AtomBasisSet(self, Programme: str, BasisSet: str, Atom) -> str:
+        parameters = {'elements': [Atom]}
+        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        # Check for errors
+        if response.status_code != 200:
+            print(response.text)
+            raise RuntimeError("Could not obtain data from Basis Set Exchange. Check error message above")
+
+        # Format the basis set text
+        BasisSet = response.text.split('\n')
+
+        Info = ''
+        for i in BasisSet[:10]:
+            Info += f'{i}\n'
+        print(Info)
+
+        self.basis = ''
+        for i in BasisSet[12:]:
+            self.basis += f'{i}\n'
+        return self.basis
 
