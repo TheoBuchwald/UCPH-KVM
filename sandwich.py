@@ -21,20 +21,24 @@ if __name__ == '__main__':
     parser.add_argument('atom2', type=int, nargs=1, help='Atom 2 that should be aligned between the nanoparticles')
     parser.add_argument('diameter', type=float, nargs=1, help='Diameter of the nanoparticle')
 
-    parser.add_argument('-au', action='store_true', help='Include to make gold nanoparticles')
-    parser.add_argument('-ag', action='store_true', help='Include to make silver nanoparticles')
-    parser.add_argument('-cu', action='store_true', help='Include to make copper nanoparticles')
-    parser.add_argument('-tio2', action='store_true', help='Include to make titanium dioxide nanoparticles')
-    parser.add_argument('-nacl', action='store_true', help='Include to make salt nanoparticles')
-    parser.add_argument('-pd', action='store_true', help='Include to make palladium nanoparticles')
-    parser.add_argument('-pt', action='store_true', help='Include to make platinum nanoparticles')
-    parser.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
-    parser.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
-    parser.add_argument('--noxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
-    parser.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
-    parser.add_argument('--charge', default=0, nargs='?', type=int, help='Include to specify charge - 0 if not included')
-    parser.add_argument('--basis', default='pc-1', nargs='?', type=str, help='Include to specify basis set - pc-1 if not included')
-    # parser.add_argument('--ribasis', default='pc-1-RI', nargs='?', type=str, help='Include to specify basis set - pc-1-RI if not included')
+    CrystalGroup = parser.add_argument_group('Nanoparticles')
+    CrystalGroup.add_argument('-au', action='store_true', help='Include to make gold nanoparticles')
+    CrystalGroup.add_argument('-ag', action='store_true', help='Include to make silver nanoparticles')
+    CrystalGroup.add_argument('-cu', action='store_true', help='Include to make copper nanoparticles')
+    CrystalGroup.add_argument('-tio2', action='store_true', help='Include to make titanium dioxide nanoparticles')
+    CrystalGroup.add_argument('-nacl', action='store_true', help='Include to make salt nanoparticles')
+    CrystalGroup.add_argument('-pd', action='store_true', help='Include to make palladium nanoparticles')
+    CrystalGroup.add_argument('-pt', action='store_true', help='Include to make platinum nanoparticles')
+    CrystalGroup.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
+
+    CalculationGroup = parser.add_argument_group('Calculation options')
+    CalculationGroup.add_argument('--charge', default=0, nargs=1, type=int, help='Include to specify charge - 0 if not included')
+    CalculationGroup.add_argument('--basis', default='pc-1', nargs=1, type=str, help='Include to specify basis set - pc-1 if not included')
+
+    AdditionalCommandsGroup = parser.add_argument_group('Additional commands')
+    AdditionalCommandsGroup.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
+    AdditionalCommandsGroup.add_argument('--noxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
+    AdditionalCommandsGroup.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
 
 
     args = parser.parse_args()
@@ -58,7 +62,6 @@ if __name__ == '__main__':
     inwards = args.outwards
     charge = args.charge
     basis = args.basis
-    # RIbasis = args.ribasis
     linenumber = args.linenumber
     returnxyz = args.noxyz
 
@@ -69,40 +72,40 @@ if __name__ == '__main__':
         atom1 -=1
         atom2 -=1
 
+    namesmol = np.array([])
+    molxyz = struct.Molecule(np.empty((0, 3)))
+    with open(molfile, 'r') as f:
+        lines = f.readlines()
+        for i in range(2, len(lines)):
+            x = lines[i].split()
+            namesmol = np.append(namesmol, x[0])
+            molxyz.molecule = np.vstack([molxyz.molecule, np.array([float(x[1]), float(x[2]), float(x[3])])])
+
+    #We get the axis between the two points to be parallel to the x-axis and then translate it such that it lies in the x-axis
+    #Get normalized vector defining the axis
+    v1 = molxyz.molecule[atom1, :] - molxyz.molecule[atom2, :]
+    v1 *= 1 / np.sqrt(np.dot(v1, v1))
+
+    #Calculate angle in order to be parallel to the x-axis
+    theta = np.arccos(np.dot(v1, np.array([1, 0, 0])))
+
+    #The direction vector for the rotation in orthogonal to both v1 and the x-axis. Note that the normalization is crucial.
+    dir_vec = np.cross(v1, np.array([1, 0, 0]))
+    dir_vec *= 1/np.sqrt(np.dot(dir_vec, dir_vec))
+
+    molxyz.get_rotation_matrix(molxyz.molecule[atom1], dir_vec, theta)
+    molxyz.rotateMolecule(atom1)
+
+    molxyz.__len__()
+
+    mol_min = molxyz.min()
+    mol_max = molxyz.max()
+
+    index_min = molxyz.index_min()
+    index_max = molxyz.index_max()
+
     crystal_structures = [item[0] for item in Arguments.items() if item[1] == True]
     for crystal_structure in crystal_structures:
-        namesmol = np.array([])
-        molxyz = struct.Molecule(np.empty((0, 3)))
-        with open(molfile, 'r') as f:
-            lines = f.readlines()
-            for i in range(2, len(lines)):
-                x = lines[i].split()
-                namesmol = np.append(namesmol, x[0])
-                molxyz.molecule = np.vstack([molxyz.molecule, np.array([float(x[1]), float(x[2]), float(x[3])])])
-
-        #We get the axis between the two points to be parallel to the x-axis and then translate it such that it lies in the x-axis
-        #Get normalized vector defining the axis
-        v1 = molxyz.molecule[atom1, :] - molxyz.molecule[atom2, :]
-        v1 *= 1 / np.sqrt(np.dot(v1, v1))
-
-        #Calculate angle in order to be parallel to the x-axis
-        theta = np.arccos(np.dot(v1, np.array([1, 0, 0])))
-
-        #The direction vector for the rotation in orthogonal to both v1 and the x-axis. Note that the normalization is crucial.
-        dir_vec = np.cross(v1, np.array([1, 0, 0]))
-        dir_vec *= 1/np.sqrt(np.dot(dir_vec, dir_vec))
-
-        molxyz.get_rotation_matrix(molxyz.molecule[atom1], dir_vec, theta)
-        molxyz.rotateMolecule(atom1)
-
-        molxyz.__len__()
-
-        mol_min = molxyz.min()
-        mol_max = molxyz.max()
-
-        index_min = molxyz.index_min()
-        index_max = molxyz.index_max()
-
         NP = struct.NanoParticle(crystal_structure)
 
         NP.setInwards(inwards)
@@ -139,8 +142,6 @@ if __name__ == '__main__':
         for i in unique_indices:
             ind = unique_indices.index(i)
             count = list(Counter(namesmol).values())[ind]
-            # atomnr = ci.AtomicInformation(i).atomnr().atomnr
-            # print(atomnr)
             lines_mol.append(f'  {ci.AtomicInformation(i).atomnr():.4f}     {count} Bas={basis}\n')
             for j in range(len(namesmol)):
                 if namesmol[j] == i:
@@ -151,8 +152,6 @@ if __name__ == '__main__':
 
         #Build .pol file
         lines_pol = []
-
-        #pol = polarizability(crystal_structure)
 
         lines_pol.append('AA\n')
         lines_pol.append(str(left[:, 0].size*2)+'   0 1 1\n')
