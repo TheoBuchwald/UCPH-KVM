@@ -68,7 +68,7 @@ class BasisSet:
     def __init__(self):
         self.BSE = "https://www.basissetexchange.org/"
 
-    def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list) -> str:
+    def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list, SupressHeader: bool) -> str:
         atoms = set(Atoms) # Remove duplicate atoms
         parameters = {'elements': [atoms]}
         response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
@@ -81,17 +81,18 @@ class BasisSet:
         # Format the basis set text
         BasisSet = response.text.split('\n')
 
-        Info = ''
-        for i in BasisSet[:10]:
-            Info += f'{i}\n'
-        print(Info)
+        if not SupressHeader:
+            Info = ''
+            for i in BasisSet[:10]:
+                Info += f'{i}\n'
+            print(Info)
 
         self.basis = ''
         for i in BasisSet[12:]:
             self.basis += f'{i}\n'
         return self.basis
 
-    def AtomBasisSet(self, Programme: str, BasisSet: str, Atom) -> str:
+    def AtomBasisSet(self, Programme: str, BasisSet: str, Atom, SupressHeader: bool) -> str:
         parameters = {'elements': [Atom]}
         response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
         # Check for errors
@@ -102,10 +103,11 @@ class BasisSet:
         # Format the basis set text
         BasisSet = response.text.split('\n')
 
-        Info = ''
-        for i in BasisSet[:10]:
-            Info += f'{i}\n'
-        print(Info)
+        if not SupressHeader:
+            Info = ''
+            for i in BasisSet[:10]:
+                Info += f'{i}\n'
+            print(Info)
 
         self.basis = ''
         for i in BasisSet[12:]:
