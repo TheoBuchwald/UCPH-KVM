@@ -590,6 +590,7 @@ class dal:
 
     def _Excitation_energies(self):
         self.exc_energies = []
+        self.exc_type = None
         linenumber = Forward_search_last(self.file, '@  Oscillator strengths are dimensionless.', 'excitation energies', err=False)
         if type(linenumber) == int:
             self.exc_type = '.EXCITA'
@@ -1077,15 +1078,15 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
 
         if len(excitations) == 0 and len(oscillations) == 0:
             if not(suppressed):
-                print(f'Excitation energies and oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
+                print(f'{Fore.RED}Excitation energies and oscillator strengths{Style.RESET_ALL} have either not been implemented for this {Style.BRIGHT}{Fore.CYAN}output type{Style.RESET_ALL}, or none were found in the file {Style.BRIGHT}{Fore.YELLOW}{filename}')
             continue
         elif len(excitations) == 0:
             if not(suppressed):
-                print(f'Excitation energies have either not been implemented for this output type, or none were found in the file {filename}')
+                print(f'{Fore.RED}Excitation energies{Style.RESET_ALL} have either not been implemented for this {Style.BRIGHT}{Fore.CYAN}output type{Style.RESET_ALL}, or none were found in the file {Style.BRIGHT}{Fore.YELLOW}{filename}')
             continue
         elif len(oscillations) == 0:
             if not(suppressed):
-                print(f'Oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
+                print(f'{Fore.RED}Oscillator strengths{Style.RESET_ALL} have either not been implemented for this {Style.BRIGHT}{Fore.CYAN}output type{Style.RESET_ALL}, or none were found in the file {Style.BRIGHT}{Fore.YELLOW}{filename}')
             continue
         elif len(excitations) > len(oscillations):
             excitations = excitations[0:len(oscillations)]
@@ -1111,7 +1112,7 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
             Save_Dict[file] = [span,graph]
     if SAVE:
         np.savez('UVVIS.npz', **Save_Dict)
-        print('UVVIS spectrum data has been saved in UVVIS.npz')
+        print(f'{Style.BRIGHT}{Fore.LIGHTGREEN_EX}UVVIS spectrum data has been saved in UVVIS.npz')
 
     del Save_Dict # Deletes dictionary from memory since it is no longer needed
 
@@ -1173,10 +1174,11 @@ if __name__ == "__main__":
 
     if SAVE == 'csv':
         np.savetxt('data.csv', Output_Array, delimiter=',', fmt='%s')
-        print('Data has been saved in data.csv')
+        print(f'{Style.BRIGHT}{Fore.LIGHTGREEN_EX}Data has been saved in data.csv')
     elif SAVE == 'npz':
         Save_Dict = {i[0]: i[1:] for i in Output_Array}
         np.savez('data.npz', **Save_Dict)
+        print(f'{Style.BRIGHT}{Fore.LIGHTGREEN_EX}Data has been saved in data.npz')
     else:
         print(Output_Array)
 
