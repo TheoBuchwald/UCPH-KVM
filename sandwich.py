@@ -11,7 +11,7 @@ import dependencies.chemical_information as ci
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''A script to make junction consisting of a molecule and nanoparticles
 
-    To use the follwoing must be given:
+    To use the following must be given:
         xyz-file   atom   atom   diameter''', epilog='''For help contact
     Theo Juncker von Buchwald
     fnc970@alumni.ku.dk''')
@@ -39,7 +39,6 @@ if __name__ == '__main__':
     AdditionalCommandsGroup.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
     AdditionalCommandsGroup.add_argument('--noxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
     AdditionalCommandsGroup.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
-
 
     args = parser.parse_args()
 

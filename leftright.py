@@ -12,7 +12,7 @@ import dependencies.chemical_information as ci
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''A script to make junction consisting of a molecule and nanoparticles
 
-    To use the follwoing must be given:
+    To use the following must be given:
         xyz-file   atom   atom   diameter''', epilog='''For help contact
     Theo Juncker von Buchwald
     fnc970@alumni.ku.dk''')
