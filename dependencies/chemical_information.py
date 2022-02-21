@@ -69,9 +69,9 @@ class BasisSet:
         self.BSE = "https://www.basissetexchange.org/"
 
     def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list) -> str:
-        self.atoms = set(Atoms) # Remove duplicate atoms
-        self.parameters = {'elements': [AtomicInformation(i).atomnr() for i in self.atoms]} # Set the parameters needed to obtain the basis set
-        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=self.parameters) # Request data from BSE
+        atoms = set(Atoms) # Remove duplicate atoms
+        parameters = {'elements': [atoms]}
+        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
 
         # Check for errors
         if response.status_code != 200:
@@ -80,7 +80,35 @@ class BasisSet:
 
         # Format the basis set text
         BasisSet = response.text.split('\n')
-        self.basis = ''''''
+
+        Info = ''
+        for i in BasisSet[:10]:
+            Info += f'{i}\n'
+        print(Info)
+
+        self.basis = ''
         for i in BasisSet[12:]:
             self.basis += f'{i}\n'
         return self.basis
+
+    def AtomBasisSet(self, Programme: str, BasisSet: str, Atom) -> str:
+        parameters = {'elements': [Atom]}
+        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        # Check for errors
+        if response.status_code != 200:
+            print(response.text)
+            raise RuntimeError("Could not obtain data from Basis Set Exchange. Check error message above")
+
+        # Format the basis set text
+        BasisSet = response.text.split('\n')
+
+        Info = ''
+        for i in BasisSet[:10]:
+            Info += f'{i}\n'
+        print(Info)
+
+        self.basis = ''
+        for i in BasisSet[12:]:
+            self.basis += f'{i}\n'
+        return self.basis
+
