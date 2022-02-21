@@ -1,41 +1,46 @@
-# Loads the sys to additional input in the line
-# Loads the re search function
 
-import sys
+import argparse
 
-# Set global variables
-start = 0
-end = 0
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''A script to find the optimized structure from an orca output file''', epilog='''For help contact
+    Theo Juncker von Buchwald
+    fnc970@alumni.ku.dk''')
 
-# This comes from the input
-# Gives the name to a possible new file
+    parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.out orca file')
 
-filename = sys.argv[1]
-newfile = str(filename)[:-4] + "_opt.xyz"
 
-# Read the entire original file
-with open(filename,'r') as f:
-    rline = f.readlines()
+    args = parser.parse_args()
+    input_files = args.infile
 
-#Find all the times coordinates are listed in the output; the last are retained
-for i in range (len(rline)):
-    if "CARTESIAN COORDINATES (ANGSTROEM)" in rline[i]:
-        start = i+2
-        for m in range (start, len(rline)):
-            if "CARTESIAN COORDINATES (A.U.)" in rline[m]:
-                end = m-2
-                break
+    for filename in input_files:
+        newfile = str(filename)[:-4] + "_opt.xyz"
 
-# Write lines in output file
-lines_to_add = []
+        start = 0
+        end = 0
 
-lines_to_add.append(f"{end-(start)}\n")
-lines_to_add.append('\n')
+        # Read the entire original file
+        with open(filename,'r') as f:
+            rline = f.readlines()
 
-for line in rline[start : end] :
-    words = line.split()
-    lines_to_add.append(f"{words[0]}  {words[1]}  {words[2]}  {words[3]}\n")
+        #Find all the times coordinates are listed in the output; the last are retained
+        for i in range (len(rline)):
+            if "CARTESIAN COORDINATES (ANGSTROEM)" in rline[i]:
+                start = i+2
+                for m in range (start, len(rline)):
+                    if "CARTESIAN COORDINATES (A.U.)" in rline[m]:
+                        end = m-2
+                        break
 
-with open(newfile,'w') as f:
-    f.writelines(lines_to_add)
+        # Write lines in output file
+        lines_to_add = []
+
+        lines_to_add.append(f"{end-(start)}\n")
+        lines_to_add.append('\n')
+
+        for line in rline[start : end] :
+            words = line.split()
+            lines_to_add.append(f"{words[0]}  {words[1]}  {words[2]}  {words[3]}\n")
+
+        with open(newfile,'w') as f:
+            f.writelines(lines_to_add)
 
