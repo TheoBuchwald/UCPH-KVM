@@ -68,7 +68,7 @@ class BasisSet:
     def __init__(self):
         self.BSE = "https://www.basissetexchange.org/"
 
-    def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list, SupressHeader: bool) -> str:
+    def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list, SupressHeader: bool = False) -> str:
         atoms = set(Atoms) # Remove duplicate atoms
         parameters = {'elements': [atoms]}
         response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
@@ -92,7 +92,7 @@ class BasisSet:
             self.basis += f'{i}\n'
         return self.basis
 
-    def AtomBasisSet(self, Programme: str, BasisSet: str, Atom, SupressHeader: bool) -> str:
+    def AtomBasisSet(self, Programme: str, BasisSet: str, Atom: str, SupressHeader: bool = False) -> str:
         parameters = {'elements': [Atom]}
         response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
         # Check for errors
