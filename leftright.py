@@ -59,7 +59,7 @@ if __name__ == '__main__':
         'CoSb3' : args.cosb3
     }
 
-    molfile = args.infile
+    input_files = args.infile
     atom1 = args.atom1[0]
     atom2 = args.atom2[0]
     diameter = args.diameter[0]
@@ -90,119 +90,120 @@ if __name__ == '__main__':
     # Getting basis set from Basis set exchange
     BasisSet = ci.BasisSet()
 
-    namesmol = np.array([])
-    molxyz = struct.Molecule(np.empty((0, 3)))
-    with open(molfile, 'r') as f:
-        lines = f.readlines()
-        for i in range(2, len(lines)):
-            x = lines[i].split()
-            namesmol = np.append(namesmol, x[0])
-            molxyz.molecule = np.vstack([molxyz.molecule, np.array([float(x[1]), float(x[2]), float(x[3])])])
+    for molfile in input_files:
+        namesmol = np.array([])
+        molxyz = struct.Molecule(np.empty((0, 3)))
+        with open(molfile, 'r') as f:
+            lines = f.readlines()
+            for i in range(2, len(lines)):
+                x = lines[i].split()
+                namesmol = np.append(namesmol, x[0])
+                molxyz.molecule = np.vstack([molxyz.molecule, np.array([float(x[1]), float(x[2]), float(x[3])])])
 
-    basis_mol = BasisSet.GenerateBasisSet('gaussian94', basis, namesmol)
+        basis_mol = BasisSet.GenerateBasisSet('gaussian94', basis, namesmol)
 
-    #We get the axis between the two points to be parallel to the x-axis and then translate it such that it lies in the x-axis
-    #Get normalized vector defining the axis
-    v1 = molxyz.molecule[atom1, :] - molxyz.molecule[atom2, :]
-    v1 *= 1 / np.sqrt(np.dot(v1, v1))
+        #We get the axis between the two points to be parallel to the x-axis and then translate it such that it lies in the x-axis
+        #Get normalized vector defining the axis
+        v1 = molxyz.molecule[atom1, :] - molxyz.molecule[atom2, :]
+        v1 *= 1 / np.sqrt(np.dot(v1, v1))
 
-    #Calculate angle in order to be parallel to the x-axis
-    theta = np.arccos(np.dot(v1, np.array([1, 0, 0])))
+        #Calculate angle in order to be parallel to the x-axis
+        theta = np.arccos(np.dot(v1, np.array([1, 0, 0])))
 
-    #The direction vector for the rotation in orthogonal to both v1 and the x-axis. Note that the normalization is crucial.
-    dir_vec = np.cross(v1, np.array([1, 0, 0]))
-    dir_vec *= 1/np.sqrt(np.dot(dir_vec, dir_vec))
+        #The direction vector for the rotation in orthogonal to both v1 and the x-axis. Note that the normalization is crucial.
+        dir_vec = np.cross(v1, np.array([1, 0, 0]))
+        dir_vec *= 1/np.sqrt(np.dot(dir_vec, dir_vec))
 
-    molxyz.get_rotation_matrix(molxyz.molecule[atom1], dir_vec, theta)
-    molxyz.rotateMolecule(atom1)
+        molxyz.get_rotation_matrix(molxyz.molecule[atom1], dir_vec, theta)
+        molxyz.rotateMolecule(atom1)
 
-    molxyz.__len__()
+        molxyz.__len__()
 
-    mol_min = molxyz.min()
-    mol_max = molxyz.max()
+        mol_min = molxyz.min()
+        mol_max = molxyz.max()
 
-    index_min = molxyz.index_min()
-    index_max = molxyz.index_max()
+        index_min = molxyz.index_min()
+        index_max = molxyz.index_max()
 
-    #Rescaling to get index in array
+        #Rescaling to get index in array
 
-    #Crystal Structure (Au, Ag, Cu, TiO2, NaCl, CoSb3, Pt, Pd)
-    crystal_structures = [item[0] for item in Arguments.items() if item[1] == True]
-    for crystal_structure in crystal_structures:
-        NP = struct.NanoParticle(crystal_structure)
+        #Crystal Structure (Au, Ag, Cu, TiO2, NaCl, CoSb3, Pt, Pd)
+        crystal_structures = [item[0] for item in Arguments.items() if item[1] == True]
+        for crystal_structure in crystal_structures:
+            NP = struct.NanoParticle(crystal_structure)
 
-        NP.setInwards(inwards)
-        NP.setDiameter(diameter)
+            NP.setInwards(inwards)
+            NP.setDiameter(diameter)
 
-        atoms_symbol, atoms_pos = NP.makeNanoparticle(diameter)
+            atoms_symbol, atoms_pos = NP.makeNanoparticle(diameter)
 
-        left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol)
+            left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol)
 
-        atmtype = NP.atomtypes
+            atmtype = NP.atomtypes
 
-        if returnxyz:
-            #Build .xyz files
+            if returnxyz:
+                #Build .xyz files
+                for j in ['left','right']:
+                    lines_to_add = []
+                    lines_to_add.append(str(left[:,0].size+molxyz.molecule[:,0].size)+'\n')
+                    lines_to_add.append('\n')
+
+                    for i in range(len(left[:,0])):
+                        if j == 'left':
+                            lines_to_add.append(''.join([atoms_symbol[i],' ',f"{left[i,0]:.6f}",' ', f"{left[i,1]:.6f}", ' ',f"{left[i,2]:.6f}" ,'\n']))
+                        else:
+                            lines_to_add.append(''.join([atoms_symbol[i],' ',f"{right[i,0]:.6f}",' ', f"{right[i,1]:.6f}", ' ',f"{right[i,2]:.6f}" ,'\n']))
+
+                    for i in range(len(molxyz.molecule[:,0])):
+                        lines_to_add.append(''.join([namesmol[i],' ',f"{molxyz.molecule[i,0]:.6f}",' ', f"{molxyz.molecule[i,1]:.6f}", ' ',f"{molxyz.molecule[i,2]:.6f}" ,'\n']))
+
+                    with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}_'+j+'.xyz','w') as f:
+                        f.writelines(lines_to_add)
+
+
             for j in ['left','right']:
-                lines_to_add = []
-                lines_to_add.append(str(left[:,0].size+molxyz.molecule[:,0].size)+'\n')
-                lines_to_add.append('\n')
-
-                for i in range(len(left[:,0])):
-                    if j == 'left':
-                        lines_to_add.append(''.join([atoms_symbol[i],' ',f"{left[i,0]:.6f}",' ', f"{left[i,1]:.6f}", ' ',f"{left[i,2]:.6f}" ,'\n']))
-                    else:
-                        lines_to_add.append(''.join([atoms_symbol[i],' ',f"{right[i,0]:.6f}",' ', f"{right[i,1]:.6f}", ' ',f"{right[i,2]:.6f}" ,'\n']))
-
-                for i in range(len(molxyz.molecule[:,0])):
-                    lines_to_add.append(''.join([namesmol[i],' ',f"{molxyz.molecule[i,0]:.6f}",' ', f"{molxyz.molecule[i,1]:.6f}", ' ',f"{molxyz.molecule[i,2]:.6f}" ,'\n']))
-
-                with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}_'+j+'.xyz','w') as f:
-                    f.writelines(lines_to_add)
-
-
-        for j in ['left','right']:
-            filename = molfile[:-4] + f'_charge_{charge}_{crystal_structure}_'+j
-            lines_com = []
-            lines_com.append(f"%mem={mem}GB\n")
-            lines_com.append(f"%nprocshared={ncpus}\n")
-            lines_com.append(f"%chk={filename}.chk\n")
-            lines_com.append(f"# {method}/GEN PSEUDO=READ scf=qc pop=full iop(3/33=1)\n")
-            lines_com.append('\n')
-            lines_com.append(f"Hej Theo - {molfile}-{j}\n")
-            lines_com.append('\n')
-            if charge == 0 or abs(charge) == 2:
-                lines_com.append(f"{charge} 1 {charge} 1 0 1\n")
-            else:
-                lines_com.append(f"{charge} 2 {charge} 2 0 1\n")
-            for i in range(len(namesmol)):
-                lines_com.append(''.join([namesmol[i],'(Fragment=1)',' ',f"{molxyz.molecule[i,0]:.9f}",' ', f"{molxyz.molecule[i,1]:.9f}", ' ',f"{molxyz.molecule[i,2]:.9f}" ,'\n']))
-            if j == 'left':
-                for i in range(len(left[:,0])):
-                    lines_com.append(''.join([atoms_symbol[i],'(Fragment=2)',' ',f"{left[i,0]:.9f}",' ', f"{left[i,1]:.9f}", ' ',f"{left[i,2]:.9f}" ,'\n']))
-            else:
-                for i in range(len(right[:,0])):
-                    lines_com.append(''.join([atoms_symbol[i],'(Fragment=2)',' ',f"{right[i,0]:.9f}",' ', f"{right[i,1]:.9f}", ' ',f"{right[i,2]:.9f}" ,'\n']))
-            lines_com.append('\n')
-            for i in atmtype:
-                if i in set(namesmol):
-                    pass
-                else:
-                    lines_com.append(i+'\n')
-                    lines_com.append(basis_NP+'\n')
-                    lines_com.append('*********'+'\n')
-            lines_com.append(basis_mol+'\n')
-            lines_com.append('*********'+'\n')
-            lines_com.append('\n')
-            for i in atmtype:
-                lines_com.append(i+' 0\n')
-                lines_com.append(ecp_NP+'\n')
+                filename = molfile[:-4] + f'_charge_{charge}_{crystal_structure}_'+j
+                lines_com = []
+                lines_com.append(f"%mem={mem}GB\n")
+                lines_com.append(f"%nprocshared={ncpus}\n")
+                lines_com.append(f"%chk={filename}.chk\n")
+                lines_com.append(f"# {method}/GEN PSEUDO=READ scf=qc pop=full iop(3/33=1)\n")
                 lines_com.append('\n')
-            lines_com.append('\n')
-            with open(filename+'.com','w') as f:
-                f.writelines(lines_com)
+                lines_com.append(f"Hej Theo - {molfile}-{j}\n")
+                lines_com.append('\n')
+                if charge == 0 or abs(charge) == 2:
+                    lines_com.append(f"{charge} 1 {charge} 1 0 1\n")
+                else:
+                    lines_com.append(f"{charge} 2 {charge} 2 0 1\n")
+                for i in range(len(namesmol)):
+                    lines_com.append(''.join([namesmol[i],'(Fragment=1)',' ',f"{molxyz.molecule[i,0]:.9f}",' ', f"{molxyz.molecule[i,1]:.9f}", ' ',f"{molxyz.molecule[i,2]:.9f}" ,'\n']))
+                if j == 'left':
+                    for i in range(len(left[:,0])):
+                        lines_com.append(''.join([atoms_symbol[i],'(Fragment=2)',' ',f"{left[i,0]:.9f}",' ', f"{left[i,1]:.9f}", ' ',f"{left[i,2]:.9f}" ,'\n']))
+                else:
+                    for i in range(len(right[:,0])):
+                        lines_com.append(''.join([atoms_symbol[i],'(Fragment=2)',' ',f"{right[i,0]:.9f}",' ', f"{right[i,1]:.9f}", ' ',f"{right[i,2]:.9f}" ,'\n']))
+                lines_com.append('\n')
+                for i in atmtype:
+                    if i in set(namesmol):
+                        pass
+                    else:
+                        lines_com.append(i+'\n')
+                        lines_com.append(basis_NP+'\n')
+                        lines_com.append('*********'+'\n')
+                lines_com.append(basis_mol+'\n')
+                lines_com.append('*********'+'\n')
+                lines_com.append('\n')
+                for i in atmtype:
+                    lines_com.append(i+' 0\n')
+                    lines_com.append(ecp_NP+'\n')
+                    lines_com.append('\n')
+                lines_com.append('\n')
+                with open(filename+'.com','w') as f:
+                    f.writelines(lines_com)
 
-        if returnxyz:
-            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_left.xyz')
-            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_right.xyz')
-        print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_left.com')
-        print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_right.com')
+            if returnxyz:
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_left.xyz')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_right.xyz')
+            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_left.com')
+            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_right.com')
