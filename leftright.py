@@ -5,6 +5,7 @@ import numpy as np
 import argparse
 import dependencies.structures as struct
 import dependencies.chemical_information as ci
+import fnmatch as fn
 
 #INPUTS HERE
 #------------------------------
@@ -64,17 +65,17 @@ if __name__ == '__main__':
     atom2 = args.atom2[0]
     diameter = args.diameter[0]
 
-    inwards = args.outwards[0]
     charge = args.charge[0]
-    basis = args.basis[0]
+    basis_mol = args.basis[0]
     basis_NP = args.NPbasis[0]
-    ecp_NP = args.ECPbasis[0]
+    basis_ECP = args.ECPbasis[0]
     method = args.method[0]
     ncpus=args.cpu[0]
     mem=args.mem[0]
 
-    linenumber = args.linenumber
+    inwards = args.outwards
     returnxyz = args.noxyz
+    linenumber = args.linenumber
 
     if linenumber:
         atom1 -=3
@@ -83,9 +84,24 @@ if __name__ == '__main__':
         atom1 -=1
         atom2 -=1
 
-    #Method
+    #Check if basis set is in Gaussian already (Only checks the most common)
+    basis_sets_gauss = ["6-31*[Gg]*","*[Cc][Cc]-[Pp][Vv]*","[Ss][Tt][Oo]-3[Gg]","3-21*[Gg]*", "6-21*[Gg]*", "4-31*[Gg]*",  "[Ll][Aa][Nn][Ll]2*"]
+    BSE_mol = True
+    BSE_NP = True
+    BSE_ECP = True
 
-    #Computational
+    for i in basis_sets_gauss:
+        if fn.filter([basis_mol],i):
+            BSE_mol = False
+            break
+    for i in basis_sets_gauss:
+        if fn.filter([basis_NP],i):
+            BSE_NP = False
+            break
+    for i in basis_sets_gauss:
+        if fn.filter([basis_ECP],i):
+            BSE_ECP = False
+            break
 
     # Getting basis set from Basis set exchange
     BasisSet = ci.BasisSet()
@@ -100,7 +116,9 @@ if __name__ == '__main__':
                 namesmol = np.append(namesmol, x[0])
                 molxyz.molecule = np.vstack([molxyz.molecule, np.array([float(x[1]), float(x[2]), float(x[3])])])
 
-        basis_mol = BasisSet.GenerateBasisSet('gaussian94', basis, namesmol)
+        if BSE_mol:
+            basis_mol = BasisSet.GenerateBasisSet('gaussian94', basis_mol, namesmol)
+
 
         #We get the axis between the two points to be parallel to the x-axis and then translate it such that it lies in the x-axis
         #Get normalized vector defining the axis
@@ -140,6 +158,11 @@ if __name__ == '__main__':
             left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol)
 
             atmtype = NP.atomtypes
+
+            if BSE_NP:
+                basis_NP = BasisSet.GenerateBasisSet('gaussian94', basis_NP, atmtype)
+            if BSE_ECP:
+                basis_ECP = BasisSet.GenerateBasisSet('gaussian94', basis_ECP, atmtype)
 
             if returnxyz:
                 #Build .xyz files
@@ -190,13 +213,12 @@ if __name__ == '__main__':
                     else:
                         lines_com.append(i+'\n')
                         lines_com.append(basis_NP+'\n')
-                        lines_com.append('*********'+'\n')
+                        lines_com.append('****'+'\n')
                 lines_com.append(basis_mol+'\n')
-                lines_com.append('*********'+'\n')
                 lines_com.append('\n')
                 for i in atmtype:
                     lines_com.append(i+' 0\n')
-                    lines_com.append(ecp_NP+'\n')
+                    lines_com.append(basis_ECP+'\n')
                     lines_com.append('\n')
                 lines_com.append('\n')
                 with open(filename+'.com','w') as f:
