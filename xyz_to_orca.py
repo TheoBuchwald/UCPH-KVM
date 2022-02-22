@@ -10,19 +10,19 @@ if __name__ == '__main__':
 
     parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
     parser.add_argument('keyword', nargs=1, type=int, help='Include to specify keyword string', choices=range(1,11))
-    parser.add_argument('--charge', default=0, nargs=1, type=int, help='Include to specify charge - 0 if not included')
-    parser.add_argument('--mem', default=4800, nargs=1, type=int, help='Include to specify the amount of memory in MB pr. core - 4800 if not included')
+    parser.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
+    parser.add_argument('--mem', default=[4800], nargs=1, type=int, help='Include to specify the amount of memory in MB pr. core - 4800 if not included')
     parser.add_argument('--extra1', action='store_true')
     parser.add_argument('--extra2', action='store_true')
 
     args = parser.parse_args()
 
-    input_files = args.infile[0]
+    input_files = args.infile
     jobtype = args.keyword[0]
 
-    memory = f'{args.mem}' #per mpi process in MB
+    memory = f'{args.mem[0]}' #per mpi process in MB
 
-    charge = args.charge
+    charge = args.charge[0]
     if charge % 2:
         multiplicity = 1
     else:

@@ -8,18 +8,19 @@ if __name__ == '__main__':
     fnc970@alumni.ku.dk''')
 
     parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
-    parser.add_argument('--charge', default=0, nargs=1, type=int, help='Include to specify charge - 0 if not included')
-    parser.add_argument('--basis', default='pc-1', nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
+    parser.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
+    parser.add_argument('--basis', default=['pc-1'], nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
     parser.add_argument('--RIbasis', nargs=1, type=str, help='Include to specify basis set of the molecular atoms - RI-BASIS if not included')
 
     args = parser.parse_args()
 
-    input_files = args.infile[0]
-    basis = args.basis
-    RIbasis = args.RIbasis
-    charge = args.charge
+    input_files = args.infile
+    basis = args.basis[0]
+    charge = args.charge[0]
 
-    if not(RIbasis):
+    if args.RIbasis:
+        RIbasis = args.RIbasis[0]
+    else:
         RIbasis = f'RI-{basis}'
 
     for molfile in input_files:

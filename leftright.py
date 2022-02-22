@@ -33,13 +33,13 @@ if __name__ == '__main__':
     CrystalGroup.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
 
     CalculationGroup = parser.add_argument_group('Calculation options')
-    CalculationGroup.add_argument('--charge', default=0, nargs=1, type=int, help='Include to specify charge - 0 if not included')
-    CalculationGroup.add_argument('--basis', default='pc-1', nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
-    CalculationGroup.add_argument('--NPbasis', default='LANL2DZ', nargs=1, type=str, help='Include to specify basis set of the nanoparticle atoms - LANL2DZ if not included')
-    CalculationGroup.add_argument('--ECPbasis', default='LANL2', nargs=1, type=str, help='Include to specify electronic core potential basis set for nanoparticle atoms - LANL2 if not included')
-    CalculationGroup.add_argument('--method', default='cam-b3lyp', nargs=1, type=str, help='Include to specify method for calculation - CAM-B3LYP if not included')
-    CalculationGroup.add_argument('--cpu', default=16, nargs=1, type=int, help='Include to specify the amount of cpu cores - 16 if not included')
-    CalculationGroup.add_argument('--mem', default=16, nargs=1, type=int, help='Include to specify the amount of memory in GB - 16 if not included')
+    CalculationGroup.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
+    CalculationGroup.add_argument('--basis', default=['pc-1'], nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
+    CalculationGroup.add_argument('--NPbasis', default=['LANL2DZ'], nargs=1, type=str, help='Include to specify basis set of the nanoparticle atoms - LANL2DZ if not included')
+    CalculationGroup.add_argument('--ECPbasis', default=['LANL2'], nargs=1, type=str, help='Include to specify electronic core potential basis set for nanoparticle atoms - LANL2 if not included')
+    CalculationGroup.add_argument('--method', default=['cam-b3lyp'], nargs=1, type=str, help='Include to specify method for calculation - CAM-B3LYP if not included')
+    CalculationGroup.add_argument('--cpu', default=[16], nargs=1, type=int, help='Include to specify the amount of cpu cores - 16 if not included')
+    CalculationGroup.add_argument('--mem', default=[16], nargs=1, type=int, help='Include to specify the amount of memory in GB - 16 if not included')
 
     AdditionalCommandsGroup = parser.add_argument_group('Additional commands')
     AdditionalCommandsGroup.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
@@ -59,19 +59,19 @@ if __name__ == '__main__':
         'CoSb3' : args.cosb3
     }
 
-    molfile = args.infile[0]
+    molfile = args.infile
     atom1 = args.atom1[0]
     atom2 = args.atom2[0]
     diameter = args.diameter[0]
 
-    inwards = args.outwards
-    charge = args.charge
-    basis = args.basis
-    basis_NP = args.NPbasis
-    ecp_NP = args.ECPbasis
-    method = args.method
-    ncpus=args.cpu
-    mem=args.mem
+    inwards = args.outwards[0]
+    charge = args.charge[0]
+    basis = args.basis[0]
+    basis_NP = args.NPbasis[0]
+    ecp_NP = args.ECPbasis[0]
+    method = args.method[0]
+    ncpus=args.cpu[0]
+    mem=args.mem[0]
 
     linenumber = args.linenumber
     returnxyz = args.noxyz
