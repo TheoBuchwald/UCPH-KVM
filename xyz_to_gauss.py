@@ -18,7 +18,7 @@ Stars can still be used, however.''', epilog='''For help contact
         qhw298@alumni.ku.dk''')
 
     parser.add_argument('infile', type=str, nargs=1, help='The file(s) to convert into .com files', metavar='.xyz file')
-    parser.add_argument('calc', type=str,nargs='+',help='Keywords for the calculation. If there are spaces, have double quotes around the entire thing.')
+    parser.add_argument('calc', type=str,nargs=1,help='Keywords for the calculation. If there are spaces, have quotes around the entire thing.')
 
     CalculationGroup = parser.add_argument_group('Calculation options')
     CalculationGroup.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
@@ -27,7 +27,7 @@ Stars can still be used, however.''', epilog='''For help contact
     CalculationGroup.add_argument('--method', default=['cam-b3lyp'], nargs=1, type=str, help='Include to specify method for calculation - CAM-B3LYP if not included')
     CalculationGroup.add_argument('--cpu', default=[8], nargs=1, type=int, help='Include to specify the amount of cpu cores - 8 if not included')
     CalculationGroup.add_argument('--mem', default=[8], nargs=1, type=int, help='Include to specify the amount of memory in GB - 8 if not included')
-    CalculationGroup.add_argument('--chk',action='store_false', help='Include to insert a checkpoint file with the same name as the .xyz file(s)')
+    CalculationGroup.add_argument('--chk',action='store_false', help='Include to insert a checkpoint file with the same name as the .xyz file')
 
     args = parser.parse_args()
 
@@ -58,7 +58,7 @@ Stars can still be used, however.''', epilog='''For help contact
     BSE = True
 
     for i in basis_sets_gauss:
-        if fn.filter(basis,i):
+        if fn.filter([basis],i):
             BSE = False
             break
 
