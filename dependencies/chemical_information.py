@@ -71,7 +71,10 @@ class BasisSet:
     def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list, SupressHeader: bool = False) -> str:
         atoms = set(Atoms) # Remove duplicate atoms
         parameters = {'elements': [atoms]}
-        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        try:
+            response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        except Exception:
+            raise ConnectionError("Could not connect to Basis Set Exchange: Please check your internet connection") from None
 
         # Check for errors
         if response.status_code != 200:
@@ -94,7 +97,11 @@ class BasisSet:
 
     def AtomBasisSet(self, Programme: str, BasisSet: str, Atom: str, SupressHeader: bool = False) -> str:
         parameters = {'elements': [Atom]}
-        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        try:
+            response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        except Exception:
+            raise ConnectionError("Could not connect to Basis Set Exchange: Please check your internet connection") from None
+
         # Check for errors
         if response.status_code != 200:
             print(response.text)
