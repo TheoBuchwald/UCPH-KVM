@@ -71,7 +71,7 @@ if __name__ == '__main__':
                 try:
                     basis_mol = BasisSet.AtomBasisSet('dalton', basis, i, SupressHeader=True)
                 except RuntimeError:
-                    print("Failed to get basis set from BSE. Please check the spelling, upper-/lowercase is important")
+                    print("Failed to get basis set from BSE. Please check the spelling, upper-/lowercase IS important")
                     print('The problem may also be that the basis set does not exist for the given atom')
                     exit()
                 BlockTypes = ['s functions', 'p functions', 'd functions', 'f functions', 'g functions', 'h functions', 'i functions', 'j functions', 'k functions']
