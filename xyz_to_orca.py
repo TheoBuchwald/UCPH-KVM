@@ -23,7 +23,7 @@ if __name__ == '__main__':
     memory = f'{args.mem[0]}' #per mpi process in MB
 
     charge = args.charge[0]
-    if charge % 2:
+    if not charge % 2:
         multiplicity = 1
     else:
         multiplicity = 2
