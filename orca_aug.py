@@ -11,8 +11,8 @@ if __name__ == '__main__':
     qhw298@alumni.ku.dk''')
 
     parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
-    parser.add_argument('--charge', default=0, nargs=1, type=int, help='Include to specify charge - 0 if not included')
-    parser.add_argument('--mem', default=4800, nargs=1, type=int, help='Include to specify the amount of memory in MB pr. core - 4800 if not included')
+    parser.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
+    parser.add_argument('--mem', default=[4800], nargs=1, type=int, help='Include to specify the amount of memory in MB pr. core - 4800 if not included')
     parser.add_argument('--noaug', default=['pc-2'], nargs=1, type=str, help='Include to specify the basis set without diffuse functions - default is pc-2')
     parser.add_argument('--aug', default=['aug-pc-2'], nargs=1, type=str, help='Include to specify the basis set with diffuse functions - default is aug-pc-2')
     parser.add_argument('--method', default=['M062X'], nargs=1, type=str, help='Include to specify the method used for the geometry optimization - default is M06-2X')
@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     memory = f'{args.mem[0]}' #per mpi process in MB
 
-    charge = args.charge
+    charge = args.charge[0]
     if charge % 2 == 0:
         multiplicity = 1
     else:
@@ -100,7 +100,7 @@ if __name__ == '__main__':
                 slutfil.write(r'%moinp "temp.gbw"' + '\n')
                 slutfil.write(r'%base "temp2"' + '\n')
                 slutfil.write(r"%scf GuessMode CMatrix" + '\n')    
-                slutfil.write(r"%stresh 1e-6" + '\n')
+                slutfil.write(r"  sthresh  1e-6" + '\n')
                 slutfil.write('end'+'\n')
                 slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
 
@@ -119,20 +119,8 @@ if __name__ == '__main__':
                 slutfil.write("%method\nend\n")
                 slutfil.write('%maxcore '+memory+'\n')
                 slutfil.write(r'%moinp "temp2.gbw"'+'\n')
-                slutfil.write(r'%scf stresh 1e-6' +'\n')
+                slutfil.write(r'%scf sthresh 1e-6' +'\n')
                 slutfil.write('end'+'\n')
-                slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
-
-                for i in range(len(x)):
-                    slutfil.write(token[i])
-                    slutfil.write('  ')
-                    slutfil.write('%f' % x[i])
-                    slutfil.write('  ')
-                    slutfil.write('%f' % y[i])
-                    slutfil.write('  ')
-                    slutfil.write('%f' % z[i] + '\n')
-
-                slutfil.write('*'+'\n'+'\n')
                 slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
 
                 for i in range(len(x)):
