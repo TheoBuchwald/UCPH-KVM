@@ -3,8 +3,8 @@
 
 import numpy as np
 import argparse
-import dependencies.structures as struct
-import dependencies.chemical_information as ci
+from dependencies import structures as struct
+from dependencies import chemical_information as ci
 import fnmatch as fn
 
 if __name__ == '__main__':

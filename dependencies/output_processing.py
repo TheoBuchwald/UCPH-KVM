@@ -9,7 +9,7 @@ from colorama import Style, Fore, init
 
 init(autoreset=True)
 
-def Forward_search_last(file: str, text: str, error: str, err: bool =True, quiet: bool = False):
+def Forward_search_last(file: str, text: str, error: str, quiet: bool = False):
     """Searches from the beggining of the file given to the end where it returns the linenumber of the last occurence
 
     Args:
@@ -25,15 +25,14 @@ def Forward_search_last(file: str, text: str, error: str, err: bool =True, quiet
     out = subprocess.run(['tail', '-n1'], input=ps1.stdout, capture_output=True)
     res = out.stdout
     if len(res) == 0:
-        if not(quiet):
-            if err:
-                print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
+        if not quiet:
+            print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
     res = res.split()[0]
     res = str(res).split(':')
     return int(res[0].replace('b\'','').replace('\'','')) - 1
 
-def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, error: str, err: bool=True, quiet: bool = False):
+def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, error: str, quiet: bool = False):
     """Searches from beggining of file for last occurence of [text1] and in the following [lines] after for [text2]
 
     Args:
@@ -52,15 +51,14 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     out = subprocess.run(['grep', text2], input=ps2.stdout, capture_output=True)
     res = out.stdout
     if len(res) == 0:
-        if not(quiet):
-            if err:
-                print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
+        if not quiet:
+            print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
     res = res.split()[0]
     res = str(res).split('-')
     return int(res[0].replace('b\'','').replace('\'','')) - 1
 
-def Forward_search_first(file: str, text: str, error: str, err: bool=True, quiet: bool = False):
+def Forward_search_first(file: str, text: str, error: str, quiet: bool = False):
     """Searches from beginning of file and finds the first occurence of [text]
 
     Args:
@@ -75,15 +73,14 @@ def Forward_search_first(file: str, text: str, error: str, err: bool=True, quiet
     out = subprocess.run(['grep', '-nTm1', text, file], capture_output=True)
     res = out.stdout
     if len(res) == 0:
-        if not(quiet):
-            if err:
-                print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
+        if not quiet:
+            print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
     res = res.split()[0]
     res = str(res).split(':')
     return int(res[0].replace('b\'','').replace('\'','')) - 1
 
-def Forward_search_all(file: str, text: str, error: str, err: bool=True, quiet: bool = False):
+def Forward_search_all(file: str, text: str, error: str, quiet: bool = False):
     """Searches from beggining of file to end of file finding all occurences of [text]
 
     Args:
@@ -99,9 +96,8 @@ def Forward_search_all(file: str, text: str, error: str, err: bool=True, quiet: 
     out = subprocess.run(['awk', '{print $1}'], input=ps1.stdout, capture_output=True)
     res = out.stdout
     if len(res) == 0:
-        if not(quiet):
-            if err:
-                print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
+        if not quiet:
+            print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
     res = str(res).split('\\n')
     return [int(val.replace('b\'','').replace('\'','').replace(':','')) - 1 for val in res[:-1]]
@@ -221,7 +217,7 @@ def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
         lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
     return lambda_tot
 
-def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, count: int, Final_arrays: dict, UVVIS: str, Extracted_Values: dict, SAVE: bool = True):
+def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, UVVIS: str, Extracted_Values: dict, SAVE: bool = True):
     # A LOT OF PLOT SETUP
     rc('text', usetex=True)
     xlabel_font = ylabel_font = title_font = 16
@@ -343,25 +339,25 @@ class gaus:
             self.lines = file.readlines()
 
     def _Energy(self):
-        linenumber = Forward_search_last(self.filename, 'Sum of electronic and zero-point Energies=', 'final energy', err=False)
+        linenumber = Forward_search_last(self.filename, 'Sum of electronic and zero-point Energies=', 'final energy', quiet=True)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1]) - float(self.lines[linenumber-4].split()[-2])
             return
-        linenumber = Forward_search_last(self.filename, 'SCF Done:', 'final energy')
+        linenumber = Forward_search_last(self.filename, 'SCF Done:', 'final energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[4])
             return
         self.tot_energy = 'NaN'
 
     def _ZPV(self):
-        linenumber = Forward_search_last(self.filename, 'Sum of electronic and zero-point Energies=', 'ZPV energy')
+        linenumber = Forward_search_last(self.filename, 'Sum of electronic and zero-point Energies=', 'ZPV energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.zpv = float(self.lines[linenumber].split()[-1])
             return
         self.zpv = 'NaN'
 
     def _Dipole_moments(self):
-        linenumber = Forward_search_last(self.filename, 'Electric dipole moment (input orientation):', 'dipole moments')
+        linenumber = Forward_search_last(self.filename, 'Electric dipole moment (input orientation):', 'dipole moments', quiet=self.quiet)
         if type(linenumber) == int:
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+4].split()[1].replace('D','E')), float(self.lines[linenumber+5].split()[1].replace('D','E')), float(self.lines[linenumber+6].split()[1].replace('D','E')), float(self.lines[linenumber+3].split()[1].replace('D','E'))
             return
@@ -371,7 +367,7 @@ class gaus:
         linenumber = ['NaN', 'NaN', 'NaN', 'NaN']
         searchwords = [' xx ', ' yy ', ' zz ', ' iso ']
         for i in range(len(searchwords)):
-            linenumber[i] = Forward_search_after_last(self.filename, 'Dipole polarizability, Alpha (input orientation).', searchwords[i], 15, 'polarizabilities')
+            linenumber[i] = Forward_search_after_last(self.filename, 'Dipole polarizability, Alpha (input orientation).', searchwords[i], 15, 'polarizabilities', quiet=self.quiet)
         if linenumber != ['NaN', 'NaN', 'NaN', 'NaN']:
             self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber[0]].split()[1].replace('D','E')), float(self.lines[linenumber[1]].split()[1].replace('D','E')), float(self.lines[linenumber[2]].split()[1].replace('D','E')), float(self.lines[linenumber[3]].split()[1].replace('D','E'))
             return
@@ -379,7 +375,7 @@ class gaus:
 
     def _Frequencies(self):
         self.freq = []
-        linenumbers = Forward_search_all(self.filename, 'Frequencies --', 'frequencies')
+        linenumbers = Forward_search_all(self.filename, 'Frequencies --', 'frequencies', quiet=self.quiet)
         if type(linenumbers) == list:
             for i in linenumbers:
                 for j in self.lines[i].split()[2:]:
@@ -391,9 +387,9 @@ class gaus:
 
     def _Excitation_energies(self):
         self.exc_energies = []
-        linenumber = Forward_search_last(self.filename, 'Excitation energies and oscillator strengths:', 'excitation energies', err=False)
-        linenumbers = Forward_search_all(self.filename, 'Excited State', 'excitation energies')
+        linenumber = Forward_search_last(self.filename, 'Excitation energies and oscillator strengths:', 'excitation energies', quiet=True)
         if type(linenumber) == int:
+            linenumbers = Forward_search_all(self.filename, 'Excited State', 'excitation energies', quiet=self.quiet)
             linenumbers = [i for i in linenumbers if i > linenumber]
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[4])* self.constants.ev_to_au)
@@ -404,9 +400,9 @@ class gaus:
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
-        linenumber = Forward_search_last(self.filename, 'Excitation energies and oscillator strengths:', 'oscillator strengths', err=False)
-        linenumbers = Forward_search_all(self.filename, 'Excited State', 'oscillator strengths')
+        linenumber = Forward_search_last(self.filename, 'Excitation energies and oscillator strengths:', 'oscillator strengths', quiet=True)
         if type(linenumber) == int:
+            linenumbers = Forward_search_all(self.filename, 'Excited State', 'oscillator strengths', quiet=self.quiet)
             linenumbers = [i for i in linenumbers if i > linenumber]
             for i in linenumbers:
                 self.osc_strengths.append(float(self.lines[i].split()[-1].replace('f=','')))
@@ -417,7 +413,7 @@ class gaus:
 
     def _RotationalConsts(self):
         self.rots = []
-        linenumbers = Forward_search_all(self.filename, 'Rotational constants (GHZ):', 'rotational constants')
+        linenumbers = Forward_search_all(self.filename, 'Rotational constants (GHZ):', 'rotational constants', quiet=self.quiet)
         for i in self.lines[linenumbers[-2]].split()[3:]:
             self.rots.append(float(i))
         self.rots = np.array(self.rots)
@@ -425,19 +421,19 @@ class gaus:
 
     def _Mass(self):
         self.mass = 0.0
-        linenumber = Forward_search_last(self.filename, 'Molecular mass', 'molecular mass')
+        linenumber = Forward_search_last(self.filename, 'Molecular mass', 'molecular mass', quiet=self.quiet)
         if type(linenumber) == int:
             self.mass = float(self.lines[linenumber].split()[2])
 
     def _SymmetryNumber(self):
         self.symnum = 0
-        linenumber = Forward_search_last(self.filename, 'Rotational symmetry number', 'rotational symmetry number')
+        linenumber = Forward_search_last(self.filename, 'Rotational symmetry number', 'rotational symmetry number', quiet=self.quiet)
         if type(linenumber) == int:
             self.symnum = int(self.lines[linenumber].split()[-1].replace('.',''))
 
     def _Multiplicity(self):
         self.multi = 0
-        linenumber = Forward_search_first(self.filename, 'Multiplicity', 'multiplicity')
+        linenumber = Forward_search_first(self.filename, 'Multiplicity', 'multiplicity', quiet=self.quiet)
         if type(linenumber) == int:
             self.multi = int(self.lines[linenumber].split()[-1])
 
@@ -527,18 +523,18 @@ class orca:
             self.lines = file.readlines()
 
     def _Energy(self):
-        linenumber = Forward_search_last(self.filename, 'Electronic energy', 'Final energy', err = False)
+        linenumber = Forward_search_last(self.filename, 'Electronic energy', 'Final energy', quiet=True)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
-        linenumber = Forward_search_last(self.filename, 'FINAL SINGLE POINT ENERGY', 'Final energy')
+        linenumber = Forward_search_last(self.filename, 'FINAL SINGLE POINT ENERGY', 'Final energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         self.tot_energy = 'NaN'
 
     def _ZPV(self):
-        linenumber = Forward_search_last(self.filename, 'Electronic energy', 'ZPV energy')
+        linenumber = Forward_search_last(self.filename, 'Electronic energy', 'ZPV energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.zpv = float(self.lines[linenumber].split()[-2]) + float(self.lines[linenumber+1].split()[-4])
             return
@@ -571,14 +567,14 @@ class orca:
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
 
     def _Dipole_moments(self):
-        linenumber = Forward_search_last(self.filename, 'Total Dipole Moment', 'dipole moment')
+        linenumber = Forward_search_last(self.filename, 'Total Dipole Moment', 'dipole moment', quiet=self.quiet)
         if type(linenumber) == int:
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber].split()[-3]), float(self.lines[linenumber].split()[-2]), float(self.lines[linenumber].split()[-1]), float(self.lines[linenumber+2].split()[-1])
             return
         self.dipolex, self.dipoley, self.dipolez, self.total_dipole = 'NaN'
 
     def _Polarizabilities(self):
-        linenumber = Forward_search_after_last(self.filename, 'THE POLARIZABILITY TENSOR', "'diagonalized tensor:'", 10, 'polarizability')
+        linenumber = Forward_search_after_last(self.filename, 'THE POLARIZABILITY TENSOR', "'diagonalized tensor:'", 10, 'polarizability', quiet=self.quiet)
         if type(linenumber) == int:
             self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber+1].split()[0]), float(self.lines[linenumber+1].split()[1]), float(self.lines[linenumber+1].split()[2]), float(self.lines[linenumber+7].split()[-1])
             return
@@ -586,7 +582,7 @@ class orca:
 
     def _Excitation_energies(self):
         self.exc_energies = []
-        linenumbers = Forward_search_all(self.filename, 'STATE ', 'excitation energies')
+        linenumbers = Forward_search_all(self.filename, 'STATE ', 'excitation energies', quiet=self.quiet)
         if type(linenumbers) == list:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[3]))
@@ -597,7 +593,7 @@ class orca:
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
-        linenumber = Forward_search_last(self.filename, 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS', 'oscillator strengths')
+        linenumber = Forward_search_last(self.filename, 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS', 'oscillator strengths', quiet=self.quiet)
         if type(linenumber) == int:
             for i in range(len(self.exc_energies)):
                 if len(self.lines[linenumber+5+i].split()) > 6:
@@ -611,7 +607,7 @@ class orca:
 
     def _Frequencies(self):
         self.freq = []
-        linenumber = Forward_search_last(self.filename, "VIBRATIONAL FREQUENCIES", 'frequencies')
+        linenumber = Forward_search_last(self.filename, "VIBRATIONAL FREQUENCIES", 'frequencies', quiet=self.quiet)
         if type(linenumber) == int:
             for j in self.lines[linenumber+7: self.end]:
                 if ": " and " 0.00 " in j:
@@ -627,7 +623,7 @@ class orca:
 
     def _RotationalConsts(self):
         self.rots = []
-        linenumbers = Forward_search_first(self.filename, 'Rotational constants in MHz', 'rotational constants')
+        linenumbers = Forward_search_first(self.filename, 'Rotational constants in MHz', 'rotational constants', quiet=self.quiet)
         for i in self.lines[linenumbers].split()[-3:]:
             self.rots.append(float(i))
         self.rots = np.array(self.rots) * 1E-3
@@ -635,19 +631,19 @@ class orca:
 
     def _Mass(self):
         self.mass = 0.0
-        linenumber = Forward_search_last(self.filename, 'Total Mass', 'molecular mass')
+        linenumber = Forward_search_last(self.filename, 'Total Mass', 'molecular mass', quiet=self.quiet)
         if type(linenumber) == int:
             self.mass = float(self.lines[linenumber].split()[-2])
 
     def _SymmetryNumber(self):
         self.symnum = 0
-        linenumber = Forward_search_last(self.filename, 'Symmetry Number', 'rotational symmetry number')
+        linenumber = Forward_search_last(self.filename, 'Symmetry Number', 'rotational symmetry number', quiet=self.quiet)
         if type(linenumber) == int:
             self.symnum = int(self.lines[linenumber].split()[-1])
 
     def _Multiplicity(self):
         self.multi = 0
-        linenumber = Forward_search_first(self.filename, 'Multiplicity', 'multiplicity')
+        linenumber = Forward_search_first(self.filename, 'Multiplicity', 'multiplicity', quiet=self.quiet)
         if type(linenumber) == int:
             self.multi = int(self.lines[linenumber].split()[-1])
 
@@ -711,36 +707,36 @@ class dal:
             self.lines = file.readlines()
 
     def _Energy(self):
-        linenumber = Forward_search_last(self.filename, 'Total .*  energy:', 'final energy', err=False)
+        linenumber = Forward_search_last(self.filename, 'Total .*  energy:', 'final energy', quiet=True)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
-        linenumber = Forward_search_last(self.filename, '@    Final .* energy:', 'final energy', err=False)
+        linenumber = Forward_search_last(self.filename, '@    Final .* energy:', 'final energy', quiet=True)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
-        linenumber = Forward_search_last(self.filename, '@ Energy at final geometry is', 'final energy')
+        linenumber = Forward_search_last(self.filename, '@ Energy at final geometry is', 'final energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
         self.tot_energy = 'NaN'
 
     def _ZPV(self):
-        linenumber = Forward_search_last(self.filename, 'Total Molecular Energy', 'zero-point energy')
+        linenumber = Forward_search_last(self.filename, 'Total Molecular Energy', 'zero-point energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.zpv = float(self.lines[linenumber+5].split()[1])
             return
         self.zpv = 'NaN'
 
     def _Dipole_moments(self):
-        linenumber = Forward_search_last(self.filename, 'Dipole moment components', 'dipole moment')
+        linenumber = Forward_search_last(self.filename, 'Dipole moment components', 'dipole moment', quiet=self.quiet)
         if type(linenumber) == int:
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+5].split()[1]), float(self.lines[linenumber+6].split()[1]), float(self.lines[linenumber+7].split()[1]), float(self.lines[linenumber-3].split()[0])
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
     def _Polarizabilities(self):
-        linenumber = Forward_search_last(self.filename, 'SECOND ORDER PROPERTIES', 'polarizabilities')
+        linenumber = Forward_search_last(self.filename, 'SECOND ORDER PROPERTIES', 'polarizabilities', quiet=self.quiet)
         if type(linenumber) == int:
             self.polx, self.poly, self.polz = float(self.lines[linenumber+2].split()[-1]), float(self.lines[linenumber+5].split()[-1]), float(self.lines[linenumber+7].split()[-1])
             self.iso_polar = (self.polx + self.poly + self.polz)/3.
@@ -750,7 +746,7 @@ class dal:
     def _Excitation_energies(self):
         self.exc_energies = []
         self.exc_type = None
-        linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'excitation energies', err=False)
+        linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'excitation energies', quiet=True)
         if type(linenumber) == int:
             self.exc_type = '.EXCITA'
             for i in self.lines[linenumber+5: self.end]:
@@ -758,7 +754,7 @@ class dal:
                     self.exc_energies.append(float(i.split()[3])* self.constants.ev_to_au)
                 else:
                     break
-        linenumbers = Forward_search_all(self.filename, '@ Excitation energy', 'excitation energies')
+        linenumbers = Forward_search_all(self.filename, '@ Excitation energy', 'excitation energies', quiet=self.quiet)
         if type(linenumbers) == list:
             self.exc_type = 'MCTDHF'
             for i in linenumbers:
@@ -771,15 +767,15 @@ class dal:
     def _Oscillator_strengths(self):
         self.osc_strengths = []
         if self.exc_type == '.EXCITA':
-            linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'oscillator strengths')
+            linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'oscillator strengths', quiet=self.quiet)
             if type(linenumber) == int:
                 for i in self.lines[linenumber+5: self.end]:
                     if "@ " in i:
                         self.osc_strengths.append(float(i.split()[-1]))
                     else:
                         break
-        if self.exc_type == 'MCTDHF':
-            linenumbers = Forward_search_all(self.filename, '@ Excitation energy', 'oscillator strengths')
+        elif self.exc_type == 'MCTDHF':
+            linenumbers = Forward_search_all(self.filename, '@ Excitation energy', 'oscillator strengths', quiet=self.quiet)
             if type(linenumbers) == list:
                 for i in linenumbers:
                     osc = 0
@@ -795,7 +791,7 @@ class dal:
 
     def _Frequencies(self):
         self.freq = []
-        linenumber = Forward_search_last(self.filename, 'Vibrational Frequencies and IR Intensities', 'frequencies')
+        linenumber = Forward_search_last(self.filename, 'Vibrational Frequencies and IR Intensities', 'frequencies', quiet=self.quiet)
         if type(linenumber) == int:
             for i in self.lines[linenumber+7: self.end]:
                 if len(i.split()) < 1:
@@ -808,7 +804,7 @@ class dal:
 
     def _RotationalConsts(self):
         self.rots = []
-        linenumbers = Forward_search_last(self.filename, 'Rotational constants', 'rotational constants')
+        linenumbers = Forward_search_last(self.filename, 'Rotational constants', 'rotational constants', quiet=self.quiet)
         for i in self.lines[linenumbers+7].split()[:-1]:
             self.rots.append(float(i))
         self.rots = np.array(self.rots) * 1E-3
@@ -830,7 +826,7 @@ class dal:
 
     def _Multiplicity(self):
         self.multi = 0
-        linenumber = Forward_search_last(self.filename, 'Spatial symmetry', 'multiplicity')
+        linenumber = Forward_search_last(self.filename, 'Spatial symmetry', 'multiplicity', quiet=self.quiet)
         if type(linenumber) == int:
             self.multi = int(self.lines[linenumber].split()[2])
 
@@ -919,36 +915,36 @@ class lsdal:
             self.lines = file.readlines()
 
     def _Energy(self):
-        linenumber = Forward_search_last(self.filename, 'Final .* energy:', 'final energy', err=False)
-        if type(linenumber) == int:
-            self.tot_energy = float(self.lines[linenumber].split()[-1])
-            return
-        linenumber = Forward_search_last(self.filename, 'ENERGY SUMMARY', 'final energy')
+        linenumber = Forward_search_last(self.filename, 'ENERGY SUMMARY', 'final energy', quiet=True)
         if type(linenumber) == int:
             for i in self.lines[linenumber+3:self.end]:
                 if 'E: ' in i:
                     self.tot_energy = float(i.split()[-1])
                 else:
                     return
+        linenumber = Forward_search_last(self.filename, 'Final .* energy:', 'final energy', quiet=self.quiet)
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
         self.tot_energy = 'NaN'
 
     def _Dipole_moments(self):
-        linenumber = Forward_search_last(self.filename, 'Permanent dipole moment', 'dipole moment')
+        linenumber = Forward_search_last(self.filename, 'Permanent dipole moment', 'dipole moment', quiet=self.quiet)
         if type(linenumber) == int:
-            self.dipolex, self.dipoley, self.dipolez, self.total_dipole = self.lines[linenumber+9].split()[1], self.lines[linenumber+10].split()[1], self.lines[linenumber+11].split()[1], self.lines[linenumber+3].split()[0]
+            self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+9].split()[1]), float(self.lines[linenumber+10].split()[1]), float(self.lines[linenumber+11].split()[1]), float(self.lines[linenumber+3].split()[0])
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
     def _Polarizabilities(self):
-        linenumber = Forward_search_last(self.filename, '*          POLARIZABILITY TENSOR RESULTS (in a.u.)          *', 'polarizability')
+        linenumber = Forward_search_last(self.filename, '*          POLARIZABILITY TENSOR RESULTS (in a.u.)          *', 'polarizability', quiet=self.quiet)
         if type(linenumber) == int:
-            self.polx, self.poly, self.polz, self.iso_polar = self.lines[linenumber+10].split()[-3], self.lines[linenumber+11].split()[-2], self.lines[linenumber+12].split()[-1], self.lines[linenumber+14].split()[-1]
+            self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber+10].split()[-3]), float(self.lines[linenumber+11].split()[-2]), float(self.lines[linenumber+12].split()[-1]), float(self.lines[linenumber+14].split()[-1])
             return
         self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
     def _Excitation_energies(self):
         self.exc_energies = []
-        linenumber = Forward_search_last(self.filename, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'excitation energies')
+        linenumber = Forward_search_last(self.filename, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'excitation energies', quiet=self.quiet)
         if type(linenumber) == int:
             for i in range(linenumber+8,self.end):
                 if len(self.lines[i].split()) < 1:
@@ -961,7 +957,7 @@ class lsdal:
 
     def _Oscillator_strengths(self):
         self.osc_strengths = []
-        linenumber = Forward_search_last(self.filename, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'oscillator strengths')
+        linenumber = Forward_search_last(self.filename, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'oscillator strengths', quiet=self.quiet)
         if type(linenumber) == int:
             for i in range(len(self.exc_energies)):
                 self.osc_strengths.append(float(self.lines[linenumber+8+i].split()[-1]))
