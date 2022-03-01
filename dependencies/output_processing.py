@@ -31,7 +31,7 @@ def Forward_search_last(file: str, text: str, error: str, err: bool =True, quiet
         return 'NaN'
     res = res.split()[0]
     res = str(res).split(':')
-    return int(res[0].replace('b\'','').replace('\'','')) - 1
+    return int(res[0].replace('b\'','')) - 1
 
 def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, error: str, err: bool=True, quiet: bool = False):
     """Searches from beggining of file for last occurence of [text1] and in the following [lines] after for [text2]
