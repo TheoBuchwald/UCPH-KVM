@@ -21,6 +21,10 @@ __pycache__
 *.inp
 # Ignore mol files
 *.mol
+# Ignore pot files
+*.pot
+# Ignore xyz files
+*.xyz
 # Ignore vscode settings
 .vscode
 # Ignore build folder
