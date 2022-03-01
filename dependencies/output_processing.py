@@ -58,7 +58,7 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
         return 'NaN'
     res = res.split()[0]
     res = str(res).split('-')
-    return int(res[0].replace('b\'','')) - 1
+    return int(res[0].replace('b\'','').replace('\'','')) - 1
 
 def Forward_search_first(file: str, text: str, error: str, err: bool=True, quiet: bool = False):
     """Searches from beginning of file and finds the first occurence of [text]
@@ -81,7 +81,7 @@ def Forward_search_first(file: str, text: str, error: str, err: bool=True, quiet
         return 'NaN'
     res = res.split()[0]
     res = str(res).split(':')
-    return int(res[0].replace('b\'','')) - 1
+    return int(res[0].replace('b\'','').replace('\'','')) - 1
 
 def Forward_search_all(file: str, text: str, error: str, err: bool=True, quiet: bool = False):
     """Searches from beggining of file to end of file finding all occurences of [text]
@@ -104,7 +104,7 @@ def Forward_search_all(file: str, text: str, error: str, err: bool=True, quiet: 
                 print(f'{Fore.RED}No {error}{Style.RESET_ALL} could be found in {Style.BRIGHT}{Fore.YELLOW}{file}')
         return 'NaN'
     res = str(res).split('\\n')
-    return [int(val.replace('b\'','').replace(':','')) - 1 for val in res[:-1]]
+    return [int(val.replace('b\'','').replace('\'','').replace(':','')) - 1 for val in res[:-1]]
 
 def Resize(array: list):
     """Takes an array of arrays with varying sizes and resizes them to the same size.
