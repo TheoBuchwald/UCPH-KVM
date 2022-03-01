@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     DataProcessingGroup = parser.add_argument_group('Data processing commands')
     DataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
-    DataProcessingGroup.add_argument('--uvvis', const='png', type=str, help='Include to calculate a UV-VIS spectrum. Tou can give the picture format as an optional argument. Will use png as default. If \'--save\' is used togrther with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
+    DataProcessingGroup.add_argument('--uvvis', const='png', type=str, help='Include to calculate a UV-VIS spectrum. Tou can give the picture format as an optional argument. Will use png as default. If \'--save\' is used together with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
 
     AdditionalCommandsGroup = parser.add_argument_group('Additional commands')
     AdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
