@@ -1,7 +1,7 @@
 
 import argparse
 import numpy as np
-import dependencies.output_processing as op
+from dependencies import output_processing as op
 from functools import partial
 from multiprocessing import Pool, cpu_count
 from colorama import Fore, Style, init
@@ -219,7 +219,7 @@ if __name__ == "__main__":
             op.Resize(Final_arrays[key])
 
     if UVVIS:
-        op.Make_uvvis_spectrum(input_file, quiet, op.UVVIS_Spectrum, count, Final_arrays, UVVIS, Extracted_Values, SAVE)
+        op.Make_uvvis_spectrum(input_file, quiet, op.UVVIS_Spectrum, UVVIS, Extracted_Values, SAVE)
 
     op.Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)   #Fixing the size of variable size arrays
 
