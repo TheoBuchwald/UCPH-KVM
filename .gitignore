@@ -1,5 +1,6 @@
 # Ignore pycache
 __pycache__
+.pytest_cache
 # Ignore csv files
 *.csv
 # Ignore npz files
@@ -20,3 +21,9 @@ __pycache__
 *.inp
 # Ignore mol files
 *.mol
+# Ignore vscode settings
+.vscode
+# Ignore build folder
+build
+# Ignore Kurt.egg-info
+Kurt.egg-info
