@@ -100,6 +100,7 @@ if __name__ == "__main__":
 
     AdditionalCommandsGroup = parser.add_argument_group('Additional commands')
     AdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
+    AdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
 
 
 #******************************* SETUP ********************************
@@ -160,6 +161,7 @@ if __name__ == "__main__":
     }
 
     quiet = args.quiet
+    MULTIPROCESSING = args.multiprocessing
 
     NeededArguments = RequestedArguments.copy()
 
@@ -192,10 +194,15 @@ if __name__ == "__main__":
 
     count = len(input_file)
 
-    with Pool(int(cpu_count()/2)) as pool:
-        Extracted_Values = pool.map(partial(op.Data_Extraction, Needed_Values=Needed_Values, NeededArguments=NeededArguments, quiet=quiet, Temperature=T), input_file)
+    if MULTIPROCESSING:
+        with Pool(int(cpu_count()/2)) as pool:
+            Extracted_Values = pool.map(partial(op.Data_Extraction, Needed_Values=Needed_Values, NeededArguments=NeededArguments, quiet=quiet, Temperature=T), input_file)
+            Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
+    else:
+        Extracted_Values = dict()
+        for infile in input_file:
+            Extracted_Values[infile] = op.Data_Extraction(infile, Needed_Values, NeededArguments, quiet, T)[infile]
 
-    Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
     Input_Array = [[i] for i in Extracted_Values] # Creating array_input
 
     op.Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
