@@ -1,5 +1,10 @@
 # Quantum-chemistry-output-parser
 This repository was created to collect all the scripts and programs developed and used in Professor Kurt V. Mikkelsens group at the University of Copenhagen.
+
+Once you have cloned the repository you will have to run ./build.sh to initialize the repository.
+
+You should also do this when pulling new updates, as they may have changed the build package.
+
 ## [collect_data.py](./collect_data.py)
 <details><summary> Program information </summary>
 <p>
