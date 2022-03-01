@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 import dependencies.output_processing as op
 from functools import partial
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from colorama import Fore, Style, init
 
 init(autoreset=True)
@@ -192,7 +192,7 @@ if __name__ == "__main__":
 
     count = len(input_file)
 
-    with Pool() as pool:
+    with Pool(int(cpu_count()/2)) as pool:
         Extracted_Values = pool.map(partial(op.Data_Extraction, Needed_Values=Needed_Values, NeededArguments=NeededArguments, quiet=quiet, Temperature=T), input_file)
 
     Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
