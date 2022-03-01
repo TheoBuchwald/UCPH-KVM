@@ -711,6 +711,10 @@ class dal:
             self.lines = file.readlines()
 
     def _Energy(self):
+        linenumber = Forward_search_last(self.filename, 'Total .*  energy:', 'final energy', err=False)
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
         linenumber = Forward_search_last(self.filename, '@    Final .* energy:', 'final energy', err=False)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
