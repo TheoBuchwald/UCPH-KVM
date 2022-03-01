@@ -32,8 +32,8 @@ if __name__ == '__main__':
     CrystalGroup.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
 
     CalculationGroup = parser.add_argument_group('Calculation options')
-    CalculationGroup.add_argument('--charge', default=0, nargs=1, type=int, help='Include to specify charge - 0 if not included')
-    CalculationGroup.add_argument('--basis', default='pc-1', nargs=1, type=str, help='Include to specify basis set - pc-1 if not included')
+    CalculationGroup.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
+    CalculationGroup.add_argument('--basis', default=['pc-1'], nargs=1, type=str, help='Include to specify basis set - pc-1 if not included')
 
     AdditionalCommandsGroup = parser.add_argument_group('Additional commands')
     AdditionalCommandsGroup.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
@@ -53,14 +53,15 @@ if __name__ == '__main__':
         'CoSb3' : args.cosb3
     }
 
-    molfile = args.infile[0]
+    molfile = args.infile
     atom1 = args.atom1[0]
     atom2 = args.atom2[0]
     diameter = args.diameter[0]
 
+    charge = args.charge[0]
+    basis = args.basis[0]
+
     inwards = args.outwards
-    charge = args.charge
-    basis = args.basis
     linenumber = args.linenumber
     returnxyz = args.noxyz
 

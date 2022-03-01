@@ -66,6 +66,17 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
+## [xyz_to_gauss.py](./xyz_to_gauss.py)
+<details><summary> Program information </summary>
+<p>
+  A script designed to convert a xyz file to a com input file for the Gaussian suite of programs
+
+  You will need to supply the xyz file and keywords. Other options can be added via the command line. Use -h on the script to see the available options.
+
+  You can also supply basis sets not implemented in Gaussian, in which case an API to BSE (https://www.basissetexchange.org/) is used.
+</p>
+</details>
+
 ## [xyz_to_mol.py](./xyz_to_mol.py)
 <details><summary> Program information </summary>
 <p>

@@ -68,10 +68,13 @@ class BasisSet:
     def __init__(self):
         self.BSE = "https://www.basissetexchange.org/"
 
-    def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list) -> str:
+    def GenerateBasisSet(self, Programme: str, BasisSet: str, Atoms: list, SupressHeader: bool = False) -> str:
         atoms = set(Atoms) # Remove duplicate atoms
         parameters = {'elements': [atoms]}
-        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        try:
+            response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        except Exception:
+            raise ConnectionError("Could not connect to Basis Set Exchange: Please check your internet connection") from None
 
         # Check for errors
         if response.status_code != 200:
@@ -81,19 +84,24 @@ class BasisSet:
         # Format the basis set text
         BasisSet = response.text.split('\n')
 
-        Info = ''
-        for i in BasisSet[:10]:
-            Info += f'{i}\n'
-        print(Info)
+        if not SupressHeader:
+            Info = ''
+            for i in BasisSet[:10]:
+                Info += f'{i}\n'
+            print(Info)
 
         self.basis = ''
         for i in BasisSet[12:]:
             self.basis += f'{i}\n'
         return self.basis
 
-    def AtomBasisSet(self, Programme: str, BasisSet: str, Atom) -> str:
+    def AtomBasisSet(self, Programme: str, BasisSet: str, Atom: str, SupressHeader: bool = False) -> str:
         parameters = {'elements': [Atom]}
-        response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        try:
+            response = requests.get(f'{self.BSE}/api/basis/{BasisSet}/format/{Programme}', params=parameters) # Request data from BSE
+        except Exception:
+            raise ConnectionError("Could not connect to Basis Set Exchange: Please check your internet connection") from None
+
         # Check for errors
         if response.status_code != 200:
             print(response.text)
@@ -102,10 +110,11 @@ class BasisSet:
         # Format the basis set text
         BasisSet = response.text.split('\n')
 
-        Info = ''
-        for i in BasisSet[:10]:
-            Info += f'{i}\n'
-        print(Info)
+        if not SupressHeader:
+            Info = ''
+            for i in BasisSet[:10]:
+                Info += f'{i}\n'
+            print(Info)
 
         self.basis = ''
         for i in BasisSet[12:]:

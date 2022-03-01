@@ -14,3 +14,9 @@ __pycache__
 *.svg
 # Ignore ps files
 *.ps
+# Ignore com files
+*.com
+# Ignore inp files
+*.inp
+# Ignore mol files
+*.mol
