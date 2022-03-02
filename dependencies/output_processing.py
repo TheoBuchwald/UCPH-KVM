@@ -458,6 +458,7 @@ class gaus:
     def _Enthalpy(self):
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
+                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
             self.enthalpy = 'NaN'
         if len(self.rots) == 1:
             self.E_R = self.T * self.constants.gas_constant
