@@ -1,5 +1,12 @@
 # Quantum-chemistry-output-parser
 This repository was created to collect all the scripts and programs developed and used in Professor Kurt V. Mikkelsens group at the University of Copenhagen.
+
+Once you have cloned the repository you will have to run ./build.sh to initialize the repository.
+
+You should also do this when pulling new updates, as they may have changed the build package.
+
+When you wish to push an update, to ensure that it works, you may want to use ./test.sh in the root directory of the repository and check for any errors or failures in the different tests.
+
 ## [collect_data.py](./collect_data.py)
 <details><summary> Program information </summary>
 <p>
@@ -31,7 +38,7 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
-## [sandwich.py](./sandwich.py)
+## [sandwich.py](./junctions/sandwich.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to place nanoparticles on either side of a molecule
@@ -48,7 +55,7 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
-## [leftright.py](./leftright.py)
+## [leftright.py](./junctions/leftright.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to place nanoparticles on either side of a molecule in two separate files
@@ -66,7 +73,7 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
-## [xyz_to_gauss.py](./xyz_to_gauss.py)
+## [xyz_to_gauss.py](./xyz/xyz_to_gauss.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to convert a xyz file to a com input file for the Gaussian suite of programs
@@ -77,7 +84,7 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
-## [xyz_to_mol.py](./xyz_to_mol.py)
+## [xyz_to_mol.py](./xyz/xyz_to_mol.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to convert a xyz file to a mol file for the programme DALTON
@@ -88,7 +95,7 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
-## [xyz_to_molpro.py](./xyz_to_molpro.py)
+## [xyz_to_molpro.py](./xyz/xyz_to_molpro.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to convert a xyz file to a molpro file
@@ -97,7 +104,7 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
-## [xyz_to_orca.py](./xyz_to_orca.py)
+## [xyz_to_orca.py](./xyz/xyz_to_orca.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to convert a xyz file to a inp file for the programme ORCA
@@ -110,7 +117,7 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
-## [xyz_to_povray.py](./xyz_to_povray.py)
+## [xyz_to_povray.py](./visualization/xyz_to_povray.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to convert a xyz file to a pov file for the programme POV-Ray which can be used ot ake visually pretty graphics
@@ -129,7 +136,7 @@ This repository was created to collect all the scripts and programs developed an
 </p>
 </details>
 
-## [pov_editor.py](./pov_editor.py)
+## [pov_editor.py](./visualization/pov_editor.py)
 <details><summary> Program information </summary>
 <p>
   A script designed to take the camera position of an existing pov file and update the graphics arguments of said file

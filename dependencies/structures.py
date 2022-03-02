@@ -1,11 +1,8 @@
 
-from colorama import Fore, Style, init
 import numpy as np
 from ase.build import fcc110, bcc110, hcp0001, diamond100
 from ase.spacegroup import crystal
 import dependencies.chemical_information as ci
-
-init(autoreset=True)
 
 class NanoParticle():
     def __init__(self, nanoparticle: str) -> None:
@@ -37,29 +34,29 @@ class NanoParticle():
         try:
             self.atomtypes = Atoms[self.structure]
         except KeyError:
-            print(f'{Fore.RED}{self.structure} has not been implemented in {Style.BRIGHT}Atoms dictionary')
+            print(f'{self.structure} has not been implemented in Atoms dictionary')
             Errors += 1
 
         try:
             self.lattice_length = Length[self.structure]
         except KeyError:
-            print(f'{Fore.RED}{self.structure} has not been implemented in {Style.BRIGHT}Length dictionary')
+            print(f'{self.structure} has not been implemented in Length dictionary')
             Errors += 1
 
         try:
             self.lattice_type = Type[self.structure]
         except KeyError:
-            print(f'{Fore.RED}{self.structure} has not been implemented in {Style.BRIGHT}Type dictionary')
+            print(f'{self.structure} has not been implemented in Type dictionary')
             Errors += 1
 
         try:
             self.vdw = VdW[self.structure]
         except KeyError:
-            print(f'{Fore.RED}{self.structure} has not been implemented in {Style.BRIGHT}Van der Waals dictionary')
+            print(f'{self.structure} has not been implemented in Van der Waals dictionary')
             Errors += 1
 
         if Errors > 0:
-            print(f'{Fore.RED}There were {Errors} errors for nanoparticle {Style.BRIGHT}{nanoparticle}')
+            print(f'There were {Errors} errors for nanoparticle {nanoparticle}')
             raise ValueError
 
     def setInwards(self, set_to) -> None:
@@ -99,7 +96,7 @@ class NanoParticle():
             a = 9.04
             self.atoms = crystal([self.atomtypes[0], self.atomtypes[1]], basis=[(0.25, 0.25, 0.25), (0.0, 0.335, 0.158)], spacegroup=204, cellpar=[a, a, a, 90, 90, 90], size=(2, dim1, dim2))
         else:
-            print(f'{Fore.RED}The crystal structure type {Style.BRIGHT}{self.lattice_type}{Style.NORMAL} is not implemented')
+            print(f'The crystal structure type {self.lattice_type} is not implemented')
             raise ValueError
 
         self.atoms_symbols = self.atoms.get_chemical_symbols()

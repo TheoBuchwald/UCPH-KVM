@@ -1,12 +1,9 @@
 
 import argparse
 import numpy as np
-import dependencies.output_processing as op
+from dependencies import output_processing as op
 from functools import partial
 from multiprocessing import Pool, cpu_count
-from colorama import Fore, Style, init
-
-init(autoreset=True)
 
 
 #*************************** INPUT PARSING ****************************
@@ -18,58 +15,58 @@ if __name__ == "__main__":
 
             Currently the output formats supported are
             ------------------------------------------
-                -  {Style.BRIGHT}{Fore.CYAN}ORCA{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.CYAN}DALTON{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.CYAN}GAUSSIAN{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.CYAN}LSDALTON{Style.RESET_ALL}
+                -  ORCA
+                -  DALTON
+                -  GAUSSIAN
+                -  LSDALTON
 
             This script can currently extract the data
             ------------------------------------------
-                -  {Style.BRIGHT}{Fore.GREEN}Total energies{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Zero-Point Vibrational energies{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Enthalpies{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Entropies{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Gibbs Free energies{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Dipole moments{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Polarizability{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Excitation energies{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Oscillator strengths{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Frequencies{Style.RESET_ALL}
-                -  {Style.BRIGHT}{Fore.GREEN}Partition functions at a given temperature{Style.RESET_ALL}
+                -  Total energies
+                -  Zero-Point Vibrational energies
+                -  Enthalpies
+                -  Entropies
+                -  Gibbs Free energies
+                -  Dipole moments
+                -  Polarizability
+                -  Excitation energies
+                -  Oscillator strengths
+                -  Frequencies
+                -  Partition functions at a given temperature
 
     Though not all data types have been implemented for all of the output formats
 
-    All values are extracted as {Style.BRIGHT}{Fore.MAGENTA}Atomic Units{Style.RESET_ALL} where applicable'''
+    All values are extracted as Atomic Units where applicable'''
     ,epilog=f'''
-    The following is not implemented for {Style.BRIGHT}{Fore.CYAN}ORCA{Style.RESET_ALL}
-    -  {Fore.RED}Entropies{Style.RESET_ALL}
+    The following is not implemented for ORCA
+    -  Entropies
 
-    The following is not implemented for {Style.BRIGHT}{Fore.CYAN}DALTON{Style.RESET_ALL}
-    -  {Fore.RED}Non DFT total energies{Style.RESET_ALL}
-    -  {Fore.RED}Zero-Point Vibrational energies{Style.RESET_ALL}
-    -  {Fore.RED}Enthalpies{Style.RESET_ALL}
-    -  {Fore.RED}Entropies{Style.RESET_ALL}
-    -  {Fore.RED}Gibbs Free energies{Style.RESET_ALL}
-    -  {Fore.RED}Frequencies{Style.RESET_ALL}
-    -  {Fore.RED}Partition functions with symmetry{Style.RESET_ALL}
+    The following is not implemented for DALTON
+    -  Non DFT total energies
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Frequencies
+    -  Partition functions with symmetry
 
-    The following is not implemented for {Style.BRIGHT}{Fore.CYAN}GAUSSIAN{Style.RESET_ALL}
-    -  {Fore.RED}Entropies{Style.RESET_ALL}
-    -  {Fore.RED}Excitation energies{Style.RESET_ALL}
-    -  {Fore.RED}Oscillator strengths{Style.RESET_ALL}
+    The following is not implemented for GAUSSIAN
+    -  Entropies
+    -  Excitation energies
+    -  Oscillator strengths
 
-    The following is not implemented for {Style.BRIGHT}{Fore.CYAN}LSDALTON{Style.RESET_ALL}
-    -  {Fore.RED}Probably some total energies{Style.RESET_ALL}
-    -  {Fore.RED}Zero-Point Vibrational energies{Style.RESET_ALL}
-    -  {Fore.RED}Enthalpies{Style.RESET_ALL}
-    -  {Fore.RED}Gibbs Free energies{Style.RESET_ALL}
-    -  {Fore.RED}Entropies{Style.RESET_ALL}
-    -  {Fore.RED}Dipole moments{Style.RESET_ALL}
-    -  {Fore.RED}Polarizabilities{Style.RESET_ALL}
-    -  {Fore.RED}Excitation energies{Style.RESET_ALL}
-    -  {Fore.RED}Oscillator strengths{Style.RESET_ALL}
-    -  {Fore.RED}Frequencies{Style.RESET_ALL}
-    -  {Fore.RED}Partition functions{Style.RESET_ALL}
+    The following is not implemented for LSDALTON
+    -  Probably some total energies
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Gibbs Free energies
+    -  Entropies
+    -  Dipole moments
+    -  Polarizabilities
+    -  Excitation energies
+    -  Oscillator strengths
+    -  Frequencies
+    -  Partition functions
 
     For help contact
     Theo Juncker von Buchwald
@@ -96,7 +93,7 @@ if __name__ == "__main__":
 
     DataProcessingGroup = parser.add_argument_group('Data processing commands')
     DataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
-    DataProcessingGroup.add_argument('--uvvis', const='png', type=str, help='Include to calculate a UV-VIS spectrum. Tou can give the picture format as an optional argument. Will use png as default. If \'--save\' is used togrther with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
+    DataProcessingGroup.add_argument('--uvvis', const='png', type=str, help='Include to calculate a UV-VIS spectrum. Tou can give the picture format as an optional argument. Will use png as default. If \'--save\' is used together with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
 
     AdditionalCommandsGroup = parser.add_argument_group('Additional commands')
     AdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
@@ -219,7 +216,7 @@ if __name__ == "__main__":
             op.Resize(Final_arrays[key])
 
     if UVVIS:
-        op.Make_uvvis_spectrum(input_file, quiet, op.UVVIS_Spectrum, count, Final_arrays, UVVIS, Extracted_Values, SAVE)
+        op.Make_uvvis_spectrum(input_file, quiet, op.UVVIS_Spectrum, UVVIS, Extracted_Values, SAVE)
 
     op.Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)   #Fixing the size of variable size arrays
 
@@ -234,11 +231,11 @@ if __name__ == "__main__":
 
     if SAVE == 'csv':
         np.savetxt('data.csv', Output_Array, delimiter=',', fmt='%s')
-        print(f'{Style.BRIGHT}{Fore.LIGHTGREEN_EX}Data has been saved in data.csv')
+        print(f'Data has been saved in data.csv')
     elif SAVE == 'npz':
         Save_Dict = {i[0]: i[1:] for i in Output_Array}
         np.savez('data.npz', **Save_Dict)
-        print(f'{Style.BRIGHT}{Fore.LIGHTGREEN_EX}Data has been saved in data.npz')
+        print(f'Data has been saved in data.npz')
     else:
         print(Output_Array)
 

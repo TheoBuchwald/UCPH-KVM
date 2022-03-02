@@ -3,8 +3,8 @@
 
 import numpy as np
 import argparse
-import dependencies.structures as struct
-import dependencies.chemical_information as ci
+from dependencies import structures as struct
+from dependencies import chemical_information as ci
 import fnmatch as fn
 
 #INPUTS HERE
@@ -59,6 +59,9 @@ if __name__ == '__main__':
         'NaCl' : args.nacl,
         'CoSb3' : args.cosb3
     }
+
+    if all(value == False for value in Arguments.values()):
+        Arguments['Au'] = True
 
     input_files = args.infile
     atom1 = args.atom1[0]
