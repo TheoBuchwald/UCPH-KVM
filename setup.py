@@ -10,6 +10,6 @@ setup(
     license='LICENCSE',
     description='A package containing scripts and programs developed and used in Professor Kurt V. Mikkelsens group at the University of Copenhagen.',
     long_description=open('README.md').read(),
-    install_requires=['numpy >= 1.13.0'],
+    install_requires=['numpy >= 1.13.0', 'requests >= 2.4', ],
     python_requires='>=3.6'
 )
