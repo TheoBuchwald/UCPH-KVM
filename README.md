@@ -5,6 +5,8 @@ Once you have cloned the repository you will have to run ./build.sh to initializ
 
 You should also do this when pulling new updates, as they may have changed the build package.
 
+When you wish to push an update, to ensure that it works, you may want to use ./test.sh in the root directory of the repository and check for any errors or failures in the different tests.
+
 ## [collect_data.py](./collect_data.py)
 <details><summary> Program information </summary>
 <p>
