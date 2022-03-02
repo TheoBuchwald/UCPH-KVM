@@ -1,4 +1,4 @@
 #!/bin/bash
 
-pip requests install --user
+pip install requests --user
 python3 setup.py install --user
