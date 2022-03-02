@@ -33,3 +33,5 @@ __pycache__
 build
 # Ignore Kurt.egg-info
 Kurt.egg-info
+dist
+*.egg
