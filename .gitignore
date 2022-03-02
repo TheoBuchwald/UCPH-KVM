@@ -1,6 +1,8 @@
 # Ignore pycache
 __pycache__
 .pytest_cache
+# Ignore swap files
+*.swp
 # Ignore csv files
 *.csv
 # Ignore npz files
@@ -31,3 +33,5 @@ __pycache__
 build
 # Ignore Kurt.egg-info
 Kurt.egg-info
+dist
+*.egg

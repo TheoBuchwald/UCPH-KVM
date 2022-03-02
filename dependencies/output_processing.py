@@ -411,7 +411,7 @@ class gaus:
     def _RotationalConsts(self):
         self.rots = []
         linenumbers = Forward_search_all(self.filename, 'Rotational constants (GHZ):', 'rotational constants', quiet=self.quiet)
-        for i in self.lines[linenumbers[-2]].split()[3:]:
+        for i in self.lines[linenumbers[-1]].split()[3:]:
             self.rots.append(float(i))
         self.rots = np.array(self.rots)
         self.rots = self.rots[self.rots != 0.0]
@@ -460,7 +460,6 @@ class gaus:
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
             self.enthalpy = 'NaN'
-            return
         self._RotationalConsts()
         self.E_T = 3/2 * self.T * self.constants.gas_constant
         if len(self.rots) == 1:
