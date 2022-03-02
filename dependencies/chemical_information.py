@@ -1,8 +1,5 @@
 
-from colorama import Fore, Style, init
 import requests
-
-init(autoreset=True)
 
 class AtomicInformation():
     def __init__(self, atom: str) -> None:
@@ -34,7 +31,7 @@ class AtomicInformation():
             self.nr = dic[self.atom]
             return self.nr
         except KeyError:
-            print(f'{Fore.RED}{self.atom} is not an atom or has not been implemented in {Style.BRIGHT}AtomicInformation.atomnr')
+            print(f'{self.atom} is not an atom or has not been implemented in AtomicInformation.atomnr')
 
     def VdW(self) -> None:
         dic = {'H' : 1.09, 'C' : 1.7, 'O' : 1.52, 'Na' : 2.27, 'S' : 1.8, 'Cl' : 1.75,
@@ -45,7 +42,7 @@ class AtomicInformation():
             self.vdw = dic[self.atom]
             return self.vdw
         except KeyError:
-            print(f'{Fore.RED}{self.atom} is not an atom or has not been implemented {Style.BRIGHT}AtomicInformation.VdW')
+            print(f'{self.atom} is not an atom or has not been implemented AtomicInformation.VdW')
 
 
     def polarizability(self) -> None:
@@ -61,7 +58,7 @@ class AtomicInformation():
             self.pol = dic[self.atom]
             return self.pol
         except KeyError:
-            print(f'{Fore.RED}{self.atom} is not an atom or has not been implemented {Style.BRIGHT}AtomicInformation.polarizability')
+            print(f'{self.atom} is not an atom or has not been implemented AtomicInformation.polarizability')
 
 
 class BasisSet:
