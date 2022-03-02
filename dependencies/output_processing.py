@@ -18,8 +18,8 @@ def Forward_search_last(file: str, text: str, error: str, quiet: bool = False):
     Returns:
         (int): Linenumber of last occurence
     """
-    ps1 = subprocess.run(['grep', '-nT', text, file], capture_output=True)
-    out = subprocess.run(['tail', '-n1'], input=ps1.stdout, capture_output=True)
+    ps1 = subprocess.run(['grep', '-nT', text, file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = subprocess.run(['tail', '-n1'], input=ps1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     res = out.stdout
     if len(res) == 0:
         if not quiet:
@@ -43,9 +43,9 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     Returns:
         (int): Linenumber of [text2] occurence
     """
-    ps1 = subprocess.run(['grep', '-nTA', f'{lines}', text1, file], capture_output=True)
-    ps2 = subprocess.run(['tail', '-n', f'{lines + 1}'], input=ps1.stdout, capture_output=True)
-    out = subprocess.run(['grep', text2], input=ps2.stdout, capture_output=True)
+    ps1 = subprocess.run(['grep', '-nTA', f'{lines}', text1, file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    ps2 = subprocess.run(['tail', '-n', f'{lines + 1}'], input=ps1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = subprocess.run(['grep', text2], input=ps2.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     res = out.stdout
     if len(res) == 0:
         if not quiet:
@@ -67,7 +67,7 @@ def Forward_search_first(file: str, text: str, error: str, quiet: bool = False):
     Returns:
         (int): Linenumber of first occurence
     """
-    out = subprocess.run(['grep', '-nTm1', text, file], capture_output=True)
+    out = subprocess.run(['grep', '-nTm1', text, file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     res = out.stdout
     if len(res) == 0:
         if not quiet:
@@ -89,8 +89,8 @@ def Forward_search_all(file: str, text: str, error: str, quiet: bool = False):
     Returns:
         (list): List of the linenumbers of all occurences
     """
-    ps1 = subprocess.run(['grep', '-nT', text, file], capture_output=True)
-    out = subprocess.run(['awk', '{print $1}'], input=ps1.stdout, capture_output=True)
+    ps1 = subprocess.run(['grep', '-nT', text, file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = subprocess.run(['awk', '{print $1}'], input=ps1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     res = out.stdout
     if len(res) == 0:
         if not quiet:
