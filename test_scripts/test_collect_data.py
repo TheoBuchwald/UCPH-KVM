@@ -2,6 +2,8 @@
 # sys.path.append('../dependencies')
 from dependencies import output_processing as op
 import unittest
+import numpy as np
+import math
 
 
 class Test_output_processing(unittest.TestCase):
@@ -196,7 +198,7 @@ class Test_output_processing(unittest.TestCase):
         Arguments = {'_Energy': True, '_Frequencies': -1, '_Enthalpy': True}
         Values = [item[0] for item in Arguments.items() if not(item[1] == None or item[1] == False)]
 
-        Enthalpies = ['NaN', 'NaN', -154.52566064469565, ['Not implemented'], -154.53248701964583, 'NaN', 'NaN', -40.33506821290447, ['Not implemented'], -40.337609149443004, 'NaN', 'NaN', -76.21279991181812, ['Not implemented'], -76.21486366305679, 'NaN', ['Not implemented'], 'NaN', -154.95934041097973, ['Not implemented'], ['Not implemented'], -154.86410285555365, ['Not implemented'], -154.56038877841905, 'NaN', ['Not implemented'], 'NaN', -40.4682022302921, ['Not implemented'], ['Not implemented'], -40.43235099125042, ['Not implemented'], -40.33657882247748, 'NaN', ['Not implemented'], 'NaN', -76.39574155566171, ['Not implemented'], ['Not implemented'], -76.35870999344932, ['Not implemented'], -76.33859889244732, -154.0008789398892, -154.00250005079639, ['Not implemented'], -154.00249842271637, -40.14802980781707, -40.14793143737707, ['Not implemented'], -40.1479424907723, -76.0004754165776, -76.0002595934421, ['Not implemented'], -76.0002617356017, 'NaN', -154.48748709124328, ['Not implemented'], 'NaN', -40.31099251843578, ['Not implemented'], 'NaN', -76.20324234869736, ['Not implemented'], ['Not implemented'], ['Not implemented'], ['Not implemented']]
+        Enthalpies = ['NaN', -154.087594945, -154.525660645, ['Not implemented'], -154.53248702, 'NaN', -40.1945232125, -40.3350682129, ['Not implemented'], -40.3376091494, 'NaN', -76.0224710512, -76.2127999118, ['Not implemented'], -76.2148636631, 'NaN', ['Not implemented'], 'NaN', -154.959340411, ['Not implemented'], ['Not implemented'], -154.864102856, ['Not implemented'], -154.560388778, 'NaN', ['Not implemented'], 'NaN', -40.4682022303, ['Not implemented'], ['Not implemented'], -40.4323509913, ['Not implemented'], -40.3365788225, 'NaN', ['Not implemented'], 'NaN', -76.3957415557, ['Not implemented'], ['Not implemented'], -76.3587099934, ['Not implemented'], -76.3385988924, -154.00087894, -154.002500051, ['Not implemented'], -154.002498423, -40.1480298078, -40.1479314374, ['Not implemented'], -40.1479424908, -76.0004754166, -76.0002595934, ['Not implemented'], -76.0002617356, 'NaN', -154.487487091, ['Not implemented'], 'NaN', -40.3109925184, ['Not implemented'], 'NaN', -76.2032423487, ['Not implemented'], ['Not implemented'], ['Not implemented'], ['Not implemented']]
         EnthalpyPairs = dict(zip(input_files, Enthalpies))
 
         Extracted_Values = dict()
@@ -262,7 +264,7 @@ class Test_output_processing(unittest.TestCase):
         Arguments = {'_Frequencies': -1, '_PartitionFunctions': True}
         Values = [item[0] for item in Arguments.items() if not(item[1] == None or item[1] == False)]
 
-        Partitionfunctions = ['NaN', 'NaN', 2.6780649532871417e+35, ['Not implemented'], 5.667152009996761e+86, 'NaN', 'NaN', 6.996902242028944e+32, ['Not implemented'], 2.016303027729237e+52, 'NaN', 'NaN', 1.6214471734943105e+32, ['Not implemented'], 1.855949878541049e+38, 'NaN', ['Not implemented'], 'NaN', 2.7583510408613045e+35, ['Not implemented'], ['Not implemented'], 8.976066788823056e+86, ['Not implemented'], 6.503100902499089e+36, 'NaN', ['Not implemented'], 'NaN', 6.945533851464278e+32, ['Not implemented'], ['Not implemented'], 2.3913849688276984e+52, ['Not implemented'], 1.3361303893299186e+36, 'NaN', ['Not implemented'], 'NaN', 1.6372617865412857e+32, ['Not implemented'], ['Not implemented'], 2.030799852472984e+38, ['Not implemented'], 1.6182835638527508e+32, 9.665479849517811e+36, 2.4799362104279636e+35, ['Not implemented'], 1.2818829399878162e+37, 1.3409763612165186e+36, 6.746750821109676e+32, ['Not implemented'], 1.3410390830937153e+36, 1.6316923969362124e+32, 1.5149547641818876e+32, ['Not implemented'], 1.515886233784354e+32, 'NaN', 2.6276086610423462e+35, ['Not implemented'], 'NaN', 6.936366195994587e+32, ['Not implemented'], 'NaN', 1.622822399761551e+32, ['Not implemented'], ['Not implemented'], ['Not implemented'], ['Not implemented']]
+        Partitionfunctions = ['NaN', 'NaN', 2.67806497923e+35, ['Not implemented'], 5.66715201e+86, 'NaN', 'NaN', 6.99690225109e+32, ['Not implemented'], 2.01630302773e+52, 'NaN', 'NaN', 1.6214471772e+32, ['Not implemented'], 1.85594987854e+38, 'NaN', ['Not implemented'], 'NaN', 2.75835220018e+35, ['Not implemented'], ['Not implemented'], 8.97606678882e+86, ['Not implemented'], 6.5031009025e+36, 'NaN', ['Not implemented'], 'NaN', 6.94553388052e+32, ['Not implemented'], ['Not implemented'], 2.39138496883e+52, ['Not implemented'], 1.33613038933e+36, 'NaN', ['Not implemented'], 'NaN', 1.63726178136e+32, ['Not implemented'], ['Not implemented'], 2.03079985247e+38, ['Not implemented'], 1.61828356385e+32, 9.66547984952e+36, 2.47993653109e+35, ['Not implemented'], 1.28188293999e+37, 1.34097636122e+36, 6.74675083178e+32, ['Not implemented'], 1.34103908309e+36, 1.63169239694e+32, 1.51495476863e+32, ['Not implemented'], 1.51588623378e+32, 'NaN', 2.62761015023e+35, ['Not implemented'], 'NaN', 6.93636636114e+32, ['Not implemented'], 'NaN', 1.62282241073e+32, ['Not implemented'], ['Not implemented'], ['Not implemented'], ['Not implemented']]
         PartitionfunctionPairs = dict(zip(input_files, Partitionfunctions))
 
         Extracted_Values = dict()
@@ -273,7 +275,10 @@ class Test_output_processing(unittest.TestCase):
         op.Check_if_Implemented(input_files, {'_PartitionFunctions': ['qTotal']}, Extracted_Values)
 
         for infile in input_files:
-            self.assertAlmostEqual(Extracted_Values[infile]['qTotal'], PartitionfunctionPairs[infile])
+            if isinstance(Extracted_Values[infile]['qTotal'], float) and isinstance(PartitionfunctionPairs[infile], float):
+                self.assertAlmostEqual(math.log(Extracted_Values[infile]['qTotal']), math.log(PartitionfunctionPairs[infile]))
+            else:
+                self.assertAlmostEqual(Extracted_Values[infile]['qTotal'], PartitionfunctionPairs[infile])
 
 if __name__ == '__main__':
     unittest.main()
