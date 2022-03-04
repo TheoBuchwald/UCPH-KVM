@@ -1,9 +1,9 @@
 # Quantum-chemistry-output-parser
 This repository was created to collect all the scripts and programs developed and used in Professor Kurt V. Mikkelsens group at the University of Copenhagen.
 
-Once you have cloned the repository you will have to run ./build.sh to initialize the repository.
+This package is dependent on the KurtGroup package. It can be installed as pip install KurtGroup or pip install KurtGroup --user
 
-You should also do this when pulling new updates, as they may have changed the build package.
+It can be updated as pip install KurtGroup -U or pip install KurtGroup --user -U
 
 When you wish to push an update, to ensure that it works, you may want to use ./test.sh in the root directory of the repository and check for any errors or failures in the different tests.
 
