@@ -137,14 +137,14 @@ def Data_Extraction(infile, Needed_Values: dict, NeededArguments, quiet: bool = 
 
     infile = Output_type(str(infile), NeededArguments, quiet, Temperature)
 
-    Extract_data(quiet, Needed_Values, infile.filename, infile.filetype, infile.input)  #Extracting data
-    infile.filetype.__delattr__('lines') #Removing the file text from memory
+    Extract_data(quiet, Needed_Values, infile.filename, infile.extract, infile.input)  #Extracting data
+    infile.extract.__delattr__('lines') #Removing the file text from memory
 
-    dict_keys = [*infile.filetype.__dict__.keys()]
+    dict_keys = [*infile.extract.__dict__.keys()]
     collection_dict = dict()
 
     for i in dict_keys[1:]: #Collecting the data in dictionaries
-        collection_dict[i] =  infile.filetype.__dict__[i]
+        collection_dict[i] =  infile.extract.__dict__[i]
 
     Extracted_values[infile.filename] = collection_dict
 
@@ -288,20 +288,24 @@ class Output_type:
             lines = read.readlines()[:10]
 
         if '* O   R   C   A *' in lines[4]: #File type = ORCA
-            self.filetype = orca(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = orca_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'ORCA'
 
         if '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:  #File type = DALTON
-            self.filetype = dal(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = dal_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'DALTON'
 
         if 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:  #File type = GAUSSIAN
-            self.filetype = gaus(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = gaus_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'GAUSSIAN'
 
         if '**********  LSDalton - An electronic structure program  **********' in lines[2]:    #File type = LSDALTON
-            self.filetype = lsdal(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = lsdal_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'LSDALTON'
+
+        if '!                                                       VELOXCHEM                                                        !' in lines[2]:
+            self.extract = velox_extract(self.filename, NeededArguments, Quiet, Temperature)
+            self.input = 'VELOXCHEM'
 
         del lines
 
@@ -319,7 +323,31 @@ class Constants:
         self.au_to_kJmol = 2625.4996394799
 
 
-class gaus:
+class velox_extract:
+    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
+        self.filename = filename
+        self.NeededArguments = NeededArguments
+        self.quiet = Quiet
+        self.T = Temperature
+        self.constants = Constants()
+
+        self.ReadFile()
+
+        self.end = len(self.lines)
+
+    def ReadFile(self):
+        with open(self.filename, "r") as file:
+            self.lines = file.readlines()
+
+    def _Energy(self):
+        linenumber = Forward_search_last(self.filename, 'Total Energy', 'final energy', quiet=self.quiet)
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-2])
+            return
+        self.tot_energy = 'NaN'
+
+
+class gaus_extract:
     def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
         self.filename = filename
         self.NeededArguments = NeededArguments
@@ -502,7 +530,7 @@ class gaus:
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
 
 
-class orca:
+class orca_extract:
     def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
         self.filename = filename
         self.NeededArguments = NeededArguments
@@ -686,7 +714,7 @@ class orca:
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
 
 
-class dal:
+class dal_extract:
     def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
         self.filename = filename
         self.NeededArguments = NeededArguments
@@ -894,7 +922,7 @@ class dal:
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
 
 
-class lsdal:
+class lsdal_extract:
     def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
         self.filename = filename
         self.NeededArguments = NeededArguments
