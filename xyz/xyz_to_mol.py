@@ -1,6 +1,6 @@
 import argparse
 from collections import Counter #For number of unique elements
-from dependencies import chemical_information as ci
+from Kurt import chemical_information as ci
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''A script to convert xyz files to mol files for DALTON''', epilog='''For help contact

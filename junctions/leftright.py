@@ -3,8 +3,8 @@
 
 import numpy as np
 import argparse
-from dependencies import structures as struct
-from dependencies import chemical_information as ci
+from Kurt import structures as struct
+from Kurt import chemical_information as ci
 import fnmatch as fn
 
 #INPUTS HERE
