@@ -137,12 +137,12 @@ if __name__ == "__main__":
         '_Oscillator_strengths' : ['osc_strengths'],
         '_Frequencies' : ['freq'],
         '_PartitionFunctions' : ['qTotal'],
-        '_CPUS' : ['total_cpu_time', 'pr_cpu_time'],
+        '_CPUS' : ['total_cpu_time', 'wall_cpu_time'],
     }
 
     Header_text = { #These are what will be written in the header for each datapoint
         'tot_energy' : 'Energy',
-        'zpv' : 'ZPV Energy',
+        'zpv' : 'ZPV EnergTotaly',
         'enthalpy' : 'Enthalpy',
         'entropy' : 'Entropy (kJ/(mol*K)',
         'gibbs' : 'Gibbs Free Energy',
@@ -159,7 +159,7 @@ if __name__ == "__main__":
         'freq' : 'Frequency',
         'qTotal' : 'Total molar partition function',
         'total_cpu_time': f'Total CPU time ({args.cpu_time})',
-        'pr_cpu_time' : f'Pr. CPU time ({args.cpu_time})'
+        'wall_cpu_time' : f'Wall CPU time ({args.cpu_time})'
     }
 
     quiet = args.quiet
