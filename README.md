@@ -1,9 +1,9 @@
 # Quantum-chemistry-output-parser
 This repository was created to collect all the scripts and programs developed and used in Professor Kurt V. Mikkelsens group at the University of Copenhagen.
 
-Once you have cloned the repository you will have to run ./build.sh to initialize the repository.
+This package is dependent on the KurtGroup package. It can be installed as pip install KurtGroup or pip install KurtGroup --user
 
-You should also do this when pulling new updates, as they may have changed the build package.
+It can be updated as pip install KurtGroup -U or pip install KurtGroup --user -U
 
 When you wish to push an update, to ensure that it works, you may want to use ./test.sh in the root directory of the repository and check for any errors or failures in the different tests.
 
@@ -87,7 +87,7 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 ## [xyz_to_mol.py](./xyz/xyz_to_mol.py)
 <details><summary> Program information </summary>
 <p>
-  A script designed to convert a xyz file to a mol file for the programme DALTON
+  A script designed to convert a xyz file to a mol file for the program DALTON
 
   You will need to supply the xyz file
 
@@ -100,16 +100,16 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 <p>
   A script designed to convert a xyz file to a molpro file
 
-  You will need to supply the xyz file as well as a keywords nr. to determine the options for the programme
+  You will need to supply the xyz file as well as a keywords nr. to determine the options for the program
 </p>
 </details>
 
 ## [xyz_to_orca.py](./xyz/xyz_to_orca.py)
 <details><summary> Program information </summary>
 <p>
-  A script designed to convert a xyz file to a inp file for the programme ORCA
+  A script designed to convert a xyz file to a inp file for the program ORCA
 
-  You will need to supply the xyz file as well as a keywords nr. to determine the options for the programme
+  You will need to supply the xyz file as well as a keywords nr. to determine the options for the program
 
   Apart from this, you can also supply a charge and memory limits with the keywords *--charge* and *--mem*
 
@@ -120,7 +120,7 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 ## [xyz_to_povray.py](./visualization/xyz_to_povray.py)
 <details><summary> Program information </summary>
 <p>
-  A script designed to convert a xyz file to a pov file for the programme POV-Ray which can be used ot ake visually pretty graphics
+  A script designed to convert a xyz file to a pov file for the program POV-Ray which can be used ot ake visually pretty graphics
 
   The only argument you have to provide is the xyz file(s)
 

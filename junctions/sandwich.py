@@ -3,8 +3,8 @@
 import numpy as np
 from collections import Counter #For number of unique elements
 import argparse
-from dependencies import structures as struct
-from dependencies import chemical_information as ci
+from Kurt import structures as struct
+from Kurt import chemical_information as ci
 
 # ------------------------------------ INPUTS ------------------------------------
 

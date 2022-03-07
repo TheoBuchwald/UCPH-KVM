@@ -1,6 +1,6 @@
 # import sys
 # sys.path.append('../dependencies')
-from dependencies import output_processing as op
+from Kurt import output_processing as op
 import unittest
 import numpy as np
 import math

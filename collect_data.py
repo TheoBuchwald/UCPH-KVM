@@ -1,7 +1,7 @@
 
 import argparse
 import numpy as np
-from dependencies import output_processing as op
+from Kurt import output_processing as op
 from functools import partial
 from multiprocessing import Pool, cpu_count
 
