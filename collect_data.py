@@ -90,6 +90,7 @@ if __name__ == "__main__":
     ExtractionGroup.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
     ExtractionGroup.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
     ExtractionGroup.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
+    ExtractionGroup.add_argument('-C', '--cpu_time', const=['m'], help='Include to extract total cpu time and pr. cpu time. You can change the output from being in seconds, minutes and hours, where the default is minutes', nargs='?', choices=['s', 'm', 'h'])
 
     DataProcessingGroup = parser.add_argument_group('Data processing commands')
     DataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
@@ -121,6 +122,7 @@ if __name__ == "__main__":
         '_Entropy' : args.entropy,
         '_Gibbs' : args.gibbs,
         '_PartitionFunctions' : args.partfunc,
+        '_CPUS' : args.cpu_time,
     }
 
     Outputs = {     #These are the datapoints that will be extracted per argument
@@ -135,6 +137,7 @@ if __name__ == "__main__":
         '_Oscillator_strengths' : ['osc_strengths'],
         '_Frequencies' : ['freq'],
         '_PartitionFunctions' : ['qTotal'],
+        '_CPUS' : ['total_cpu_time', 'pr_cpu_time'],
     }
 
     Header_text = { #These are what will be written in the header for each datapoint
@@ -155,6 +158,8 @@ if __name__ == "__main__":
         'osc_strengths' : 'Osc. strength',
         'freq' : 'Frequency',
         'qTotal' : 'Total molar partition function',
+        'total_cpu_time': f'Total CPU time ({args.cpu_time})',
+        'pr_cpu_time' : f'Pr. CPU time ({args.cpu_time})'
     }
 
     quiet = args.quiet
