@@ -107,7 +107,7 @@ if __name__ == '__main__':
         elif '.pov' in i:
             povfile = i
         else:
-            print(f'{i} was not recognised as either an XYZ or POV file. Exciting programme')
+            print(f'{i} was not recognised as either an XYZ or POV file. Exciting program')
             exit()
 
     molecule = Get_Structure(xyzfile)
