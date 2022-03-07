@@ -5,7 +5,6 @@ import numpy as np
 import argparse
 from Kurt import structures as struct
 from Kurt import chemical_information as ci
-import fnmatch as fn
 
 #INPUTS HERE
 #------------------------------
@@ -87,24 +86,17 @@ if __name__ == '__main__':
         atom1 -=1
         atom2 -=1
 
-    #Check if basis set is in Gaussian already (Only checks the most common)
-    basis_sets_gauss = ["6-31*[Gg]*","*[Cc][Cc]-[Pp][Vv]*","[Ss][Tt][Oo]-3[Gg]","3-21*[Gg]*", "6-21*[Gg]*", "4-31*[Gg]*",  "[Ll][Aa][Nn][Ll]2*"]
+    #Check if basis set is in Gaussian already
     BSE_mol = True
     BSE_NP = True
     BSE_ECP = True
 
-    for i in basis_sets_gauss:
-        if fn.filter([basis_mol],i):
-            BSE_mol = False
-            break
-    for i in basis_sets_gauss:
-        if fn.filter([basis_NP],i):
-            BSE_NP = False
-            break
-    for i in basis_sets_gauss:
-        if fn.filter([basis_ECP],i):
-            BSE_ECP = False
-            break
+    if ci.BasisSet.CheckBasisSet('Gaussian94', basis_mol):
+        BSE_mol = False
+    if ci.BasisSet.CheckBasisSet('Gaussian94', basis_NP):
+        BSE_NP = False
+    if ci.BasisSet.CheckBasisSet('Gaussian94', basis_ECP):
+        BSE_ECP = False
 
     # Getting basis set from Basis set exchange
     BasisSet = ci.BasisSet()
