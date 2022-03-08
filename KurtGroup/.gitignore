@@ -1,33 +1,3 @@
-
-# Ignore swap files
-*.swp
-# Ignore csv files
-*.csv
-# Ignore npz files
-*.npz
-# Ignore png files
-*.png
-# Ignore eps files
-*.eps
-# Ignore pdf files
-*.pdf
-# Ignore svg files
-*.svg
-# Ignore ps files
-*.ps
-# Ignore com files
-*.com
-# Ignore inp files
-*.inp
-# Ignore mol files
-*.mol
-# Ignore pot files
-*.pot
-# Ignore xyz files
-*.xyz
-# Ignore vscode settings
-.vscode
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
