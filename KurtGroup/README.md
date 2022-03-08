@@ -15,9 +15,9 @@ You need twine to update the package:
 pip install twine
 ```
 
-You will also need a PyPi account
+You will also need a PyPI account
 
-After this you may use: 
+After this you may use:
 ```
 python setup.py sdist
 ```
