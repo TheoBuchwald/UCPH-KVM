@@ -2,7 +2,7 @@
 
 This repository was created to collect all the scripts and programs developed and used in Professor, Ph.D., Dr. Scient. Kurt V. Mikkelsens group at the University of Copenhagen.
 
-This package is dependent on the KurtGroup package. It can be installed by using of the following commands
+Many of the scripts are dependent on the [KurtGroup](https://pypi.org/project/KurtGroup/#history) Python package. It can be installed by using of the following commands
 
 ```
 pip install KurtGroup
@@ -19,7 +19,7 @@ pip install KurtGroup -U
 pip install KurtGroup --user -U
 ```
 
-The KurtGroup package information and source code is located in the folder KurtGroup. More information about this package can be found on the [PyPI web page](https://pypi.org/project/KurtGroup/#history) or in the [README](./KurtGroup/README.md) in said folder.
+The KurtGroup package information and source code is located in the folder KurtGroup. More information about this package can be found on the [PyPI web page](https://pypi.org/project/KurtGroup) or in the [README](./KurtGroup/README.md) in said folder.
 
 When you wish to push an update, to ensure that it works, you may want to use ./[test.sh](./test.sh) in the root directory of the repository and check for any errors or failures in the different tests.
 
