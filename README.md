@@ -1,7 +1,8 @@
 # Quantum-chemistry-output-parser
-This repository was created to collect all the scripts and programs developed and used in Professor Kurt V. Mikkelsens group at the University of Copenhagen.
 
-This package is dependent on the KurtGroup package. It can be installed by using of the following commands
+This repository was created to collect all the scripts and programs developed and used in Professor, Ph.D., Dr. Scient. Kurt V. Mikkelsens group at the University of Copenhagen.
+
+Many of the scripts are dependent on the [KurtGroup](https://pypi.org/project/KurtGroup/#history) Python package. It can be installed by using of the following commands
 
 ```
 pip install KurtGroup
@@ -18,7 +19,9 @@ pip install KurtGroup -U
 pip install KurtGroup --user -U
 ```
 
-When you wish to push an update, to ensure that it works, you may want to use ./test.sh in the root directory of the repository and check for any errors or failures in the different tests.
+The KurtGroup package information and source code is located in the folder KurtGroup. More information about this package can be found on the [PyPI web page](https://pypi.org/project/KurtGroup) or in the [README](./KurtGroup/README.md) in said folder.
+
+When you wish to push an update, to ensure that it works, you may want to use ./[test.sh](./test.sh) in the root directory of the repository and check for any errors or failures in the different tests.
 
 ## [collect_data.py](./collect_data.py)
 <details><summary> Program information </summary>
@@ -93,7 +96,7 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 
   You will need to supply the xyz file and keywords. Other options can be added via the command line. Use -h on the script to see the available options.
 
-  You can also supply basis sets not implemented in Gaussian, in which case an API to BSE (https://www.basissetexchange.org/) is used.
+  You can also supply basis sets not implemented in Gaussian, in which case an API to the [Basis Set Exchange](https://www.basissetexchange.org/) is used.
 </p>
 </details>
 
@@ -104,7 +107,9 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 
   You will need to supply the xyz file
 
-  Apart from this, you can also supply a basis set, RI-basis set and the charge with the keywords *--basis*, *--RIbasis*, and *--charge*
+  Apart from this, you can also supply a basis set and the charge with the keywords *--basis* and *--charge*
+
+  You can also supply basis sets not implemented in DALTON, in which case an API to the [Basis Set Exchange](https://www.basissetexchange.org/) is used.
 </p>
 </details>
 
@@ -139,7 +144,9 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 
   Apart from this the script will also automatically start generating the figures requested using some antialiasing settings applied in the script. Those settings are:
 
-    +A0.1 +AM2 +AG0 +R5 -J
+```
++A0.1 +AM2 +AG0 +R5 -J
+```
 
   +A0.1: Antialliasing set to 0.1 threshold<br/>
   +AM2: Antialiasing method 2<br/>
@@ -160,7 +167,9 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 
   Apart from this the script will also automatically start generating the figures requested using some antialiasing settings applied in the script Those settings are:
 
-    +A0.1 +AM2 +AG0 +R5 -J
+```
++A0.1 +AM2 +AG0 +R5 -J
+```
 
   +A0.1: Antialliasing set to 0.1 threshold<br/>
   +AM2: Antialiasing method 2<br/>
