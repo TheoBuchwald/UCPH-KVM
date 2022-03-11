@@ -208,7 +208,7 @@ if __name__ == '__main__':
                     else:
                         lines_com.append(i+'\n')
                         lines_com.append(basis_NP+'\n')
-                        lines_com.append('****'+'\n')
+                        lines_com.append('****')
                 lines_com.append(basis_mol+'\n')
                 lines_com.append('\n')
                 for i in atmtype:
