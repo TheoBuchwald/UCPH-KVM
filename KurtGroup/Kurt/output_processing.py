@@ -580,21 +580,30 @@ class orca_extract:
         linenumber = Backward_search_last(self.filename, 'Sum of individual times         ...', self.end, 'CPU time', quiet=self.quiet)
         if type(linenumber) == int:
             self.wall_cpu_time = float(self.lines[linenumber].split()[-2])
-            linenumber2 = Forward_search_last(self.filename, 'PAL', 'CPU count', quiet=self.quiet)
+            linenumber2 = Forward_search_last(self.filename, '%pal nprocs', 'CPU count', quiet=True)
             if type(linenumber2) == int:
-                self.total_cpu_time = self.wall_cpu_time * int(self.lines[linenumber2].split()[-1][3:])
+                self.total_cpu_time = self.wall_cpu_time * int(self.lines[linenumber2].split()[-1])
+                total_cpu_time = True
+            linenumber3 = Forward_search_last(self.filename, 'PAL', 'CPU count', quiet=self.quiet)
+            if type(linenumber3) == int:
+                self.total_cpu_time = self.wall_cpu_time * int(self.lines[linenumber3].split()[-1][3:])
+                total_cpu_time = True
+            if total_cpu_time:
                 if self.NeededArguments['_CPUS'] == 's':
                     self.total_cpu_time *= 60
+                    self.wall_cpu_time *= 60
                 elif self.NeededArguments['_CPUS'] == 'h':
                     self.total_cpu_time /= 60
+                    self.wall_cpu_time /= 60
             else:
                 self.total_cpu_time = 'NaN'
-            if self.NeededArguments['_CPUS'] == 's':
-                self.wall_cpu_time *= 60
-            elif self.NeededArguments['_CPUS'] == 'h':
-                self.wall_cpu_time /= 60
+                if self.NeededArguments['_CPUS'] == 's':
+                    self.wall_cpu_time *= 60
+                elif self.NeededArguments['_CPUS'] == 'h':
+                    self.wall_cpu_time /= 60
             return
         self.total_cpu_time = 'NaN'
+        self.wall_cpu_time = 'NaN'
 
     def _Energy(self):
         linenumber = Forward_search_last(self.filename, 'Electronic energy', 'Final energy', quiet=True)
