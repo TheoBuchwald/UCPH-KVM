@@ -51,12 +51,11 @@ end
 Calc_Hess true
 end""",
 
-    4: """! aug-cc-pVDZ MP2 VeryTightSCF NoFrozenCore
-%pal nprocs 32
-end
-%mp2 density unrelaxed
-end
-%elprop dipole true
+    4:  """! B3LYP cc-pVDZ VeryTightSCF
+% TDDFT NROOTS    10
+        TRIPLETS TRUE
+        TDA FALSE
+%method
 end""",
 
     5: """! aug-cc-pVDZ CCSD VeryTightSCF NoFrozenCore
