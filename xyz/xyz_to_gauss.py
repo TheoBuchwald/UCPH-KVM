@@ -86,7 +86,7 @@ Stars can still be used, however.''', epilog='''For help contact
         Magnus Bukhave Johansen
         qhw298@alumni.ku.dk''')
 
-    parser.add_argument('infile', type=str, nargs=1, help='The file(s) to convert into .com files', metavar='.xyz file')
+    parser.add_argument('infile', type=str, nargs=1, help='The file to convert into a .com file', metavar='.xyz file')
     parser.add_argument('calc', type=str,nargs=1,help='Keywords for the calculation. If there are spaces, have quotes around the entire thing.')
 
     CalculationGroup = parser.add_argument_group('Calculation options')
