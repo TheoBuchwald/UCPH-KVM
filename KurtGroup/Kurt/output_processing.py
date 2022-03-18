@@ -162,20 +162,30 @@ def Data_Extraction(infile, Needed_Values: dict, NeededArguments, quiet: bool = 
 
     infile = Output_type(str(infile), NeededArguments, quiet, Temperature)
 
-    Extract_data(quiet, Needed_Values, infile.filename, infile.extract, infile.input)  #Extracting data
-    infile.extract.__delattr__('lines') #Removing the file text from memory
+    # Extracting data
+    Extract_data(quiet, Needed_Values, infile.filename, infile.extract, infile.input)
 
+    # Removing the file text from memory as this is no longer needed (and fills in memory)
+    infile.extract.__delattr__('lines')
+
+    # List of all dictionary keys for infile.extract
     dict_keys = [*infile.extract.__dict__.keys()]
+
+    # Dictionary
     collection_dict = dict()
 
-    for i in dict_keys[1:]: #Collecting the data in dictionaries
+    # Collecting the data in dictionaries
+    for i in dict_keys[1:]:
         collection_dict[i] =  infile.extract.__dict__[i]
 
+    # Assigning to the Extracted_values dictionary with the filename as key so all data can be easily found in the future
     Extracted_values[infile.filename] = collection_dict
 
     return Extracted_values
 
 def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: dict, input_type: str) -> None:
+    # Loops over all requested values and runs the corresponding function
+    # If the function has not been implemented it will print an error message
     for i in Wanted_Values:
         try:
             method = getattr(type(file_text),i)
@@ -185,6 +195,8 @@ def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: 
                 print(f'{infile}: {i} has not been implemented for {input_type}')
 
 def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values: dict) -> None:
+    # Checks to see if the keys of a double dictionary exists
+    # If they don't it is assumed that the function related to the data hasn't been implemented
     for infile in input_file:
         for key in Set_of_values:
             for val in Set_of_values[key]:
@@ -196,6 +208,8 @@ def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values:
 def Collect_and_sort_data(input_file: str, Set_of_values: dict, Extracted_values: dict) -> dict:
     Final_arrays = dict()
 
+    # All data from Extracted_values is sorted by the Set_of_values
+    # This way excess values in Extracged_values are ignored
     for key in Set_of_values:
         for val in Set_of_values[key]:
             Final_arrays[val] = []
@@ -204,6 +218,8 @@ def Collect_and_sort_data(input_file: str, Set_of_values: dict, Extracted_values
     return Final_arrays
 
 def Downsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int, Final_arrays: dict) -> None:
+    # Downsizes arays if requested
+    # If not requested nothing happens
     for item in Variable_arrays.items():
         if item[1] > 0:
             for val in Outputs[item[0]]:
@@ -212,6 +228,7 @@ def Downsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int,
 
 def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict) -> list:
     header = ['File']
+    # Adds to the header row all relevant headers for the data-points requested
     for key in Set_of_values.keys():
         for val in Set_of_values[key]:
             if len(Final_arrays[val][0]) > 1:
@@ -222,11 +239,14 @@ def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict) ->
     return header
 
 def Fill_output_array(Set_of_values: dict, array_input: dict, count: int, Final_arrays: dict, output_array: list) -> None:
+    # Fills the output array with the header row
     if count == 1:
         output_array[1,0] = array_input[0][0]
     else:
         output_array[1:,0] = np.array(np.concatenate(array_input))
 
+    # Fills the output array with the requested data
+    # As it is not known the length of all lists in the Final_arrays the col is used to slowly move through the array
     col = 1
     for key in Set_of_values.keys():
         for val in Set_of_values[key]:
@@ -357,25 +377,35 @@ class Output_type:
         with open(self.filename,'r') as read:
             lines = read.readlines()[:10]
 
-        if '* O   R   C   A *' in lines[4]: #File type = ORCA
+        # The output file is determined to be of one of the following types
+
+        # File type = ORCA
+        if '* O   R   C   A *' in lines[4]:
             self.extract = orca_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'ORCA'
 
-        if '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:  #File type = DALTON
+        # File type = DALTON
+        elif '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:
             self.extract = dal_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'DALTON'
 
-        if 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:  #File type = GAUSSIAN
+        # File type = GAUSSIAN
+        elif 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:
             self.extract = gaus_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'GAUSSIAN'
 
-        if '**********  LSDalton - An electronic structure program  **********' in lines[2]:    #File type = LSDALTON
+        # File type = LSDALTON
+        elif '**********  LSDalton - An electronic structure program  **********' in lines[2]:
             self.extract = lsdal_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'LSDALTON'
 
-        if '!                                                       VELOXCHEM                                                        !' in lines[2]:
+        # File type = VELOXCHEM
+        elif '!                                                       VELOXCHEM                                                        !' in lines[2]:
             self.extract = velox_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'VELOXCHEM'
+
+        else:
+            print(f"The output file {self.filename} is not of a known format")
 
         del lines
 
