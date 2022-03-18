@@ -2,24 +2,27 @@
 
 This repository was created to collect all the scripts and programs developed and used in Professor, Ph.D., Dr. Scient. Kurt V. Mikkelsens group at the University of Copenhagen.
 
-Many of the scripts are dependent on the [KurtGroup](https://pypi.org/project/KurtGroup/#history) Python package. It can be installed by using of the following commands
+Many of the scripts in this repository are dependent on functions also found in the [KurtGroup](https://pypi.org/project/KurtGroup/) Python package. It is not necessary to install this Python package to use these scripts, however if you wish to use some of the functionalities this package supplies for your own personal scripts it might be an idea to install it using either of
 
 ```
 pip install KurtGroup
 pip install KurtGroup --user
 ```
+
 To install a specific version you can use
 
 ```
 pip install KurtGroup==version
 ```
+
 It can be updated using one of the following commands
+
 ```
 pip install KurtGroup -U
 pip install KurtGroup --user -U
 ```
 
-The KurtGroup package information and source code is located in the folder KurtGroup. More information about this package can be found on the [PyPI web page](https://pypi.org/project/KurtGroup) or in the [README](./KurtGroup/README.md) in said folder.
+The KurtGroup package information and source code is located in the folder [KurtGroup](./KurtGroup/). More information about this package can be found on the [PyPI web page](https://pypi.org/project/KurtGroup) or in the [README](./KurtGroup/README.md) in said folder.
 
 When you wish to push an update, to ensure that it works, you may want to use ./[test.sh](./test.sh) in the root directory of the repository and check for any errors or failures in the different tests.
 
@@ -160,7 +163,7 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   +AG0: Gamma set to 0<br/>
   +R5: Depth set to 5<br/>
   -J: Jitter set to off
-  
+
 </p>
 </details>
 
