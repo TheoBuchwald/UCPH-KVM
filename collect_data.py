@@ -1,113 +1,74 @@
 
 import argparse
 import numpy as np
-from Kurt import output_processing as op
+from KurtGroup.Kurt import output_processing as op
 from functools import partial
 from multiprocessing import Pool, cpu_count
 
 
 #*************************** INPUT PARSING ****************************
 
+def Spectra(args):
+    input_file = args.infile
+    UVVIS = args.uvvis
+    complex_propagator = args.complex_propagator
+    format = args.format
+    SAVE = args.save
+    quiet = args.quiet
+    MULTIPROCESSING = args.multiprocessing
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
-    A script designed to make it easier to extract data from output files
+    if UVVIS:
+        NeededArguments = {'_Excitation_energies': -1, '_Oscillator_strengths': -1}
+        Set_of_Values = {'_Excitation_energies': ['exc_energies'], '_Oscillator_strengths': ['osc_strengths']}
 
-            Currently the output formats supported are
-            ------------------------------------------
-                -  ORCA
-                -  DALTON
-                -  GAUSSIAN
-                -  LSDALTON
+        if MULTIPROCESSING:
+            with Pool(int(cpu_count()/2)) as pool:
+                Extracted_Values = pool.map(partial(op.Data_Extraction, Needed_Values=NeededArguments, NeededArguments=NeededArguments, quiet=quiet), input_file)
+                Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
+        else:
+            Extracted_Values = dict()
+            for infile in input_file:
+                Extracted_Values[infile] = op.Data_Extraction(infile, NeededArguments, NeededArguments, quiet)[infile]
 
-            This script can currently extract the data
-            ------------------------------------------
-                -  Total energies
-                -  Zero-Point Vibrational energies
-                -  Enthalpies
-                -  Entropies
-                -  Gibbs Free energies
-                -  Dipole moments
-                -  Polarizability
-                -  Excitation energies
-                -  Oscillator strengths
-                -  Frequencies
-                -  Partition functions at a given temperature
+        op.Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
 
-    Though not all data types have been implemented for all of the output formats
+        for key_outer in Extracted_Values.keys():   # Turn everything into lists
+            for key_inner in Extracted_Values[key_outer].keys():
+                if type(Extracted_Values[key_outer][key_inner]) != list:
+                    Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
-    All values are extracted as Atomic Units where applicable'''
-    ,epilog=f'''
-    The following is not implemented for ORCA
-    -  Entropies
+        op.Make_uvvis_spectrum(input_file, quiet, op.UVVIS_Spectrum, format, Extracted_Values, SAVE)
 
-    The following is not implemented for DALTON
-    -  Non DFT total energies
-    -  Zero-Point Vibrational energies
-    -  Enthalpies
-    -  Entropies
-    -  Gibbs Free energies
-    -  Frequencies
-    -  Partition functions with symmetry
+    elif complex_propagator:
+        NeededArguments = {'_Complex_propagator': True}
+        Set_of_Values = {'_Complex_propagator': ['complex_propagator']}
 
-    The following is not implemented for GAUSSIAN
-    -  Entropies
-    -  Excitation energies
-    -  Oscillator strengths
+        if MULTIPROCESSING:
+            with Pool(int(cpu_count()/2)) as pool:
+                Extracted_Values = pool.map(partial(op.Data_Extraction, Needed_Values=NeededArguments, NeededArguments=NeededArguments, quiet=quiet), input_file)
+                Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
+        else:
+            Extracted_Values = dict()
+            for infile in input_file:
+                Extracted_Values[infile] = op.Data_Extraction(infile, NeededArguments, NeededArguments, quiet)[infile]
 
-    The following is not implemented for LSDALTON
-    -  Probably some total energies
-    -  Zero-Point Vibrational energies
-    -  Enthalpies
-    -  Gibbs Free energies
-    -  Entropies
-    -  Dipole moments
-    -  Polarizabilities
-    -  Excitation energies
-    -  Oscillator strengths
-    -  Frequencies
-    -  Partition functions
+        op.Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
 
-    For help contact
-    Theo Juncker von Buchwald
-    fnc970@alumni.ku.dk
+        for key_outer in Extracted_Values.keys():   # Turn everything into lists
+            for key_inner in Extracted_Values[key_outer].keys():
+                if type(Extracted_Values[key_outer][key_inner]) != list:
+                    Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
-    Magnus Bukhave Johansen
-    qhw298@alumni.ku.dk''')
+        op.Make_complex_propagator_spectrum(input_file, quiet, format, Extracted_Values, SAVE)
 
-    parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='File')
-
-    ExtractionGroup = parser.add_argument_group('Data extraction commands')
-    ExtractionGroup.add_argument('-E', '--energy', action='store_true', help='Include to extract the Total Energy')
-    ExtractionGroup.add_argument('-Z', '--zpv', action='store_true', help='Include to extract the Zero-Point Vibrational Energy')
-    ExtractionGroup.add_argument('-H', '--enthalpy', action='store_true', help='Include to calculate molar enthalpies (kJ/mol)')
-    ExtractionGroup.add_argument('-S', '--entropy', action='store_true', help='Include to calculate molar entropes (kJ/(mol*K)')
-    ExtractionGroup.add_argument('-G', '--gibbs', action='store_true', help='Include to extract the Gibbs Free Energy')
-    ExtractionGroup.add_argument('-D', '--dipole', action='store_true', help='Include to extract the Dipole Moment')
-    ExtractionGroup.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
-    ExtractionGroup.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
-    ExtractionGroup.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
-    ExtractionGroup.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
-    ExtractionGroup.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
-    ExtractionGroup.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
-    ExtractionGroup.add_argument('-C', '--cpu_time', const=['m'], help='Include to extract total cpu time and pr. cpu time. You can change the output from being in seconds, minutes and hours, where the default is minutes', nargs='?', choices=['s', 'm', 'h'])
-
-    DataProcessingGroup = parser.add_argument_group('Data processing commands')
-    DataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
-    DataProcessingGroup.add_argument('--uvvis', const='png', type=str, help='Include to calculate a UV-VIS spectrum. Tou can give the picture format as an optional argument. Will use png as default. If \'--save\' is used together with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
-
-    AdditionalCommandsGroup = parser.add_argument_group('Additional commands')
-    AdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
-    AdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
+    else:
+        print('Doing nothing - please use --uvvis or --complex-propagator')
 
 
-#******************************* SETUP ********************************
 
-
-    args = parser.parse_args()
+def Extract(args):
     input_file = args.infile
     SAVE = args.save
-    UVVIS = args.uvvis
     T = args.temp
 
     RequestedArguments = {   #These are all the possible arguments that extract data
@@ -167,9 +128,6 @@ if __name__ == "__main__":
 
     NeededArguments = RequestedArguments.copy()
 
-    if UVVIS:
-        NeededArguments['_Oscillator_strengths'] = NeededArguments['_Excitation_energies'] = -1
-
     if NeededArguments['_Oscillator_strengths'] and NeededArguments['_Excitation_energies'] == None:   #Ensuring that excitation energies are calculated when oscillator strengths are
         NeededArguments['_Oscillator_strengths'] = NeededArguments['_Excitation_energies'] = -1
     elif NeededArguments['_Oscillator_strengths']:
@@ -220,9 +178,6 @@ if __name__ == "__main__":
         if type(Final_arrays[key]) == list:
             op.Resize(Final_arrays[key])
 
-    if UVVIS:
-        op.Make_uvvis_spectrum(input_file, quiet, op.UVVIS_Spectrum, UVVIS, Extracted_Values, SAVE)
-
     op.Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)   #Fixing the size of variable size arrays
 
     Header = op.Create_Header(Header_text, Set_of_Values, Final_arrays)    #Creation of header row
@@ -243,6 +198,144 @@ if __name__ == "__main__":
         print(f'Data has been saved in data.npz')
     else:
         print(Output_Array)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
+    A script designed to make it easier to extract data from output files
+
+    To extract data you have to use the keyword extract before any other keywords
+    To make spectra you will have to use the keyword spectra before any other keywords
+
+            Currently the output formats supported are
+            ------------------------------------------
+                -  ORCA
+                -  DALTON
+                -  GAUSSIAN
+                -  LSDALTON
+                -  VELOXCHEM'''
+    , epilog=f'''
+For help contact
+    Theo Juncker von Buchwald
+    fnc970@alumni.ku.dk
+
+    Magnus Bukhave Johansen
+    qhw298@alumni.ku.dk''')
+    subparser = parser.add_subparsers(dest='pars')
+    subparser.required = False
+
+    Spectra_subparser = subparser.add_parser('spectra', formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
+    This part of the script is used for making spectra from data collected from output files
+
+            Currently the output formats supported are
+            ------------------------------------------
+                -  ORCA
+                -  DALTON
+                -  GAUSSIAN
+                -  LSDALTON
+                -  VELOXCHEM
+
+    It is currently possible to make UVVIS spectra using excitation energies and complex propagator theory
+
+    The following is not implemented for ORCA
+    -  UVVIS based on complex propagator theory
+
+    The following is not implemented for DALTON
+    -  UVVIS based on complex propagator theory
+
+    The following is not implemented for GAUSSIAN
+    -  UVVIS based on complex propagator theory
+
+    The following is not implemented for VELOXCHEM
+    -  UVVIS based on excitation energies
+    -  UVVIS based on complex propagator theory'''
+    , help='Use to make spectra such as UVVIS from excitation energies or complex propagator theory')
+    Spectra_subparser.set_defaults(func=Spectra)
+    Spectra_subparser.add_argument('infile', type=str, nargs='+', help='The file(s) to make spectra from', metavar='File')
+
+    Spectra_group = Spectra_subparser.add_mutually_exclusive_group()
+    Spectra_group.add_argument('--uvvis', action='store_true', help='Include to make UVVIS spectra')
+    Spectra_group.add_argument('--complex-propagator', action='store_true', help='Include to use complex propagator theory to make the spectra')
+
+    SpectraDataProcessingGroup = Spectra_subparser.add_argument_group('Data processing commands')
+    SpectraDataProcessingGroup.add_argument('--format', default='png', const='png', type=str, help='Include this to change the picture format. Will use png as default. If \'--save\' is used together with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
+    SpectraDataProcessingGroup.add_argument('-s', '--save', action='store_true', help='Saves extracted and processed data in a npz file')
+
+    SpectraAdditionalCommandsGroup = Spectra_subparser.add_argument_group('Additional commands')
+    SpectraAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
+    SpectraAdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
+
+    Extraction_subparser = subparser.add_parser('extract', formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
+    This part of the script is for extracting data from output files and either printing it in the terminal or saveing it to a file
+
+            This script can currently extract the data
+            ------------------------------------------
+                -  Total energies
+                -  Zero-Point Vibrational energies
+                -  Enthalpies
+                -  Entropies
+                -  Gibbs Free energies
+                -  Dipole moments
+                -  Polarizability
+                -  Excitation energies
+                -  Oscillator strengths
+                -  Frequencies
+                -  Partition functions at a given temperature
+                -  CPU time used
+
+    Though not all data types have been implemented for all of the output formats
+
+    All values are extracted as Atomic Units where applicable
+
+    The following is not implemented for LSDALTON
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Frequencies
+    -  Partition functions
+
+    The following is not implemented for VELOXCHEM
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Dipole moments
+    -  Polarizability
+    -  Excitation energies
+    -  Oscillator strengths
+    -  Frequencies
+    -  Partition functions at a given temperature
+    -  CPU time used
+'''
+    , help='Use to extract data from output files')
+    Extraction_subparser.set_defaults(func=Extract)
+    Extraction_subparser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='File')
+
+    ExtractionGroup = Extraction_subparser.add_argument_group('Data extraction commands')
+    ExtractionGroup.add_argument('-E', '--energy', action='store_true', help='Include to extract the Total Energy')
+    ExtractionGroup.add_argument('-Z', '--zpv', action='store_true', help='Include to extract the Zero-Point Vibrational Energy')
+    ExtractionGroup.add_argument('-H', '--enthalpy', action='store_true', help='Include to calculate molar enthalpies (kJ/mol)')
+    ExtractionGroup.add_argument('-S', '--entropy', action='store_true', help='Include to calculate molar entropes (kJ/(mol*K)')
+    ExtractionGroup.add_argument('-G', '--gibbs', action='store_true', help='Include to extract the Gibbs Free Energy')
+    ExtractionGroup.add_argument('-D', '--dipole', action='store_true', help='Include to extract the Dipole Moment')
+    ExtractionGroup.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
+    ExtractionGroup.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
+    ExtractionGroup.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
+    ExtractionGroup.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
+    ExtractionGroup.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
+    ExtractionGroup.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
+    ExtractionGroup.add_argument('-C', '--cpu_time', const=['m'], help='Include to extract total cpu time and pr. cpu time. You can change the output from being in seconds, minutes and hours, where the default is minutes', nargs='?', choices=['s', 'm', 'h'])
+
+    ExtractionDataProcessingGroup = Extraction_subparser.add_argument_group('Data processing commands')
+    ExtractionDataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
+
+    ExtractionAdditionalCommandsGroup = Extraction_subparser.add_argument_group('Additional commands')
+    ExtractionAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
+    ExtractionAdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
+
+    args = parser.parse_args()
+    args.func(args)
 
 
 #EOF

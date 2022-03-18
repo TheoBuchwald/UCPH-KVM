@@ -2,24 +2,27 @@
 
 This repository was created to collect all the scripts and programs developed and used in Professor, Ph.D., Dr. Scient. Kurt V. Mikkelsens group at the University of Copenhagen.
 
-Many of the scripts are dependent on the [KurtGroup](https://pypi.org/project/KurtGroup/#history) Python package. It can be installed by using of the following commands
+Many of the scripts in this repository are dependent on functions also found in the [KurtGroup](https://pypi.org/project/KurtGroup/) Python package. It is not necessary to install this Python package to use these scripts, however if you wish to use some of the functionalities this package supplies for your own personal scripts it might be an idea to install it using either of
 
 ```
 pip install KurtGroup
 pip install KurtGroup --user
 ```
+
 To install a specific version you can use
 
 ```
 pip install KurtGroup==version
 ```
+
 It can be updated using one of the following commands
+
 ```
 pip install KurtGroup -U
 pip install KurtGroup --user -U
 ```
 
-The KurtGroup package information and source code is located in the folder KurtGroup. More information about this package can be found on the [PyPI web page](https://pypi.org/project/KurtGroup) or in the [README](./KurtGroup/README.md) in said folder.
+The KurtGroup package information and source code is located in the folder [KurtGroup](./KurtGroup/). More information about this package can be found on the [PyPI web page](https://pypi.org/project/KurtGroup) or in the [README](./KurtGroup/README.md) in said folder.
 
 When you wish to push an update, to ensure that it works, you may want to use ./[test.sh](./test.sh) in the root directory of the repository and check for any errors or failures in the different tests.
 
@@ -29,26 +32,33 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   A script designed to make it easier to extract data from output files
 
   Currently the following has been implemented:<br/>
-  | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |
-  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|
-  | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
-  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
-  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
-  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
-  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
-  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |
+  | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |
+  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
+  | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
+  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
+  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
+  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
+  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
+  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
+  | CPU time used                   |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
 
   **N/A means not applicable*
 
-  Some more advanced functions are:
-  - UV/VIS Spectra
-    - Requires excitation energies and oscillator strengths in the output file
-    - It is possible to choose between different formats for the figure
+  When it comes to more advanced features the following has been implemented:
+
+  | Data processing                 |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |
+  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
+  | UVVIS using excitation energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | UVVIS using complex propagators |        :x:       |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
+
+  It is possible to choose between multiple formats for the spectra (png, eps,...)
+
+  The graph data can also be saved in a npz file using the *-s* or *--save* keyword. Here it will be saved as the [wavelength span, extinction coefficient] for the UVVIS spectra
 
   The data you want extracted is done using keywords when calling the script. The keywords you call will be printed either in the terminal or written to a csv or npz file.
 </p>
@@ -153,6 +163,7 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   +AG0: Gamma set to 0<br/>
   +R5: Depth set to 5<br/>
   -J: Jitter set to off
+
 </p>
 </details>
 
@@ -176,5 +187,6 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   +AG0: Gamma set to 0<br/>
   +R5: Depth set to 5<br/>
   -J: Jitter set to off
+
 </p>
 </details>

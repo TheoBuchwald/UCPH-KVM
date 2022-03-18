@@ -1,14 +1,13 @@
 
-from Kurt import output_processing as op
+from ...KurtGroup.Kurt import output_processing as op
 import unittest
-import math
 import json
 import os
 
 def ReadJSONFile():
     BASE_DIR = os.path.dirname(__file__)
     with open(f'{BASE_DIR}/test_data.json', 'r') as json_file:
-        dictionary= json.load(json_file)
+        dictionary = json.load(json_file)
     return dictionary
 
 
@@ -207,6 +206,25 @@ class Test_output_processing(unittest.TestCase):
 
         for infile in data_file:
             self.assertAlmostEqual(Extracted_Values[infile]['qTotal'], data_file[infile]['qTotal'])
+
+    def test_CPUtime_Extraction(self):
+
+        Arguments = {'_CPUS': True}
+        Values = [item[0] for item in Arguments.items() if not(item[1] == None or item[1] == False)]
+
+        data_file = ReadJSONFile()
+
+        Extracted_Values = dict()
+        for infile in data_file:
+            file = f'test_systems/{infile}'
+            Extracted_Values[infile] = op.Data_Extraction(file, Needed_Values=Values, NeededArguments=Arguments, quiet=True)[file]
+
+        op.Check_if_Implemented(data_file, {'_CPUS' : 'wall_cpu_time'}, Extracted_Values)
+
+        for infile in data_file:
+            self.assertAlmostEqual(Extracted_Values[infile]['total_cpu_time'], data_file[infile]['total_cpu_time'])
+            self.assertAlmostEqual(Extracted_Values[infile]['wall_cpu_time'], data_file[infile]['wall_cpu_time'])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -221,13 +221,58 @@ def Fill_output_array(Set_of_values: dict, array_input: dict, count: int, Final_
             output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
             col += len(np.array(Final_arrays[val][0]))
 
+def Make_complex_propagator_spectrum(input_file: list, suppressed: bool, Format: str, Extracted_Values: dict, SAVE: bool = True):
+    # A LOT OF PLOT SETUP
+    rc('text', usetex=True)
+    xlabel_font = ylabel_font = title_font = 16
+    plt.rc('font', size=12) # x/y axis font size
+    NA=6.02214199*10**23 #avogadros number
+    c=299792458 #speed of light
+    eps0=8.8541878176e-12
+    aufreq=4.134137334*10**16
+    hartreetohz=6.579683920502*10**15
+    Save_Dict = dict()
+        # PLOT SETUP DONE
+    for file in input_file:
+        filename = file.replace('.out','')
+        plotname = f'{filename}-complex-propagator.{Format}'
+        title = filename.replace("_"," ")
+
+        frequencies = np.array([x[0] for x in Extracted_Values[file]['complex_propagator'] if x != 'NaN' and x != 'Not implemented'])
+        imaginary_part = np.array([x[2] for x in Extracted_Values[file]['complex_propagator'] if x != 'NaN' and x != 'Not implemented'])
+
+        if len(frequencies) == 0:
+            if not(suppressed):
+                print(f'Polarizability dampening frequencies have either not been implemented for this output type, or none were found in the file {filename}')
+            continue
+
+        span = c/(frequencies*hartreetohz)*10**9
+        graph = (frequencies*aufreq*10000)/(c*eps0) * (imaginary_part*1.64877727436*10**(-41)*NA)/(2.3*1000)
+
+        plt.title(title)
+        plt.plot(span, graph)
+        plt.ylim((0,max(graph)*1.2))
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        plt.xlabel('Wavelength $(nm)$', fontsize=xlabel_font)
+        plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=16)
+        plt.savefig(plotname, format=f'{Format}', dpi=600)
+        plt.close()
+
+        if SAVE:
+            Save_Dict[file] = [span,graph]
+    if SAVE:
+        np.savez('complex_propagator.npz', **Save_Dict)
+        print(f'Complex propagator spectrum data has been saved in complex_propagator.npz')
+
 def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
     lambda_tot = np.zeros(len(t))
     for x in range(1,len(t)):
         lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
     return lambda_tot
 
-def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, UVVIS: str, Extracted_Values: dict, SAVE: bool = True):
+def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True):
     # A LOT OF PLOT SETUP
     rc('text', usetex=True)
     xlabel_font = ylabel_font = title_font = 16
@@ -246,7 +291,7 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
         # PLOT SETUP DONE
     for file in input_file:
         filename = file.replace('.out','')
-        plotname = f'{filename}-uvvis.{UVVIS}'
+        plotname = f'{filename}-uvvis.{Format}'
         title = filename.replace("_"," ")
 
         excitations = np.array([x for x in Extracted_Values[file]['exc_energies'] if x != 'NaN' and x != 'Not implemented'])
@@ -281,7 +326,7 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
         plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
-        plt.savefig(plotname, format=f'{UVVIS}', dpi=600)
+        plt.savefig(plotname, format=f'{Format}', dpi=600)
         plt.close()
 
         if SAVE:
@@ -788,6 +833,15 @@ class dal_extract:
     def ReadFile(self):
         with open(self.filename, "r") as file:
             self.lines = file.readlines()
+
+    def _Complex_propagator(self):
+        linenumbers = Forward_search_all(self.filename, 'Averaged value', 'polarizability with damping', quiet=self.quiet)
+        if type(linenumbers) == list:
+            self.complex_propagator = []
+            for i in linenumbers:
+                self.complex_propagator.append([float(self.lines[i].split()[-3]), float(self.lines[i].split()[-2]), float(self.lines[i].split()[-1])])
+            return
+        self.complex_propagator = 'NaN'
 
     def _CPUS(self):
         linenumber = Backward_search_last(self.filename, 'Total CPU  time used in DALTON:', self.end, 'CPU time', quiet=self.quiet)

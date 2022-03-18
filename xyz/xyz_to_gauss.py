@@ -2,7 +2,79 @@
 #Use the BSE API to obtain basis sets not already in Gaussian
 
 import argparse
-from Kurt import xyz
+from ...KurtGroup.Kurt import chemical_information as ci
+from ...KurtGroup.Kurt import xyz
+
+def generateGaussianInputFileText(XYZ: xyz.xyz_to, charge: int) -> str:
+    """Makes the text for a Gaussian input file
+
+    Args:
+        charge (int): The charge of the molecule
+
+    Returns:
+        str: Returns the file text
+    """
+    if not hasattr(XYZ, 'atoms'):
+        print(f'''You need to process the xyz file using the class function processXYZ before generating the file:
+Exiting program''')
+        exit()
+
+    basis_name = XYZ.basis
+    if XYZ.BSE:
+        BasisSet = ci.BasisSet()
+        try:
+            basis_mol = BasisSet.GenerateBasisSet('gaussian94', XYZ.basis, XYZ.atoms[:,0], SupressHeader=True)
+        except RuntimeError:
+            print("Failed to get basis set from BSE. Please check the spelling, upper-/lowercase is not important")
+            exit()
+        basis_name = XYZ.basis
+        XYZ.basis = "GEN"
+
+    filename_no_ext = XYZ.filename.replace('.xyz', '')
+    XYZ.input_filename = f'{filename_no_ext}.com'
+
+    if charge % 2 == 0:
+        multiplicity = 1
+    else:
+        multiplicity = 2
+
+    if XYZ.method.upper() == 'DFT':
+        method = XYZ.functional
+    else:
+        method = XYZ.method
+
+    XYZ.filetext = f'''%chk={filename_no_ext}.chk
+%mem={XYZ.mem}GB
+%nprocshared={XYZ.ncpus}
+# {XYZ.calc} {method}/{XYZ.basis}
+
+'''
+    if XYZ.BSE:
+        XYZ.filetext += f'{filename_no_ext}.xyz - {basis_name}\n'
+    else:
+        XYZ.filetext += f'{filename_no_ext}.xyz\n'
+
+    XYZ.filetext += f'\n{charge} {multiplicity}\n'
+
+    for atom in XYZ.atoms:
+        XYZ.filetext += f'{atom[0]} {atom[1]: >14.9} {atom[2]: >19.9} {atom[3]: >19.9}\n'
+
+    XYZ.filetext += '\n'
+
+    if XYZ.BSE:
+        XYZ.filetext += '****\n'
+        XYZ.filetext += f'{basis_mol}\n'
+        XYZ.filetext += '\n'
+
+    XYZ.basis = basis_name
+
+    return XYZ.filetext
+
+def writeInputfile(XYZ: xyz.xyz_to):
+    """Writes the file text to an input file with similar name as the xyz file
+    """
+    with open(XYZ.input_filename, 'w') as input_file:
+        input_file.writelines(XYZ.filetext)
 
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''Use to make Gaussian input files from a given .xyz file.
@@ -14,7 +86,7 @@ Stars can still be used, however.''', epilog='''For help contact
         Magnus Bukhave Johansen
         qhw298@alumni.ku.dk''')
 
-    parser.add_argument('infile', type=str, nargs=1, help='The file(s) to convert into .com files', metavar='.xyz file')
+    parser.add_argument('infile', type=str, nargs=1, help='The file to convert into a .com file', metavar='.xyz file')
     parser.add_argument('calc', type=str,nargs=1,help='Keywords for the calculation. If there are spaces, have quotes around the entire thing.')
 
     CalculationGroup = parser.add_argument_group('Calculation options')
@@ -45,8 +117,8 @@ Stars can still be used, however.''', epilog='''For help contact
     else:
         A.setMethod(method)
     A.setBasis(basis)
-    filetext = A.generateGaussianInputFileText(charge)
-    A.writeInputfile()
+    filetext = generateGaussianInputFileText(A, charge)
+    writeInputfile(A)
 
 if __name__ == '__main__':
     main()
