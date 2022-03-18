@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from types import FunctionType
 
-def Forward_search_last(file: str, text: str, error: str, quiet: bool = False):
+def Forward_search_last(file: str, text: str, error: str, quiet: bool = False) -> int:
     """Searches from the beggining of the file given to the end where it returns the linenumber of the last occurence
 
     Args:
@@ -29,7 +29,7 @@ def Forward_search_last(file: str, text: str, error: str, quiet: bool = False):
     res = str(res).split(':')
     return int(res[0].replace('b\'','').replace('\'','')) - 1
 
-def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, error: str, quiet: bool = False):
+def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, error: str, quiet: bool = False) -> int:
     """Searches from beggining of file for last occurence of [text1] and in the following [lines] after for [text2]
 
     Args:
@@ -55,7 +55,19 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     res = str(res).split('-')
     return int(res[0].replace('b\'','').replace('\'','')) - 1
 
-def Backward_search_last(file: str, text: str, filelength: int, error: str, quiet: bool = False):
+def Backward_search_last(file: str, text: str, filelength: int, error: str, quiet: bool = False) -> int:
+    """Finds the last occurence of a text string in a file by searching from the end
+
+    Args:
+        file (str): File to search in
+        text (str): Text string to look for
+        filelength (int): The length of the file
+        error (str): If no occurences were fount it will print 'No [error] could be found in [file]
+        quiet (bool, optional): Whether or not to print error message. Defaults to False.
+
+    Returns:
+        (int): Linenumber of last occurence
+    """
     ps1 = subprocess.run(['tac', file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out = subprocess.run(['grep', '-nTm1', text], input=ps1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     res = out.stdout
@@ -68,7 +80,7 @@ def Backward_search_last(file: str, text: str, filelength: int, error: str, quie
     return filelength - int(res[0].replace('b\'','').replace('\'',''))
 
 
-def Forward_search_first(file: str, text: str, error: str, quiet: bool = False):
+def Forward_search_first(file: str, text: str, error: str, quiet: bool = False) -> int:
     """Searches from beginning of file and finds the first occurence of [text]
 
     Args:
@@ -90,7 +102,7 @@ def Forward_search_first(file: str, text: str, error: str, quiet: bool = False):
     res = str(res).split(':')
     return int(res[0].replace('b\'','').replace('\'','')) - 1
 
-def Forward_search_all(file: str, text: str, error: str, quiet: bool = False):
+def Forward_search_all(file: str, text: str, error: str, quiet: bool = False) -> list:
     """Searches from beggining of file to end of file finding all occurences of [text]
 
     Args:
@@ -112,7 +124,7 @@ def Forward_search_all(file: str, text: str, error: str, quiet: bool = False):
     res = str(res).split('\\n')
     return [int(val.replace('b\'','').replace('\'','').replace(':','')) - 1 for val in res[:-1]]
 
-def Resize(array: list):
+def Resize(array: list) -> None:
     """Takes an array of arrays with varying sizes and resizes them to the same size.
     This is done by appending 'NaN' to the smaller lists.
     If the first value says 'Not implemented' the remainder of the array will be filled with 'Not implemented
@@ -131,7 +143,7 @@ def Resize(array: list):
         else:
             array[i] += ['NaN'] * (max_size - len(arr))
 
-def CheckForOnlyNans(array: list):
+def CheckForOnlyNans(array: list) -> bool:
     """Function for checking if an array is fille only with the value 'NaN'
 
     Args:
@@ -145,25 +157,35 @@ def CheckForOnlyNans(array: list):
            return False
     return True
 
-def Data_Extraction(infile, Needed_Values: dict, NeededArguments, quiet: bool = False, Temperature: float = 298.15):
+def Data_Extraction(infile, Needed_Values: dict, NeededArguments, quiet: bool = False, Temperature: float = 298.15) -> dict:
     Extracted_values = dict()
 
     infile = Output_type(str(infile), NeededArguments, quiet, Temperature)
 
-    Extract_data(quiet, Needed_Values, infile.filename, infile.extract, infile.input)  #Extracting data
-    infile.extract.__delattr__('lines') #Removing the file text from memory
+    # Extracting data
+    Extract_data(quiet, Needed_Values, infile.filename, infile.extract, infile.input)
 
+    # Removing the file text from memory as this is no longer needed (and fills in memory)
+    infile.extract.__delattr__('lines')
+
+    # List of all dictionary keys for infile.extract
     dict_keys = [*infile.extract.__dict__.keys()]
+
+    # Dictionary
     collection_dict = dict()
 
-    for i in dict_keys[1:]: #Collecting the data in dictionaries
+    # Collecting the data in dictionaries
+    for i in dict_keys[1:]:
         collection_dict[i] =  infile.extract.__dict__[i]
 
+    # Assigning to the Extracted_values dictionary with the filename as key so all data can be easily found in the future
     Extracted_values[infile.filename] = collection_dict
 
     return Extracted_values
 
-def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: dict, input_type: str):
+def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: dict, input_type: str) -> None:
+    # Loops over all requested values and runs the corresponding function
+    # If the function has not been implemented it will print an error message
     for i in Wanted_Values:
         try:
             method = getattr(type(file_text),i)
@@ -172,7 +194,9 @@ def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: 
             if not(suppressed):
                 print(f'{infile}: {i} has not been implemented for {input_type}')
 
-def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values: dict):
+def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values: dict) -> None:
+    # Checks to see if the keys of a double dictionary exists
+    # If they don't it is assumed that the function related to the data hasn't been implemented
     for infile in input_file:
         for key in Set_of_values:
             for val in Set_of_values[key]:
@@ -181,9 +205,11 @@ def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values:
                 except KeyError:
                     Extracted_values[infile][val] = ['Not implemented']
 
-def Collect_and_sort_data(input_file: str, Set_of_values: dict, Extracted_values: dict):
+def Collect_and_sort_data(input_file: str, Set_of_values: dict, Extracted_values: dict) -> dict:
     Final_arrays = dict()
 
+    # All data from Extracted_values is sorted by the Set_of_values
+    # This way excess values in Extracged_values are ignored
     for key in Set_of_values:
         for val in Set_of_values[key]:
             Final_arrays[val] = []
@@ -191,15 +217,18 @@ def Collect_and_sort_data(input_file: str, Set_of_values: dict, Extracted_values
                 Final_arrays[val].append(Extracted_values[infile][val])
     return Final_arrays
 
-def Downsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int, Final_arrays: dict):
+def Downsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int, Final_arrays: dict) -> None:
+    # Downsizes arays if requested
+    # If not requested nothing happens
     for item in Variable_arrays.items():
         if item[1] > 0:
             for val in Outputs[item[0]]:
                 for file in range(0,count):
                     Final_arrays[val][file] = Final_arrays[val][file][0:item[1]]
 
-def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict):
+def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict) -> list:
     header = ['File']
+    # Adds to the header row all relevant headers for the data-points requested
     for key in Set_of_values.keys():
         for val in Set_of_values[key]:
             if len(Final_arrays[val][0]) > 1:
@@ -209,19 +238,22 @@ def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict):
                 header.append(Header_text[val])
     return header
 
-def Fill_output_array(Set_of_values: dict, array_input: dict, count: int, Final_arrays: dict, output_array: list):
+def Fill_output_array(Set_of_values: dict, array_input: dict, count: int, Final_arrays: dict, output_array: list) -> None:
+    # Fills the output array with the header row
     if count == 1:
         output_array[1,0] = array_input[0][0]
     else:
         output_array[1:,0] = np.array(np.concatenate(array_input))
 
+    # Fills the output array with the requested data
+    # As it is not known the length of all lists in the Final_arrays the col is used to slowly move through the array
     col = 1
     for key in Set_of_values.keys():
         for val in Set_of_values[key]:
             output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
             col += len(np.array(Final_arrays[val][0]))
 
-def Make_complex_propagator_spectrum(input_file: list, suppressed: bool, Format: str, Extracted_Values: dict, SAVE: bool = True):
+def Make_complex_propagator_spectrum(input_file: list, suppressed: bool, Format: str, Extracted_Values: dict, SAVE: bool = True) -> None:
     # A LOT OF PLOT SETUP
     rc('text', usetex=True)
     xlabel_font = ylabel_font = title_font = 16
@@ -272,7 +304,7 @@ def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
         lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
     return lambda_tot
 
-def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True):
+def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True) -> None:
     # A LOT OF PLOT SETUP
     rc('text', usetex=True)
     xlabel_font = ylabel_font = title_font = 16
@@ -345,25 +377,35 @@ class Output_type:
         with open(self.filename,'r') as read:
             lines = read.readlines()[:10]
 
-        if '* O   R   C   A *' in lines[4]: #File type = ORCA
+        # The output file is determined to be of one of the following types
+
+        # File type = ORCA
+        if '* O   R   C   A *' in lines[4]:
             self.extract = orca_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'ORCA'
 
-        if '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:  #File type = DALTON
+        # File type = DALTON
+        elif '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:
             self.extract = dal_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'DALTON'
 
-        if 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:  #File type = GAUSSIAN
+        # File type = GAUSSIAN
+        elif 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:
             self.extract = gaus_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'GAUSSIAN'
 
-        if '**********  LSDalton - An electronic structure program  **********' in lines[2]:    #File type = LSDALTON
+        # File type = LSDALTON
+        elif '**********  LSDalton - An electronic structure program  **********' in lines[2]:
             self.extract = lsdal_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'LSDALTON'
 
-        if '!                                                       VELOXCHEM                                                        !' in lines[2]:
+        # File type = VELOXCHEM
+        elif '!                                                       VELOXCHEM                                                        !' in lines[2]:
             self.extract = velox_extract(self.filename, NeededArguments, Quiet, Temperature)
             self.input = 'VELOXCHEM'
+
+        else:
+            print(f"The output file {self.filename} is not of a known format")
 
         del lines
 
@@ -393,11 +435,11 @@ class velox_extract:
 
         self.end = len(self.lines)
 
-    def ReadFile(self):
+    def ReadFile(self) -> None:
         with open(self.filename, "r") as file:
             self.lines = file.readlines()
 
-    def _Energy(self):
+    def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total Energy', 'final energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-2])
@@ -406,7 +448,7 @@ class velox_extract:
 
 
 class gaus_extract:
-    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
+    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
         self.NeededArguments = NeededArguments
         self.quiet = Quiet
@@ -417,11 +459,11 @@ class gaus_extract:
 
         self.end = len(self.lines)
 
-    def ReadFile(self):
+    def ReadFile(self) -> None:
         with open(self.filename, "r") as file:
             self.lines = file.readlines()
 
-    def _CPUS(self):
+    def _CPUS(self) -> None:
         linenumber = Backward_search_last(self.filename, 'Job cpu time:', self.end, 'CPU time', quiet=self.quiet)
         if type(linenumber) == int:
             self.total_cpu_time = float(self.lines[linenumber].split()[3])*24*60 + float(self.lines[linenumber].split()[5])*60 + float(self.lines[linenumber].split()[7]) + float(self.lines[linenumber].split()[9])/60
@@ -436,7 +478,7 @@ class gaus_extract:
         self.total_cpu_time = 'NaN'
         self.wall_cpu_time = 'NaN'
 
-    def _Energy(self):
+    def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Sum of electronic and zero-point Energies=', 'final energy', quiet=True)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1]) - float(self.lines[linenumber-4].split()[-2])
@@ -447,21 +489,21 @@ class gaus_extract:
             return
         self.tot_energy = 'NaN'
 
-    def _ZPV(self):
+    def _ZPV(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Sum of electronic and zero-point Energies=', 'ZPV energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.zpv = float(self.lines[linenumber].split()[-1])
             return
         self.zpv = 'NaN'
 
-    def _Dipole_moments(self):
+    def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Electric dipole moment (input orientation):', 'dipole moments', quiet=self.quiet)
         if type(linenumber) == int:
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+4].split()[1].replace('D','E')), float(self.lines[linenumber+5].split()[1].replace('D','E')), float(self.lines[linenumber+6].split()[1].replace('D','E')), float(self.lines[linenumber+3].split()[1].replace('D','E'))
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
-    def _Polarizabilities(self):
+    def _Polarizabilities(self) -> None:
         linenumber = ['NaN', 'NaN', 'NaN', 'NaN']
         searchwords = [' xx ', ' yy ', ' zz ', ' iso ']
         for i in range(len(searchwords)):
@@ -471,7 +513,7 @@ class gaus_extract:
             return
         self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
-    def _Frequencies(self):
+    def _Frequencies(self) -> None:
         self.freq = []
         linenumbers = Forward_search_all(self.filename, 'Frequencies --', 'frequencies', quiet=self.quiet)
         if type(linenumbers) == list:
@@ -483,7 +525,7 @@ class gaus_extract:
         if len(self.freq) < self.NeededArguments['_Frequencies']:
             self.freq += ['NaN'] * (self.NeededArguments['_Frequencies'] - len(self.freq))
 
-    def _Excitation_energies(self):
+    def _Excitation_energies(self) -> None:
         self.exc_energies = []
         linenumber = Forward_search_last(self.filename, 'Excitation energies and oscillator strengths:', 'excitation energies', quiet=True)
         if type(linenumber) == int:
@@ -496,7 +538,7 @@ class gaus_extract:
         if len(self.exc_energies) < self.NeededArguments['_Excitation_energies']:
             self.exc_energies += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.exc_energies))
 
-    def _Oscillator_strengths(self):
+    def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
         linenumber = Forward_search_last(self.filename, 'Excitation energies and oscillator strengths:', 'oscillator strengths', quiet=True)
         if type(linenumber) == int:
@@ -511,7 +553,7 @@ class gaus_extract:
         if len(self.osc_strengths) < self.NeededArguments['_Excitation_energies']:
             self.osc_strengths += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
 
-    def _RotationalConsts(self):
+    def _RotationalConsts(self) -> None:
         self.rots = []
         linenumbers = Forward_search_all(self.filename, 'Rotational constants (GHZ):', 'rotational constants', quiet=self.quiet)
         for i in self.lines[linenumbers[-1]].split()[3:]:
@@ -519,7 +561,7 @@ class gaus_extract:
         self.rots = np.array(self.rots)
         self.rots = self.rots[self.rots != 0.0]
 
-    def _Mass(self):
+    def _Mass(self) -> None:
         self.mass = 0.0
         linenumber = Forward_search_last(self.filename, 'Molecular mass', 'molecular mass', quiet=self.quiet)
         if type(linenumber) == int:
@@ -531,13 +573,13 @@ class gaus_extract:
         if type(linenumber) == int:
             self.symnum = int(self.lines[linenumber].split()[-1].replace('.',''))
 
-    def _Multiplicity(self):
+    def _Multiplicity(self) -> None:
         self.multi = 0
         linenumber = Forward_search_first(self.filename, 'Multiplicity', 'multiplicity', quiet=self.quiet)
         if type(linenumber) == int:
             self.multi = int(self.lines[linenumber].split()[-1])
 
-    def _PartitionFunctions(self):
+    def _PartitionFunctions(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -558,7 +600,7 @@ class gaus_extract:
         self.qE = self.multi #Good approximation for most closed-shell molecules
         self.qTotal = self.qT*self.qR*self.qV*self.qE
 
-    def _Enthalpy(self):
+    def _Enthalpy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -575,7 +617,7 @@ class gaus_extract:
         self.E_e = 0 #Good approximation for most closed-shell molecules
         self.enthalpy = (self.E_T+self.E_R+self.E_V+self.constants.gas_constant *  self.T ) / self.constants.au_to_kJmol + self.tot_energy
 
-    def _Entropy(self):
+    def _Entropy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -596,7 +638,7 @@ class gaus_extract:
         self.S_E = self.constants.gas_constant * np.log(self.multi) #Good approximation for most closed-shell molecules
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
 
-    def _Gibbs(self):
+    def _Gibbs(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping free energy energy calculation")
@@ -606,7 +648,7 @@ class gaus_extract:
 
 
 class orca_extract:
-    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
+    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
         self.NeededArguments = NeededArguments
         self.quiet = Quiet
@@ -617,11 +659,11 @@ class orca_extract:
 
         self.end = len(self.lines)
 
-    def ReadFile(self):
+    def ReadFile(self) -> None:
         with open(self.filename, "r") as file:
             self.lines = file.readlines()
 
-    def _CPUS(self):
+    def _CPUS(self) -> None:
         linenumber = Backward_search_last(self.filename, 'Sum of individual times         ...', self.end, 'CPU time', quiet=self.quiet)
         if type(linenumber) == int:
             self.wall_cpu_time = float(self.lines[linenumber].split()[-2])
@@ -650,7 +692,7 @@ class orca_extract:
         self.total_cpu_time = 'NaN'
         self.wall_cpu_time = 'NaN'
 
-    def _Energy(self):
+    def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Electronic energy', 'Final energy', quiet=True)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-2])
@@ -661,14 +703,14 @@ class orca_extract:
             return
         self.tot_energy = 'NaN'
 
-    def _ZPV(self):
+    def _ZPV(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Electronic energy', 'ZPV energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.zpv = float(self.lines[linenumber].split()[-2]) + float(self.lines[linenumber+1].split()[-4])
             return
         self.zpv = 'NaN'
 
-    def _Enthalpy(self):
+    def _Enthalpy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -686,7 +728,7 @@ class orca_extract:
         self.E_e = 0 #Good approximation for most closed-shell molecules
         self.enthalpy = (self.E_T+self.E_R+self.E_V+self.constants.gas_constant *  self.T ) / self.constants.au_to_kJmol + self.tot_energy
 
-    def _Gibbs(self):
+    def _Gibbs(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping free energy energy calculation")
@@ -694,21 +736,21 @@ class orca_extract:
             return
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
 
-    def _Dipole_moments(self):
+    def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total Dipole Moment', 'dipole moment', quiet=self.quiet)
         if type(linenumber) == int:
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber].split()[-3]), float(self.lines[linenumber].split()[-2]), float(self.lines[linenumber].split()[-1]), float(self.lines[linenumber+2].split()[-1])
             return
         self.dipolex, self.dipoley, self.dipolez, self.total_dipole = 'NaN'
 
-    def _Polarizabilities(self):
+    def _Polarizabilities(self) -> None:
         linenumber = Forward_search_after_last(self.filename, 'THE POLARIZABILITY TENSOR', "'diagonalized tensor:'", 10, 'polarizability', quiet=self.quiet)
         if type(linenumber) == int:
             self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber+1].split()[0]), float(self.lines[linenumber+1].split()[1]), float(self.lines[linenumber+1].split()[2]), float(self.lines[linenumber+7].split()[-1])
             return
         self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
-    def _Excitation_energies(self):
+    def _Excitation_energies(self) -> None:
         self.exc_energies = []
         linenumbers = Forward_search_all(self.filename, 'STATE ', 'excitation energies', quiet=self.quiet)
         if type(linenumbers) == list:
@@ -719,7 +761,7 @@ class orca_extract:
         if len(self.exc_energies) < self.NeededArguments['_Excitation_energies']:
             self.exc_energies += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.exc_energies))
 
-    def _Oscillator_strengths(self):
+    def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
         linenumber = Forward_search_last(self.filename, 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS', 'oscillator strengths', quiet=self.quiet)
         if type(linenumber) == int:
@@ -733,7 +775,7 @@ class orca_extract:
         if len(self.osc_strengths) < self.NeededArguments['_Excitation_energies']:
             self.osc_strengths += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
 
-    def _Frequencies(self):
+    def _Frequencies(self) -> None:
         self.freq = []
         linenumber = Forward_search_last(self.filename, "VIBRATIONAL FREQUENCIES", 'frequencies', quiet=self.quiet)
         if type(linenumber) == int:
@@ -749,7 +791,7 @@ class orca_extract:
         if len(self.freq) < self.NeededArguments['_Frequencies']:
             self.freq += ['NaN'] * (self.NeededArguments['_Frequencies'] - len(self.freq))
 
-    def _RotationalConsts(self):
+    def _RotationalConsts(self) -> None:
         self.rots = []
         linenumbers = Forward_search_first(self.filename, 'Rotational constants in MHz', 'rotational constants', quiet=self.quiet)
         for i in self.lines[linenumbers].split()[-3:]:
@@ -757,25 +799,25 @@ class orca_extract:
         self.rots = np.array(self.rots) * 1E-3
         self.rots = self.rots[self.rots != 0.0]
 
-    def _Mass(self):
+    def _Mass(self) -> None:
         self.mass = 0.0
         linenumber = Forward_search_last(self.filename, 'Total Mass', 'molecular mass', quiet=self.quiet)
         if type(linenumber) == int:
             self.mass = float(self.lines[linenumber].split()[-2])
 
-    def _SymmetryNumber(self):
+    def _SymmetryNumber(self) -> None:
         self.symnum = 0
         linenumber = Forward_search_last(self.filename, 'Symmetry Number', 'rotational symmetry number', quiet=self.quiet)
         if type(linenumber) == int:
             self.symnum = int(self.lines[linenumber].split()[-1])
 
-    def _Multiplicity(self):
+    def _Multiplicity(self) -> None:
         self.multi = 0
         linenumber = Forward_search_first(self.filename, 'Multiplicity', 'multiplicity', quiet=self.quiet)
         if type(linenumber) == int:
             self.multi = int(self.lines[linenumber].split()[-1])
 
-    def _PartitionFunctions(self):
+    def _PartitionFunctions(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -796,7 +838,7 @@ class orca_extract:
         self.qE = self.multi #Good approximation for most closed-shell molecules
         self.qTotal = self.qT*self.qR*self.qV*self.qE
 
-    def _Entropy(self):
+    def _Entropy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -819,7 +861,7 @@ class orca_extract:
 
 
 class dal_extract:
-    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
+    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
         self.NeededArguments = NeededArguments
         self.quiet = Quiet
@@ -830,11 +872,11 @@ class dal_extract:
 
         self.end = len(self.lines)
 
-    def ReadFile(self):
+    def ReadFile(self) -> None:
         with open(self.filename, "r") as file:
             self.lines = file.readlines()
 
-    def _Complex_propagator(self):
+    def _Complex_propagator(self) -> None:
         linenumbers = Forward_search_all(self.filename, 'Averaged value', 'polarizability with damping', quiet=self.quiet)
         if type(linenumbers) == list:
             self.complex_propagator = []
@@ -843,7 +885,7 @@ class dal_extract:
             return
         self.complex_propagator = 'NaN'
 
-    def _CPUS(self):
+    def _CPUS(self) -> None:
         linenumber = Backward_search_last(self.filename, 'Total CPU  time used in DALTON:', self.end, 'CPU time', quiet=self.quiet)
         if type(linenumber) == int:
             self.total_cpu_time = 0.
@@ -886,7 +928,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.wall_cpu_time = 'NaN'
         self.total_cpu_time = 'NaN'
 
-    def _Energy(self):
+    def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total .*  energy:', 'final energy', quiet=True)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
@@ -901,21 +943,21 @@ Please contact a maintainer of the script ot have this updated''')
             return
         self.tot_energy = 'NaN'
 
-    def _ZPV(self):
+    def _ZPV(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total Molecular Energy', 'zero-point energy', quiet=self.quiet)
         if type(linenumber) == int:
             self.zpv = float(self.lines[linenumber+5].split()[1])
             return
         self.zpv = 'NaN'
 
-    def _Dipole_moments(self):
+    def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Dipole moment components', 'dipole moment', quiet=self.quiet)
         if type(linenumber) == int:
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+5].split()[1]), float(self.lines[linenumber+6].split()[1]), float(self.lines[linenumber+7].split()[1]), float(self.lines[linenumber-3].split()[0])
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
-    def _Polarizabilities(self):
+    def _Polarizabilities(self) -> None:
         linenumber = Forward_search_last(self.filename, 'SECOND ORDER PROPERTIES', 'polarizabilities', quiet=self.quiet)
         if type(linenumber) == int:
             self.polx, self.poly, self.polz = float(self.lines[linenumber+2].split()[-1]), float(self.lines[linenumber+5].split()[-1]), float(self.lines[linenumber+7].split()[-1])
@@ -923,7 +965,7 @@ Please contact a maintainer of the script ot have this updated''')
             return
         self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
-    def _Excitation_energies(self):
+    def _Excitation_energies(self) -> None:
         self.exc_energies = []
         self.exc_type = None
         linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'excitation energies', quiet=True)
@@ -944,7 +986,7 @@ Please contact a maintainer of the script ot have this updated''')
         if len(self.exc_energies) < self.NeededArguments['_Excitation_energies']:
             self.exc_energies += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.exc_energies))
 
-    def _Oscillator_strengths(self):
+    def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
         if self.exc_type == '.EXCITA':
             linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'oscillator strengths', quiet=self.quiet)
@@ -969,7 +1011,7 @@ Please contact a maintainer of the script ot have this updated''')
         if len(self.osc_strengths) < self.NeededArguments['_Excitation_energies']:
             self.osc_strengths += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
 
-    def _Frequencies(self):
+    def _Frequencies(self) -> None:
         self.freq = []
         linenumber = Forward_search_last(self.filename, 'Vibrational Frequencies and IR Intensities', 'frequencies', quiet=self.quiet)
         if type(linenumber) == int:
@@ -982,7 +1024,7 @@ Please contact a maintainer of the script ot have this updated''')
         if len(self.freq) < self.NeededArguments['_Frequencies']:
             self.freq += ['NaN'] * (self.NeededArguments['_Frequencies'] - len(self.freq))
 
-    def _RotationalConsts(self):
+    def _RotationalConsts(self) -> None:
         self.rots = []
         linenumbers = Forward_search_last(self.filename, 'Rotational constants', 'rotational constants', quiet=self.quiet)
         for i in self.lines[linenumbers+7].split()[:-1]:
@@ -990,7 +1032,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.rots = np.array(self.rots) * 1E-3
         self.rots = self.rots[self.rots != 0.0]
 
-    def _Mass(self):
+    def _Mass(self) -> None:
         self.mass = 0.0
         linenumber = Forward_search_last(self.filename, 'Total mass:', 'molecular mass')
         if type(linenumber) == int:
@@ -1004,13 +1046,13 @@ Please contact a maintainer of the script ot have this updated''')
     #    if type(linenumber) == int:
     #        self.symnum = int(self.lines[linenumber].split()[-1])
 
-    def _Multiplicity(self):
+    def _Multiplicity(self) -> None:
         self.multi = 0
         linenumber = Forward_search_last(self.filename, 'Spatial symmetry', 'multiplicity', quiet=self.quiet)
         if type(linenumber) == int:
             self.multi = int(self.lines[linenumber].split()[2])
 
-    def _PartitionFunctions(self):
+    def _PartitionFunctions(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -1031,7 +1073,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.qE = self.multi #Good approximation for most closed-shell molecules
         self.qTotal = self.qT*self.qR*self.qV*self.qE
 
-    def _Entropy(self):
+    def _Entropy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -1051,7 +1093,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.S_E = self.constants.gas_constant * np.log(self.multi) #Good approximation for most closed-shell molecules
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
 
-    def _Enthalpy(self):
+    def _Enthalpy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping partition function calculation")
@@ -1069,7 +1111,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.E_e = 0 #Good approximation for most closed-shell molecules
         self.enthalpy = (self.E_T+self.E_R+self.E_V+self.constants.gas_constant *  self.T ) / self.constants.au_to_kJmol + self.tot_energy
 
-    def _Gibbs(self):
+    def _Gibbs(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
                 print(f"No frequencies found in {self.filename}, skipping free energy energy calculation")
@@ -1079,7 +1121,7 @@ Please contact a maintainer of the script ot have this updated''')
 
 
 class lsdal_extract:
-    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
+    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
         self.NeededArguments = NeededArguments
         self.quiet = Quiet
@@ -1090,11 +1132,11 @@ class lsdal_extract:
 
         self.end = len(self.lines)
 
-    def ReadFile(self):
+    def ReadFile(self) -> None:
         with open(self.filename, "r") as file:
             self.lines = file.readlines()
 
-    def _CPUS(self):
+    def _CPUS(self) -> None:
         linenumber = Backward_search_last(self.filename, '>>>  CPU Time used in LSDALTON is', self.end, 'CPU time', quiet=self.quiet)
         if type(linenumber) == int:
             self.total_cpu_time = 0.
@@ -1137,7 +1179,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.total_cpu_time = 'NaN'
         self.wall_cpu_time = 'NaN'
 
-    def _Energy(self):
+    def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total .*  energy:', 'final energy', quiet=True)
         if type(linenumber) == int:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
@@ -1152,7 +1194,7 @@ Please contact a maintainer of the script ot have this updated''')
             return
         self.tot_energy = 'NaN'
 
-    def _Energy(self):
+    def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'ENERGY SUMMARY', 'final energy', quiet=True)
         if type(linenumber) == int:
             for i in self.lines[linenumber+3:self.end]:
@@ -1166,21 +1208,21 @@ Please contact a maintainer of the script ot have this updated''')
             return
         self.tot_energy = 'NaN'
 
-    def _Dipole_moments(self):
+    def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Permanent dipole moment', 'dipole moment', quiet=self.quiet)
         if type(linenumber) == int:
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+9].split()[1]), float(self.lines[linenumber+10].split()[1]), float(self.lines[linenumber+11].split()[1]), float(self.lines[linenumber+3].split()[0])
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
-    def _Polarizabilities(self):
+    def _Polarizabilities(self) -> None:
         linenumber = Forward_search_last(self.filename, '*          POLARIZABILITY TENSOR RESULTS (in a.u.)          *', 'polarizability', quiet=self.quiet)
         if type(linenumber) == int:
             self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber+10].split()[-3]), float(self.lines[linenumber+11].split()[-2]), float(self.lines[linenumber+12].split()[-1]), float(self.lines[linenumber+14].split()[-1])
             return
         self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
-    def _Excitation_energies(self):
+    def _Excitation_energies(self) -> None:
         self.exc_energies = []
         linenumber = Forward_search_last(self.filename, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'excitation energies', quiet=self.quiet)
         if type(linenumber) == int:
@@ -1193,7 +1235,7 @@ Please contact a maintainer of the script ot have this updated''')
         if len(self.exc_energies) < self.NeededArguments['_Excitation_energies']:
             self.exc_energies += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.exc_energies))
 
-    def _Oscillator_strengths(self):
+    def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
         linenumber = Forward_search_last(self.filename, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'oscillator strengths', quiet=self.quiet)
         if type(linenumber) == int:
