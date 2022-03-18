@@ -1,7 +1,7 @@
 
 import argparse
-from Kurt import xyz
-from Kurt import chemical_information as ci
+from ...KurtGroup.Kurt import xyz
+from ...KurtGroup.Kurt import chemical_information as ci
 
 def generateDaltonInputFileText(XYZ: xyz.xyz_to, charge: int) -> str:
     """Makes the text for a Dalton input file

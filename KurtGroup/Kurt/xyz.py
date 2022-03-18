@@ -1,6 +1,5 @@
 
-import Kurt.chemical_information as ci
-# from . import chemical_information as ci
+from . import chemical_information as ci
 import numpy as np
 import json
 import os

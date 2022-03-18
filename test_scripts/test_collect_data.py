@@ -1,5 +1,5 @@
 
-from Kurt import output_processing as op
+from ...KurtGroup.Kurt import output_processing as op
 import unittest
 import json
 import os
