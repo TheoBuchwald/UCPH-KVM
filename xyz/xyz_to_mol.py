@@ -31,7 +31,7 @@ if __name__ == '__main__':
     if args.RIbasis:
         RIbasis = args.RIbasis[0]
     else:
-        RIbasis = f'RI-{basis}'
+        RIbasis = f'{basis}-RI'
 
     for molfile in input_files:
         namesmol = []
