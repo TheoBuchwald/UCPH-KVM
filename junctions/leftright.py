@@ -3,8 +3,12 @@
 
 import numpy as np
 import argparse
-from Kurt import structures as struct
-from Kurt import chemical_information as ci
+import sys
+
+sys.path.append('')
+
+import KurtGroup.Kurt.structures as struct
+import KurtGroup.Kurt.chemical_information as ci
 
 #INPUTS HERE
 #------------------------------
