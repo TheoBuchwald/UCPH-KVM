@@ -2,6 +2,7 @@
 import subprocess
 import numpy as np
 from typing import List
+from chemical_information import get_atm_label
 
 def Forward_search_last(file: str, text: str, error: str, quiet: bool = False) -> int:
     """Searches from the beggining of the file given to the end where it returns the linenumber of the last occurence
@@ -135,13 +136,49 @@ def CheckForOnlyNans(array: list) -> bool:
            return False
     return True
 
+def WriteToFile(filename : str, lines : list) -> None:
+    """ Function for writing out to a file
+
+    Args:
+        lines (list) : List of lines that should be written in the file
+    """
+    with open(filename,'w') as wrt:
+        wrt.writelines(lines)
+
+def GenerateXYZ(lines : list, filename : str , start : int, end : int, lab_loc : int, transform : bool = False) -> None:
+    """ Function for generating and writing out XYZ file from imput
+
+    Args:
+        lines (list): Lines in an input file
+        filename (str): Filename for geometry file
+        start, end (int): Starting and ending linenumber of the final geometry in the file
+        lab_loc (int): Location of label in line
+        transform (bool): Transforms atomic number into label, if needed
+    """
+    lines_to_add = []
+    lines_to_add.append(str(end-(start))+ '\n')
+    lines_to_add.append('\n')
+    for line in lines[start:end]:
+        words = line.split()
+        if transform:
+            atm = int(words[lab_loc])
+            lines_to_add.append(''.join([get_atm_label(atm).ljust(2),' ',words[-3].rjust(10),' ', words[-2].rjust(15), ' ',words[-1].rjust(15) ,'\n']))
+        else:
+            lines_to_add.append(''.join([words[lab_loc].ljust(2),' ',words[-3].rjust(10),' ', words[-2].rjust(15), ' ',words[-1].rjust(15) ,'\n']))
+    WriteToFile(filename,lines_to_add)
+
 
 class OutputType:
     def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15):
         self.filename = filename
 
         with open(self.filename,'r') as read:
-            lines = read.readlines()[:10]
+            lines = read.readlines()[:100]
+
+        AMS = False
+        for i in range(100):
+            if "Amsterdam Modeling Suite (AMS)" in lines[i]:
+                AMS = True
 
         # The output file is determined to be of one of the following types
 
@@ -169,6 +206,13 @@ class OutputType:
         elif '!                                                       VELOXCHEM                                                        !' in lines[2]:
             self.extract = VeloxExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'VELOXCHEM'
+
+
+        # File type = AMS
+        elif AMS:
+            self.extract = AMSExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
+            self.input = 'Amsterdam Modeling Suite'
+        
 
         # File type not implemented
         else:
@@ -374,6 +418,26 @@ class VeloxExtract:
             return
         self.tot_energy = 'NaN'
 
+class AMSExtract:
+    def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
+        self.filename = filename
+        self.quiet = Quiet
+        self.T = Temperature
+        self.constants = Constants()
+        self.ReadFile()
+
+        self.end = len(self.lines)
+
+    def ReadFile(self) -> None:
+        with open(self.filename, "r") as file:
+            self.lines = file.readlines()
+
+    def _Energy(self) -> None:
+        linenumber = Forward_search_last(self.filename, "Energy (hartree)", "final energy", quiet=self.quiet)
+        if type(linenumber) == int:
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
+        self.tot_energy = 'NaN'
 
 class GaussianExtract:
     def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
@@ -560,6 +624,23 @@ class GaussianExtract:
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
+    
+    def _Optimized_Geometry(self) -> None:
+        start = Forward_search_last(self.filename, 'Standard orientation', 'geometry', quiet=self.quiet)
+        end = Forward_search_after_last(self.filename, 'Standard orientation', 'Rotational constants', 200, "end of geometry", quiet=self.quiet)
+        if start != "NaN" and end != "NaN":
+            #Offset for going into actual coordinate list
+            start += 5
+            end -= 2
+            #Which position in the line is the atom label / number at
+            label_location = 1
+            OptGeomFilename = self.filename[:-4] + "_opt.xyz"
+            GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location, transform = True)
+            if not(self.quiet):
+                print("Optimized geometry has been saved to " + OptGeomFilename)
+
+
+
 
 
 class OrcaExtract:
@@ -751,6 +832,20 @@ class OrcaExtract:
         self.S_V = self.constants.gas_constant * np.sum(self.constants.vib_const * realfreq / self.T / (np.exp(self.constants.vib_const * realfreq /  self.T ) - 1) - np.log(1-np.exp(-self.constants.vib_const * realfreq /  self.T )))
         self.S_E = self.constants.gas_constant * np.log(self.multi) #Good approximation for most closed-shell molecules
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
+
+    def _Optimized_Geometry(self) -> None:
+        start = Forward_search_last(self.filename, 'CARTESIAN COORDINATES (ANGSTROEM)', 'geometry', quiet=self.quiet)
+        end = Forward_search_after_last(self.filename, 'CARTESIAN COORDINATES (ANGSTROEM)', 'CARTESIAN COORDINATES (A.U.)', 200, "end of geometry", quiet=self.quiet)
+        if start != "NaN" and end != "NaN":
+            #Offset for going into actual coordinate list
+            start += 2
+            end -= 2
+            #Which position in the line is the atom label / number at
+            label_location = 0
+            OptGeomFilename = self.filename[:-4] + "_opt.xyz"
+            GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
+            if not(self.quiet):
+                print("Optimized geometry has been saved to " + OptGeomFilename)
 
 
 class DaltonExtract:

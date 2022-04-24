@@ -335,6 +335,7 @@ def Extract(args):
         '_Gibbs': args.gibbs,
         '_PartitionFunctions': args.partfunc,
         '_CPUS': args.cpu_time,
+        '_Optimized_Geometry': args.optgeom
     }
 
     # These are the datapoints that will be extracted per argument
@@ -521,7 +522,8 @@ def main():
                 -  DALTON
                 -  GAUSSIAN
                 -  LSDALTON
-                -  VELOXCHEM'''
+                -  VELOXCHEM
+                -  AMSTERDAM MODELING SUITE'''
     , epilog=f'''
 For help contact
     Theo Juncker von Buchwald
@@ -585,7 +587,7 @@ For help contact
     # Creating extract subparser
     #---------------------------
     Extraction_subparser = subparser.add_parser('extract', formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
-    This part of the script is for extracting data from output files and either printing it in the terminal or saveing it to a file
+    This part of the script is for extracting data from output files and either printing it in the terminal or saving it to a file
 
             This script can currently extract the data
             ------------------------------------------
@@ -601,6 +603,7 @@ For help contact
                 -  Frequencies
                 -  Partition functions at a given temperature
                 -  CPU time used
+                -  Optimized geometries (or last geometry in file)
 
     Though not all data types have been implemented for all of the output formats
 
@@ -615,6 +618,19 @@ For help contact
     -  Partition functions
 
     The following is not implemented for VELOXCHEM
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Dipole moments
+    -  Polarizability
+    -  Excitation energies
+    -  Oscillator strengths
+    -  Frequencies
+    -  Partition functions at a given temperature
+    -  CPU time used
+
+    The following is not implemented for AMSTERDAM MODELING SUITE
     -  Zero-Point Vibrational energies
     -  Enthalpies
     -  Entropies
@@ -649,6 +665,7 @@ For help contact
     ExtractionGroup.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
     ExtractionGroup.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
     ExtractionGroup.add_argument('-C', '--cpu_time', const=['m'], help='Include to extract total cpu time and pr. cpu time. You can change the output from being in seconds, minutes and hours, where the default is minutes', nargs='?', choices=['s', 'm', 'h'])
+    ExtractionGroup.add_argument('-geom', '--optgeom', action='store_true',help='Include to extract optimized geometries and save to \'filename_opt.xyz\'.')
 
     ExtractionDataProcessingGroup = Extraction_subparser.add_argument_group('Data processing commands')
     ExtractionDataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
