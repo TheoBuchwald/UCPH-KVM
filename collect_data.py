@@ -507,9 +507,9 @@ def Extract(args):
         print(f'Data has been saved in data.npz')
         return
 
-    if len(Output_Array) == count + 1:
-        print("No data was extracted, therefore nothing more will be printed")
-        return
+    #if len(Output_Array) == count + 1:
+    #    print("No data was extracted, therefore nothing more will be printed")
+    #    return
 
     print(Output_Array)
 

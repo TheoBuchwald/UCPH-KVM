@@ -399,6 +399,7 @@ class Constants:
         self.s_trans_const = 0.3160965065 #Assuming 1 bar standard pressure and molar
         self.au_to_kJmol = 2625.4996394799
         self.bohr_to_ao = 0.529177249
+        self.debye_to_au = 0.393456  
 
 
 class VeloxExtract:
@@ -461,6 +462,14 @@ class AMSExtract:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         self.tot_energy = 'NaN'
+    
+    def _Dipole_moments(self) -> None:
+        linenumber = Forward_search_last(self.filename, 'Dipole Moment', 'dipole moment', quiet=self.quiet)
+        if isinstance(linenumber, int):
+            linenumber += 3
+            self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber].split()[-3])*self.constants.debye_to_au, float(self.lines[linenumber].split()[-2])*self.constants.debye_to_au, float(self.lines[linenumber].split()[-1])*self.constants.debye_to_au, float(self.lines[linenumber+1].split()[-1])*self.constants.debye_to_au
+            return
+        self.dipolex, self.dipoley, self.dipolez, self.total_dipole = 'NaN'
 
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Formula:', 'geometry', quiet=self.quiet)
