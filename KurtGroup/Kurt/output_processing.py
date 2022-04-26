@@ -1,10 +1,7 @@
 
-import math
 import subprocess
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib import rc
-from types import FunctionType
+from typing import List
 
 def Forward_search_last(file: str, text: str, error: str, quiet: bool = False) -> int:
     """Searches from the beggining of the file given to the end where it returns the linenumber of the last occurence
@@ -124,25 +121,6 @@ def Forward_search_all(file: str, text: str, error: str, quiet: bool = False) ->
     res = str(res).split('\\n')
     return [int(val.replace('b\'','').replace('\'','').replace(':','')) - 1 for val in res[:-1]]
 
-def Resize(array: list) -> None:
-    """Takes an array of arrays with varying sizes and resizes them to the same size.
-    This is done by appending 'NaN' to the smaller lists.
-    If the first value says 'Not implemented' the remainder of the array will be filled with 'Not implemented
-
-    Args:
-        array (list): Array of arrays with varying sizes
-    """
-    max_size = 0
-    for arr in array:
-        if len(arr) > max_size:
-            max_size = len(arr)
-
-    for i, arr in enumerate(array):
-        if arr == ['Not implemented']:
-            array[i] *= max_size
-        else:
-            array[i] += ['NaN'] * (max_size - len(arr))
-
 def CheckForOnlyNans(array: list) -> bool:
     """Function for checking if an array is fille only with the value 'NaN'
 
@@ -157,221 +135,9 @@ def CheckForOnlyNans(array: list) -> bool:
            return False
     return True
 
-def Data_Extraction(infile, Needed_Values: dict, NeededArguments, quiet: bool = False, Temperature: float = 298.15) -> dict:
-    Extracted_values = dict()
 
-    infile = Output_type(str(infile), NeededArguments, quiet, Temperature)
-
-    # Extracting data
-    Extract_data(quiet, Needed_Values, infile.filename, infile.extract, infile.input)
-
-    # Removing the file text from memory as this is no longer needed (and fills in memory)
-    infile.extract.__delattr__('lines')
-
-    # List of all dictionary keys for infile.extract
-    dict_keys = [*infile.extract.__dict__.keys()]
-
-    # Dictionary
-    collection_dict = dict()
-
-    # Collecting the data in dictionaries
-    for i in dict_keys[1:]:
-        collection_dict[i] =  infile.extract.__dict__[i]
-
-    # Assigning to the Extracted_values dictionary with the filename as key so all data can be easily found in the future
-    Extracted_values[infile.filename] = collection_dict
-
-    return Extracted_values
-
-def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: dict, input_type: str) -> None:
-    # Loops over all requested values and runs the corresponding function
-    # If the function has not been implemented it will print an error message
-    for i in Wanted_Values:
-        try:
-            method = getattr(type(file_text),i)
-            method(file_text)
-        except AttributeError:
-            if not(suppressed):
-                print(f'{infile}: {i} has not been implemented for {input_type}')
-
-def Check_if_Implemented(input_file: str, Set_of_values: dict, Extracted_values: dict) -> None:
-    # Checks to see if the keys of a double dictionary exists
-    # If they don't it is assumed that the function related to the data hasn't been implemented
-    for infile in input_file:
-        for key in Set_of_values:
-            for val in Set_of_values[key]:
-                try:
-                    Extracted_values[infile][val]
-                except KeyError:
-                    Extracted_values[infile][val] = ['Not implemented']
-
-def Collect_and_sort_data(input_file: str, Set_of_values: dict, Extracted_values: dict) -> dict:
-    Final_arrays = dict()
-
-    # All data from Extracted_values is sorted by the Set_of_values
-    # This way excess values in Extracged_values are ignored
-    for key in Set_of_values:
-        for val in Set_of_values[key]:
-            Final_arrays[val] = []
-            for infile in input_file:
-                Final_arrays[val].append(Extracted_values[infile][val])
-    return Final_arrays
-
-def Downsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int, Final_arrays: dict) -> None:
-    # Downsizes arays if requested
-    # If not requested nothing happens
-    for item in Variable_arrays.items():
-        if item[1] > 0:
-            for val in Outputs[item[0]]:
-                for file in range(0,count):
-                    Final_arrays[val][file] = Final_arrays[val][file][0:item[1]]
-
-def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict) -> list:
-    header = ['File']
-    # Adds to the header row all relevant headers for the data-points requested
-    for key in Set_of_values.keys():
-        for val in Set_of_values[key]:
-            if len(Final_arrays[val][0]) > 1:
-                for i in range(len(Final_arrays[val][0])):
-                    header.append(f'{Header_text[val]} {i+1}')
-            else:
-                header.append(Header_text[val])
-    return header
-
-def Fill_output_array(Set_of_values: dict, array_input: dict, count: int, Final_arrays: dict, output_array: list) -> None:
-    # Fills the output array with the header row
-    if count == 1:
-        output_array[1,0] = array_input[0][0]
-    else:
-        output_array[1:,0] = np.array(np.concatenate(array_input))
-
-    # Fills the output array with the requested data
-    # As it is not known the length of all lists in the Final_arrays the col is used to slowly move through the array
-    col = 1
-    for key in Set_of_values.keys():
-        for val in Set_of_values[key]:
-            output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
-            col += len(np.array(Final_arrays[val][0]))
-
-def Make_complex_propagator_spectrum(input_file: list, suppressed: bool, Format: str, Extracted_Values: dict, SAVE: bool = True) -> None:
-    # A LOT OF PLOT SETUP
-    rc('text', usetex=True)
-    xlabel_font = ylabel_font = title_font = 16
-    plt.rc('font', size=12) # x/y axis font size
-    NA=6.02214199*10**23 #avogadros number
-    c=299792458 #speed of light
-    eps0=8.8541878176e-12
-    aufreq=4.134137334*10**16
-    hartreetohz=6.579683920502*10**15
-    Save_Dict = dict()
-        # PLOT SETUP DONE
-    for file in input_file:
-        filename = file.replace('.out','')
-        plotname = f'{filename}-complex-propagator.{Format}'
-        title = filename.replace("_"," ")
-
-        frequencies = np.array([x[0] for x in Extracted_Values[file]['complex_propagator'] if x != 'NaN' and x != 'Not implemented'])
-        imaginary_part = np.array([x[2] for x in Extracted_Values[file]['complex_propagator'] if x != 'NaN' and x != 'Not implemented'])
-
-        if len(frequencies) == 0:
-            if not(suppressed):
-                print(f'Polarizability dampening frequencies have either not been implemented for this output type, or none were found in the file {filename}')
-            continue
-
-        span = c/(frequencies*hartreetohz)*10**9
-        graph = (frequencies*aufreq*10000)/(c*eps0) * (imaginary_part*1.64877727436*10**(-41)*NA)/(2.3*1000)
-
-        plt.title(title)
-        plt.plot(span, graph)
-        plt.ylim((0,max(graph)*1.2))
-        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-        plt.xlabel('Wavelength $(nm)$', fontsize=xlabel_font)
-        plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
-        plt.xticks(fontsize=16)
-        plt.yticks(fontsize=16)
-        plt.savefig(plotname, format=f'{Format}', dpi=600)
-        plt.close()
-
-        if SAVE:
-            Save_Dict[file] = [span,graph]
-    if SAVE:
-        np.savez('complex_propagator.npz', **Save_Dict)
-        print(f'Complex propagator spectrum data has been saved in complex_propagator.npz')
-
-def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
-    lambda_tot = np.zeros(len(t))
-    for x in range(1,len(t)):
-        lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
-    return lambda_tot
-
-def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True) -> None:
-    # A LOT OF PLOT SETUP
-    rc('text', usetex=True)
-    xlabel_font = ylabel_font = title_font = 16
-    plt.rc('font', size=12) # x/y axis font size
-    N=1000 # number of calculated points in curve
-    NA=6.02214199*10**23 #avogadros number
-    c=299792458 #speed of light
-    e=1.60217662*10**(-19) #electron charge
-    me=9.10938*10**(-31) #electron mass
-    pi=math.pi
-    epsvac=8.8541878176*10**(-12)
-    sigmacm=0.4*8065.544
-    k=(NA*e**2)/(np.log(10)*2*me*c**2*epsvac)*np.sqrt(np.log(2)/pi)*10**(-1)
-    inv_cm_to_au = 1/219474.63068
-    Save_Dict = dict()
-        # PLOT SETUP DONE
-    for file in input_file:
-        filename = file.replace('.out','')
-        plotname = f'{filename}-uvvis.{Format}'
-        title = filename.replace("_"," ")
-
-        excitations = np.array([x for x in Extracted_Values[file]['exc_energies'] if x != 'NaN' and x != 'Not implemented'])
-        oscillations = np.array([x for x in Extracted_Values[file]['osc_strengths'] if x != 'NaN' and x != 'Not implemented'])
-
-        if len(excitations) == 0 and len(oscillations) == 0:
-            if not(suppressed):
-                print(f'Excitation energies and oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
-            continue
-        elif len(excitations) == 0:
-            if not(suppressed):
-                print(f'Excitation energies have either not been implemented for this output type, or none were found in the file {filename}')
-            continue
-        elif len(oscillations) == 0:
-            if not(suppressed):
-                print(f'Oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
-            continue
-        elif len(excitations) > len(oscillations):
-            excitations = excitations[0:len(oscillations)]
-        elif len(oscillations) > len(excitations):
-            oscillations = oscillations[0:len(excitations)]
-
-        excitations = 1E7/(excitations/ inv_cm_to_au)   # From a.u. to cm^-1 to nm
-        span = np.linspace(min(excitations)-20, max(excitations)+20, N, endpoint=True) # exctinction coefficient (wavelength range)
-
-        graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
-        plt.title(title)
-        plt.plot(span, graph)
-        plt.ylim((0,max(graph)*1.2))
-        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-        plt.xlabel('Wavelength $(nm)$', fontsize=xlabel_font)
-        plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
-        plt.xticks(fontsize=16)
-        plt.yticks(fontsize=16)
-        plt.savefig(plotname, format=f'{Format}', dpi=600)
-        plt.close()
-
-        if SAVE:
-            Save_Dict[file] = [span,graph]
-    if SAVE:
-        np.savez('UVVIS.npz', **Save_Dict)
-        print(f'UVVIS spectrum data has been saved in UVVIS.npz')
-
-    del Save_Dict # Deletes dictionary from memory since it is no longer needed
-
-
-class Output_type:
-    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15):
+class OutputType:
+    def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15):
         self.filename = filename
 
         with open(self.filename,'r') as read:
@@ -381,33 +147,196 @@ class Output_type:
 
         # File type = ORCA
         if '* O   R   C   A *' in lines[4]:
-            self.extract = orca_extract(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = OrcaExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'ORCA'
 
         # File type = DALTON
         elif '*************** Dalton - An Electronic Structure Program ***************' in lines[3]:
-            self.extract = dal_extract(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = DaltonExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'DALTON'
 
         # File type = GAUSSIAN
         elif 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:
-            self.extract = gaus_extract(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = GaussianExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'GAUSSIAN'
 
         # File type = LSDALTON
         elif '**********  LSDalton - An electronic structure program  **********' in lines[2]:
-            self.extract = lsdal_extract(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = LSDaltonExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'LSDALTON'
 
         # File type = VELOXCHEM
         elif '!                                                       VELOXCHEM                                                        !' in lines[2]:
-            self.extract = velox_extract(self.filename, NeededArguments, Quiet, Temperature)
+            self.extract = VeloxExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'VELOXCHEM'
 
+        # File type not implemented
         else:
             print(f"The output file {self.filename} is not of a known format")
 
         del lines
+
+    def getEnergy(self) -> float:
+        try:
+            return self.extract.tot_energy
+        except AttributeError:
+            try:
+                self.extract._Energy()
+                return self.extract.tot_energy
+            except AttributeError: ...
+
+    def getZeroPointVibrationalEnergy(self) -> float:
+        try:
+            return self.extract.zpv
+        except AttributeError:
+            try:
+                self.extract._ZPV()
+                return self.extract.zpv
+            except AttributeError: ...
+
+    def getEnthalpy(self) -> float:
+        try:
+            return self.extract.enthalpy
+        except AttributeError:
+            try:
+                self.extract.tot_energy
+            except AttributeError:
+                try:
+                    self.extract._Energy()
+                except AttributeError: return
+            try:
+                self.extract.freq
+            except AttributeError:
+                try:
+                    self.extract._Frequencies()
+                except AttributeError: return
+            try:
+                self.extract._Enthalpy()
+                return self.extract.enthalpy
+            except AttributeError: ...
+
+    def getEntropy(self) -> float:
+        try:
+            return self.entropy
+        except AttributeError:
+            try:
+                self.extract.freq
+            except AttributeError:
+                try:
+                    self.extract._Frequencies()
+                except AttributeError: return
+            try:
+                self.extract._Entropy()
+                return self.extract.entropy
+            except AttributeError: ...
+
+    def getGibbsFreeEnergy(self) -> float:
+        try:
+            return self.extract.gibbs
+        except AttributeError:
+            try:
+                self.extract.tot_energy
+            except AttributeError:
+                try:
+                    self.extract._Energy()
+                except AttributeError: return
+            try:
+                self.extract.freq
+            except AttributeError:
+                try:
+                    self.extract._Frequencies()
+                except AttributeError: return
+            try:
+                self.extract.enthalpy
+            except AttributeError:
+                try:
+                    self.extract._Enthalpy()
+                except AttributeError: return
+            try:
+                self.extract.entropy
+            except AttributeError:
+                try:
+                    self.extract._Entropy()
+                except AttributeError: return
+            try:
+                self.extract._Gibbs()
+                return self.extract.gibbs
+            except AttributeError: ...
+
+    def getDipoleMoment(self) -> List[float]:
+        try:
+            return [self.extract.dipolex, self.extract.dipoley, self.extract.dipolez, self.extract.total_dipole]
+        except AttributeError:
+            try:
+                self.extract._Dipole_moments()
+                return [self.extract.dipolex, self.extract.dipoley, self.extract.dipolez, self.extract.total_dipole]
+            except AttributeError: ...
+
+    def getPolarizability(self) -> List[float]:
+        try:
+            return [self.extract.polx, self.extract.poly, self.extract.polz, self.extract.iso_polar]
+        except AttributeError:
+            try:
+                self.extract._Polarizabilities()
+                return [self.extract.polx, self.extract.poly, self.extract.polz, self.extract.iso_polar]
+            except AttributeError: ...
+
+    def getExcitationEnergies(self) -> List[float]:
+        try:
+            return self.extract.exc_energies
+        except AttributeError:
+            try:
+                self.extract._Excitation_energies()
+                return self.extract.exc_energies
+            except AttributeError: ...
+
+    def getOscillatorStrengths(self) -> List[float]:
+        try:
+            return self.extract.osc_strengths
+        except AttributeError:
+            try:
+                self.extract.exc_energies
+            except AttributeError:
+                try:
+                    self.extract._Excitation_energies()
+                except AttributeError: return
+            try:
+                self.extract._Oscillator_strengths()
+                return self.extract.osc_strengths
+            except AttributeError: ...
+
+    def getFrequencies(self) -> List[float]:
+        try:
+            return self.extract.freq
+        except AttributeError:
+            try:
+                self.extract._Frequencies()
+                return self.extract.freq
+            except AttributeError: ...
+
+    def getPartitionFunction(self) -> float:
+        try:
+            return self.extract.qTotal
+        except AttributeError:
+            try:
+                self.extract.freq
+            except AttributeError:
+                try:
+                    self.extract._Frequencies()
+                except AttributeError: return
+            try:
+                self.extract._PartitionFunctions()
+                return self.extract.qTotal
+            except AttributeError: ...
+
+    def getCPUTime(self) -> List[float]:
+        try:
+            return [self.extract.total_cpu_time, self.extract.wall_cpu_time]
+        except AttributeError:
+            try:
+                self.extract._CPUS()
+                return [self.extract.total_cpu_time, self.extract.wall_cpu_time]
+            except AttributeError: ...
 
 
 class Constants:
@@ -423,10 +352,9 @@ class Constants:
         self.au_to_kJmol = 2625.4996394799
 
 
-class velox_extract:
-    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
+class VeloxExtract:
+    def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
-        self.NeededArguments = NeededArguments
         self.quiet = Quiet
         self.T = Temperature
         self.constants = Constants()
@@ -447,10 +375,9 @@ class velox_extract:
         self.tot_energy = 'NaN'
 
 
-class gaus_extract:
-    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
+class GaussianExtract:
+    def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
-        self.NeededArguments = NeededArguments
         self.quiet = Quiet
         self.T = Temperature
         self.constants = Constants()
@@ -468,12 +395,6 @@ class gaus_extract:
         if type(linenumber) == int:
             self.total_cpu_time = float(self.lines[linenumber].split()[3])*24*60 + float(self.lines[linenumber].split()[5])*60 + float(self.lines[linenumber].split()[7]) + float(self.lines[linenumber].split()[9])/60
             self.wall_cpu_time = float(self.lines[linenumber+1].split()[2])*24*60 + float(self.lines[linenumber+1].split()[4])*60 + float(self.lines[linenumber+1].split()[6]) + float(self.lines[linenumber+1].split()[8])/60
-            if self.NeededArguments['_CPUS'] == 's':
-                self.total_cpu_time *= 60
-                self.wall_cpu_time *= 60
-            elif self.NeededArguments['_CPUS'] == 'h':
-                self.total_cpu_time /= 60
-                self.wall_cpu_time /= 60
             return
         self.total_cpu_time = 'NaN'
         self.wall_cpu_time = 'NaN'
@@ -521,9 +442,7 @@ class gaus_extract:
                 for j in self.lines[i].split()[2:]:
                     self.freq.append(float(j)* self.constants.inv_cm_to_au)
         if len(self.freq) == 0:
-            self.freq = ['NaN'] * abs(self.NeededArguments['_Frequencies'])
-        if len(self.freq) < self.NeededArguments['_Frequencies']:
-            self.freq += ['NaN'] * (self.NeededArguments['_Frequencies'] - len(self.freq))
+            self.freq = ['NaN']
 
     def _Excitation_energies(self) -> None:
         self.exc_energies = []
@@ -534,9 +453,7 @@ class gaus_extract:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[4])* self.constants.ev_to_au)
         if len(self.exc_energies) == 0:
-            self.exc_energies = ['NaN'] * abs(self.NeededArguments['_Excitation_energies'])
-        if len(self.exc_energies) < self.NeededArguments['_Excitation_energies']:
-            self.exc_energies += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.exc_energies))
+            self.exc_energies = ['NaN']
 
     def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
@@ -549,9 +466,7 @@ class gaus_extract:
                     if 'f=' in j:
                         self.osc_strengths.append(float(j.replace('f=','')))
         if len(self.osc_strengths) == 0:
-            self.osc_strengths = ['NaN'] * abs(self.NeededArguments['_Excitation_energies'])
-        if len(self.osc_strengths) < self.NeededArguments['_Excitation_energies']:
-            self.osc_strengths += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
+            self.osc_strengths = ['NaN']
 
     def _RotationalConsts(self) -> None:
         self.rots = []
@@ -647,10 +562,9 @@ class gaus_extract:
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
 
 
-class orca_extract:
-    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
+class OrcaExtract:
+    def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
-        self.NeededArguments = NeededArguments
         self.quiet = Quiet
         self.T = Temperature
         self.constants = Constants()
@@ -670,24 +584,9 @@ class orca_extract:
             linenumber2 = Forward_search_last(self.filename, '%pal nprocs', 'CPU count', quiet=True)
             if type(linenumber2) == int:
                 self.total_cpu_time = self.wall_cpu_time * int(self.lines[linenumber2].split()[-1])
-                total_cpu_time = True
             linenumber3 = Forward_search_last(self.filename, 'PAL', 'CPU count', quiet=self.quiet)
             if type(linenumber3) == int:
                 self.total_cpu_time = self.wall_cpu_time * int(self.lines[linenumber3].split()[-1][3:])
-                total_cpu_time = True
-            if total_cpu_time:
-                if self.NeededArguments['_CPUS'] == 's':
-                    self.total_cpu_time *= 60
-                    self.wall_cpu_time *= 60
-                elif self.NeededArguments['_CPUS'] == 'h':
-                    self.total_cpu_time /= 60
-                    self.wall_cpu_time /= 60
-            else:
-                self.total_cpu_time = 'NaN'
-                if self.NeededArguments['_CPUS'] == 's':
-                    self.wall_cpu_time *= 60
-                elif self.NeededArguments['_CPUS'] == 'h':
-                    self.wall_cpu_time /= 60
             return
         self.total_cpu_time = 'NaN'
         self.wall_cpu_time = 'NaN'
@@ -757,9 +656,7 @@ class orca_extract:
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[3]))
         if len(self.exc_energies) == 0:
-            self.exc_energies = ['NaN'] * abs(self.NeededArguments['_Excitation_energies']  )
-        if len(self.exc_energies) < self.NeededArguments['_Excitation_energies']:
-            self.exc_energies += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.exc_energies))
+            self.exc_energies = ['NaN']
 
     def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
@@ -771,9 +668,7 @@ class orca_extract:
                 else:
                     self.osc_strengths.append('NaN')
         if len(self.osc_strengths) == 0:
-            self.osc_strengths = ['NaN'] * abs(self.NeededArguments['_Excitation_energies'])
-        if len(self.osc_strengths) < self.NeededArguments['_Excitation_energies']:
-            self.osc_strengths += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
+            self.osc_strengths = ['NaN']
 
     def _Frequencies(self) -> None:
         self.freq = []
@@ -787,9 +682,7 @@ class orca_extract:
                 else:
                     break
         if len(self.freq) == 0:
-            self.freq = ['NaN'] * abs(self.NeededArguments['_Frequencies'])
-        if len(self.freq) < self.NeededArguments['_Frequencies']:
-            self.freq += ['NaN'] * (self.NeededArguments['_Frequencies'] - len(self.freq))
+            self.freq = ['NaN']
 
     def _RotationalConsts(self) -> None:
         self.rots = []
@@ -860,7 +753,7 @@ class orca_extract:
         self.entropy = self.S_T+self.S_R+self.S_V+self.S_E
 
 
-class dal_extract:
+class DaltonExtract:
     def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
         self.NeededArguments = NeededArguments
@@ -918,12 +811,6 @@ Please contact a maintainer of the script ot have this updated''')
                     print('''It was not expected that DALTON would print anything larger than days in the total CPU time
 This will not be accounted for when printing the CPU time. The result will therefore not be correct
 Please contact a maintainer of the script ot have this updated''')
-            if self.NeededArguments['_CPUS'] == 's':
-                self.total_cpu_time *= 60
-                self.wall_cpu_time *= 60
-            elif self.NeededArguments['_CPUS'] == 'h':
-                self.total_cpu_time /= 60
-                self.wall_cpu_time /= 60
             return
         self.wall_cpu_time = 'NaN'
         self.total_cpu_time = 'NaN'
@@ -982,9 +869,7 @@ Please contact a maintainer of the script ot have this updated''')
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[-2]))
         if len(self.exc_energies) == 0:
-            self.exc_energies = ['NaN'] * abs(self.NeededArguments['_Excitation_energies'])
-        if len(self.exc_energies) < self.NeededArguments['_Excitation_energies']:
-            self.exc_energies += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.exc_energies))
+            self.exc_energies = ['NaN']
 
     def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
@@ -1006,10 +891,7 @@ Please contact a maintainer of the script ot have this updated''')
                             osc += float(j.split()[5])**2
                     self.osc_strengths.append(osc**0.5)
         if len(self.osc_strengths) == 0:
-            self.osc_strengths = ['NaN'] * len(self.exc_energies)
-            return
-        if len(self.osc_strengths) < self.NeededArguments['_Excitation_energies']:
-            self.osc_strengths += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
+            self.osc_strengths = ['NaN']
 
     def _Frequencies(self) -> None:
         self.freq = []
@@ -1020,9 +902,7 @@ Please contact a maintainer of the script ot have this updated''')
                     break
                 self.freq.append(float(i.split()[3]))
         if len(self.freq) == 0:
-            self.freq = ['NaN'] * abs(self.NeededArguments['_Frequencies'])
-        if len(self.freq) < self.NeededArguments['_Frequencies']:
-            self.freq += ['NaN'] * (self.NeededArguments['_Frequencies'] - len(self.freq))
+            self.freq = ['NaN']
 
     def _RotationalConsts(self) -> None:
         self.rots = []
@@ -1120,7 +1000,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
 
 
-class lsdal_extract:
+class LSDaltonExtract:
     def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
         self.filename = filename
         self.NeededArguments = NeededArguments
@@ -1169,12 +1049,6 @@ Please contact a maintainer of the script ot have this updated''')
                     print('''It was not expected that LSDALTON would print anything larger than days in the total CPU time
 This will not be accounted for when printing the CPU time. The result will therefore not be correct
 Please contact a maintainer of the script ot have this updated''')
-            if self.NeededArguments['_CPUS'] == 's':
-                self.total_cpu_time *= 60
-                self.wall_cpu_time *= 60
-            elif self.NeededArguments['_CPUS'] == 'h':
-                self.total_cpu_time /= 60
-                self.wall_cpu_time /= 60
             return
         self.total_cpu_time = 'NaN'
         self.wall_cpu_time = 'NaN'
@@ -1231,9 +1105,7 @@ Please contact a maintainer of the script ot have this updated''')
                     break
                 self.exc_energies.append(float(self.lines[i].split()[0]))
         if len(self.exc_energies) == 0:
-            self.exc_energies = ['NaN'] * abs(self.NeededArguments['_Excitation_energies']  )
-        if len(self.exc_energies) < self.NeededArguments['_Excitation_energies']:
-            self.exc_energies += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.exc_energies))
+            self.exc_energies = ['NaN']
 
     def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
@@ -1242,6 +1114,4 @@ Please contact a maintainer of the script ot have this updated''')
             for i in range(len(self.exc_energies)):
                 self.osc_strengths.append(float(self.lines[linenumber+8+i].split()[-1]))
         if len(self.osc_strengths) == 0:
-            self.osc_strengths = ['NaN'] * abs(self.NeededArguments['_Excitation_energies'])
-        if len(self.osc_strengths) < self.NeededArguments['_Excitation_energies']:
-            self.osc_strengths += ['NaN'] * (self.NeededArguments['_Excitation_energies'] - len(self.osc_strengths))
+            self.osc_strengths = ['NaN']
