@@ -1,5 +1,5 @@
 
-from . import chemical_information as ci
+import chemical_information as ci
 import numpy as np
 import json
 import os
