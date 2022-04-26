@@ -5,10 +5,8 @@ from ...KurtGroup.Kurt import chemical_information as ci
 
 def generateDaltonInputFileText(XYZ: xyz.xyz_to, charge: int) -> str:
     """Makes the text for a Dalton input file
-
     Args:
         charge (int): The charge of the molecule
-
     Returns:
         str: Returns the file text
     """
@@ -22,7 +20,6 @@ Exiting program''')
     unique_atoms = set(XYZ.atoms[:,0])
     XYZ.filetext = f'''ATOMBASIS
 ./{XYZ.filename}
-
 Atomtypes={len(unique_atoms)} Charge={charge} NoSymmetry Angstrom
 '''
 
