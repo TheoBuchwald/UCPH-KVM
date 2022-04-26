@@ -4,9 +4,252 @@ import numpy as np
 from KurtGroup.Kurt import output_processing as op
 from functools import partial
 from multiprocessing import Pool, cpu_count
+import matplotlib.pyplot as plt
+from matplotlib import rc
+from types import FunctionType
 
 
 #*************************** INPUT PARSING ****************************
+
+def Resize(array: list) -> None:
+    """Takes an array of arrays with varying sizes and resizes them to the same size.
+    This is done by appending 'NaN' to the smaller lists.
+    If the first value says 'Not implemented' the remainder of the array will be filled with 'Not implemented
+
+    Args:
+        array (list): Array of arrays with varying sizes
+    """
+    max_size = 0
+    for arr in array:
+        if len(arr) > max_size:
+            max_size = len(arr)
+
+    for i, arr in enumerate(array):
+        if arr == ['Not implemented']:
+            array[i] *= max_size
+        else:
+            array[i] += ['NaN'] * (max_size - len(arr))
+
+def Data_Extraction(infile, Needed_Values: dict, quiet: bool = False, Temperature: float = 298.15) -> dict:
+    Extracted_values = dict()
+
+    infile = op.OutputType(str(infile), Quiet=quiet, Temperature=Temperature)
+
+    # Extracting data
+    Extract_data(quiet, Needed_Values, infile.filename, infile.extract, infile.input)
+
+    # Removing the file text from memory as this is no longer needed (and fills in memory)
+    infile.extract.__delattr__('lines')
+
+    # List of all dictionary keys for infile.extract
+    dict_keys = [*infile.extract.__dict__.keys()]
+
+    # Dictionary
+    collection_dict = dict()
+
+    # Collecting the data in dictionaries
+    for i in dict_keys[1:]:
+        collection_dict[i] =  infile.extract.__dict__[i]
+
+    # Assigning to the Extracted_values dictionary with the filename as key so all data can be easily found in the future
+    Extracted_values[infile.filename] = collection_dict
+
+    return Extracted_values
+
+def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: dict, input_type: str) -> None:
+    # Loops over all requested values and runs the corresponding function
+    # If the function has not been implemented it will print an error message
+    for i in Wanted_Values:
+        try:
+            method = getattr(type(file_text),i)
+            method(file_text)
+        except AttributeError:
+            if not(suppressed):
+                print(f'{infile}: {i} has not been implemented for {input_type}')
+
+def Check_if_Implemented(input_file: dict, Set_of_values: dict, Extracted_values: dict) -> None:
+    # Checks to see if the keys of a double dictionary exists
+    # If they don't it is assumed that the function related to the data hasn't been implemented
+    for infile in input_file:
+        for values in Set_of_values.values():
+            for val in values:
+                try:
+                    Extracted_values[infile][val]
+                except KeyError:
+                    Extracted_values[infile][val] = ['Not implemented']
+
+def Collect_and_sort_data(input_file: str, Set_of_values: dict, Extracted_values: dict) -> dict:
+    Final_arrays = dict()
+
+    # All data from Extracted_values is sorted by the Set_of_values
+    # This way excess values in Extracged_values are ignored
+    for key in Set_of_values:
+        for val in Set_of_values[key]:
+            Final_arrays[val] = []
+            for infile in input_file:
+                Final_arrays[val].append(Extracted_values[infile][val])
+    return Final_arrays
+
+def Downsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int, Final_arrays: dict) -> None:
+    # Downsizes arrays if requested
+    # If not requested nothing happens
+    for item in Variable_arrays.items():
+        if item[1] > 0:
+            for val in Outputs[item[0]]:
+                for file in range(0,count):
+                    Final_arrays[val][file] = Final_arrays[val][file][0:item[1]]
+
+def Upsizing_variable_arrays(Outputs: dict, Variable_arrays: dict, count: int, Final_arrays: dict, Arguments: dict) -> None:
+    # Upsizes arrays if requested
+    # If not requested nothing happens
+    for key, arg in Variable_arrays.items():
+        for val in Outputs[key]:
+            for file in range(0,count):
+                Final_arrays[val][file] += ['NaN'] * (arg-len(Final_arrays[val][file]))
+
+
+def Create_Header(Header_text: dict, Set_of_values: dict, Final_arrays: dict) -> list:
+    header = ['File']
+    # Adds to the header row all relevant headers for the data-points requested
+    for key in Set_of_values.keys():
+        for val in Set_of_values[key]:
+            if len(Final_arrays[val][0]) > 1:
+                for i in range(len(Final_arrays[val][0])):
+                    header.append(f'{Header_text[val]} {i+1}')
+            else:
+                header.append(Header_text[val])
+    return header
+
+def Fill_output_array(Set_of_values: dict, array_input: dict, count: int, Final_arrays: dict, output_array: list) -> None:
+    # Fills the output array with the header row
+    if count == 1:
+        output_array[1,0] = array_input[0][0]
+    else:
+        output_array[1:,0] = np.array(np.concatenate(array_input))
+
+    # Fills the output array with the requested data
+    # As it is not known the length of all lists in the Final_arrays the col is used to slowly move through the array
+    col = 1
+    for key in Set_of_values.keys():
+        for val in Set_of_values[key]:
+            output_array[1:,col:col+len(np.array(Final_arrays[val][0]))] = np.array(Final_arrays[val])
+            col += len(np.array(Final_arrays[val][0]))
+
+def Make_complex_propagator_spectrum(input_file: list, suppressed: bool, Format: str, Extracted_Values: dict, SAVE: bool = True) -> None:
+    # A LOT OF PLOT SETUP
+    rc('text', usetex=True)
+    xlabel_font = ylabel_font = title_font = 16
+    plt.rc('font', size=12) # x/y axis font size
+    NA=6.02214199*10**23 #avogadros number
+    c=299792458 #speed of light
+    eps0=8.8541878176e-12
+    aufreq=4.134137334*10**16
+    hartreetohz=6.579683920502*10**15
+    Save_Dict = dict()
+        # PLOT SETUP DONE
+    for file in input_file:
+        filename = file.replace('.out','')
+        plotname = f'{filename}-complex-propagator.{Format}'
+        title = filename.replace("_"," ")
+
+        frequencies = np.array([x[0] for x in Extracted_Values[file]['complex_propagator'] if x != 'NaN' and x != 'Not implemented'])
+        imaginary_part = np.array([x[2] for x in Extracted_Values[file]['complex_propagator'] if x != 'NaN' and x != 'Not implemented'])
+
+        if len(frequencies) == 0:
+            if not(suppressed):
+                print(f'Polarizability dampening frequencies have either not been implemented for this output type, or none were found in the file {filename}')
+            continue
+
+        span = c/(frequencies*hartreetohz)*10**9
+        graph = (frequencies*aufreq*10000)/(c*eps0) * (imaginary_part*1.64877727436*10**(-41)*NA)/(2.3*1000)
+
+        plt.title(title)
+        plt.plot(span, graph)
+        plt.ylim((0,max(graph)*1.2))
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        plt.xlabel('Wavelength $(nm)$', fontsize=xlabel_font)
+        plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=16)
+        plt.savefig(plotname, format=f'{Format}', dpi=600)
+        plt.close()
+
+        if SAVE:
+            Save_Dict[file] = [span,graph]
+    if SAVE:
+        np.savez('complex_propagator.npz', **Save_Dict)
+        print(f'Complex propagator spectrum data has been saved in complex_propagator.npz')
+
+def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
+    lambda_tot = np.zeros(len(t))
+    for x in range(1,len(t)):
+        lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
+    return lambda_tot
+
+def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True) -> None:
+    # A LOT OF PLOT SETUP
+    rc('text', usetex=True)
+    xlabel_font = ylabel_font = title_font = 16
+    plt.rc('font', size=12) # x/y axis font size
+    N=1000 # number of calculated points in curve
+    NA=6.02214199*10**23 #avogadros number
+    c=299792458 #speed of light
+    e=1.60217662*10**(-19) #electron charge
+    me=9.10938*10**(-31) #electron mass
+    pi=np.pi
+    epsvac=8.8541878176*10**(-12)
+    sigmacm=0.4*8065.544
+    k=(NA*e**2)/(np.log(10)*2*me*c**2*epsvac)*np.sqrt(np.log(2)/pi)*10**(-1)
+    inv_cm_to_au = 1/219474.63068
+    Save_Dict = dict()
+        # PLOT SETUP DONE
+    for file in input_file:
+        filename = file.replace('.out','')
+        plotname = f'{filename}-uvvis.{Format}'
+        title = filename.replace("_"," ")
+
+        excitations = np.array([x for x in Extracted_Values[file]['exc_energies'] if x != 'NaN' and x != 'Not implemented'])
+        oscillations = np.array([x for x in Extracted_Values[file]['osc_strengths'] if x != 'NaN' and x != 'Not implemented'])
+
+        if len(excitations) == 0 and len(oscillations) == 0:
+            if not(suppressed):
+                print(f'Excitation energies and oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
+            continue
+        elif len(excitations) == 0:
+            if not(suppressed):
+                print(f'Excitation energies have either not been implemented for this output type, or none were found in the file {filename}')
+            continue
+        elif len(oscillations) == 0:
+            if not(suppressed):
+                print(f'Oscillator strengths have either not been implemented for this output type, or none were found in the file {filename}')
+            continue
+        elif len(excitations) > len(oscillations):
+            excitations = excitations[0:len(oscillations)]
+        elif len(oscillations) > len(excitations):
+            oscillations = oscillations[0:len(excitations)]
+
+        excitations = 1E7/(excitations/ inv_cm_to_au)   # From a.u. to cm^-1 to nm
+        span = np.linspace(min(excitations)-20, max(excitations)+20, N, endpoint=True) # exctinction coefficient (wavelength range)
+
+        graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
+        plt.title(title)
+        plt.plot(span, graph)
+        plt.ylim((0,max(graph)*1.2))
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+        plt.xlabel('Wavelength $(nm)$', fontsize=xlabel_font)
+        plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=16)
+        plt.savefig(plotname, format=f'{Format}', dpi=600)
+        plt.close()
+
+        if SAVE:
+            Save_Dict[file] = [span,graph]
+    if SAVE:
+        np.savez('UVVIS.npz', **Save_Dict)
+        print(f'UVVIS spectrum data has been saved in UVVIS.npz')
+
+    del Save_Dict # Deletes dictionary from memory since it is no longer needed
 
 def Spectra(args):
     """
@@ -26,21 +269,21 @@ def Spectra(args):
 
         if MULTIPROCESSING:
             with Pool(int(cpu_count()/2)) as pool:
-                Extracted_Values = pool.map(partial(op.Data_Extraction, Needed_Values=NeededArguments, NeededArguments=NeededArguments, quiet=quiet), input_file)
+                Extracted_Values = pool.map(partial(Data_Extraction, Needed_Values=NeededArguments, quiet=quiet), input_file)
                 Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
         else:
             Extracted_Values = dict()
             for infile in input_file:
-                Extracted_Values[infile] = op.Data_Extraction(infile, NeededArguments, NeededArguments, quiet)[infile]
+                Extracted_Values[infile] = Data_Extraction(infile, NeededArguments, quiet)[infile]
 
-        op.Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
+        Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
 
         for key_outer in Extracted_Values.keys():   # Turn everything into lists
             for key_inner in Extracted_Values[key_outer].keys():
                 if type(Extracted_Values[key_outer][key_inner]) != list:
                     Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
-        op.Make_uvvis_spectrum(input_file, quiet, op.UVVIS_Spectrum, format, Extracted_Values, SAVE)
+        Make_uvvis_spectrum(input_file, quiet, UVVIS_Spectrum, format, Extracted_Values, SAVE)
 
     elif complex_propagator:
         NeededArguments = {'_Complex_propagator': True}
@@ -48,21 +291,21 @@ def Spectra(args):
 
         if MULTIPROCESSING:
             with Pool(int(cpu_count()/2)) as pool:
-                Extracted_Values = pool.map(partial(op.Data_Extraction, Needed_Values=NeededArguments, NeededArguments=NeededArguments, quiet=quiet), input_file)
+                Extracted_Values = pool.map(partial(Data_Extraction, Needed_Values=NeededArguments, quiet=quiet), input_file)
                 Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
         else:
             Extracted_Values = dict()
             for infile in input_file:
-                Extracted_Values[infile] = op.Data_Extraction(infile, NeededArguments, NeededArguments, quiet)[infile]
+                Extracted_Values[infile] = Data_Extraction(infile, NeededArguments, quiet)[infile]
 
-        op.Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
+        Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
 
         for key_outer in Extracted_Values.keys():   # Turn everything into lists
             for key_inner in Extracted_Values[key_outer].keys():
                 if type(Extracted_Values[key_outer][key_inner]) != list:
                     Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
-        op.Make_complex_propagator_spectrum(input_file, quiet, format, Extracted_Values, SAVE)
+        Make_complex_propagator_spectrum(input_file, quiet, format, Extracted_Values, SAVE)
 
     else:
         print('Doing nothing - please use --uvvis or --complex-propagator')
@@ -192,18 +435,31 @@ def Extract(args):
     # Else they will be run in a linear fashion
     if MULTIPROCESSING:
         with Pool(int(cpu_count()/2)) as pool:
-            Extracted_Values = pool.map(partial(op.Data_Extraction, Needed_Values=Needed_Values, NeededArguments=NeededArguments, quiet=quiet, Temperature=T), input_files)
+            Extracted_Values = pool.map(partial(Data_Extraction, Needed_Values=Needed_Values, quiet=quiet, Temperature=T), input_files)
             Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
     else:
         Extracted_Values = dict()
-        for infile in input_files:
-            Extracted_Values[infile] = op.Data_Extraction(infile, Needed_Values, NeededArguments, quiet, T)[infile]
+        for file in input_files:
+            Extracted_Values[file] = Data_Extraction(file, Needed_Values, quiet, T)[file]
 
     # Creating Input_Array where all values are put in lists
     Input_Array = [[i] for i in Extracted_Values]
 
     # Checking if some functions have not been implemented for the relevant extraction types
-    op.Check_if_Implemented(input_files, Set_of_Values, Extracted_Values)
+    Check_if_Implemented(input_files, Set_of_Values, Extracted_Values)
+
+    # If the CPU time has been requested in second or hours instead of minutes
+    # then the calculation from minutes to the requested unit is done here
+    if RequestedArguments['_CPUS'] == 's':
+        for file in input_files:
+            if Extracted_Values[file]['total_cpu_time'] != ['Not Implemented']:
+                Extracted_Values[file]['total_cpu_time'] *= 60
+                Extracted_Values[file]['wall_cpu_time'] *= 60
+    elif NeededArguments['_CPUS'] == 'h':
+        for file in input_files:
+            if Extracted_Values[file]['total_cpu_time'] != ['Not Implemented']:
+                Extracted_Values[file]['total_cpu_time'] /= 60
+                Extracted_Values[file]['wall_cpu_time'] /= 60
 
     # If something is at this point not in a list somehow they will be after this
     for key_outer in Extracted_Values.keys():
@@ -213,26 +469,27 @@ def Extract(args):
 
     # Collecting all values in arrays in a dictionary
     # Some values in the Extracted_Values dictionary may not have been requested, so these are removed here
-    Final_arrays = op.Collect_and_sort_data(input_files, Set_of_Values, Extracted_Values)
+    Final_arrays = Collect_and_sort_data(input_files, Set_of_Values, Extracted_Values)
 
     # Resizing arrays
     # An example is Excitation energies where there may be more of them in one output file than another
     # By doing this it fits properly in what is printed to the terminal
     for key in Final_arrays.keys():
         if type(Final_arrays[key]) == list:
-            op.Resize(Final_arrays[key])
+            Resize(Final_arrays[key])
 
     # Fixing the size of variable size arrays so that they match what was requested
-    op.Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)
+    Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)
+    Upsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays, RequestedArguments)
 
     # Creation of header row
-    Header = op.Create_Header(Header_text, Set_of_Values, Final_arrays)
+    Header = Create_Header(Header_text, Set_of_Values, Final_arrays)
 
     # Create output array from header row
     Output_Array = np.array([Header] * (count + 1), dtype=object)
 
     # Filling the output array with the extracted data
-    op.Fill_output_array(Set_of_Values, Input_Array, count, Final_arrays, Output_Array)
+    Fill_output_array(Set_of_Values, Input_Array, count, Final_arrays, Output_Array)
 
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
