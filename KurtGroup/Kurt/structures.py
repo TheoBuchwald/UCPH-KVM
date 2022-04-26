@@ -2,7 +2,7 @@
 import numpy as np
 from ase.build import fcc110, bcc110, hcp0001, diamond100
 from ase.spacegroup import crystal
-from . import chemical_information as ci
+import chemical_information as ci
 
 class NanoParticle():
     def __init__(self, nanoparticle: str) -> None:
