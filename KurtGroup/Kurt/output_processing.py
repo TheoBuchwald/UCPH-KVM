@@ -383,6 +383,9 @@ class OutputType:
                 return [self.extract.total_cpu_time, self.extract.wall_cpu_time]
             except AttributeError: ...
 
+    def getOptimizedGeometry(self) -> None:
+        self.extract._Optimized_Geometry()
+
 
 class Constants:
     def __init__(self) -> None:
