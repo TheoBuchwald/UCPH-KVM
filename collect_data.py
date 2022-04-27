@@ -140,11 +140,11 @@ def Make_complex_propagator_spectrum(input_file: list, suppressed: bool, Format:
     rc('text', usetex=True)
     xlabel_font = ylabel_font = title_font = 16
     plt.rc('font', size=12) # x/y axis font size
-    NA=6.02214199*10**23 #avogadros number
-    c=299792458 #speed of light
-    eps0=8.8541878176e-12
-    aufreq=4.134137334*10**16
-    hartreetohz=6.579683920502*10**15
+    NA=6.02214199E23 #a vogadros number
+    c=299792458 # speed of light
+    eps0=8.8541878176E-12
+    aufreq=4.134137334E16
+    hartreetohz=6.579683920502E15
     Save_Dict = dict()
         # PLOT SETUP DONE
     for file in input_file:
@@ -284,6 +284,7 @@ def Spectra(args):
                     Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
         Make_uvvis_spectrum(input_file, quiet, UVVIS_Spectrum, format, Extracted_Values, SAVE)
+        return
 
     elif complex_propagator:
         NeededArguments = {'_Complex_propagator': True}
@@ -306,9 +307,9 @@ def Spectra(args):
                     Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
         Make_complex_propagator_spectrum(input_file, quiet, format, Extracted_Values, SAVE)
+        return
 
-    else:
-        print('Doing nothing - please use --uvvis or --complex-propagator')
+    print('Doing nothing - please use --uvvis or --complex-propagator')
 
 
 
@@ -498,12 +499,19 @@ def Extract(args):
     if SAVE == 'csv':
         np.savetxt('data.csv', Output_Array, delimiter=',', fmt='%s')
         print(f'Data has been saved in data.csv')
+        return
+
     elif SAVE == 'npz':
         Save_Dict = {i[0]: i[1:] for i in Output_Array}
         np.savez('data.npz', **Save_Dict)
         print(f'Data has been saved in data.npz')
-    else:
-        print(Output_Array)
+        return
+
+    if len(Output_Array) == count + 1:
+        print("No data was extracted, therefore nothing more will be printed")
+        return
+
+    print(Output_Array)
 
 
 def main():
@@ -523,14 +531,15 @@ def main():
                 -  GAUSSIAN
                 -  LSDALTON
                 -  VELOXCHEM
-                -  AMSTERDAM MODELING SUITE'''
-    , epilog=f'''
+                -  AMSTERDAM MODELING SUITE
+''', epilog=f'''
 For help contact
     Theo Juncker von Buchwald
     fnc970@alumni.ku.dk
 
     Magnus Bukhave Johansen
-    qhw298@alumni.ku.dk''')
+    qhw298@alumni.ku.dk
+''')
 
     #---------------------------
     # Creating spectra subparser
@@ -567,8 +576,8 @@ For help contact
 
     The following is not implemented for AMSTERDAM MODELING SUITE
     -  UVVIS based on excitation energies
-    -  UVVIS based on complex propagator theory'''
-    , help='Use to make spectra such as UVVIS from excitation energies or complex propagator theory')
+    -  UVVIS based on complex propagator theory
+''', help='Use to make spectra such as UVVIS from excitation energies or complex propagator theory')
 
     # Setting the Spectra function to be run if spectra is used
     Spectra_subparser.set_defaults(func=Spectra)
@@ -689,5 +698,3 @@ For help contact
 
 if __name__ == "__main__":
     main()
-
-#EOF
