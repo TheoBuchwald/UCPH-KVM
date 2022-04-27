@@ -548,6 +548,7 @@ For help contact
                 -  GAUSSIAN
                 -  LSDALTON
                 -  VELOXCHEM
+                -  AMSTERDAM MODELING SUITE
 
     It is currently possible to make UVVIS spectra using excitation energies and complex propagator theory
 
@@ -561,6 +562,10 @@ For help contact
     -  UVVIS based on complex propagator theory
 
     The following is not implemented for VELOXCHEM
+    -  UVVIS based on excitation energies
+    -  UVVIS based on complex propagator theory
+
+    The following is not implemented for AMSTERDAM MODELING SUITE
     -  UVVIS based on excitation energies
     -  UVVIS based on complex propagator theory'''
     , help='Use to make spectra such as UVVIS from excitation energies or complex propagator theory')
