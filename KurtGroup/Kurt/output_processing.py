@@ -203,9 +203,10 @@ class OutputType:
             self.input = 'LSDALTON'
 
         # File type = VELOXCHEM
-        elif '!                                                       VELOXCHEM                                                        !' in lines[2]:
+        elif 'VELOXCHEM' in lines[2]:
             self.extract = VeloxExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'VELOXCHEM'
+
 
 
         # File type = AMS
@@ -394,6 +395,7 @@ class Constants:
         self.gas_constant = 8.31446261815324E-03 # In kJ/(mol*K)
         self.s_trans_const = 0.3160965065 #Assuming 1 bar standard pressure and molar
         self.au_to_kJmol = 2625.4996394799
+        self.bohr_to_ao = 0.529177249
 
 
 class VeloxExtract:
@@ -417,6 +419,24 @@ class VeloxExtract:
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
         self.tot_energy = 'NaN'
+    
+    def _Optimized_Geometry(self) -> None:
+        start = Forward_search_last(self.filename, 'Molecular Geometry', 'geometry', quiet=self.quiet)
+        end = Forward_search_after_last(self.filename, 'Molecular Geometry', 'Summary of Geometry', 200, "end of geometry", quiet=self.quiet)
+        offset_single_point = 0 #Need different offset if single point calc
+        if end == "NaN":
+           end = Forward_search_after_last(self.filename, 'Molecular Geometry', 'Molecular charge', 200, "end of geometry", quiet=self.quiet)
+           offset_single_point = 1
+        if start != "NaN" and end != "NaN":
+            #Offset for going into actual coordinate list
+            start += 5
+            end -= 2 - offset_single_point
+            #Which position in the line is the atom label / number at
+            label_location = 0
+            OptGeomFilename = self.filename[:-4] + "_opt.xyz"
+            GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
+            if not(self.quiet):
+                print("Final geometry has been saved to " + OptGeomFilename)
 
 class AMSExtract:
     def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
@@ -438,6 +458,20 @@ class AMSExtract:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         self.tot_energy = 'NaN'
+    
+    def _Optimized_Geometry(self) -> None:
+        start = Forward_search_last(self.filename, 'Formula:', 'geometry', quiet=self.quiet)
+        end = Forward_search_after_last(self.filename, 'Formula:', 'Total System Charge', 200, "end of geometry", quiet=self.quiet)
+        if start != "NaN" and end != "NaN":
+            #Offset for going into actual coordinate list
+            start += 3
+            end -= 1
+            #Which position in the line is the atom label / number at
+            label_location = 1
+            OptGeomFilename = self.filename[:-4] + "_opt.xyz"
+            GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
+            if not(self.quiet):
+                print("Final geometry has been saved to " + OptGeomFilename)
 
 class GaussianExtract:
     def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
@@ -637,7 +671,7 @@ class GaussianExtract:
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
             GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location, transform = True)
             if not(self.quiet):
-                print("Optimized geometry has been saved to " + OptGeomFilename)
+                print("Final geometry has been saved to " + OptGeomFilename)
 
 
 
@@ -845,7 +879,7 @@ class OrcaExtract:
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
             GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
             if not(self.quiet):
-                print("Optimized geometry has been saved to " + OptGeomFilename)
+                print("Final geometry has been saved to " + OptGeomFilename)
 
 
 class DaltonExtract:
@@ -1093,6 +1127,37 @@ Please contact a maintainer of the script ot have this updated''')
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
+
+    def _Optimized_Geometry(self) -> None:
+        start = Forward_search_last(self.filename, 'Final geometry (xyz format; angstrom)', 'final geometry', quiet=self.quiet)
+        end = Forward_search_after_last(self.filename, 'Final geometry (xyz format; angstrom)', '@ Iter', 200, "end of final geometry", quiet=self.quiet)
+        if start != "NaN" and end != "NaN":
+            #Offset for going into actual coordinate list
+            start += 5
+            end -= 3
+            #Which position in the line is the atom label / number at
+            label_location = 0
+            OptGeomFilename = self.filename[:-4] + "_opt.xyz"
+            GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
+            if not(self.quiet):
+                print("Final geometry has been saved to " + OptGeomFilename)
+        else:
+            start = Forward_search_last(self.filename, 'Cartesian Coordinates', 'initial geometry', quiet=self.quiet)
+            end = Forward_search_after_last(self.filename, 'Cartesian Coordinates', 'Interatomic separations', 200, "end of initial geometry", quiet=self.quiet)
+            if start != "NaN" and end != "NaN":
+                start += 4
+                end -= 2
+                lines_to_add = []
+                lines_to_add.append(str(end-(start))+ '\n')
+                lines_to_add.append('\n')
+                for line in self.lines[start:end]:
+                    words = line.split()
+                    lines_to_add.append(''.join([words[0].ljust(2),' ',f"{float(words[-7]) * self.constants.bohr_to_ao:.7f}".rjust(10),' ', f"{float(words[-4]) * self.constants.bohr_to_ao:.7f}".rjust(15), ' ',f"{float(words[-1]) * self.constants.bohr_to_ao:.7f}".rjust(15) ,'\n']))
+                OptGeomFilename = self.filename[:-4] + "_opt.xyz"
+                WriteToFile(OptGeomFilename,lines_to_add)
+                if not(self.quiet):
+                	print("Initial geometry has been saved to " + OptGeomFilename)
+		
 
 
 class LSDaltonExtract:
