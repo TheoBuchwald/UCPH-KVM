@@ -2,7 +2,7 @@
 import subprocess
 import numpy as np
 from typing import List
-from chemical_information import get_atm_label
+from chemical_information import AtomicInformation
 
 def Forward_search_last(file: str, text: str, error: str, quiet: bool = False) -> int:
     """Searches from the beggining of the file given to the end where it returns the linenumber of the last occurence
@@ -161,8 +161,8 @@ def GenerateXYZ(lines : list, filename : str , start : int, end : int, lab_loc :
     for line in lines[start:end]:
         words = line.split()
         if transform:
-            atm = int(words[lab_loc])
-            lines_to_add.append(''.join([get_atm_label(atm).ljust(2),' ',words[-3].rjust(10),' ', words[-2].rjust(15), ' ',words[-1].rjust(15) ,'\n']))
+            atm = AtomicInformation(int(words[lab_loc]))
+            lines_to_add.append(''.join([atm.atom.ljust(2),' ',words[-3].rjust(10),' ', words[-2].rjust(15), ' ',words[-1].rjust(15) ,'\n']))
         else:
             lines_to_add.append(''.join([words[lab_loc].ljust(2),' ',words[-3].rjust(10),' ', words[-2].rjust(15), ' ',words[-1].rjust(15) ,'\n']))
     WriteToFile(filename,lines_to_add)
