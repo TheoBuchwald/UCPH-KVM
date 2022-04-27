@@ -146,7 +146,7 @@ if __name__ == '__main__':
             for i in unique_indices:
                 ind = unique_indices.index(i)
                 count = list(Counter(namesmol).values())[ind]
-                lines_mol.append(f'  {ci.AtomicInformation(i).atomnr():.4f}     {count} Bas={basis}\n')
+                lines_mol.append(f'  {ci.AtomicInformation(i).getAtomnr():.4f}     {count} Bas={basis}\n')
                 for j in range(len(namesmol)):
                     if namesmol[j] == i:
                         lines_mol.append(''.join([namesmol[j].ljust(2), ' ', f"{molxyz.molecule[j, 0]:.9f}".rjust(14), ' ', f"{molxyz.molecule[j, 1]:.9f}".rjust(19), ' ', f"{molxyz.molecule[j, 2]:.9f}".rjust(19) , '\n']))

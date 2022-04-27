@@ -30,7 +30,7 @@ Atomtypes={len(unique_atoms)} Charge={charge} NoSymmetry Angstrom
     for unique_atom in unique_atoms:
         count = list(XYZ.atoms[:,0]).count(unique_atom)
         if not XYZ.BSE:
-            XYZ.filetext += f'  {ci.AtomicInformation(unique_atom).atomnr():.4f}     {count} Bas={XYZ.basis}\n'
+            XYZ.filetext += f'  {ci.AtomicInformation(unique_atom).getAtomnr():.4f}     {count} Bas={XYZ.basis}\n'
         else:
             BasisSet = ci.BasisSet()
             try:
@@ -48,7 +48,7 @@ The problem may also be that the basis set does not exist for {unique_atom}''')
             Block = f'{blocks}'
             for j in BlockTypes[:blocks]:
                 Block += f' {basis_mol.count(j)}'
-            XYZ.filetext += f'  Charge={ci.AtomicInformation(unique_atom).atomnr():.4f}     Atoms={count}     Blocks={Block}\n'
+            XYZ.filetext += f'  Charge={ci.AtomicInformation(unique_atom).getAtomnr():.4f}     Atoms={count}     Blocks={Block}\n'
             basis_mol = basis_mol.replace('H','').split('\n')[5:-2]
             basis_mol = [i for i in basis_mol if 'functions' not in i]
         for j, atom in enumerate(XYZ.atoms[:,0]):

@@ -9,7 +9,7 @@ class AtomicInformation():
             self.atom = self.getAtom()
         elif isinstance(atom, str):
             self.atom = atom
-            self.atomnr = self.atomnr()
+            self.atomnr = self.getAtomnr()
 
     def getAtomnr(self) -> None:
         dic = {
@@ -37,7 +37,7 @@ class AtomicInformation():
             atomnr = dic[self.atom]
             return atomnr
         except KeyError:
-            print(f'{self.atom} is not an atom or has not been implemented in AtomicInformation.atomnr')
+            print(f'{self.atom} is not an atom or has not been implemented in AtomicInformation.getAtomnr')
 
     def getAtom(self) -> None:
         dic = {
