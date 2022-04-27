@@ -71,7 +71,7 @@ class NanoParticle():
         self.diameter = self.radius * 2
 
     def makeNanoparticle(self, diameter):
-        if type(self.lattice_length) == float:
+        if isinstance(self.lattice_length, float):
             dim = int(np.ceil(diameter/self.lattice_length)) * 2
         else:
             dim1 = int(np.ceil(diameter/self.lattice_length[0]))
@@ -114,7 +114,7 @@ class NanoParticle():
 
         self.distance = molecule.__len__() + vacuum_dist_left + vacuum_dist_right
 
-        if type(self.lattice_length) == float:
+        if isinstance(self.lattice_length, float):
             left, right, left_symbols, right_symbols = self.spherical(molecule.max(), molecule.min(), vacuum_dist_left, vacuum_dist_right)
         else:
             left, right, left_symbols, right_symbols = self.slab(molecule.max(), molecule.min(), vacuum_dist_left, vacuum_dist_right)

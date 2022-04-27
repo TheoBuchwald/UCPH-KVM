@@ -213,7 +213,7 @@ class OutputType:
         elif AMS:
             self.extract = AMSExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'Amsterdam Modeling Suite'
-        
+
 
         # File type not implemented
         else:
@@ -415,11 +415,11 @@ class VeloxExtract:
 
     def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total Energy', 'final energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
         self.tot_energy = 'NaN'
-    
+
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Molecular Geometry', 'geometry', quiet=self.quiet)
         end = Forward_search_after_last(self.filename, 'Molecular Geometry', 'Summary of Geometry', 200, "end of geometry", quiet=self.quiet)
@@ -454,11 +454,11 @@ class AMSExtract:
 
     def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, "Energy (hartree)", "final energy", quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         self.tot_energy = 'NaN'
-    
+
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Formula:', 'geometry', quiet=self.quiet)
         end = Forward_search_after_last(self.filename, 'Formula:', 'Total System Charge', 200, "end of geometry", quiet=self.quiet)
@@ -490,7 +490,7 @@ class GaussianExtract:
 
     def _CPUS(self) -> None:
         linenumber = Backward_search_last(self.filename, 'Job cpu time:', self.end, 'CPU time', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.total_cpu_time = float(self.lines[linenumber].split()[3])*24*60 + float(self.lines[linenumber].split()[5])*60 + float(self.lines[linenumber].split()[7]) + float(self.lines[linenumber].split()[9])/60
             self.wall_cpu_time = float(self.lines[linenumber+1].split()[2])*24*60 + float(self.lines[linenumber+1].split()[4])*60 + float(self.lines[linenumber+1].split()[6]) + float(self.lines[linenumber+1].split()[8])/60
             return
@@ -499,25 +499,25 @@ class GaussianExtract:
 
     def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Sum of electronic and zero-point Energies=', 'final energy', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-1]) - float(self.lines[linenumber-4].split()[-2])
             return
         linenumber = Forward_search_last(self.filename, 'SCF Done:', 'final energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[4])
             return
         self.tot_energy = 'NaN'
 
     def _ZPV(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Sum of electronic and zero-point Energies=', 'ZPV energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.zpv = float(self.lines[linenumber].split()[-1])
             return
         self.zpv = 'NaN'
 
     def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Electric dipole moment (input orientation):', 'dipole moments', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+4].split()[1].replace('D','E')), float(self.lines[linenumber+5].split()[1].replace('D','E')), float(self.lines[linenumber+6].split()[1].replace('D','E')), float(self.lines[linenumber+3].split()[1].replace('D','E'))
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
@@ -535,7 +535,7 @@ class GaussianExtract:
     def _Frequencies(self) -> None:
         self.freq = []
         linenumbers = Forward_search_all(self.filename, 'Frequencies --', 'frequencies', quiet=self.quiet)
-        if type(linenumbers) == list:
+        if isinstance(linenumbers, list):
             for i in linenumbers:
                 for j in self.lines[i].split()[2:]:
                     self.freq.append(float(j)* self.constants.inv_cm_to_au)
@@ -545,7 +545,7 @@ class GaussianExtract:
     def _Excitation_energies(self) -> None:
         self.exc_energies = []
         linenumber = Forward_search_last(self.filename, 'Excitation energies and oscillator strengths:', 'excitation energies', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             linenumbers = Forward_search_all(self.filename, 'Excited State', 'excitation energies', quiet=self.quiet)
             linenumbers = [i for i in linenumbers if i > linenumber]
             for i in linenumbers:
@@ -556,7 +556,7 @@ class GaussianExtract:
     def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
         linenumber = Forward_search_last(self.filename, 'Excitation energies and oscillator strengths:', 'oscillator strengths', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             linenumbers = Forward_search_all(self.filename, 'Excited State', 'oscillator strengths', quiet=self.quiet)
             linenumbers = [i for i in linenumbers if i > linenumber]
             for i in linenumbers:
@@ -577,19 +577,19 @@ class GaussianExtract:
     def _Mass(self) -> None:
         self.mass = 0.0
         linenumber = Forward_search_last(self.filename, 'Molecular mass', 'molecular mass', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.mass = float(self.lines[linenumber].split()[2])
 
     def _SymmetryNumber(self):
         self.symnum = 0
         linenumber = Forward_search_last(self.filename, 'Rotational symmetry number', 'rotational symmetry number', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.symnum = int(self.lines[linenumber].split()[-1].replace('.',''))
 
     def _Multiplicity(self) -> None:
         self.multi = 0
         linenumber = Forward_search_first(self.filename, 'Multiplicity', 'multiplicity', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.multi = int(self.lines[linenumber].split()[-1])
 
     def _PartitionFunctions(self) -> None:
@@ -658,7 +658,7 @@ class GaussianExtract:
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
-    
+
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Standard orientation', 'geometry', quiet=self.quiet)
         end = Forward_search_after_last(self.filename, 'Standard orientation', 'Rotational constants', 200, "end of geometry", quiet=self.quiet)
@@ -694,13 +694,13 @@ class OrcaExtract:
 
     def _CPUS(self) -> None:
         linenumber = Backward_search_last(self.filename, 'Sum of individual times         ...', self.end, 'CPU time', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.wall_cpu_time = float(self.lines[linenumber].split()[-2])
             linenumber2 = Forward_search_last(self.filename, '%pal nprocs', 'CPU count', quiet=True)
-            if type(linenumber2) == int:
+            if isinstance(linenumber2, int):
                 self.total_cpu_time = self.wall_cpu_time * int(self.lines[linenumber2].split()[-1])
             linenumber3 = Forward_search_last(self.filename, 'PAL', 'CPU count', quiet=self.quiet)
-            if type(linenumber3) == int:
+            if isinstance(linenumber3, int):
                 self.total_cpu_time = self.wall_cpu_time * int(self.lines[linenumber3].split()[-1][3:])
             return
         self.total_cpu_time = 'NaN'
@@ -708,18 +708,18 @@ class OrcaExtract:
 
     def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Electronic energy', 'Final energy', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
         linenumber = Forward_search_last(self.filename, 'FINAL SINGLE POINT ENERGY', 'Final energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         self.tot_energy = 'NaN'
 
     def _ZPV(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Electronic energy', 'ZPV energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.zpv = float(self.lines[linenumber].split()[-2]) + float(self.lines[linenumber+1].split()[-4])
             return
         self.zpv = 'NaN'
@@ -752,14 +752,14 @@ class OrcaExtract:
 
     def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total Dipole Moment', 'dipole moment', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber].split()[-3]), float(self.lines[linenumber].split()[-2]), float(self.lines[linenumber].split()[-1]), float(self.lines[linenumber+2].split()[-1])
             return
         self.dipolex, self.dipoley, self.dipolez, self.total_dipole = 'NaN'
 
     def _Polarizabilities(self) -> None:
         linenumber = Forward_search_after_last(self.filename, 'THE POLARIZABILITY TENSOR', "'diagonalized tensor:'", 10, 'polarizability', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber+1].split()[0]), float(self.lines[linenumber+1].split()[1]), float(self.lines[linenumber+1].split()[2]), float(self.lines[linenumber+7].split()[-1])
             return
         self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
@@ -767,7 +767,7 @@ class OrcaExtract:
     def _Excitation_energies(self) -> None:
         self.exc_energies = []
         linenumbers = Forward_search_all(self.filename, 'STATE ', 'excitation energies', quiet=self.quiet)
-        if type(linenumbers) == list:
+        if isinstance(linenumbers, list):
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[3]))
         if len(self.exc_energies) == 0:
@@ -776,7 +776,7 @@ class OrcaExtract:
     def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
         linenumber = Forward_search_last(self.filename, 'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS', 'oscillator strengths', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             for i in range(len(self.exc_energies)):
                 if len(self.lines[linenumber+5+i].split()) > 6:
                     self.osc_strengths.append(float(self.lines[linenumber+5+i].split()[3]))
@@ -788,7 +788,7 @@ class OrcaExtract:
     def _Frequencies(self) -> None:
         self.freq = []
         linenumber = Forward_search_last(self.filename, "VIBRATIONAL FREQUENCIES", 'frequencies', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             for j in self.lines[linenumber+7: self.end]:
                 if ": " and " 0.00 " in j:
                     pass
@@ -810,19 +810,19 @@ class OrcaExtract:
     def _Mass(self) -> None:
         self.mass = 0.0
         linenumber = Forward_search_last(self.filename, 'Total Mass', 'molecular mass', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.mass = float(self.lines[linenumber].split()[-2])
 
     def _SymmetryNumber(self) -> None:
         self.symnum = 0
         linenumber = Forward_search_last(self.filename, 'Symmetry Number', 'rotational symmetry number', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.symnum = int(self.lines[linenumber].split()[-1])
 
     def _Multiplicity(self) -> None:
         self.multi = 0
         linenumber = Forward_search_first(self.filename, 'Multiplicity', 'multiplicity', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.multi = int(self.lines[linenumber].split()[-1])
 
     def _PartitionFunctions(self) -> None:
@@ -900,7 +900,7 @@ class DaltonExtract:
 
     def _Complex_propagator(self) -> None:
         linenumbers = Forward_search_all(self.filename, 'Averaged value', 'polarizability with damping', quiet=self.quiet)
-        if type(linenumbers) == list:
+        if isinstance(linenumbers, list):
             self.complex_propagator = []
             for i in linenumbers:
                 self.complex_propagator.append([float(self.lines[i].split()[-3]), float(self.lines[i].split()[-2]), float(self.lines[i].split()[-1])])
@@ -909,7 +909,7 @@ class DaltonExtract:
 
     def _CPUS(self) -> None:
         linenumber = Backward_search_last(self.filename, 'Total CPU  time used in DALTON:', self.end, 'CPU time', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.total_cpu_time = 0.
             self.wall_cpu_time = 0.
             total_time = self.lines[linenumber].split()[6:]
@@ -946,36 +946,36 @@ Please contact a maintainer of the script ot have this updated''')
 
     def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total .*  energy:', 'final energy', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         linenumber = Forward_search_last(self.filename, '@    Final .* energy:', 'final energy', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         linenumber = Forward_search_last(self.filename, '@ Energy at final geometry is', 'final energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
         self.tot_energy = 'NaN'
 
     def _ZPV(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total Molecular Energy', 'zero-point energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.zpv = float(self.lines[linenumber+5].split()[1])
             return
         self.zpv = 'NaN'
 
     def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Dipole moment components', 'dipole moment', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+5].split()[1]), float(self.lines[linenumber+6].split()[1]), float(self.lines[linenumber+7].split()[1]), float(self.lines[linenumber-3].split()[0])
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
     def _Polarizabilities(self) -> None:
         linenumber = Forward_search_last(self.filename, 'SECOND ORDER PROPERTIES', 'polarizabilities', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.polx, self.poly, self.polz = float(self.lines[linenumber+2].split()[-1]), float(self.lines[linenumber+5].split()[-1]), float(self.lines[linenumber+7].split()[-1])
             self.iso_polar = (self.polx + self.poly + self.polz)/3.
             return
@@ -985,7 +985,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.exc_energies = []
         self.exc_type = None
         linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'excitation energies', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.exc_type = '.EXCITA'
             for i in self.lines[linenumber+5: self.end]:
                 if "@ "in i:
@@ -993,7 +993,7 @@ Please contact a maintainer of the script ot have this updated''')
                 else:
                     break
         linenumbers = Forward_search_all(self.filename, '@ Excitation energy', 'excitation energies', quiet=self.quiet)
-        if type(linenumbers) == list:
+        if isinstance(linenumbers, list):
             self.exc_type = 'MCTDHF'
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[-2]))
@@ -1004,7 +1004,7 @@ Please contact a maintainer of the script ot have this updated''')
         self.osc_strengths = []
         if self.exc_type == '.EXCITA':
             linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'oscillator strengths', quiet=self.quiet)
-            if type(linenumber) == int:
+            if isinstance(linenumber, int):
                 for i in self.lines[linenumber+5: self.end]:
                     if "@ " in i:
                         self.osc_strengths.append(float(i.split()[-1]))
@@ -1012,7 +1012,7 @@ Please contact a maintainer of the script ot have this updated''')
                         break
         elif self.exc_type == 'MCTDHF':
             linenumbers = Forward_search_all(self.filename, '@ Excitation energy', 'oscillator strengths', quiet=self.quiet)
-            if type(linenumbers) == list:
+            if isinstance(linenumbers, list):
                 for i in linenumbers:
                     osc = 0
                     for j in self.lines[i:i+15]:
@@ -1025,7 +1025,7 @@ Please contact a maintainer of the script ot have this updated''')
     def _Frequencies(self) -> None:
         self.freq = []
         linenumber = Forward_search_last(self.filename, 'Vibrational Frequencies and IR Intensities', 'frequencies', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             for i in self.lines[linenumber+7: self.end]:
                 if len(i.split()) < 1:
                     break
@@ -1044,7 +1044,7 @@ Please contact a maintainer of the script ot have this updated''')
     def _Mass(self) -> None:
         self.mass = 0.0
         linenumber = Forward_search_last(self.filename, 'Total mass:', 'molecular mass')
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.mass = float(self.lines[linenumber].split()[-2])
 
     #Symmetry checking not implemented by default in Dalton
@@ -1052,13 +1052,13 @@ Please contact a maintainer of the script ot have this updated''')
     #
     #    self.symnum = 0
     #    linenumber = Forward_search_last(self.file, 'Symmetry Number', 'rotational symmetry number')
-    #    if type(linenumber) == int:
+    #    if isinstance(linenumber, int):
     #        self.symnum = int(self.lines[linenumber].split()[-1])
 
     def _Multiplicity(self) -> None:
         self.multi = 0
         linenumber = Forward_search_last(self.filename, 'Spatial symmetry', 'multiplicity', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.multi = int(self.lines[linenumber].split()[2])
 
     def _PartitionFunctions(self) -> None:
@@ -1157,7 +1157,7 @@ Please contact a maintainer of the script ot have this updated''')
                 WriteToFile(OptGeomFilename,lines_to_add)
                 if not(self.quiet):
                 	print("Initial geometry has been saved to " + OptGeomFilename)
-		
+
 
 
 class LSDaltonExtract:
@@ -1178,7 +1178,7 @@ class LSDaltonExtract:
 
     def _CPUS(self) -> None:
         linenumber = Backward_search_last(self.filename, '>>>  CPU Time used in LSDALTON is', self.end, 'CPU time', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.total_cpu_time = 0.
             self.wall_cpu_time = 0.
             total_time = self.lines[linenumber].split()[7:]
@@ -1215,43 +1215,43 @@ Please contact a maintainer of the script ot have this updated''')
 
     def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Total .*  energy:', 'final energy', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         linenumber = Forward_search_last(self.filename, '@    Final .* energy:', 'final energy', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         linenumber = Forward_search_last(self.filename, '@ Energy at final geometry is', 'final energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
         self.tot_energy = 'NaN'
 
     def _Energy(self) -> None:
         linenumber = Forward_search_last(self.filename, 'ENERGY SUMMARY', 'final energy', quiet=True)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             for i in self.lines[linenumber+3:self.end]:
                 if 'E: ' in i:
                     self.tot_energy = float(i.split()[-1])
                 else:
                     return
         linenumber = Forward_search_last(self.filename, 'Final .* energy:', 'final energy', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         self.tot_energy = 'NaN'
 
     def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Permanent dipole moment', 'dipole moment', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber+9].split()[1]), float(self.lines[linenumber+10].split()[1]), float(self.lines[linenumber+11].split()[1]), float(self.lines[linenumber+3].split()[0])
             return
         self.dipolex = self.dipoley = self.dipolez = self.total_dipole = 'NaN'
 
     def _Polarizabilities(self) -> None:
         linenumber = Forward_search_last(self.filename, '*          POLARIZABILITY TENSOR RESULTS (in a.u.)          *', 'polarizability', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             self.polx, self.poly, self.polz, self.iso_polar = float(self.lines[linenumber+10].split()[-3]), float(self.lines[linenumber+11].split()[-2]), float(self.lines[linenumber+12].split()[-1]), float(self.lines[linenumber+14].split()[-1])
             return
         self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
@@ -1259,7 +1259,7 @@ Please contact a maintainer of the script ot have this updated''')
     def _Excitation_energies(self) -> None:
         self.exc_energies = []
         linenumber = Forward_search_last(self.filename, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'excitation energies', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             for i in range(linenumber+8,self.end):
                 if len(self.lines[i].split()) < 1:
                     break
@@ -1270,7 +1270,7 @@ Please contact a maintainer of the script ot have this updated''')
     def _Oscillator_strengths(self) -> None:
         self.osc_strengths = []
         linenumber = Forward_search_last(self.filename, '*                   ONE-PHOTON ABSORPTION RESULTS (in a.u.)                  *', 'oscillator strengths', quiet=self.quiet)
-        if type(linenumber) == int:
+        if isinstance(linenumber, int):
             for i in range(len(self.exc_energies)):
                 self.osc_strengths.append(float(self.lines[linenumber+8+i].split()[-1]))
         if len(self.osc_strengths) == 0:

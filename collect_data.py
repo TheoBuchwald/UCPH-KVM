@@ -280,7 +280,7 @@ def Spectra(args):
 
         for key_outer in Extracted_Values.keys():   # Turn everything into lists
             for key_inner in Extracted_Values[key_outer].keys():
-                if type(Extracted_Values[key_outer][key_inner]) != list:
+                if not isinstance(Extracted_Values[key_outer][key_inner], list):
                     Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
         Make_uvvis_spectrum(input_file, quiet, UVVIS_Spectrum, format, Extracted_Values, SAVE)
@@ -302,7 +302,7 @@ def Spectra(args):
 
         for key_outer in Extracted_Values.keys():   # Turn everything into lists
             for key_inner in Extracted_Values[key_outer].keys():
-                if type(Extracted_Values[key_outer][key_inner]) != list:
+                if not isinstance(Extracted_Values[key_outer][key_inner], list):
                     Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
         Make_complex_propagator_spectrum(input_file, quiet, format, Extracted_Values, SAVE)
@@ -416,7 +416,7 @@ def Extract(args):
 
     # Dictionary of data where the amount of values printed can be changed
     # Examples of this are the Excitation energies and the Frequencies
-    Variable_arrays = dict([item for item in NeededArguments.items() if type(item[1]) == int])
+    Variable_arrays = dict([item for item in NeededArguments.items() if isinstance(item[1], int)])
 
     # List of arguments that have been requested
     Wanted_Values = [item[0] for item in RequestedArguments.items() if not(item[1] == None or item[1] == False)]
@@ -465,7 +465,7 @@ def Extract(args):
     # If something is at this point not in a list somehow they will be after this
     for key_outer in Extracted_Values.keys():
         for key_inner in Extracted_Values[key_outer].keys():
-            if type(Extracted_Values[key_outer][key_inner]) != list:
+            if not isinstance(Extracted_Values[key_outer][key_inner], list):
                 Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
 
     # Collecting all values in arrays in a dictionary
@@ -476,7 +476,7 @@ def Extract(args):
     # An example is Excitation energies where there may be more of them in one output file than another
     # By doing this it fits properly in what is printed to the terminal
     for key in Final_arrays.keys():
-        if type(Final_arrays[key]) == list:
+        if isinstance(Final_arrays[key], list):
             Resize(Final_arrays[key])
 
     # Fixing the size of variable size arrays so that they match what was requested
