@@ -255,58 +255,58 @@ def Spectra(args):
     """
     This function is used to do any methods related to the Spectra keyword
     """
-    input_file = args.infile
-    UVVIS = args.uvvis
-    complex_propagator = args.complex_propagator
-    format = args.format
-    SAVE = args.save
-    quiet = args.quiet
-    MULTIPROCESSING = args.multiprocessing
+    InputFiles = args.infile
+    UVVis = args.uvvis
+    ComplexPropagator = args.complex_propagator
+    Format = args.format
+    Save = args.save
+    Quiet = args.quiet
+    Multiprocessing = args.multiprocessing
 
-    if UVVIS:
+    if UVVis:
         NeededArguments = {'_Excitation_energies': -1, '_Oscillator_strengths': -1}
-        Set_of_Values = {'_Excitation_energies': ['exc_energies'], '_Oscillator_strengths': ['osc_strengths']}
+        ArgumentsToValues = {'_Excitation_energies': ['exc_energies'], '_Oscillator_strengths': ['osc_strengths']}
 
-        if MULTIPROCESSING:
+        if Multiprocessing:
             with Pool(int(cpu_count()/2)) as pool:
-                Extracted_Values = pool.map(partial(Data_Extraction, Needed_Values=NeededArguments, quiet=quiet), input_file)
-                Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
+                ExtractedValues = pool.map(partial(Data_Extraction, Needed_Values=NeededArguments, quiet=Quiet), InputFiles)
+                ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
         else:
-            Extracted_Values = dict()
-            for infile in input_file:
-                Extracted_Values[infile] = Data_Extraction(infile, NeededArguments, quiet)[infile]
+            ExtractedValues = dict()
+            for infile in InputFiles:
+                ExtractedValues[infile] = Data_Extraction(infile, NeededArguments, Quiet)[infile]
 
-        Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
+        Check_if_Implemented(InputFiles, ArgumentsToValues, ExtractedValues)   # Finding functions not implemented
 
-        for key_outer in Extracted_Values.keys():   # Turn everything into lists
-            for key_inner in Extracted_Values[key_outer].keys():
-                if not isinstance(Extracted_Values[key_outer][key_inner], list):
-                    Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
+        for OuterKey in ExtractedValues:   # Turn everything into lists
+            for InnerKey, Value in ExtractedValues[OuterKey].items():
+                if not isinstance(Value, list):
+                    ExtractedValues[OuterKey][InnerKey] = [Value]
 
-        Make_uvvis_spectrum(input_file, quiet, UVVIS_Spectrum, format, Extracted_Values, SAVE)
+        Make_uvvis_spectrum(InputFiles, Quiet, UVVIS_Spectrum, Format, ExtractedValues, Save)
         return
 
-    elif complex_propagator:
+    elif ComplexPropagator:
         NeededArguments = {'_Complex_propagator': True}
-        Set_of_Values = {'_Complex_propagator': ['complex_propagator']}
+        ArgumentsToValues = {'_Complex_propagator': ['complex_propagator']}
 
-        if MULTIPROCESSING:
+        if Multiprocessing:
             with Pool(int(cpu_count()/2)) as pool:
-                Extracted_Values = pool.map(partial(Data_Extraction, Needed_Values=NeededArguments, quiet=quiet), input_file)
-                Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
+                ExtractedValues = pool.map(partial(Data_Extraction, Needed_Values=NeededArguments, quiet=Quiet), InputFiles)
+                ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
         else:
-            Extracted_Values = dict()
-            for infile in input_file:
-                Extracted_Values[infile] = Data_Extraction(infile, NeededArguments, quiet)[infile]
+            ExtractedValues = dict()
+            for infile in InputFiles:
+                ExtractedValues[infile] = Data_Extraction(infile, NeededArguments, Quiet)[infile]
 
-        Check_if_Implemented(input_file, Set_of_Values, Extracted_Values)   #Finding functions not implemented
+        Check_if_Implemented(InputFiles, ArgumentsToValues, ExtractedValues)   #Finding functions not implemented
 
-        for key_outer in Extracted_Values.keys():   # Turn everything into lists
-            for key_inner in Extracted_Values[key_outer].keys():
-                if not isinstance(Extracted_Values[key_outer][key_inner], list):
-                    Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
+        for OuterKey, Dict in ExtractedValues.items():   # Turn everything into lists
+            for InnerKey, Value in Dict.items():
+                if not isinstance(Value, list):
+                    ExtractedValues[OuterKey][InnerKey] = [Value]
 
-        Make_complex_propagator_spectrum(input_file, quiet, format, Extracted_Values, SAVE)
+        Make_complex_propagator_spectrum(InputFiles, Quiet, Format, ExtractedValues, Save)
         return
 
     print('Doing nothing - please use --uvvis or --complex-propagator')
@@ -319,7 +319,7 @@ def Extract(args):
     """
 
     # Setting the input_files variable to all files
-    input_files = args.infile
+    InputFiles = args.infile
 
     # These are all the possible arguments that extract data
     # They are here set to correspond the argument passed
@@ -359,7 +359,7 @@ def Extract(args):
     # These are what will be written in the header for each data-point
     # The keys are what the data-points are saved as in the classes
     # The values are what the data-points should be written under in the output header
-    Header_text = {
+    HeaderText = {
         'tot_energy': 'Energy',
         'zpv': 'ZPV EnergTotaly',
         'enthalpy': 'Enthalpy',
@@ -383,9 +383,9 @@ def Extract(args):
 
     # Remainder of arguments
     T = args.temp
-    SAVE = args.save
-    quiet = args.quiet
-    MULTIPROCESSING = args.multiprocessing
+    Save = args.save
+    Quiet = args.quiet
+    Multiprocessing = args.multiprocessing
 
     # Making a copy of RequestedArguments
     # This is so arguments that are dependent on others can be called independently
@@ -417,109 +417,109 @@ def Extract(args):
 
     # Dictionary of data where the amount of values printed can be changed
     # Examples of this are the Excitation energies and the Frequencies
-    Variable_arrays = dict([item for item in NeededArguments.items() if type(item[1]) == int])
+    VariableArrays = dict([item for item in NeededArguments.items() if type(item[1]) == int])
 
     # List of arguments that have been requested
-    Wanted_Values = [item[0] for item in RequestedArguments.items() if not(item[1] == None or item[1] == False)]
+    WantedValues = [key for key, val in RequestedArguments.items() if not(val == None or val == False)]
 
     # List of arguments that are needed for those requested
     # This is done so you can request as an example the Gibbs free energies withou also having the enthalpies and entropies printed
-    Needed_Values = [item[0] for item in NeededArguments.items() if not(item[1] == None or item[1] == False)]
+    NeededValues = [key for key, val in NeededArguments.items() if not(val == None or val == False)]
 
     # Data-points that will be written to the terminal or save file
     # These are found from the Outputs dictionary by comparing with the Wanted_Values list
-    Set_of_Values = dict(item for item in Outputs.items() if item[0] in Wanted_Values)
+    ArgumentsToValues = {key: val for key, val in Outputs.items() if key in WantedValues}
 
     # How many files to run the script on
-    count = len(input_files)
+    Count = len(InputFiles)
 
     # If multiprocessing is eneabled it will be run using half of the available CPUS
     # Else they will be run in a linear fashion
-    if MULTIPROCESSING:
+    if Multiprocessing:
         with Pool(int(cpu_count()/2)) as pool:
-            Extracted_Values = pool.map(partial(Data_Extraction, Needed_Values=Needed_Values, quiet=quiet, Temperature=T), input_files)
-            Extracted_Values = {key: value for dictionary in Extracted_Values for key, value in dictionary.items()} # Reformatting Extracted_values
+            ExtractedValues = pool.map(partial(Data_Extraction, Needed_Values=NeededValues, quiet=Quiet, Temperature=T), InputFiles)
+            ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
     else:
-        Extracted_Values = dict()
-        for file in input_files:
-            Extracted_Values[file] = Data_Extraction(file, Needed_Values, quiet, T)[file]
+        ExtractedValues = dict()
+        for file in InputFiles:
+            ExtractedValues[file] = Data_Extraction(file, NeededValues, Quiet, T)[file]
 
     # Creating Input_Array where all values are put in lists
-    Input_Array = [[i] for i in Extracted_Values]
+    InputArray = [[i] for i in ExtractedValues]
 
     # Checking if some functions have not been implemented for the relevant extraction types
-    Check_if_Implemented(input_files, Set_of_Values, Extracted_Values)
+    Check_if_Implemented(InputFiles, ArgumentsToValues, ExtractedValues)
 
     # If the CPU time has been requested in second or hours instead of minutes
     # then the calculation from minutes to the requested unit is done here
     if RequestedArguments['_CPUS'] == 's':
-        for file in input_files:
-            if Extracted_Values[file]['total_cpu_time'] != ['Not Implemented']:
-                Extracted_Values[file]['total_cpu_time'] *= 60
-                Extracted_Values[file]['wall_cpu_time'] *= 60
+        for file in InputFiles:
+            if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
+                ExtractedValues[file]['total_cpu_time'] *= 60
+                ExtractedValues[file]['wall_cpu_time'] *= 60
     elif NeededArguments['_CPUS'] == 'h':
-        for file in input_files:
-            if Extracted_Values[file]['total_cpu_time'] != ['Not Implemented']:
-                Extracted_Values[file]['total_cpu_time'] /= 60
-                Extracted_Values[file]['wall_cpu_time'] /= 60
+        for file in InputFiles:
+            if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
+                ExtractedValues[file]['total_cpu_time'] /= 60
+                ExtractedValues[file]['wall_cpu_time'] /= 60
 
     # If something is at this point not in a list somehow they will be after this
-    for key_outer in Extracted_Values.keys():
-        for key_inner in Extracted_Values[key_outer].keys():
-            if not isinstance(Extracted_Values[key_outer][key_inner], list):
-                Extracted_Values[key_outer][key_inner] = [Extracted_Values[key_outer][key_inner]]
+    for OuterKey, Dict in ExtractedValues.items():
+        for InnerKey, Value in Dict.items():
+            if not isinstance(Value, list):
+                ExtractedValues[OuterKey][InnerKey] = [Value]
 
     # Collecting all values in arrays in a dictionary
     # Some values in the Extracted_Values dictionary may not have been requested, so these are removed here
-    Final_arrays = Collect_and_sort_data(input_files, Set_of_Values, Extracted_Values)
+    FinalArrays = Collect_and_sort_data(InputFiles, ArgumentsToValues, ExtractedValues)
 
     # Resizing arrays
     # An example is Excitation energies where there may be more of them in one output file than another
     # By doing this it fits properly in what is printed to the terminal
-    for key in Final_arrays.keys():
-        if isinstance(Final_arrays[key], list):
-            Resize(Final_arrays[key])
+    for key in FinalArrays:
+        if isinstance(FinalArrays[key], list):
+            Resize(FinalArrays[key])
 
     # Fixing the size of variable size arrays so that they match what was requested
-    Downsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays)
-    Upsizing_variable_arrays(Outputs, Variable_arrays, count, Final_arrays, RequestedArguments)
+    Downsizing_variable_arrays(Outputs, VariableArrays, Count, FinalArrays)
+    Upsizing_variable_arrays(Outputs, VariableArrays, Count, FinalArrays, RequestedArguments)
 
     # Creation of header row
-    Header = Create_Header(Header_text, Set_of_Values, Final_arrays)
+    Header = Create_Header(HeaderText, ArgumentsToValues, FinalArrays)
 
     # Create output array from header row
-    Output_Array = np.array([Header] * (count + 1), dtype=object)
+    OutputArray = np.array([Header] * (Count + 1), dtype=object)
 
     # Filling the output array with the extracted data
-    Fill_output_array(Set_of_Values, Input_Array, count, Final_arrays, Output_Array)
+    Fill_output_array(ArgumentsToValues, InputArray, Count, FinalArrays, OutputArray)
 
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
 
     # If this statement is true, then only the filenames have been written to the Output_Array
-    if len(Output_Array) == Output_Array.size:
+    if len(OutputArray) == OutputArray.size:
        print("No data was extracted, therefore nothing more will be printed")
        return
 
-    elif SAVE == 'csv':
-        np.savetxt('data.csv', Output_Array, delimiter=',', fmt='%s')
+    elif Save == 'csv':
+        np.savetxt('data.csv', OutputArray, delimiter=',', fmt='%s')
         print(f'Data has been saved in data.csv')
         return
 
-    elif SAVE == 'npz':
-        Save_Dict = {i[0]: i[1:] for i in Output_Array}
-        np.savez('data.npz', **Save_Dict)
+    elif Save == 'npz':
+        SaveDict = {i[0]: i[1:] for i in OutputArray}
+        np.savez('data.npz', **SaveDict)
         print(f'Data has been saved in data.npz')
         return
 
-    print(Output_Array)
+    print(OutputArray)
 
 
 def main():
     #---------------------------
     # Creating main parser
     #---------------------------
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
+    Parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
     A script designed to make it easier to extract data from output files
 
     To extract data you have to use the keyword extract before any other keywords
@@ -545,10 +545,10 @@ For help contact
     #---------------------------
     # Creating spectra subparser
     #---------------------------
-    subparser = parser.add_subparsers(dest='pars')
+    subparser = Parser.add_subparsers(dest='pars')
     subparser.required = False
 
-    Spectra_subparser = subparser.add_parser('spectra', formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
+    SpectraSubparser = subparser.add_parser('spectra', formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
     This part of the script is used for making spectra from data collected from output files
 
             Currently the output formats supported are
@@ -581,27 +581,27 @@ For help contact
 ''', help='Use to make spectra such as UVVIS from excitation energies or complex propagator theory')
 
     # Setting the Spectra function to be run if spectra is used
-    Spectra_subparser.set_defaults(func=Spectra)
+    SpectraSubparser.set_defaults(func=Spectra)
 
     # Adding arguments
-    Spectra_subparser.add_argument('infile', type=str, nargs='+', help='The file(s) to make spectra from', metavar='File')
+    SpectraSubparser.add_argument('infile', type=str, nargs='+', help='The file(s) to make spectra from', metavar='File')
 
-    Spectra_group = Spectra_subparser.add_mutually_exclusive_group()
-    Spectra_group.add_argument('--uvvis', action='store_true', help='Include to make UVVIS spectra')
-    Spectra_group.add_argument('--complex-propagator', action='store_true', help='Include to use complex propagator theory to make the spectra')
+    SpectraGroup = SpectraSubparser.add_mutually_exclusive_group()
+    SpectraGroup.add_argument('--uvvis', action='store_true', help='Include to make UVVIS spectra')
+    SpectraGroup.add_argument('--complex-propagator', action='store_true', help='Include to use complex propagator theory to make the spectra')
 
-    SpectraDataProcessingGroup = Spectra_subparser.add_argument_group('Data processing commands')
+    SpectraDataProcessingGroup = SpectraSubparser.add_argument_group('Data processing commands')
     SpectraDataProcessingGroup.add_argument('--format', default='png', const='png', type=str, help='Include this to change the picture format. Will use png as default. If \'--save\' is used together with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
     SpectraDataProcessingGroup.add_argument('-s', '--save', action='store_true', help='Saves extracted and processed data in a npz file')
 
-    SpectraAdditionalCommandsGroup = Spectra_subparser.add_argument_group('Additional commands')
+    SpectraAdditionalCommandsGroup = SpectraSubparser.add_argument_group('Additional commands')
     SpectraAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
     SpectraAdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
 
     #---------------------------
     # Creating extract subparser
     #---------------------------
-    Extraction_subparser = subparser.add_parser('extract', formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
+    ExtractionSubparser = subparser.add_parser('extract', formatter_class=argparse.RawDescriptionHelpFormatter, description=f'''
     This part of the script is for extracting data from output files and either printing it in the terminal or saving it to a file
 
             This script can currently extract the data
@@ -661,12 +661,12 @@ For help contact
     , help='Use to extract data from output files')
 
     # Setting the Extract function to be run if extract is used
-    Extraction_subparser.set_defaults(func=Extract)
+    ExtractionSubparser.set_defaults(func=Extract)
 
     # Adding arguments
-    Extraction_subparser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='File')
+    ExtractionSubparser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='File')
 
-    ExtractionGroup = Extraction_subparser.add_argument_group('Data extraction commands')
+    ExtractionGroup = ExtractionSubparser.add_argument_group('Data extraction commands')
     ExtractionGroup.add_argument('-E', '--energy', action='store_true', help='Include to extract the Total Energy')
     ExtractionGroup.add_argument('-Z', '--zpv', action='store_true', help='Include to extract the Zero-Point Vibrational Energy')
     ExtractionGroup.add_argument('-H', '--enthalpy', action='store_true', help='Include to calculate molar enthalpies (kJ/mol)')
@@ -682,15 +682,15 @@ For help contact
     ExtractionGroup.add_argument('-C', '--cpu_time', const=['m'], help='Include to extract total cpu time and pr. cpu time. You can change the output from being in seconds, minutes and hours, where the default is minutes', nargs='?', choices=['s', 'm', 'h'])
     ExtractionGroup.add_argument('-geom', '--optgeom', action='store_true',help='Include to extract optimized geometries and save to \'filename_opt.xyz\'.')
 
-    ExtractionDataProcessingGroup = Extraction_subparser.add_argument_group('Data processing commands')
+    ExtractionDataProcessingGroup = ExtractionSubparser.add_argument_group('Data processing commands')
     ExtractionDataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
 
-    ExtractionAdditionalCommandsGroup = Extraction_subparser.add_argument_group('Additional commands')
+    ExtractionAdditionalCommandsGroup = ExtractionSubparser.add_argument_group('Additional commands')
     ExtractionAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
     ExtractionAdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
 
     # Parses the arguments
-    args = parser.parse_args()
+    args = Parser.parse_args()
 
     # The arguments are sent to the correct function
     # The function may be one of Spectra, Extract, ...
