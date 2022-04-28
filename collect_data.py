@@ -496,7 +496,12 @@ def Extract(args):
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
 
-    if SAVE == 'csv':
+    # If this statement is true, then only the filenames have been written to the Output_Array
+    if len(Output_Array) == Output_Array.size:
+       print("No data was extracted, therefore nothing more will be printed")
+       return
+
+    elif SAVE == 'csv':
         np.savetxt('data.csv', Output_Array, delimiter=',', fmt='%s')
         print(f'Data has been saved in data.csv')
         return
@@ -506,10 +511,6 @@ def Extract(args):
         np.savez('data.npz', **Save_Dict)
         print(f'Data has been saved in data.npz')
         return
-
-    #if len(Output_Array) == count + 1:
-    #    print("No data was extracted, therefore nothing more will be printed")
-    #    return
 
     print(Output_Array)
 
