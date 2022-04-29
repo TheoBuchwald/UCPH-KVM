@@ -1,0 +1,281 @@
+!========================================================================================================================!
+!                                                                                                                        !
+!                                                   VELOXCHEM 1.0-RC2                                                    !
+!                                              AN ELECTRONIC STRUCTURE CODE                                              !
+!                                                                                                                        !
+!                                     Copyright (C) 2018-2021 VeloxChem developers.                                      !
+!                                                  All rights reserved.                                                  !
+!========================================================================================================================!
+!                                VeloxChem execution started at Fri Apr 29 08:40:28 2022.                                !
+!========================================================================================================================!
+                                                                                                                          
+* Info * Using 16 OpenMP threads per compute node.                                                                        
+                                                                                                                          
+* Info * Reading input file DFT_Methane_opt_velox.inp...                                                                  
+                                                                                                                          
+* Info * @jobs                                                                                                            
+* Info * task: optimize                                                                                                   
+* Info * @end                                                                                                             
+                                                                                                                          
+* Info * @method_settings                                                                                                 
+* Info * xcfun: b3lyp                                                                                                     
+* Info * basis: def2-svp                                                                                                  
+* Info * @end                                                                                                             
+                                                                                                                          
+* Info * Parsing @molecule group...                                                                                       
+* Info * ...done.                                                                                                         
+                                                                                                                          
+                                              Molecular Geometry (Angstroms)                                              
+                                             ================================                                             
+                                                                                                                          
+                          Atom         Coordinate X          Coordinate Y          Coordinate Z                           
+                                                                                                                          
+                           C           1.018250000000        0.093150000000        0.031470000000                         
+                           H           2.110450000000        0.093150000000        0.031470000000                         
+                           H           0.654190000000       -0.602800000000        0.790430000000                         
+                           H           0.654180000000       -0.216150000000       -0.950710000000                         
+                           H           0.654180000000        1.098400000000        0.254700000000                         
+                                                                                                                          
+                          Molecular charge            : 0                                                                 
+                          Spin multiplicity           : 1                                                                 
+                          Number of atoms             : 5                                                                 
+                          Number of alpha electrons   : 5                                                                 
+                          Number of beta  electrons   : 5                                                                 
+                                                                                                                          
+* Info * Parsing @method settings group...                                                                                
+* Info * ...done.                                                                                                         
+                                                                                                                          
+* Info * Reading basis set from file: /lustre/hpc/kemi/andreasb/software/veloxchem/venv/lib64/python3.6/site-packages/veloxchem-1.0rc2-py3.6-linux-x86_64.egg/veloxchem/basis/DEF2-SVP
+                                                                                                                          
+                                              Molecular Basis (Atomic Basis)                                              
+                                             ================================                                             
+                                                                                                                          
+                                  Basis: DEF2-SVP                                                                         
+                                                                                                                          
+                                  Atom Contracted GTOs          Primitive GTOs                                            
+                                                                                                                          
+                                   H   (2S,1P)                  (4S,1P)                                                   
+                                   C   (3S,2P,1D)               (7S,4P,1D)                                                
+                                                                                                                          
+                                  Contracted Basis Functions : 34                                                         
+                                  Primitive Basis Functions  : 52                                                         
+                                                                                                                          
+                                                                                                                          
+                                            Self Consistent Field Driver Setup                                            
+                                           ====================================                                           
+                                                                                                                          
+                   Wave Function Model             : Spin-Restricted Kohn-Sham                                            
+                   Initial Guess Model             : Superposition of Atomic Densities                                    
+                   Convergence Accelerator         : Two Level Direct Inversion of Iterative Subspace                     
+                   Max. Number of Iterations       : 50                                                                   
+                   Max. Number of Error Vectors    : 10                                                                   
+                   Convergence Threshold           : 1.0e-06                                                              
+                   ERI Screening Scheme            : Cauchy Schwarz + Density                                             
+                   ERI Screening Mode              : Dynamic                                                              
+                   ERI Screening Threshold         : 1.0e-12                                                              
+                   Linear Dependence Threshold     : 1.0e-06                                                              
+                   Exchange-Correlation Functional : B3LYP                                                                
+                   Molecular Grid Level            : 4                                                                    
+                                                                                                                          
+* Info * Nuclear repulsion energy: 13.4083251507 au                                                                       
+                                                                                                                          
+* Info * Molecular grid with 53679 points generated in 0.02 sec.                                                          
+                                                                                                                          
+* Info * Overlap matrix computed in 0.02 sec.                                                                             
+                                                                                                                          
+* Info * Kinetic energy matrix computed in 0.03 sec.                                                                      
+                                                                                                                          
+* Info * Nuclear potential matrix computed in 0.00 sec.                                                                   
+                                                                                                                          
+* Info * Orthogonalization matrix computed in 0.27 sec.                                                                   
+                                                                                                                          
+* Info * SAD initial guess computed in 0.01 sec.                                                                          
+                                                                                                                          
+* Info * Starting Reduced Basis SCF calculation...                                                                        
+* Info * ...done. SCF energy in reduced basis set: -40.144671005651 au. Time: 0.53 sec.                                   
+                                                                                                                          
+* Info * Overlap matrix computed in 0.00 sec.                                                                             
+                                                                                                                          
+* Info * Kinetic energy matrix computed in 0.00 sec.                                                                      
+                                                                                                                          
+* Info * Nuclear potential matrix computed in 0.00 sec.                                                                   
+                                                                                                                          
+* Info * Orthogonalization matrix computed in 0.00 sec.                                                                   
+                                                                                                                          
+                                                                                                                          
+               Iter. |    Kohn-Sham Energy | Energy Change | Gradient Norm | Max. Gradient | Density Change               
+               --------------------------------------------------------------------------------------------               
+                  1       -40.485939274344    0.0000000000      0.11108811      0.01401305      0.00000000                
+                  2       -40.485530914377    0.0004083600      0.12689561      0.01679202      0.07407776                
+                  3       -40.487670079172   -0.0021391648      0.00189164      0.00024637      0.03561562                
+                  4       -40.487670542383   -0.0000004632      0.00004468      0.00000532      0.00049247                
+                  5       -40.487670542615   -0.0000000002      0.00000373      0.00000048      0.00001732                
+                  6       -40.487670542617   -0.0000000000      0.00000003      0.00000001      0.00000111                
+                                                                                                                          
+* Info * Checkpoint written to file: DFT_Methane_opt_velox.scf.h5                                                         
+                                                                                                                          
+               *** SCF converged in 6 iterations. Time: 1.58 sec.                                                         
+                                                                                                                          
+               Spin-Restricted Kohn-Sham:                                                                                 
+               --------------------------                                                                                 
+               Total Energy                       :      -40.4876705426 au                                                
+               Electronic Energy                  :      -53.8959956933 au                                                
+               Nuclear Repulsion Energy           :       13.4083251507 au                                                
+               ------------------------------------                                                                       
+               Gradient Norm                      :        0.0000000335 au                                                
+                                                                                                                          
+                                                                                                                          
+               Ground State Information                                                                                   
+               ------------------------                                                                                   
+               Charge of Molecule            :  0.0                                                                       
+               Multiplicity (2S+1)           :  1.0                                                                       
+               Magnetic Quantum Number (M_S) :  0.0                                                                       
+                                                                                                                          
+                                                                                                                          
+                                                 Spin Restricted Orbitals                                                 
+                                                 ------------------------                                                 
+                                                                                                                          
+               Molecular Orbital No.   1:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:  -10.17333 au                                                                      
+               (   1 C   1s  :    -0.99)                                                                                  
+                                                                                                                          
+               Molecular Orbital No.   2:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:   -0.68585 au                                                                      
+               (   1 C   1s  :     0.25) (   1 C   2s  :    -0.48) (   2 H   1s  :    -0.18)                              
+               (   3 H   1s  :    -0.18) (   4 H   1s  :    -0.18) (   5 H   1s  :    -0.18)                              
+                                                                                                                          
+               Molecular Orbital No.   3:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:   -0.39131 au                                                                      
+               (   1 C   1p+1:     0.29) (   1 C   1p0 :     0.32) (   2 H   1s  :     0.26)                              
+               (   3 H   1s  :     0.16) (   4 H   1s  :    -0.32)                                                        
+                                                                                                                          
+               Molecular Orbital No.   4:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:   -0.39130 au                                                                      
+               (   1 C   1p-1:    -0.37) (   1 C   1p0 :    -0.21) (   4 H   1s  :     0.22)                              
+               (   5 H   1s  :    -0.37) (   5 H   2s  :    -0.16)                                                        
+                                                                                                                          
+               Molecular Orbital No.   5:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:   -0.39130 au                                                                      
+               (   1 C   1p+1:     0.31) (   1 C   1p-1:     0.23) (   1 C   1p0 :    -0.22)                              
+               (   2 H   1s  :     0.27) (   3 H   1s  :    -0.35) (   3 H   2s  :    -0.16)                              
+                                                                                                                          
+               Molecular Orbital No.   6:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.07204 au                                                                      
+               (   1 C   2s  :     0.22) (   1 C   3s  :     2.92) (   2 H   2s  :    -1.07)                              
+               (   3 H   2s  :    -1.07) (   4 H   2s  :    -1.07) (   5 H   2s  :    -1.07)                              
+                                                                                                                          
+               Molecular Orbital No.   7:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.14405 au                                                                      
+               (   1 C   1p+1:     0.17) (   1 C   1p-1:     0.28) (   1 C   1p0 :    -0.18)                              
+               (   1 C   2p+1:     0.56) (   1 C   2p-1:     0.95) (   1 C   2p0 :    -0.59)                              
+               (   2 H   2s  :    -0.92) (   3 H   2s  :     1.96) (   5 H   2s  :    -0.92)                              
+                                                                                                                          
+               Molecular Orbital No.   8:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.14405 au                                                                      
+               (   1 C   1p+1:     0.27) (   1 C   1p-1:    -0.23) (   1 C   2p+1:     0.90)                              
+               (   1 C   2p-1:    -0.78) (   1 C   2p0 :    -0.39) (   2 H   2s  :    -1.47)                              
+               (   4 H   2s  :    -0.43) (   5 H   2s  :     1.79)                                                        
+                                                                                                                          
+               Molecular Orbital No.   9:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.14405 au                                                                      
+               (   1 C   1p+1:     0.20) (   1 C   1p0 :     0.31) (   1 C   2p+1:     0.66)                              
+               (   1 C   2p-1:     0.25) (   1 C   2p0 :     1.04) (   2 H   2s  :    -1.07)                              
+               (   3 H   2s  :    -0.55) (   4 H   2s  :     1.99) (   5 H   2s  :    -0.37)                              
+                                                                                                                          
+               Molecular Orbital No.  10:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.41680 au                                                                      
+               (   1 C   1p+1:     0.24) (   1 C   1p0 :    -0.19) (   1 C   2p+1:    -0.95)                              
+               (   1 C   2p0 :     0.75) (   2 H   1s  :     0.68) (   3 H   1s  :    -0.67)                              
+               (   4 H   1s  :     0.23) (   5 H   1s  :    -0.25)                                                        
+                                                                                                                          
+                                                                                                                          
+                                                Ground-State Dipole Moment                                                
+                                               ----------------------------                                               
+                                                                                                                          
+                                   X   :         0.000001 a.u.         0.000001 Debye                                     
+                                   Y   :        -0.000001 a.u.        -0.000003 Debye                                     
+                                   Z   :        -0.000001 a.u.        -0.000003 Debye                                     
+                                 Total :         0.000002 a.u.         0.000004 Debye                                     
+                                                                                                                          
+                                                                                                                          
+                                                Optimization Driver Setup                                                 
+                                               ===========================                                                
+                                                                                                                          
+                                     Coordinate System       :    TRIC                                                    
+                                     Constraints             :    No                                                      
+                                     Max. Number of Steps    :    300                                                     
+                                                                                                                          
+* Info * Computing energy and gradient...                                                                                 
+* Info *   Energy   : -40.4876705426 a.u.                                                                                 
+* Info *   Gradient : 4.280739e-03 a.u. (RMS)                                                                             
+* Info *              4.795541e-03 a.u. (Max)                                                                             
+* Info *   Time     : 49.92 sec                                                                                           
+                                                                                                                          
+* Info * Computing energy and gradient...                                                                                 
+* Info *   Energy   : -40.4877982806 a.u.                                                                                 
+* Info *   Gradient : 1.258093e-04 a.u. (RMS)                                                                             
+* Info *              1.417586e-04 a.u. (Max)                                                                             
+* Info *   Time     : 48.96 sec                                                                                           
+                                                                                                                          
+* Info * Computing energy and gradient...                                                                                 
+* Info *   Energy   : -40.4877983957 a.u.                                                                                 
+* Info *   Gradient : 3.316600e-06 a.u. (RMS)                                                                             
+* Info *              4.170258e-06 a.u. (Max)                                                                             
+* Info *   Time     : 49.54 sec                                                                                           
+                                                                                                                          
+* Info * Geometry optimization completed.                                                                                 
+                                                                                                                          
+                                              Molecular Geometry (Angstroms)                                              
+                                             ================================                                             
+                                                                                                                          
+                          Atom         Coordinate X          Coordinate Y          Coordinate Z                           
+                                                                                                                          
+                           C           1.018253003729        0.093144814083        0.031472300790                         
+                           H           2.117586492222        0.093131733549        0.031288619417                         
+                           H           0.651945303912       -0.607290051815        0.795466675203                         
+                           H           0.651596436186       -0.218197565175       -0.957028933756                         
+                           H           0.651865405627        1.104959179660        0.256162790981                         
+                                                                                                                          
+                                                                                                                          
+                                             Summary of Geometry Optimization                                             
+                                            ==================================                                            
+                                                                                                                          
+                  Opt.Step       Energy (a.u.)       Energy Change (a.u.)       Displacement (RMS, Max)                   
+                  -------------------------------------------------------------------------------------                   
+                      0         -40.487670542617        0.000000000000         0.000e+00      0.000e+00                   
+                      1         -40.487798280589       -0.000127737972         6.555e-03      7.346e-03                   
+                      2         -40.487798395704       -0.000000115115         1.871e-04      2.127e-04                   
+                                                                                                                          
+                                                                                                                          
+                                              Statistical Deviation between                                               
+                                         Optimized Geometry and Initial Geometry                                          
+                                        =========================================                                         
+                                                                                                                          
+                               Internal Coord.        RMS deviation         Max. deviation                                
+                               -----------------------------------------------------------                                
+                                  Bonds               0.007 Angstrom        0.007 Angstrom                                
+                                  Angles              0.001 degree          0.002 degree                                  
+                                                                                                                          
+                                    *** Time spent in Optimization Driver: 148.96 sec                                     
+                                                                                                                          
+!========================================================================================================================!
+!                               VeloxChem execution completed at Fri Apr 29 08:42:59 2022.                               !
+!========================================================================================================================!
+!                                          Total execution time is 151.58 sec.                                           !
+!========================================================================================================================!
+!                     Rinkevicius, Z.; Li, X.; Vahtras, O.; Ahmadzadeh, K.; Brand, M.; Ringholm, M.;                     !
+!                              List, N. H.; Scheurer, M.; Scott, M.; Dreuw, A.; Norman, P.                               !
+!                     VeloxChem: A Python-driven Density-functional Theory Program for Spectroscopy                      !
+!                                Simulations in High-performance Computing Environments.                                 !
+!                                       WIREs Comput Mol Sci 2020, 10 (5), e1457.                                        !
+!========================================================================================================================!
