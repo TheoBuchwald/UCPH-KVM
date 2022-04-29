@@ -423,6 +423,28 @@ class VeloxExtract:
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
         self.tot_energy = 'NaN'
+    
+    def _Dipole_moments(self) -> None:
+        linenumber = Forward_search_last(self.filename, 'Ground-State Dipole Moment', 'dipole moment', quiet=self.quiet)
+        if isinstance(linenumber, int):
+            linenumber += 3
+            self.dipolex, self.dipoley, self.dipolez, self.total_dipole = float(self.lines[linenumber].split()[-4]), float(self.lines[linenumber+1].split()[-4]), float(self.lines[linenumber+2].split()[-4]), float(self.lines[linenumber+3].split()[-4])
+            return
+        self.dipolex, self.dipoley, self.dipolez, self.total_dipole = 'NaN'
+
+    #NB! Only static polarizability considered
+    def _Polarizabilities(self) -> None:
+        linenumber = Forward_search_last(self.filename, 'Polarizability (w=0.0000)', 'polarizability', quiet=self.quiet)
+        if isinstance(linenumber, int):
+            #Need to perform diagonalization
+            PolarizabilityTensor = np.array([[float(self.lines[linenumber+3].split()[1]), float(self.lines[linenumber+3].split()[2]), float(self.lines[linenumber+3].split()[3])],
+                                             [float(self.lines[linenumber+4].split()[1]), float(self.lines[linenumber+4].split()[2]), float(self.lines[linenumber+4].split()[3])],
+                                             [float(self.lines[linenumber+5].split()[1]), float(self.lines[linenumber+5].split()[2]), float(self.lines[linenumber+5].split()[3])]])
+            PolarizabilityEigenvalues = np.linalg.eigh(PolarizabilityTensor)[0]
+            self.polx, self.poly, self.polz = PolarizabilityEigenvalues
+            self.iso_polar = PolarizabilityEigenvalues.mean()
+            return
+        self.polx = self.poly = self.polz = self.iso_polar = 'NaN'
 
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Molecular Geometry', 'geometry', quiet=self.quiet)
