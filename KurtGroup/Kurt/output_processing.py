@@ -176,8 +176,8 @@ class OutputType:
             lines = read.readlines()[:100]
 
         AMS = False
-        for i in range(100):
-            if "Amsterdam Modeling Suite (AMS)" in lines[i]:
+        for line in lines:
+            if "Amsterdam Modeling Suite (AMS)" in line:
                 AMS = True
 
         # The output file is determined to be of one of the following types
@@ -399,7 +399,7 @@ class Constants:
         self.s_trans_const = 0.3160965065 #Assuming 1 bar standard pressure and molar
         self.au_to_kJmol = 2625.4996394799
         self.bohr_to_ao = 0.529177249
-        self.debye_to_au = 0.393456  
+        self.debye_to_au = 0.393456
 
 
 class VeloxExtract:
@@ -423,7 +423,7 @@ class VeloxExtract:
             self.tot_energy = float(self.lines[linenumber].split()[-2])
             return
         self.tot_energy = 'NaN'
-    
+
     def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Ground-State Dipole Moment', 'dipole moment', quiet=self.quiet)
         if isinstance(linenumber, int):
@@ -484,7 +484,7 @@ class AMSExtract:
             self.tot_energy = float(self.lines[linenumber].split()[-1])
             return
         self.tot_energy = 'NaN'
-    
+
     def _Dipole_moments(self) -> None:
         linenumber = Forward_search_last(self.filename, 'Dipole Moment', 'dipole moment', quiet=self.quiet)
         if isinstance(linenumber, int):
