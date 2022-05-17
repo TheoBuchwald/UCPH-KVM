@@ -1,15 +1,32 @@
 
 import argparse
 import numpy as np
+from tqdm import tqdm
 from KurtGroup.Kurt import output_processing as op
 from functools import partial
 from multiprocessing import Pool, cpu_count
 import matplotlib.pyplot as plt
 from matplotlib import rc
 from types import FunctionType
+import json
+import copy
 
 
 #*************************** INPUT PARSING ****************************
+
+def flatten_list(data, flat_list):
+    # iterating over the data
+    for element in data:
+        # checking for list
+        if type(element) == list:
+            # calling the same function with current element as new argument
+            flatten_list(element, flat_list)
+        else:
+            flat_list.append(element)
+
+def IterExtract(files, NeededValues, Quiet, T):
+    for file in files:
+        yield Data_Extraction(file, NeededValues, Quiet, T)[file]
 
 def Resize(array: list) -> None:
     """Takes an array of arrays with varying sizes and resizes them to the same size.
@@ -386,6 +403,8 @@ def Extract(args):
     Save = args.save
     Quiet = args.quiet
     Multiprocessing = args.multiprocessing
+    ProgressBar = args.progressbar
+    UnitTesting = args.unittest
 
     # Making a copy of RequestedArguments
     # This is so arguments that are dependent on others can be called independently
@@ -430,19 +449,37 @@ def Extract(args):
     # These are found from the Outputs dictionary by comparing with the Wanted_Values list
     ArgumentsToValues = {key: val for key, val in Outputs.items() if key in WantedValues}
 
+    Values = []
+    flatten_list([val for val in ArgumentsToValues.values()], Values)
+
     # How many files to run the script on
     Count = len(InputFiles)
 
     # If multiprocessing is eneabled it will be run using half of the available CPUS
     # Else they will be run in a linear fashion
-    if Multiprocessing:
-        with Pool(int(cpu_count()/2)) as pool:
-            ExtractedValues = pool.map(partial(Data_Extraction, Needed_Values=NeededValues, quiet=Quiet, Temperature=T), InputFiles)
-            ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
+    if ProgressBar:
+        if Multiprocessing:
+            with Pool(int(cpu_count()/2)) as pool:
+                ExtractedValues = []
+                for result in tqdm(pool.imap(partial(Data_Extraction, Needed_Values=NeededValues, quiet=Quiet, Temperature=T), InputFiles), total=Count, unit=" files", leave=True):
+                    ExtractedValues.append(result)
+                ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
+        else:
+            ExtractedValues = dict()
+            with tqdm(IterExtract(InputFiles, NeededValues, Quiet, T), total=Count, initial=1, unit=" files", leave=True) as t:
+                for file, result in zip(InputFiles, t):
+                    t.set_postfix_str(f'{file:{len(max(InputFiles, key=len))}}')
+                    ExtractedValues[file] = result
     else:
-        ExtractedValues = dict()
-        for file in InputFiles:
-            ExtractedValues[file] = Data_Extraction(file, NeededValues, Quiet, T)[file]
+        if Multiprocessing:
+            with Pool(int(cpu_count()/2)) as pool:
+                ExtractedValues = []
+                ExtractedValues = pool.map(partial(Data_Extraction, Needed_Values=NeededValues, quiet=Quiet, Temperature=T), InputFiles)
+                ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
+        else:
+            ExtractedValues = dict()
+            for file in InputFiles:
+                ExtractedValues[file] = Data_Extraction(file, NeededValues, Quiet, T)[file]
 
     # Creating Input_Array where all values are put in lists
     InputArray = [[i] for i in ExtractedValues]
@@ -462,6 +499,15 @@ def Extract(args):
             if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
                 ExtractedValues[file]['total_cpu_time'] /= 60
                 ExtractedValues[file]['wall_cpu_time'] /= 60
+
+    # This is done purely for the unittest script to work correctly
+    if UnitTesting:
+        SaveDict = copy.deepcopy(ExtractedValues)
+        for key_outer, dictionary in ExtractedValues.items():
+            for key_inner in dictionary:
+                if key_inner not in Values:
+                    SaveDict[key_outer].pop(key_inner)
+        return SaveDict
 
     # If something is at this point not in a list somehow they will be after this
     for OuterKey, Dict in ExtractedValues.items():
@@ -501,6 +547,14 @@ def Extract(args):
        print("No data was extracted, therefore nothing more will be printed")
        return
 
+    elif Save == 'return':
+        SaveDict = copy.deepcopy(ExtractedValues)
+        for key_outer, dictionary in ExtractedValues.items():
+            for key_inner in dictionary:
+                if key_inner not in Values:
+                    SaveDict[key_outer].pop(key_inner)
+        return SaveDict
+
     elif Save == 'csv':
         np.savetxt('data.csv', OutputArray, delimiter=',', fmt='%s')
         print(f'Data has been saved in data.csv')
@@ -510,6 +564,19 @@ def Extract(args):
         SaveDict = {i[0]: i[1:] for i in OutputArray}
         np.savez('data.npz', **SaveDict)
         print(f'Data has been saved in data.npz')
+        return
+
+    elif Save == 'json':
+        SaveDict = copy.deepcopy(ExtractedValues)
+        for key_outer, dictionary in ExtractedValues.items():
+            for key_inner in dictionary:
+                if key_inner not in Values:
+                    SaveDict[key_outer].pop(key_inner)
+        json_object = json.dumps(SaveDict, indent=4)
+
+        with open("data.json", "w") as outfile:
+            outfile.write(json_object)
+
         return
 
     print(OutputArray)
@@ -683,11 +750,13 @@ For help contact
     ExtractionGroup.add_argument('-geom', '--optgeom', action='store_true',help='Include to extract optimized geometries and save to \'filename_opt.xyz\'.')
 
     ExtractionDataProcessingGroup = ExtractionSubparser.add_argument_group('Data processing commands')
-    ExtractionDataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv','npz'])
+    ExtractionDataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv', 'npz', 'json', 'return'])
 
     ExtractionAdditionalCommandsGroup = ExtractionSubparser.add_argument_group('Additional commands')
     ExtractionAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
     ExtractionAdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
+    ExtractionAdditionalCommandsGroup.add_argument('--no-progressbar', action='store_false', help='Include to deactivate progress bar', dest='progressbar')
+    ExtractionAdditionalCommandsGroup.add_argument('--unittest', action='store_true', help=argparse.SUPPRESS)
 
     # Parses the arguments
     args = Parser.parse_args()
