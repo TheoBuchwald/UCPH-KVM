@@ -755,7 +755,7 @@ For help contact
     ExtractionAdditionalCommandsGroup = ExtractionSubparser.add_argument_group('Additional commands')
     ExtractionAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
     ExtractionAdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
-    ExtractionAdditionalCommandsGroup.add_argument('--no-progressbar', action='store_false', help='Include to deactivate progress bar', dest='progressbar')
+    ExtractionAdditionalCommandsGroup.add_argument('--progressbar', action='store_true', help='Include to deactivate progress bar', dest='progressbar')
     ExtractionAdditionalCommandsGroup.add_argument('--unittest', action='store_true', help=argparse.SUPPRESS)
 
     # Parses the arguments
