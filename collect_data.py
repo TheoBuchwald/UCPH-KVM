@@ -1,7 +1,6 @@
 
 import argparse
 import numpy as np
-from tqdm import tqdm
 from KurtGroup.Kurt import output_processing as op
 from functools import partial
 from multiprocessing import Pool, cpu_count
@@ -458,6 +457,7 @@ def Extract(args):
     # If multiprocessing is eneabled it will be run using half of the available CPUS
     # Else they will be run in a linear fashion
     if ProgressBar:
+        from tqdm import tqdm
         if Multiprocessing:
             with Pool(int(cpu_count()/2)) as pool:
                 ExtractedValues = []
