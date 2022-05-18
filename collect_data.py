@@ -1,5 +1,7 @@
 
 import argparse
+import os
+import time
 import numpy as np
 from KurtGroup.Kurt import output_processing as op
 from functools import partial
@@ -13,6 +15,76 @@ import copy
 
 #*************************** INPUT PARSING ****************************
 
+
+class TerminalInformation():
+
+    def __init__(self, total_nr: int, max_filename_length: int = None):
+        self.full_bar = "▇"
+        self.empty_bar = " "
+        self.total_nr = total_nr
+        self.max_filename_length = max_filename_length
+        self.terminal_width, _ = os.get_terminal_size()
+
+        self.UP = lambda x : f"\x1B[{x}A"
+        self.CLR = "\x1B[0K"
+        self.CLRnl = "\x1B[0K\n"
+        self.additionalLines = 0
+
+        self.setProgressbarWidth(True)
+        self.updateProgressbar(0, False, False)
+
+    def setProgressbarWidth(self, timing: bool):
+        self.progressbar_scale_factor = self.terminal_width
+        self.progressbar_scale_factor -= 2 # Corresponds to removing the sidebars
+        self.progressbar_scale_factor -= len(str(self.total_nr)) * 2 - 2 # Removes the counter
+        if timing:
+            self.progressbar_scale_factor -= 23 # Removes the timing parts except the average files pr. second time
+            self.progressbar_scale_factor -= 5 # Estimate for average files pr. second time
+        self.progressbar_scale_factor -= 10 # Additional just in case
+
+    def updateProgressbar(self, nr: int, print_filename: bool, timing: bool, *, filename: str = None):
+        self.progress = nr/self.total_nr*self.progressbar_scale_factor
+        self.additionalLines = 0
+
+        self.bar = int(self.progress)*self.full_bar + (self.progressbar_scale_factor-int(self.progress))*self.empty_bar
+
+        self.progressbar = f"|{self.bar}| {nr}/{self.total_nr}"
+
+        if timing:
+            self.progressbar += self.timer(nr)
+
+        if print_filename:
+            self.additionalLines += 1
+            self.progressbar = f"<<< {filename:{self.max_filename_length}} >>>{self.CLRnl}{self.progressbar}"
+
+        lines = self.progressbar.split('\n')
+        if isinstance(lines, list) and len(lines) > 1:
+            self.progressbar = f"{self.UP(len(lines)-1)}{self.progressbar}"
+
+        print(self.progressbar + self.CLR, end="\r")
+
+    def start_timer(self):
+        start_time = time.perf_counter()
+        self.times = [start_time]
+        self.time_differences = []
+
+    def timer(self, nr):
+        self.times.append(time.perf_counter())
+
+        self.time_differences.append(self.times[-1] - self.times[-2])
+
+        minutes = lambda x : x // 60
+        seconds = lambda x : x - x // 60
+
+        if len(self.times) > 1:
+            time_average = np.mean(self.time_differences)
+            time_spent = sum(self.time_differences)
+            time_left = time_average*(self.total_nr - nr)
+            return f"; {minutes(time_spent):02.0f}:{seconds(time_spent):02.0f}<{minutes(time_left):02.0f}:{seconds(time_left):02.0f}; {1/time_average:.2f} files/s"
+        else:
+            return "; 00:00<00:00; 0 files/s"
+
+# Stolen from https://geekflare.com/flatten-list-python/ and modified slightly
 def flatten_list(data, flat_list):
     # iterating over the data
     for element in data:
@@ -22,10 +94,6 @@ def flatten_list(data, flat_list):
             flatten_list(element, flat_list)
         else:
             flat_list.append(element)
-
-def IterExtract(files, NeededValues, Quiet, T):
-    for file in files:
-        yield Data_Extraction(file, NeededValues, Quiet, T)[file]
 
 def Resize(array: list) -> None:
     """Takes an array of arrays with varying sizes and resizes them to the same size.
@@ -81,7 +149,8 @@ def Extract_data(suppressed: bool, Wanted_Values: dict, infile: str, file_text: 
             method(file_text)
         except AttributeError:
             if not(suppressed):
-                print(f'{infile}: {i} has not been implemented for {input_type}')
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f'{infile}: {i} has not been implemented for {input_type}\n')
 
 def Check_if_Implemented(input_file: dict, Set_of_values: dict, Extracted_values: dict) -> None:
     # Checks to see if the keys of a double dictionary exists
@@ -454,32 +523,26 @@ def Extract(args):
     # How many files to run the script on
     Count = len(InputFiles)
 
-    # If multiprocessing is eneabled it will be run using half of the available CPUS
+    # If multiprocessing is enabled it will be run using half of the available CPUS
     # Else they will be run in a linear fashion
     if ProgressBar:
-        from tqdm import tqdm
-        if Multiprocessing:
-            with Pool(int(cpu_count()/2)) as pool:
-                ExtractedValues = []
-                for result in tqdm(pool.imap(partial(Data_Extraction, Needed_Values=NeededValues, quiet=Quiet, Temperature=T), InputFiles), total=Count, unit=" files", leave=True):
-                    ExtractedValues.append(result)
-                ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
-        else:
-            ExtractedValues = dict()
-            with tqdm(IterExtract(InputFiles, NeededValues, Quiet, T), total=Count, initial=1, unit=" files", leave=True) as t:
-                for file, result in zip(InputFiles, t):
-                    t.set_postfix_str(f'{file:{len(max(InputFiles, key=len))}}')
-                    ExtractedValues[file] = result
+        max_filename_length = len(max(InputFiles, key=len))
+        TerminalOutput = TerminalInformation(Count, max_filename_length)
+        TerminalOutput.start_timer()
+    if Multiprocessing:
+        with Pool(int(cpu_count()/2)) as pool:
+            ExtractedValues = []
+            for i, result in enumerate(pool.imap(partial(Data_Extraction, Needed_Values=NeededValues, quiet=Quiet, Temperature=T), InputFiles), start=1):
+                if ProgressBar:
+                    TerminalOutput.updateProgressbar(i, False, True)
+                ExtractedValues.append(result)
+            ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
     else:
-        if Multiprocessing:
-            with Pool(int(cpu_count()/2)) as pool:
-                ExtractedValues = []
-                ExtractedValues = pool.map(partial(Data_Extraction, Needed_Values=NeededValues, quiet=Quiet, Temperature=T), InputFiles)
-                ExtractedValues = {key: value for dictionary in ExtractedValues for key, value in dictionary.items()} # Reformatting Extracted_values
-        else:
-            ExtractedValues = dict()
-            for file in InputFiles:
-                ExtractedValues[file] = Data_Extraction(file, NeededValues, Quiet, T)[file]
+        ExtractedValues = dict()
+        for i, file in enumerate(InputFiles, start=1):
+            if ProgressBar:
+                TerminalOutput.updateProgressbar(i, True, True, filename=file)
+            ExtractedValues[file] = Data_Extraction(file, NeededValues, Quiet, T)[file]
 
     # Creating Input_Array where all values are put in lists
     InputArray = [[i] for i in ExtractedValues]
@@ -492,13 +555,15 @@ def Extract(args):
     if RequestedArguments['_CPUS'] == 's':
         for file in InputFiles:
             if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
-                ExtractedValues[file]['total_cpu_time'] *= 60
-                ExtractedValues[file]['wall_cpu_time'] *= 60
+                continue
+            ExtractedValues[file]['total_cpu_time'] *= 60
+            ExtractedValues[file]['wall_cpu_time'] *= 60
     elif NeededArguments['_CPUS'] == 'h':
         for file in InputFiles:
             if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
-                ExtractedValues[file]['total_cpu_time'] /= 60
-                ExtractedValues[file]['wall_cpu_time'] /= 60
+                continue
+            ExtractedValues[file]['total_cpu_time'] /= 60
+            ExtractedValues[file]['wall_cpu_time'] /= 60
 
     # This is done purely for the unittest script to work correctly
     if UnitTesting:
@@ -542,6 +607,9 @@ def Extract(args):
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
 
+    if ProgressBar:
+        print("")
+
     # If this statement is true, then only the filenames have been written to the Output_Array
     if len(OutputArray) == OutputArray.size:
        print("No data was extracted, therefore nothing more will be printed")
@@ -576,6 +644,7 @@ def Extract(args):
 
         with open("data.json", "w") as outfile:
             outfile.write(json_object)
+        print("Data has been saved in data.json")
 
         return
 
@@ -753,9 +822,9 @@ For help contact
     ExtractionDataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv', 'npz', 'json', 'return'])
 
     ExtractionAdditionalCommandsGroup = ExtractionSubparser.add_argument_group('Additional commands')
-    ExtractionAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
+    ExtractionAdditionalCommandsGroup.add_argument('-q', '--quiet', '--no-log', action='store_true', help="Include to not print error messages to the 'collect_data.log' file", dest='quiet')
     ExtractionAdditionalCommandsGroup.add_argument('-mp','--multiprocessing', action='store_true', help='Include to use the multiprocessing library for data extraction')
-    ExtractionAdditionalCommandsGroup.add_argument('--progressbar', action='store_true', help='Include to deactivate progress bar', dest='progressbar')
+    ExtractionAdditionalCommandsGroup.add_argument('--no-progressbar', action='store_false', help='Include to deactivate progress bar', dest='progressbar')
     ExtractionAdditionalCommandsGroup.add_argument('--unittest', action='store_true', help=argparse.SUPPRESS)
 
     # Parses the arguments
