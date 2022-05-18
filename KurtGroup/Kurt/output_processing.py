@@ -21,7 +21,8 @@ def Forward_search_last(file: str, text: str, error: str, quiet: bool = False) -
     res = out.stdout
     if len(res) == 0:
         if not quiet:
-            print(f'No {error} could be found in {file}')
+            with open("collect_data.log", "a") as logfile:
+                logfile.write(f'No {error} could be found in {file}\n')
         return 'NaN'
     res = res.split()[0]
     res = str(res).split(':')
@@ -47,7 +48,8 @@ def Forward_search_after_last(file: str, text1: str, text2: str, lines: int, err
     res = out.stdout
     if len(res) == 0:
         if not quiet:
-            print(f'No {error} could be found in {file}')
+            with open("collect_data.log", "a") as logfile:
+                logfile.write(f'No {error} could be found in {file}\n')
         return 'NaN'
     res = res.split()[0]
     res = str(res).split('-')
@@ -71,7 +73,8 @@ def Backward_search_last(file: str, text: str, filelength: int, error: str, quie
     res = out.stdout
     if len(res) == 0:
         if not quiet:
-            print(f'No {error} could be found in {file}')
+            with open("collect_data.log", "a") as logfile:
+                logfile.write(f'No {error} could be found in {file}\n')
         return 'NaN'
     res = res.split()[0]
     res = str(res).split(':')
@@ -94,7 +97,8 @@ def Forward_search_first(file: str, text: str, error: str, quiet: bool = False) 
     res = out.stdout
     if len(res) == 0:
         if not quiet:
-            print(f'No {error} could be found in {file}')
+            with open("collect_data.log", "a") as logfile:
+                logfile.write(f'No {error} could be found in {file}\n')
         return 'NaN'
     res = res.split()[0]
     res = str(res).split(':')
@@ -117,7 +121,8 @@ def Forward_search_all(file: str, text: str, error: str, quiet: bool = False) ->
     res = out.stdout
     if len(res) == 0:
         if not quiet:
-            print(f'No {error} could be found in {file}')
+            with open("collect_data.log", "a") as logfile:
+                logfile.write(f'No {error} could be found in {file}\n')
         return 'NaN'
     res = str(res).split('\\n')
     return [int(val.replace('b\'','').replace('\'','').replace(':','')) - 1 for val in res[:-1]]
@@ -217,7 +222,9 @@ class OutputType:
 
         # File type not implemented
         else:
-            print(f"The output file {self.filename} is not of a known format")
+            if not Quiet:
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"The output file {self.filename} is not of a known format\n")
 
         del lines
 
@@ -462,7 +469,8 @@ class VeloxExtract:
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
             GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
             if not(self.quiet):
-                print("Final geometry has been saved to " + OptGeomFilename)
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
 
 class AMSExtract:
     def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
@@ -505,7 +513,8 @@ class AMSExtract:
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
             GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
             if not(self.quiet):
-                print("Final geometry has been saved to " + OptGeomFilename)
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
 
 class GaussianExtract:
     def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
@@ -629,7 +638,8 @@ class GaussianExtract:
     def _PartitionFunctions(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -650,7 +660,8 @@ class GaussianExtract:
     def _Enthalpy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.enthalpy = 'NaN'
         self._RotationalConsts()
         self.E_T = 3/2 * self.T * self.constants.gas_constant
@@ -667,7 +678,8 @@ class GaussianExtract:
     def _Entropy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -688,7 +700,8 @@ class GaussianExtract:
     def _Gibbs(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping free energy energy calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping free energy energy calculation\n")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
@@ -705,7 +718,8 @@ class GaussianExtract:
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
             GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location, transform = True)
             if not(self.quiet):
-                print("Final geometry has been saved to " + OptGeomFilename)
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
 
 
 
@@ -761,7 +775,8 @@ class OrcaExtract:
     def _Enthalpy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
@@ -779,7 +794,8 @@ class OrcaExtract:
     def _Gibbs(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping free energy energy calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping free energy energy calculation\n")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
@@ -862,7 +878,8 @@ class OrcaExtract:
     def _PartitionFunctions(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -883,7 +900,8 @@ class OrcaExtract:
     def _Entropy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -913,7 +931,8 @@ class OrcaExtract:
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
             GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
             if not(self.quiet):
-                print("Final geometry has been saved to " + OptGeomFilename)
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
 
 
 class DaltonExtract:
@@ -958,9 +977,10 @@ class DaltonExtract:
                 elif i*2 == 6:
                     self.total_cpu_time += float(time_value) * 60 * 24
                 else:
-                    print('''It was not expected that DALTON would print anything larger than days in the total CPU time
+                    with open("collect_data.log", "a") as logfile:
+                        logfile.write('''It was not expected that DALTON would print anything larger than days in the total CPU time
 This will not be accounted for when printing the CPU time. The result will therefore not be correct
-Please contact a maintainer of the script ot have this updated''')
+Please contact a maintainer of the script ot have this updated\n''')
             for i, time_value in enumerate(pr_time[-2::-2]):
                 if i*2 == 0:
                     self.wall_cpu_time += float(time_value) / 60
@@ -971,9 +991,10 @@ Please contact a maintainer of the script ot have this updated''')
                 elif i*2 == 6:
                     self.wall_cpu_time += float(time_value) * 60 * 24
                 else:
-                    print('''It was not expected that DALTON would print anything larger than days in the total CPU time
+                    with open("collect_data.log", "a") as logfile:
+                        logfile.write('''It was not expected that DALTON would print anything larger than days in the total CPU time
 This will not be accounted for when printing the CPU time. The result will therefore not be correct
-Please contact a maintainer of the script ot have this updated''')
+Please contact a maintainer of the script ot have this updated\n''')
             return
         self.wall_cpu_time = 'NaN'
         self.total_cpu_time = 'NaN'
@@ -1098,7 +1119,8 @@ Please contact a maintainer of the script ot have this updated''')
     def _PartitionFunctions(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.qTotal = 'NaN'
             return
         self._RotationalConsts()
@@ -1119,7 +1141,8 @@ Please contact a maintainer of the script ot have this updated''')
     def _Entropy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.entropy = 'NaN'
             return
         self._RotationalConsts()
@@ -1139,7 +1162,8 @@ Please contact a maintainer of the script ot have this updated''')
     def _Enthalpy(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping partition function calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping partition function calculation\n")
             self.enthalpy = 'NaN'
             return
         self._RotationalConsts()
@@ -1157,7 +1181,8 @@ Please contact a maintainer of the script ot have this updated''')
     def _Gibbs(self) -> None:
         if CheckForOnlyNans(np.array(self.freq)):
             if not(self.quiet):
-                print(f"No frequencies found in {self.filename}, skipping free energy energy calculation")
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write(f"No frequencies found in {self.filename}, skipping free energy energy calculation\n")
             self.gibbs = 'NaN'
             return
         self.gibbs = self.enthalpy - self.T*self.entropy / self.constants.au_to_kJmol
@@ -1174,7 +1199,8 @@ Please contact a maintainer of the script ot have this updated''')
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
             GenerateXYZ(self.lines, OptGeomFilename, start, end, label_location)
             if not(self.quiet):
-                print("Final geometry has been saved to " + OptGeomFilename)
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
         else:
             start = Forward_search_last(self.filename, 'Cartesian Coordinates', 'initial geometry', quiet=self.quiet)
             end = Forward_search_after_last(self.filename, 'Cartesian Coordinates', 'Interatomic separations', 200, "end of initial geometry", quiet=self.quiet)
@@ -1190,8 +1216,8 @@ Please contact a maintainer of the script ot have this updated''')
                 OptGeomFilename = self.filename[:-4] + "_opt.xyz"
                 WriteToFile(OptGeomFilename,lines_to_add)
                 if not(self.quiet):
-                	print("Initial geometry has been saved to " + OptGeomFilename)
-
+                    with open("collect_data.log", "a") as logfile:
+                        logfile.write("Initial geometry has been saved to " + OptGeomFilename + "\n")
 
 
 class LSDaltonExtract:
@@ -1227,9 +1253,10 @@ class LSDaltonExtract:
                 elif i*2 == 6:
                     self.total_cpu_time += float(time_value) * 60 * 24
                 else:
-                    print('''It was not expected that LSDALTON would print anything larger than days in the total CPU time
+                    with open("collect_data.log", "a") as logfile:
+                        logfile.write('''It was not expected that LSDALTON would print anything larger than days in the total CPU time
 This will not be accounted for when printing the CPU time. The result will therefore not be correct
-Please contact a maintainer of the script ot have this updated''')
+Please contact a maintainer of the script ot have this updated\n''')
             for i, time_value in enumerate(pr_time[-2::-2]):
                 if i*2 == 0:
                     self.wall_cpu_time += float(time_value) / 60
@@ -1240,9 +1267,10 @@ Please contact a maintainer of the script ot have this updated''')
                 elif i*2 == 6:
                     self.wall_cpu_time += float(time_value) * 60 * 24
                 else:
-                    print('''It was not expected that LSDALTON would print anything larger than days in the total CPU time
+                    with open("collect_data.log", "a") as logfile:
+                        logfile.write('''It was not expected that LSDALTON would print anything larger than days in the total CPU time
 This will not be accounted for when printing the CPU time. The result will therefore not be correct
-Please contact a maintainer of the script ot have this updated''')
+Please contact a maintainer of the script ot have this updated\n''')
             return
         self.total_cpu_time = 'NaN'
         self.wall_cpu_time = 'NaN'
