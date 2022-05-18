@@ -54,6 +54,8 @@ class TerminalInformation():
             self.progressbar += self.timer(nr)
 
         if print_filename:
+            if nr == 1:
+                print("")
             self.additionalLines += 1
             self.progressbar = f"<<< {filename:{self.max_filename_length}} >>>{self.CLRnl}{self.progressbar}"
 
