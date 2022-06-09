@@ -27,6 +27,8 @@
 *.xyz
 # Ignore vscode settings
 .vscode
+# Ignore pov files
+*.pov
 
 # Ignore datafiles from collect_data
 */data.npz
