@@ -2,7 +2,7 @@
 import argparse
 import sys
 
-sys.path.append('')
+sys.path.append('../')
 
 import KurtGroup.Kurt.chemical_information as ci
 import KurtGroup.Kurt.xyz as xyz
