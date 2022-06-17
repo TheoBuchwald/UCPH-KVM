@@ -1213,7 +1213,7 @@ Please contact a maintainer of the script ot have this updated\n''')
                 lines_to_add.append('\n')
                 for line in self.lines[start:end]:
                     words = line.split()
-                    lines_to_add.append(''.join([words[0].ljust(2),' ',f"{float(words[-7]) * self.constants.bohr_to_ao:.7f}".rjust(10),' ', f"{float(words[-4]) * self.constants.bohr_to_ao:.7f}".rjust(15), ' ',f"{float(words[-1]) * self.constants.bohr_to_ao:.7f}".rjust(15) ,'\n']))
+                    lines_to_add.append(''.join([words[0].ljust(2),' ',f"{float(words[-7]) * self.constants.bohr_to_ao:.7f}".rjust(20),' ', f"{float(words[-4]) * self.constants.bohr_to_ao:.7f}".rjust(25), ' ',f"{float(words[-1]) * self.constants.bohr_to_ao:.7f}".rjust(25) ,'\n']))
                 OptGeomFilename = self.filename[:-4] + "_opt.xyz"
                 WriteToFile(OptGeomFilename,lines_to_add)
                 if not(self.quiet):
@@ -1338,3 +1338,45 @@ Please contact a maintainer of the script ot have this updated\n''')
                 self.osc_strengths.append(float(self.lines[linenumber+8+i].split()[-1]))
         if len(self.osc_strengths) == 0:
             self.osc_strengths = ['NaN']
+
+    def _Optimized_Geometry(self) -> None:
+        start = Forward_search_last(self.filename, 'Final geometry', 'geometry', quiet=self.quiet)
+        if start != "NaN":
+            #Offset for going into actual coordinate list
+            start += 6
+            atoms_in_molecule = int(int(self.lines[start-3].split()[-1])/3)
+            end = start + atoms_in_molecule*4
+            lines_to_add = []
+            lines_to_add.append(str(atoms_in_molecule)+ '\n')
+            lines_to_add.append('\n')
+            for i, _ in enumerate(self.lines[start:end:4]):
+                linenr = start + i*4
+                # print(i, start-end)
+                lines_to_add.append(''.join([self.lines[linenr].split()[1].ljust(2),' ', f"{float(self.lines[linenr].split()[-1]) * self.constants.bohr_to_ao:.7f}".rjust(20),' ', f"{float(self.lines[linenr+1].split()[-1]) * self.constants.bohr_to_ao:.7f}".rjust(25),' ', f"{float(self.lines[linenr+2].split()[-1]) * self.constants.bohr_to_ao:.7f}".rjust(25), '\n']))
+            OptGeomFilename = self.filename[:-4] + "_opt.xyz"
+            WriteToFile(OptGeomFilename,lines_to_add)
+            if not(self.quiet):
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
+        else:
+            start = Forward_search_last(self.filename, 'PRINTING THE MOLECULE.INP FILE', 'initial geometry', quiet=self.quiet)
+            if start != "NaN":
+                start += 7
+                current_line = start
+                atoms_in_molecule = 0
+                lines_to_add = []
+                lines_to_add.append(str(atoms_in_molecule) + '\n')
+                lines_to_add.append('\n')
+                for _ in range(int(self.lines[start-1].split()[0].split('=')[-1])):
+                    current_atom = AtomicInformation(int(self.lines[current_line].split()[0].split('.')[0]))
+                    for i in range(int(self.lines[current_line].split()[1])):
+                        lines_to_add.append(''.join([current_atom.atom.ljust(2),' ', f"{float(self.lines[current_line+i+1].split()[1]):.7f}".rjust(20),' ', f"{float(self.lines[current_line+i+1].split()[2]):.7f}".rjust(25),' ', f"{float(self.lines[current_line+i+1].split()[3]):.7f}".rjust(25), '\n']))
+                    else:
+                        current_line += i+2
+                        atoms_in_molecule += i+1
+                lines_to_add[0] = f"{atoms_in_molecule}\n"
+            OptGeomFilename = self.filename[:-4] + "_opt.xyz"
+            WriteToFile(OptGeomFilename,lines_to_add)
+            if not(self.quiet):
+                with open("collect_data.log", "a") as logfile:
+                    logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
