@@ -80,7 +80,6 @@ def Backward_search_last(file: str, text: str, filelength: int, error: str, quie
     res = str(res).split(':')
     return filelength - int(res[0].replace('b\'','').replace('\'',''))
 
-
 def Forward_search_first(file: str, text: str, error: str, quiet: bool = False) -> int:
     """Searches from beginning of file and finds the first occurence of [text]
 
@@ -455,15 +454,13 @@ class VeloxExtract:
 
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Molecular Geometry', 'geometry', quiet=self.quiet)
-        end = Forward_search_after_last(self.filename, 'Molecular Geometry', 'Summary of Geometry', 200, "end of geometry", quiet=self.quiet)
-        offset_single_point = 0 #Need different offset if single point calc
-        if end == "NaN":
-           end = Forward_search_after_last(self.filename, 'Molecular Geometry', 'Molecular charge', 200, "end of geometry", quiet=self.quiet)
-           offset_single_point = 1
-        if start != "NaN" and end != "NaN":
-            #Offset for going into actual coordinate list
+        if start != "NaN":# and end != "NaN":
             start += 5
-            end -= 2 - offset_single_point
+            for i, line in enumerate(self.lines[start:]):
+                if len(line.strip()) == 0:
+                    end = start + i
+                    break
+            #Offset for going into actual coordinate list
             #Which position in the line is the atom label / number at
             label_location = 0
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
@@ -471,6 +468,7 @@ class VeloxExtract:
             if not(self.quiet):
                 with open("collect_data.log", "a") as logfile:
                     logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
+
 
 class AMSExtract:
     def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
@@ -503,11 +501,13 @@ class AMSExtract:
 
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Formula:', 'geometry', quiet=self.quiet)
-        end = Forward_search_after_last(self.filename, 'Formula:', 'Total System Charge', 200, "end of geometry", quiet=self.quiet)
-        if start != "NaN" and end != "NaN":
-            #Offset for going into actual coordinate list
+        if start != "NaN":
             start += 3
-            end -= 1
+            #Offset for going into actual coordinate list
+            for i, line in enumerate(self.lines[start:]):
+                if len(line.strip()) == 0:
+                    end = start + i
+                    break
             #Which position in the line is the atom label / number at
             label_location = 1
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
@@ -515,6 +515,7 @@ class AMSExtract:
             if not(self.quiet):
                 with open("collect_data.log", "a") as logfile:
                     logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
+
 
 class GaussianExtract:
     def __init__(self, filename: str, *, Quiet: bool = False, Temperature: float = 298.15) -> None:
@@ -708,11 +709,14 @@ class GaussianExtract:
 
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Standard orientation', 'geometry', quiet=self.quiet)
-        end = Forward_search_after_last(self.filename, 'Standard orientation', 'Rotational constants', 200, "end of geometry", quiet=self.quiet)
-        if start != "NaN" and end != "NaN":
+        # end = Forward_search_after_last(self.filename, 'Standard orientation', 'Rotational constants', 200, "end of geometry", quiet=self.quiet)
+        if start != "NaN":# and end != "NaN":
             #Offset for going into actual coordinate list
             start += 5
-            end -= 1
+            for i, line in enumerate(self.lines[start:]):
+                if '---------------------------------------------------------------------' in line:
+                    end = start + i
+                    break
             #Which position in the line is the atom label / number at
             label_location = 1
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
@@ -720,9 +724,6 @@ class GaussianExtract:
             if not(self.quiet):
                 with open("collect_data.log", "a") as logfile:
                     logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
-
-
-
 
 
 class OrcaExtract:
@@ -921,11 +922,13 @@ class OrcaExtract:
 
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'CARTESIAN COORDINATES (ANGSTROEM)', 'geometry', quiet=self.quiet)
-        end = Forward_search_after_last(self.filename, 'CARTESIAN COORDINATES (ANGSTROEM)', 'CARTESIAN COORDINATES (A.U.)', 200, "end of geometry", quiet=self.quiet)
-        if start != "NaN" and end != "NaN":
+        if start != "NaN":
             #Offset for going into actual coordinate list
             start += 2
-            end -= 2
+            for i, line in enumerate(self.lines[start:]):
+                if'----------------------------' in line:
+                    end = start + i - 1
+                    break
             #Which position in the line is the atom label / number at
             label_location = 0
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
@@ -1189,11 +1192,10 @@ Please contact a maintainer of the script ot have this updated\n''')
 
     def _Optimized_Geometry(self) -> None:
         start = Forward_search_last(self.filename, 'Final geometry (xyz format; angstrom)', 'final geometry', quiet=self.quiet)
-        end = Forward_search_after_last(self.filename, 'Final geometry (xyz format; angstrom)', '@ Iter', 200, "end of final geometry", quiet=self.quiet)
-        if start != "NaN" and end != "NaN":
+        if start != "NaN":
             #Offset for going into actual coordinate list
             start += 5
-            end -= 3
+            end = start + int(self.lines[start-2])
             #Which position in the line is the atom label / number at
             label_location = 0
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
@@ -1203,10 +1205,9 @@ Please contact a maintainer of the script ot have this updated\n''')
                     logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
         else:
             start = Forward_search_last(self.filename, 'Cartesian Coordinates', 'initial geometry', quiet=self.quiet)
-            end = Forward_search_after_last(self.filename, 'Cartesian Coordinates', 'Interatomic separations', 200, "end of initial geometry", quiet=self.quiet)
-            if start != "NaN" and end != "NaN":
+            if start != "NaN":
                 start += 4
-                end -= 2
+                end = start + int(int(self.lines[start-1].split(' ')[-1])/3)
                 lines_to_add = []
                 lines_to_add.append(str(end-(start))+ '\n')
                 lines_to_add.append('\n')
