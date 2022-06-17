@@ -2,8 +2,18 @@
 #Use the BSE API to obtain basis sets not already in Gaussian
 
 import argparse
-from ...KurtGroup.Kurt import chemical_information as ci
-from ...KurtGroup.Kurt import xyz
+import os
+import sys
+
+current = os.path.dirname(os.path.realpath(__file__))
+  
+parent = os.path.dirname(current)
+  
+sys.path.append(parent)
+
+
+import KurtGroup.Kurt.chemical_information as ci
+import KurtGroup.Kurt.xyz as xyz
 
 def generateGaussianInputFileText(XYZ: xyz.xyz_to, charge: int) -> str:
     """Makes the text for a Gaussian input file

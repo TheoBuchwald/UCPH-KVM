@@ -1,0 +1,492 @@
+!========================================================================================================================!
+!                                                                                                                        !
+!                                                   VELOXCHEM 1.0-RC2                                                    !
+!                                              AN ELECTRONIC STRUCTURE CODE                                              !
+!                                                                                                                        !
+!                                     Copyright (C) 2018-2021 VeloxChem developers.                                      !
+!                                                  All rights reserved.                                                  !
+!========================================================================================================================!
+!                                VeloxChem execution started at Fri Apr 29 07:52:35 2022.                                !
+!========================================================================================================================!
+                                                                                                                          
+* Info * Using 16 OpenMP threads per compute node.                                                                        
+                                                                                                                          
+* Info * Reading input file water_pol.inp...                                                                              
+                                                                                                                          
+* Info * @jobs                                                                                                            
+* Info * task: response                                                                                                   
+* Info * @end                                                                                                             
+                                                                                                                          
+* Info * @method_settings                                                                                                 
+* Info * basis: aug-cc-pvdz                                                                                               
+* Info * @end                                                                                                             
+                                                                                                                          
+* Info * @response                                                                                                        
+* Info * property: polarizability                                                                                         
+* Info * frequencies: 0-0.25 (0.05)                                                                                       
+* Info * checkpoint_file: water_pol.rsp.h5                                                                                
+* Info * @end                                                                                                             
+                                                                                                                          
+* Info * Parsing @molecule group...                                                                                       
+* Info * ...done.                                                                                                         
+                                                                                                                          
+                                              Molecular Geometry (Angstroms)                                              
+                                             ================================                                             
+                                                                                                                          
+                          Atom         Coordinate X          Coordinate Y          Coordinate Z                           
+                                                                                                                          
+                           O           1.513356863105        0.483583302427       -1.093534122822                         
+                           H           1.543959181213       -0.317331698072        1.223235457218                         
+                           H           0.852403943122        0.422151120011       -2.091774013501                         
+                                                                                                                          
+                          Molecular charge            : 0                                                                 
+                          Spin multiplicity           : 1                                                                 
+                          Number of atoms             : 3                                                                 
+                          Number of alpha electrons   : 5                                                                 
+                          Number of beta  electrons   : 5                                                                 
+                                                                                                                          
+* Info * Parsing @method settings group...                                                                                
+* Info * ...done.                                                                                                         
+                                                                                                                          
+* Info * Reading basis set from file: /lustre/hpc/kemi/andreasb/software/veloxchem/venv/lib64/python3.6/site-packages/veloxchem-1.0rc2-py3.6-linux-x86_64.egg/veloxchem/basis/AUG-CC-PVDZ
+                                                                                                                          
+                                              Molecular Basis (Atomic Basis)                                              
+                                             ================================                                             
+                                                                                                                          
+                                  Basis: AUG-CC-PVDZ                                                                      
+                                                                                                                          
+                                  Atom Contracted GTOs          Primitive GTOs                                            
+                                                                                                                          
+                                   H   (3S,2P)                  (5S,2P)                                                   
+                                   O   (4S,3P,2D)               (18S,5P,2D)                                               
+                                                                                                                          
+                                  Contracted Basis Functions : 41                                                         
+                                  Primitive Basis Functions  : 65                                                         
+                                                                                                                          
+                                                                                                                          
+                                            Self Consistent Field Driver Setup                                            
+                                           ====================================                                           
+                                                                                                                          
+                   Wave Function Model             : Spin-Restricted Hartree-Fock                                         
+                   Initial Guess Model             : Superposition of Atomic Densities                                    
+                   Convergence Accelerator         : Two Level Direct Inversion of Iterative Subspace                     
+                   Max. Number of Iterations       : 50                                                                   
+                   Max. Number of Error Vectors    : 10                                                                   
+                   Convergence Threshold           : 1.0e-06                                                              
+                   ERI Screening Scheme            : Cauchy Schwarz + Density                                             
+                   ERI Screening Mode              : Dynamic                                                              
+                   ERI Screening Threshold         : 1.0e-12                                                              
+                   Linear Dependence Threshold     : 1.0e-06                                                              
+                                                                                                                          
+* Info * Nuclear repulsion energy: 5.4109281706 au                                                                        
+                                                                                                                          
+* Info * Overlap matrix computed in 0.06 sec.                                                                             
+                                                                                                                          
+* Info * Kinetic energy matrix computed in 0.07 sec.                                                                      
+                                                                                                                          
+* Info * Nuclear potential matrix computed in 0.00 sec.                                                                   
+                                                                                                                          
+* Info * Orthogonalization matrix computed in 0.35 sec.                                                                   
+                                                                                                                          
+* Info * SAD initial guess computed in 0.03 sec.                                                                          
+                                                                                                                          
+* Info * Starting Reduced Basis SCF calculation...                                                                        
+* Info * ...done. SCF energy in reduced basis set: -75.670023275052 au. Time: 0.84 sec.                                   
+                                                                                                                          
+* Info * Overlap matrix computed in 0.00 sec.                                                                             
+                                                                                                                          
+* Info * Kinetic energy matrix computed in 0.00 sec.                                                                      
+                                                                                                                          
+* Info * Nuclear potential matrix computed in 0.00 sec.                                                                   
+                                                                                                                          
+* Info * Orthogonalization matrix computed in 0.00 sec.                                                                   
+                                                                                                                          
+                                                                                                                          
+               Iter. | Hartree-Fock Energy | Energy Change | Gradient Norm | Max. Gradient | Density Change               
+               --------------------------------------------------------------------------------------------               
+                  1       -75.685520697439    0.0000000000      0.06214304      0.00506504      0.00000000                
+                  2       -75.686077857745   -0.0005571603      0.04525315      0.00395275      0.03223539                
+                  3       -75.686170680709   -0.0000928230      0.03867596      0.00465802      0.01778466                
+                  4       -75.686375502702   -0.0002048220      0.00656345      0.00075119      0.00996689                
+                  5       -75.686402553399   -0.0000270507      0.00287747      0.00029704      0.00579604                
+                  6       -75.686405928159   -0.0000033748      0.00203554      0.00021487      0.00113103                
+                  7       -75.686411132200   -0.0000052040      0.00040653      0.00005542      0.00361706                
+                  8       -75.686411267167   -0.0000001350      0.00016332      0.00002109      0.00044451                
+                  9       -75.686411289174   -0.0000000220      0.00004320      0.00000702      0.00024673                
+                 10       -75.686411289640   -0.0000000005      0.00000653      0.00000063      0.00002746                
+                 11       -75.686411289652   -0.0000000000      0.00000072      0.00000007      0.00000376                
+                                                                                                                          
+* Info * Checkpoint written to file: water_pol.scf.h5                                                                     
+                                                                                                                          
+               *** SCF converged in 11 iterations. Time: 1.29 sec.                                                        
+                                                                                                                          
+               Spin-Restricted Hartree-Fock:                                                                              
+               -----------------------------                                                                              
+               Total Energy                       :      -75.6864112897 au                                                
+               Electronic Energy                  :      -81.0973394603 au                                                
+               Nuclear Repulsion Energy           :        5.4109281706 au                                                
+               ------------------------------------                                                                       
+               Gradient Norm                      :        0.0000007244 au                                                
+                                                                                                                          
+                                                                                                                          
+               Ground State Information                                                                                   
+               ------------------------                                                                                   
+               Charge of Molecule            :  0.0                                                                       
+               Multiplicity (2S+1)           :  1.0                                                                       
+               Magnetic Quantum Number (M_S) :  0.0                                                                       
+                                                                                                                          
+                                                                                                                          
+                                                 Spin Restricted Orbitals                                                 
+                                                 ------------------------                                                 
+                                                                                                                          
+               Molecular Orbital No.   1:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:  -20.63866 au                                                                      
+               (   1 O   1s  :    -1.00)                                                                                  
+                                                                                                                          
+               Molecular Orbital No.   2:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:   -1.23212 au                                                                      
+               (   1 O   2s  :     0.49) (   1 O   3s  :     0.53)                                                        
+                                                                                                                          
+               Molecular Orbital No.   3:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:   -0.57209 au                                                                      
+               (   1 O   3s  :    -0.17) (   1 O   1p+1:    -0.33) (   1 O   1p0 :    -0.38)                              
+               (   1 O   2p+1:    -0.21) (   1 O   2p0 :    -0.24) (   3 H   1s  :     0.34)                              
+                                                                                                                          
+               Molecular Orbital No.   4:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:   -0.50121 au                                                                      
+               (   1 O   1p+1:    -0.33) (   1 O   1p-1:     0.53) (   1 O   1p0 :     0.19)                              
+               (   1 O   2p+1:    -0.23) (   1 O   2p-1:     0.36)                                                        
+                                                                                                                          
+               Molecular Orbital No.   5:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 2.0 Energy:   -0.36834 au                                                                      
+               (   1 O   1p+1:    -0.30) (   1 O   1p-1:    -0.26) (   1 O   1p0 :     0.21)                              
+               (   1 O   2p+1:    -0.23) (   1 O   2p-1:    -0.21) (   1 O   2p0 :     0.18)                              
+               (   2 H   1s  :     0.29) (   2 H   2s  :     0.31)                                                        
+                                                                                                                          
+               Molecular Orbital No.   6:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:   -0.10866 au                                                                      
+               (   1 O   1p+1:    -0.21) (   1 O   1p-1:    -0.21) (   1 O   1p0 :     0.22)                              
+               (   1 O   2p+1:    -0.17) (   1 O   2p-1:    -0.16) (   1 O   2p0 :     0.17)                              
+               (   2 H   1s  :    -0.36) (   2 H   2s  :    -0.43) (   2 H   3s  :    -0.21)                              
+                                                                                                                          
+               Molecular Orbital No.   7:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.04510 au                                                                      
+               (   1 O   4s  :    -1.09) (   1 O   2p0 :     0.15) (   1 O   3p+1:     0.22)                              
+               (   1 O   3p0 :     0.44) (   2 H   3s  :    -0.39) (   3 H   2s  :     0.58)                              
+               (   3 H   3s  :     1.67)                                                                                  
+                                                                                                                          
+               Molecular Orbital No.   8:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.07887 au                                                                      
+               (   1 O   4s  :    -0.30) (   1 O   3p0 :    -0.43) (   2 H   1s  :    -0.17)                              
+               (   2 H   2s  :    -0.62) (   2 H   3s  :     1.70) (   3 H   3s  :    -0.39)                              
+                                                                                                                          
+               Molecular Orbital No.   9:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.18878 au                                                                      
+               (   1 O   4s  :     2.17) (   1 O   1p+1:     0.18) (   1 O   1p0 :     0.25)                              
+               (   1 O   3p+1:    -0.64) (   1 O   3p0 :    -0.92) (   2 H   3s  :     0.40)                              
+               (   3 H   1s  :     0.20) (   3 H   2s  :    -0.81) (   3 H   3s  :    -1.54)                              
+               (   3 H   2p+1:    -0.50) (   3 H   2p0 :    -0.75)                                                        
+                                                                                                                          
+               Molecular Orbital No.  10:                                                                                 
+               --------------------------                                                                                 
+               Occupation: 0.0 Energy:    0.20733 au                                                                      
+               (   1 O   3s  :     0.23) (   1 O   4s  :     0.52) (   1 O   2p+1:     0.17)                              
+               (   1 O   2p-1:     0.16) (   1 O   2p0 :    -0.15) (   1 O   3p+1:    -1.07)                              
+               (   1 O   3p-1:    -0.56) (   1 O   3p0 :    -0.33) (   2 H   2p+1:    -0.23)                              
+               (   2 H   2p-1:    -0.17) (   3 H   2s  :    -1.06)                                                        
+                                                                                                                          
+                                                                                                                          
+                                                Ground-State Dipole Moment                                                
+                                               ----------------------------                                               
+                                                                                                                          
+                                   X   :        -0.285333 a.u.        -0.725243 Debye                                     
+                                   Y   :        -0.282160 a.u.        -0.717178 Debye                                     
+                                   Z   :         0.291221 a.u.         0.740209 Debye                                     
+                                 Total :         0.495821 a.u.         1.260251 Debye                                     
+                                                                                                                          
+                                                                                                                          
+                                               Linear Response Solver Setup                                               
+                                              ==============================                                              
+                                                                                                                          
+                               Number of Frequencies           : 6                                                        
+                               Max. Number of Iterations       : 150                                                      
+                               Convergence Threshold           : 1.0e-04                                                  
+                               ERI Screening Scheme            : Cauchy Schwarz + Density                                 
+                               ERI Screening Threshold         : 1.0e-12                                                  
+                                                                                                                          
+* Info * Processing Fock builds... (batch size: 16)                                                                       
+* Info *   batch 1/1                                                                                                      
+                                                                                                                          
+* Info * 7 gerade trial vectors in reduced space                                                                          
+* Info * 9 ungerade trial vectors in reduced space                                                                        
+                                                                                                                          
+* Info * 118.81 kB of memory used for subspace procedure on the master node                                               
+* Info * 122.06 GB of memory available for the solver on the master node                                                  
+                                                                                                                          
+               *** Iteration:   1 * Residuals (Max,Min): 7.19e-01 and 2.17e-01                                            
+                                                                                                                          
+               <<x;x>>_0.0000 :    -13.44803989 Residual Norm: 0.32527443                                                 
+               <<x;x>>_0.0500 :    -13.66637584 Residual Norm: 0.30374614                                                 
+               <<x;x>>_0.1000 :    -14.52730435 Residual Norm: 0.21707877                                                 
+               <<x;x>>_0.1500 :    -15.37979201 Residual Norm: 0.42707199                                                 
+               <<x;x>>_0.2000 :     12.99945359 Residual Norm: 0.34088671                                                 
+               <<x;x>>_0.2500 :    -18.69012681 Residual Norm: 0.35576445                                                 
+               <<y;y>>_0.0000 :    -15.93243630 Residual Norm: 0.69759219                                                 
+               <<y;y>>_0.0500 :    -16.81295732 Residual Norm: 0.60170982                                                 
+               <<y;y>>_0.1000 :    -22.66607126 Residual Norm: 0.43269217                                                 
+               <<y;y>>_0.1500 :     -3.58177341 Residual Norm: 0.32023196                                                 
+               <<y;y>>_0.2000 :     27.05411455 Residual Norm: 0.32733962                                                 
+               <<y;y>>_0.2500 :     -9.53661674 Residual Norm: 0.41407411                                                 
+               <<z;z>>_0.0000 :    -63.83932207 Residual Norm: 0.71948627                                                 
+               <<z;z>>_0.0500 :    -71.98787196 Residual Norm: 0.54859459                                                 
+               <<z;z>>_0.1000 :   -128.90570940 Residual Norm: 0.39054949                                                 
+               <<z;z>>_0.1500 :     64.24118367 Residual Norm: 0.35198533                                                 
+               <<z;z>>_0.2000 :    771.60300413 Residual Norm: 0.33176506                                                 
+               <<z;z>>_0.2500 :     34.46646882 Residual Norm: 0.28540362                                                 
+                                                                                                                          
+* Info * Processing Fock builds... (batch size: 22)                                                                       
+* Info *   batch 1/1                                                                                                      
+                                                                                                                          
+* Info * 17 gerade trial vectors in reduced space                                                                         
+* Info * 21 ungerade trial vectors in reduced space                                                                       
+                                                                                                                          
+* Info * 182.17 kB of memory used for subspace procedure on the master node                                               
+* Info * 122.06 GB of memory available for the solver on the master node                                                  
+                                                                                                                          
+               *** Iteration:   2 * Residuals (Max,Min): 1.53e-01 and 5.90e-02                                            
+                                                                                                                          
+               <<x;x>>_0.0000 :    -14.13599048 Residual Norm: 0.06243575                                                 
+               <<x;x>>_0.0500 :    -14.06340818 Residual Norm: 0.11592145                                                 
+               <<x;x>>_0.1000 :    -14.99388780 Residual Norm: 0.06237948                                                 
+               <<x;x>>_0.1500 :    -11.87903774 Residual Norm: 0.08805731                                                 
+               <<x;x>>_0.2000 :    -20.05077880 Residual Norm: 0.10360410                                                 
+               <<x;x>>_0.2500 :    -13.35844496 Residual Norm: 0.11704789                                                 
+               <<y;y>>_0.0000 :    -19.63138506 Residual Norm: 0.13162596                                                 
+               <<y;y>>_0.0500 :    -21.95782206 Residual Norm: 0.12757203                                                 
+               <<y;y>>_0.1000 :     -7.08497567 Residual Norm: 0.08596290                                                 
+               <<y;y>>_0.1500 :     27.23399758 Residual Norm: 0.07254721                                                 
+               <<y;y>>_0.2000 :     -9.33832807 Residual Norm: 0.05898159                                                 
+               <<y;y>>_0.2500 :    -13.66893145 Residual Norm: 0.10126664                                                 
+               <<z;z>>_0.0000 :    -85.05969032 Residual Norm: 0.15332371                                                 
+               <<z;z>>_0.0500 :   -110.14481408 Residual Norm: 0.10984351                                                 
+               <<z;z>>_0.1000 :      0.70977712 Residual Norm: 0.08548149                                                 
+               <<z;z>>_0.1500 :    434.72840690 Residual Norm: 0.07527235                                                 
+               <<z;z>>_0.2000 :     27.73271064 Residual Norm: 0.09117373                                                 
+               <<z;z>>_0.2500 :     15.45531111 Residual Norm: 0.06364608                                                 
+                                                                                                                          
+* Info * Processing Fock builds... (batch size: 25)                                                                       
+* Info *   batch 1/1                                                                                                      
+                                                                                                                          
+* Info * 29 gerade trial vectors in reduced space                                                                         
+* Info * 34 ungerade trial vectors in reduced space                                                                       
+                                                                                                                          
+* Info * 254.17 kB of memory used for subspace procedure on the master node                                               
+* Info * 122.05 GB of memory available for the solver on the master node                                                  
+                                                                                                                          
+               *** Iteration:   3 * Residuals (Max,Min): 7.81e-02 and 6.82e-03                                            
+                                                                                                                          
+               <<x;x>>_0.0000 :    -14.16406984 Residual Norm: 0.00682005                                                 
+               <<x;x>>_0.0500 :    -14.18348880 Residual Norm: 0.01211971                                                 
+               <<x;x>>_0.1000 :    -15.05025575 Residual Norm: 0.00934937                                                 
+               <<x;x>>_0.1500 :    -13.32929696 Residual Norm: 0.01094018                                                 
+               <<x;x>>_0.2000 :    -21.82826160 Residual Norm: 0.02209912                                                 
+               <<x;x>>_0.2500 :    -15.40398365 Residual Norm: 0.05972927                                                 
+               <<y;y>>_0.0000 :    -19.92783171 Residual Norm: 0.01982389                                                 
+               <<y;y>>_0.0500 :    -22.86425756 Residual Norm: 0.01866312                                                 
+               <<y;y>>_0.1000 :     -9.26264346 Residual Norm: 0.01242618                                                 
+               <<y;y>>_0.1500 :     18.30132684 Residual Norm: 0.00869752                                                 
+               <<y;y>>_0.2000 :     -9.69565604 Residual Norm: 0.02014478                                                 
+               <<y;y>>_0.2500 :    -15.15406414 Residual Norm: 0.07809882                                                 
+               <<z;z>>_0.0000 :    -86.88586275 Residual Norm: 0.02416941                                                 
+               <<z;z>>_0.0500 :   -114.92132967 Residual Norm: 0.01759738                                                 
+               <<z;z>>_0.1000 :    -16.00788851 Residual Norm: 0.01212715                                                 
+               <<z;z>>_0.1500 :    325.43549470 Residual Norm: 0.00883075                                                 
+               <<z;z>>_0.2000 :     20.83959999 Residual Norm: 0.01576521                                                 
+               <<z;z>>_0.2500 :     13.37132748 Residual Norm: 0.02405419                                                 
+                                                                                                                          
+* Info * Processing Fock builds... (batch size: 22)                                                                       
+* Info *   batch 1/1                                                                                                      
+                                                                                                                          
+* Info * 39 gerade trial vectors in reduced space                                                                         
+* Info * 46 ungerade trial vectors in reduced space                                                                       
+                                                                                                                          
+* Info * 317.53 kB of memory used for subspace procedure on the master node                                               
+* Info * 122.05 GB of memory available for the solver on the master node                                                  
+                                                                                                                          
+               *** Iteration:   4 * Residuals (Max,Min): 3.53e-02 and 1.04e-03                                            
+                                                                                                                          
+               <<x;x>>_0.0000 :    -14.16448343 Residual Norm: 0.00104036                                                 
+               <<x;x>>_0.0500 :    -14.18454508 Residual Norm: 0.00193982                                                 
+               <<x;x>>_0.1000 :    -15.05133528 Residual Norm: 0.00156920                                                 
+               <<x;x>>_0.1500 :    -13.33941257 Residual Norm: 0.00167558                                                 
+               <<x;x>>_0.2000 :    -21.89220819 Residual Norm: 0.00335718                                                 
+               <<x;x>>_0.2500 :    -15.94383616 Residual Norm: 0.02606912                                                 
+               <<y;y>>_0.0000 :    -19.93274445 Residual Norm: 0.00268199                                                 
+               <<y;y>>_0.0500 :    -22.87765677 Residual Norm: 0.00255063                                                 
+               <<y;y>>_0.1000 :     -9.28840032 Residual Norm: 0.00161249                                                 
+               <<y;y>>_0.1500 :     18.24140005 Residual Norm: 0.00123464                                                 
+               <<y;y>>_0.2000 :     -9.72922941 Residual Norm: 0.00532979                                                 
+               <<y;y>>_0.2500 :    -16.33893302 Residual Norm: 0.03528212                                                 
+               <<z;z>>_0.0000 :    -86.91513394 Residual Norm: 0.00314485                                                 
+               <<z;z>>_0.0500 :   -115.00262508 Residual Norm: 0.00229476                                                 
+               <<z;z>>_0.1000 :    -16.20575789 Residual Norm: 0.00155320                                                 
+               <<z;z>>_0.1500 :    324.78142662 Residual Norm: 0.00122669                                                 
+               <<z;z>>_0.2000 :     20.71155589 Residual Norm: 0.00217459                                                 
+               <<z;z>>_0.2500 :     13.12272170 Residual Norm: 0.00839722                                                 
+                                                                                                                          
+* Info * Processing Fock builds... (batch size: 25)                                                                       
+* Info *   batch 1/1                                                                                                      
+                                                                                                                          
+* Info * 52 gerade trial vectors in reduced space                                                                         
+* Info * 58 ungerade trial vectors in reduced space                                                                       
+                                                                                                                          
+* Info * 389.53 kB of memory used for subspace procedure on the master node                                               
+* Info * 122.05 GB of memory available for the solver on the master node                                                  
+                                                                                                                          
+               *** Iteration:   5 * Residuals (Max,Min): 5.40e-03 and 1.11e-04                                            
+                                                                                                                          
+               <<x;x>>_0.0000 :    -14.16448726 Residual Norm: 0.00011066                                                 
+               <<x;x>>_0.0500 :    -14.18455422 Residual Norm: 0.00024596                                                 
+               <<x;x>>_0.1000 :    -15.05134623 Residual Norm: 0.00019210                                                 
+               <<x;x>>_0.1500 :    -13.33953907 Residual Norm: 0.00024301                                                 
+               <<x;x>>_0.2000 :    -21.89305395 Residual Norm: 0.00053978                                                 
+               <<x;x>>_0.2500 :    -15.98090168 Residual Norm: 0.00407357                                                 
+               <<y;y>>_0.0000 :    -19.93277713 Residual Norm: 0.00028410                                                 
+               <<y;y>>_0.0500 :    -22.87774771 Residual Norm: 0.00028347                                                 
+               <<y;y>>_0.1000 :     -9.28861059 Residual Norm: 0.00018531                                                 
+               <<y;y>>_0.1500 :     18.24076389 Residual Norm: 0.00017532                                                 
+               <<y;y>>_0.2000 :     -9.73009013 Residual Norm: 0.00068067                                                 
+               <<y;y>>_0.2500 :    -16.43061150 Residual Norm: 0.00540006                                                 
+               <<z;z>>_0.0000 :    -86.91531622 Residual Norm: 0.00034664                                                 
+               <<z;z>>_0.0500 :   -115.00315115 Residual Norm: 0.00025000                                                 
+               <<z;z>>_0.1000 :    -16.20729278 Residual Norm: 0.00017464                                                 
+               <<z;z>>_0.1500 :    324.77462767 Residual Norm: 0.00017880                                                 
+               <<z;z>>_0.2000 :     20.70998961 Residual Norm: 0.00040371                                                 
+               <<z;z>>_0.2500 :     13.10997645 Residual Norm: 0.00132427                                                 
+                                                                                                                          
+* Info * Processing Fock builds... (batch size: 22)                                                                       
+* Info *   batch 1/1                                                                                                      
+                                                                                                                          
+* Info * 62 gerade trial vectors in reduced space                                                                         
+* Info * 70 ungerade trial vectors in reduced space                                                                       
+                                                                                                                          
+* Info * 453.04 kB of memory used for subspace procedure on the master node                                               
+* Info * 122.05 GB of memory available for the solver on the master node                                                  
+                                                                                                                          
+               *** Iteration:   6 * Residuals (Max,Min): 8.89e-04 and 1.21e-05                                            
+                                                                                                                          
+               <<x;x>>_0.0000 :    -14.16448730 Residual Norm: 0.00001604                                                 
+               <<x;x>>_0.0500 :    -14.18455429 Residual Norm: 0.00003057                                                 
+               <<x;x>>_0.1000 :    -15.05134631 Residual Norm: 0.00002772                                                 
+               <<x;x>>_0.1500 :    -13.33954026 Residual Norm: 0.00002207                                                 
+               <<x;x>>_0.2000 :    -21.89306251 Residual Norm: 0.00006047                                                 
+               <<x;x>>_0.2500 :    -15.98152094 Residual Norm: 0.00066270                                                 
+               <<y;y>>_0.0000 :    -19.93277734 Residual Norm: 0.00002031                                                 
+               <<y;y>>_0.0500 :    -22.87774831 Residual Norm: 0.00002195                                                 
+               <<y;y>>_0.1000 :     -9.28861181 Residual Norm: 0.00001541                                                 
+               <<y;y>>_0.1500 :     18.24075750 Residual Norm: 0.00001433                                                 
+               <<y;y>>_0.2000 :     -9.73009864 Residual Norm: 0.00009268                                                 
+               <<y;y>>_0.2500 :    -16.43214474 Residual Norm: 0.00088857                                                 
+               <<z;z>>_0.0000 :    -86.91531747 Residual Norm: 0.00001854                                                 
+               <<z;z>>_0.0500 :   -115.00315444 Residual Norm: 0.00001390                                                 
+               <<z;z>>_0.1000 :    -16.20730159 Residual Norm: 0.00001205                                                 
+               <<z;z>>_0.1500 :    324.77455664 Residual Norm: 0.00001405                                                 
+               <<z;z>>_0.2000 :     20.70997098 Residual Norm: 0.00003781                                                 
+               <<z;z>>_0.2500 :     13.10976883 Residual Norm: 0.00021139                                                 
+                                                                                                                          
+* Info * Processing Fock builds... (batch size: 5)                                                                        
+* Info *   batch 1/1                                                                                                      
+                                                                                                                          
+* Info * 64 gerade trial vectors in reduced space                                                                         
+* Info * 73 ungerade trial vectors in reduced space                                                                       
+                                                                                                                          
+* Info * 467.43 kB of memory used for subspace procedure on the master node                                               
+* Info * 122.05 GB of memory available for the solver on the master node                                                  
+                                                                                                                          
+               *** Iteration:   7 * Residuals (Max,Min): 1.91e-04 and 1.21e-05                                            
+                                                                                                                          
+               <<x;x>>_0.2500 :    -15.98154064 Residual Norm: 0.00014165                                                 
+               <<y;y>>_0.2500 :    -16.43219438 Residual Norm: 0.00019092                                                 
+               <<z;z>>_0.2500 :     13.10976247 Residual Norm: 0.00004500                                                 
+                                                                                                                          
+* Info * Processing Fock builds... (batch size: 3)                                                                        
+* Info *   batch 1/1                                                                                                      
+                                                                                                                          
+* Info * 66 gerade trial vectors in reduced space                                                                         
+* Info * 74 ungerade trial vectors in reduced space                                                                       
+                                                                                                                          
+* Info * 475.77 kB of memory used for subspace procedure on the master node                                               
+* Info * 122.05 GB of memory available for the solver on the master node                                                  
+                                                                                                                          
+               *** Iteration:   8 * Residuals (Max,Min): 9.27e-05 and 1.21e-05                                            
+                                                                                                                          
+               <<x;x>>_0.2500 :    -15.98154098 Residual Norm: 0.00002507                                                 
+               <<y;y>>_0.2500 :    -16.43219525 Residual Norm: 0.00003213                                                 
+                                                                                                                          
+* Info * Checkpoint written to file: water_pol.rsp.h5                                                                     
+                                                                                                                          
+               *** Linear response converged in 8 iterations. Time: 111.99 sec                                            
+                                                                                                                          
+                                                                                                                          
+               Polarizability (w=0.0000)                                                                                  
+               -------------------------                                                                                  
+                                  X              Y              Z                                                         
+               X        14.16448730    -0.87764498     5.61903077                                                         
+               Y        -0.87764498    19.93277734   -22.85381421                                                         
+               Z         5.61903077   -22.85381421    86.91531747                                                         
+                                                                                                                          
+               Polarizability (w=0.0500)                                                                                  
+               -------------------------                                                                                  
+                                  X              Y              Z                                                         
+               X        14.18455429    -0.63068215     6.18236577                                                         
+               Y        -0.63068215    22.87774831   -32.68785665                                                         
+               Z         6.18236577   -32.68785665   115.00315444                                                         
+                                                                                                                          
+               Polarizability (w=0.1000)                                                                                  
+               -------------------------                                                                                  
+                                  X              Y              Z                                                         
+               X        15.05134631    -1.65858463    10.03211232                                                         
+               Y        -1.65858463     9.28861181     4.81917228                                                         
+               Z        10.03211232     4.81917228    16.20730159                                                         
+                                                                                                                          
+               Polarizability (w=0.1500)                                                                                  
+               -------------------------                                                                                  
+                                  X              Y              Z                                                         
+               X        13.33954026     9.12988305   -24.85429045                                                         
+               Y         9.12988305   -18.24075750   103.90489074                                                         
+               Z       -24.85429045   103.90489074  -324.77455664                                                         
+                                                                                                                          
+               Polarizability (w=0.2000)                                                                                  
+               -------------------------                                                                                  
+                                  X              Y              Z                                                         
+               X        21.89306251     2.19403182     7.18810689                                                         
+               Y         2.19403182     9.73009864    16.91947501                                                         
+               Z         7.18810689    16.91947501   -20.70997098                                                         
+                                                                                                                          
+               Polarizability (w=0.2500)                                                                                  
+               -------------------------                                                                                  
+                                  X              Y              Z                                                         
+               X        15.98154098    -0.98151915    -4.67358361                                                         
+               Y        -0.98151915    16.43219525     8.85188532                                                         
+               Z        -4.67358380     8.85188562   -13.10976247                                                         
+                                                                                                                          
+!========================================================================================================================!
+!                               VeloxChem execution completed at Fri Apr 29 07:54:30 2022.                               !
+!========================================================================================================================!
+!                                          Total execution time is 115.00 sec.                                           !
+!========================================================================================================================!
+!                     Rinkevicius, Z.; Li, X.; Vahtras, O.; Ahmadzadeh, K.; Brand, M.; Ringholm, M.;                     !
+!                              List, N. H.; Scheurer, M.; Scott, M.; Dreuw, A.; Norman, P.                               !
+!                     VeloxChem: A Python-driven Density-functional Theory Program for Spectroscopy                      !
+!                                Simulations in High-performance Computing Environments.                                 !
+!                                       WIREs Comput Mol Sci 2020, 10 (5), e1457.                                        !
+!========================================================================================================================!

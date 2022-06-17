@@ -1,14 +1,22 @@
 
 import argparse
-from ...KurtGroup.Kurt import xyz
-from ...KurtGroup.Kurt import chemical_information as ci
+import os
+import sys
+
+current = os.path.dirname(os.path.realpath(__file__))
+
+parent = os.path.dirname(current)
+
+sys.path.append(parent)
+
+
+import KurtGroup.Kurt.chemical_information as ci
+import KurtGroup.Kurt.xyz as xyz
 
 def generateDaltonInputFileText(XYZ: xyz.xyz_to, charge: int) -> str:
     """Makes the text for a Dalton input file
-
     Args:
         charge (int): The charge of the molecule
-
     Returns:
         str: Returns the file text
     """
@@ -22,14 +30,13 @@ Exiting program''')
     unique_atoms = set(XYZ.atoms[:,0])
     XYZ.filetext = f'''ATOMBASIS
 ./{XYZ.filename}
-
 Atomtypes={len(unique_atoms)} Charge={charge} NoSymmetry Angstrom
 '''
 
     for unique_atom in unique_atoms:
         count = list(XYZ.atoms[:,0]).count(unique_atom)
         if not XYZ.BSE:
-            XYZ.filetext += f'  {ci.AtomicInformation(unique_atom).atomnr():.4f}     {count} Bas={XYZ.basis}\n'
+            XYZ.filetext += f'  {ci.AtomicInformation(unique_atom).getAtomnr():.4f}     {count} Bas={XYZ.basis}\n'
         else:
             BasisSet = ci.BasisSet()
             try:
@@ -47,7 +54,7 @@ The problem may also be that the basis set does not exist for {unique_atom}''')
             Block = f'{blocks}'
             for j in BlockTypes[:blocks]:
                 Block += f' {basis_mol.count(j)}'
-            XYZ.filetext += f'  Charge={ci.AtomicInformation(unique_atom).atomnr():.4f}     Atoms={count}     Blocks={Block}\n'
+            XYZ.filetext += f'  Charge={ci.AtomicInformation(unique_atom).getAtomnr():.4f}     Atoms={count}     Blocks={Block}\n'
             basis_mol = basis_mol.replace('H','').split('\n')[5:-2]
             basis_mol = [i for i in basis_mol if 'functions' not in i]
         for j, atom in enumerate(XYZ.atoms[:,0]):

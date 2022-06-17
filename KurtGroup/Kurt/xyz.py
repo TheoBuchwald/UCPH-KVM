@@ -1,5 +1,5 @@
 
-from . import chemical_information as ci
+import chemical_information as ci
 import numpy as np
 import json
 import os
@@ -45,7 +45,7 @@ def checkFunctional(program: str, functional: str) -> bool:
 
 class xyz_to:
     def __init__(self, program: str, xyz_file: str = None, memory: int = 8, ncpus: int = 8, calculation_type: str = 'Opt') -> None:
-        """xyz_to ismade to make it easy to generate input files for quantum chemistry programs
+        """xyz_to is made to make it easy to generate input files for quantum chemistry programs
 
         Args:
             program (str): The program to generate the input file for

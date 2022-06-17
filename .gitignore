@@ -27,6 +27,13 @@
 *.xyz
 # Ignore vscode settings
 .vscode
+# Ignore pov files
+*.pov
+
+# Ignore datafiles from collect_data
+*/data.npz
+*/data.json
+*/data.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

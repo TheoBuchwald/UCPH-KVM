@@ -3,8 +3,12 @@
 import numpy as np
 from collections import Counter #For number of unique elements
 import argparse
-from Kurt import structures as struct
-from Kurt import chemical_information as ci
+import sys
+
+sys.path.append('')
+
+import KurtGroup.Kurt.structures as struct
+import KurtGroup.Kurt.chemical_information as ci
 
 # ------------------------------------ INPUTS ------------------------------------
 
@@ -146,7 +150,7 @@ if __name__ == '__main__':
             for i in unique_indices:
                 ind = unique_indices.index(i)
                 count = list(Counter(namesmol).values())[ind]
-                lines_mol.append(f'  {ci.AtomicInformation(i).atomnr():.4f}     {count} Bas={basis}\n')
+                lines_mol.append(f'  {ci.AtomicInformation(i).getAtomnr():.4f}     {count} Bas={basis}\n')
                 for j in range(len(namesmol)):
                     if namesmol[j] == i:
                         lines_mol.append(''.join([namesmol[j].ljust(2), ' ', f"{molxyz.molecule[j, 0]:.9f}".rjust(14), ' ', f"{molxyz.molecule[j, 1]:.9f}".rjust(19), ' ', f"{molxyz.molecule[j, 2]:.9f}".rjust(19) , '\n']))
