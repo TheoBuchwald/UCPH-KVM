@@ -161,9 +161,9 @@ def GenerateXYZ(lines : list, filename : str , start : int, end : int, lab_loc :
         transform (bool): Transforms atomic number into label, if needed
     """
     lines_to_add = []
-    lines_to_add.append(str(end-(start)+1)+ '\n')
+    lines_to_add.append(str(end-(start))+ '\n')
     lines_to_add.append('\n')
-    for line in lines[start:end+1]:
+    for line in lines[start:end]:
         words = line.split()
         if transform:
             atm = AtomicInformation(int(words[lab_loc]))
@@ -712,7 +712,7 @@ class GaussianExtract:
         if start != "NaN" and end != "NaN":
             #Offset for going into actual coordinate list
             start += 5
-            end -= 2
+            end -= 1
             #Which position in the line is the atom label / number at
             label_location = 1
             OptGeomFilename = self.filename[:-4] + "_opt.xyz"
