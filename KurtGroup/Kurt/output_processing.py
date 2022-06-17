@@ -161,9 +161,9 @@ def GenerateXYZ(lines : list, filename : str , start : int, end : int, lab_loc :
         transform (bool): Transforms atomic number into label, if needed
     """
     lines_to_add = []
-    lines_to_add.append(str(end-(start))+ '\n')
+    lines_to_add.append(str(end-(start)+1)+ '\n')
     lines_to_add.append('\n')
-    for line in lines[start:end]:
+    for line in lines[start:end+1]:
         words = line.split()
         if transform:
             atm = AtomicInformation(int(words[lab_loc]))

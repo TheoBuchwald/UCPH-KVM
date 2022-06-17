@@ -506,7 +506,7 @@ def Extract(args):
 
     # Dictionary of data where the amount of values printed can be changed
     # Examples of this are the Excitation energies and the Frequencies
-    VariableArrays = dict([item for item in NeededArguments.items() if type(item[1]) == int])
+    VariableArrays = dict([item for item in RequestedArguments.items() if type(item[1]) == int])
 
     # List of arguments that have been requested
     WantedValues = [key for key, val in RequestedArguments.items() if not(val == None or val == False)]
