@@ -33,29 +33,30 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   A script designed to make it easier to extract data from output files
 
   Currently the following has been implemented:<br/>
-  | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |
-  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
-  | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | CPU time used                   |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |        AMS       |
+  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
+  | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | CPU time used                   |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Optimized geometries            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 
   **N/A means not applicable*
 
   When it comes to more advanced features the following has been implemented:
 
-  | Data processing                 |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |
-  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
-  | UVVIS using excitation energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | UVVIS using complex propagators |        :x:       |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
+  | Data processing                 |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |        AMS       |
+  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
+  | UVVIS using excitation energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | UVVIS using complex propagators |        :x:       |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |        :x:       |
 
   It is possible to choose between multiple formats for the spectra (png, eps,...)
 
@@ -186,7 +187,7 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 <details><summary> Program information </summary>
 <p>
 
-  A script designed to convert a xyz file to a pov file for the program POV-Ray which can be used ot ake visually pretty graphics
+  A script designed to convert a xyz file to a pov file for the program POV-Ray which can be used to make visually pretty graphics
 
   The only argument you have to provide is the xyz file(s)
 
