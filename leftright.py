@@ -3,10 +3,6 @@
 
 import numpy as np
 import argparse
-import sys
-
-sys.path.append('')
-
 import KurtGroup.Kurt.structures as struct
 import KurtGroup.Kurt.chemical_information as ci
 
