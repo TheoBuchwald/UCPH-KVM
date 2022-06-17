@@ -475,6 +475,7 @@ def Extract(args):
     Multiprocessing = args.multiprocessing
     ProgressBar = args.progressbar
     UnitTesting = args.unittest
+    SaveName = args.savename
 
     # Making a copy of RequestedArguments
     # This is so arguments that are dependent on others can be called independently
@@ -626,14 +627,14 @@ def Extract(args):
         return SaveDict
 
     elif Save == 'csv':
-        np.savetxt('data.csv', OutputArray, delimiter=',', fmt='%s')
-        print(f'Data has been saved in data.csv')
+        np.savetxt(f'{SaveName}.csv', OutputArray, delimiter=',', fmt='%s')
+        print(f'Data has been saved in {SaveName}.csv')
         return
 
     elif Save == 'npz':
         SaveDict = {i[0]: i[1:] for i in OutputArray}
-        np.savez('data.npz', **SaveDict)
-        print(f'Data has been saved in data.npz')
+        np.savez(f'{SaveName}.npz', **SaveDict)
+        print(f'Data has been saved in {SaveName}.npz')
         return
 
     elif Save == 'json':
@@ -644,9 +645,9 @@ def Extract(args):
                     SaveDict[key_outer].pop(key_inner)
         json_object = json.dumps(SaveDict, indent=4)
 
-        with open("data.json", "w") as outfile:
+        with open(f"{SaveName}.json", "w") as outfile:
             outfile.write(json_object)
-        print("Data has been saved in data.json")
+        print(f"Data has been saved in {SaveName}.json")
 
         return
 
@@ -822,6 +823,7 @@ For help contact
 
     ExtractionDataProcessingGroup = ExtractionSubparser.add_argument_group('Data processing commands')
     ExtractionDataProcessingGroup.add_argument('-s', '--save', const='csv', type=str, help='Saves extracted and processed data. The extracted data is by default saved in a csv file', nargs='?', choices=['csv', 'npz', 'json', 'return'])
+    ExtractionDataProcessingGroup.add_argument('--name', default='data', const='data', type=str, help='Define the name of the datafile where the extracted data is stored', nargs='?', dest='savename')
 
     ExtractionAdditionalCommandsGroup = ExtractionSubparser.add_argument_group('Additional commands')
     ExtractionAdditionalCommandsGroup.add_argument('-q', '--quiet', '--no-log', action='store_true', help="Include to not print error messages to the 'collect_data.log' file", dest='quiet')
