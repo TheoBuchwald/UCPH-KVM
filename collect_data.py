@@ -124,9 +124,6 @@ def Data_Extraction(infile, Needed_Values: dict, quiet: bool = False, Temperatur
     # Extracting data
     Extract_data(quiet, Needed_Values, infile.filename, infile.extract, infile.input)
 
-    # Removing the file text from memory as this is no longer needed (and fills in memory)
-    infile.extract.__delattr__('lines')
-
     # List of all dictionary keys for infile.extract
     dict_keys = [*infile.extract.__dict__.keys()]
 
@@ -335,8 +332,6 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
     if SAVE:
         np.savez('UVVIS.npz', **Save_Dict)
         print(f'UVVIS spectrum data has been saved in UVVIS.npz')
-
-    del Save_Dict # Deletes dictionary from memory since it is no longer needed
 
 def Spectra(args):
     """

@@ -221,11 +221,11 @@ class OutputType:
 
         # File type not implemented
         else:
+            self.extract = UnknownExtract()
+            self.input = 'Unknown'
             if not Quiet:
                 with open("collect_data.log", "a") as logfile:
                     logfile.write(f"The output file {self.filename} is not of a known format\n")
-
-        del lines
 
     def getEnergy(self) -> float:
         try:
@@ -406,6 +406,10 @@ class Constants:
         self.au_to_kJmol = 2625.4996394799
         self.bohr_to_ao = 0.529177249
         self.debye_to_au = 0.393456
+
+
+class UnknownExtract:
+    def __init__(self) -> None: ...
 
 
 class VeloxExtract:
