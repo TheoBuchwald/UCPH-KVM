@@ -140,8 +140,15 @@ if __name__ == '__main__':
 
                 for i in range(molxyz.molecule[:, 0].size):
                     lines_to_add.append(''.join([namesmol[i], ' ', f"{molxyz.molecule[i, 0]:.6f}", ' ', f"{molxyz.molecule[i, 1]:.6f}", ' ', f"{molxyz.molecule[i, 2]:.6f}" , '\n']))
-                with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.xyz', 'w') as f:
-                    f.writelines(lines_to_add)
+                
+                
+                if not onesided:
+                    with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.xyz', 'w') as f:
+                        f.writelines(lines_to_add)
+                else:
+                    with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}_1side.xyz', 'w') as f:
+                        f.writelines(lines_to_add)
+
 
             lines_mol =[]
 
@@ -160,8 +167,12 @@ if __name__ == '__main__':
                     if namesmol[j] == i:
                         lines_mol.append(''.join([namesmol[j].ljust(2), ' ', f"{molxyz.molecule[j, 0]:.9f}".rjust(14), ' ', f"{molxyz.molecule[j, 1]:.9f}".rjust(19), ' ', f"{molxyz.molecule[j, 2]:.9f}".rjust(19) , '\n']))
 
-            with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.mol', 'w') as f:
-                f.writelines(lines_mol)
+            if not onesided:
+                with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.mol', 'w') as f:
+                    f.writelines(lines_mol)
+            else:
+                with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}_1side.mol', 'w') as f:
+                    f.writelines(lines_mol)
 
             #Build .pol file
             lines_pol = []
@@ -193,11 +204,21 @@ if __name__ == '__main__':
                         lines_pol.append(''.join([str(n), f" {right[i, 0]:.6f} ", f"{right[i, 1]:.6f} ", f"{right[i, 2]:.6f} ", "0.000000 ", f"{ci.AtomicInformation(right_symbols[i]).polarizability():.6f}", '\n']))
             n += 1
 
-            with open(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot', 'w') as f:
-                f.writelines(lines_pol)
+            if not onesided:
+                with open(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot', 'w') as f:
+                    f.writelines(lines_pol)
+            else:
+                with open(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_1side.pot', 'w') as f:
+                    f.writelines(lines_pol)
 
             print("Outputs:")
-            if returnxyz:
-                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.xyz')
-            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot')
-            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.mol')
+            if onesided:
+                if returnxyz:
+                    print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_1side.xyz')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_1side.pot')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_1side.mol')
+            else:
+                if returnxyz:
+                    print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.xyz')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.mol')
