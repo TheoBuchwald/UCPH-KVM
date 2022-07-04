@@ -29,44 +29,48 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 ## [collect_data.py](./collect_data.py)
 <details><summary> Program information </summary>
 <p>
+
   A script designed to make it easier to extract data from output files
 
   Currently the following has been implemented:<br/>
-  | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |
-  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
-  | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |
-  | CPU time used                   |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |        AMS       |
+  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
+  | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |
+  | CPU time used                   |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Optimized geometries            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 
   **N/A means not applicable*
 
   When it comes to more advanced features the following has been implemented:
 
-  | Data processing                 |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |
-  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
-  | UVVIS using excitation energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | UVVIS using complex propagators |        :x:       |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |
+  | Data processing                 |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |        AMS       |
+  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
+  | UVVIS using excitation energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | UVVIS using complex propagators |        :x:       |        :x:       |:heavy_check_mark:|        :x:       |        :x:       |        :x:       |
 
   It is possible to choose between multiple formats for the spectra (png, eps,...)
 
   The graph data can also be saved in a npz file using the *-s* or *--save* keyword. Here it will be saved as the [wavelength span, extinction coefficient] for the UVVIS spectra
 
   The data you want extracted is done using keywords when calling the script. The keywords you call will be printed either in the terminal or written to a csv or npz file.
+
 </p>
 </details>
 
-## [sandwich.py](./junctions/sandwich.py)
+## [sandwich.py](./sandwich.py)
 <details><summary> Program information </summary>
 <p>
+
   A script designed to place nanoparticles on either side of a molecule
 
   Takes the molecule as a xyz file, the two atoms the nanoparticles will be aligned with and the diameter of the particles (in that order).
@@ -78,12 +82,14 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   An xyz file containing all the information about the junction will also be saved, this can be turned off by supplying the keyword *--returnxyz*. <br/>
   If the nanoparticles are spherical in nature (such as Au, Ag & Cu contrary to TiO<sub>2</sub> which is a slab) they will by default turn inwards towards the molecule. For the nanoparticles to turn outwards the keyword *--outwards* can be supplied. <br/>
   Furthermore the charge of the molecule in the junction is by default 0, this can be changed using the *--charge* keyword <\br>
+
 </p>
 </details>
 
-## [leftright.py](./junctions/leftright.py)
+## [leftright.py](./leftright.py)
 <details><summary> Program information </summary>
 <p>
+
   A script designed to place nanoparticles on either side of a molecule in two separate files
 
   Takes the molecule as a xyz file, the two atoms the nanoparticles will be aligned with and the diameter of the particles (in that order).
@@ -96,23 +102,50 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   An xyz file containing all the information about the junction will also be saved, this can be turned off by supplying the keyword *--returnxyz*. <br/>
   If the nanoparticles are spherical in nature (such as Au, Ag & Cu contrary to TiO<sub>2</sub> which is a slab) they will by default turn inwards towards the molecule. For the nanoparticles to turn outwards the keyword *--outwards* can be supplied. <br/>
   Furthermore the charge of the molecule in the junction is by default 0, this can be changed using the *--charge* keyword <\br>
+
 </p>
 </details>
 
-## [xyz_to_gauss.py](./xyz/xyz_to_gauss.py)
+## [LevelSystem5.py](./LevelSystem5.py)
 <details><summary> Program information </summary>
 <p>
+
+  For this script you need to manually edit the coupling elements and energies. After having done this you can run the script and generate the Coulomb stairs for your five level system.
+
+</p>
+</details>
+
+## [xyz_align.py](./xyz_align.py)
+<details><summary> Program information </summary>
+<p>
+
+  This script is designed to align two molecules so that the RMSD between them is as small as possible.
+
+  If you find this script useful for any publishable work, please cite the corresponding paper:
+
+  - Berhane Temelso, Joel M. Mabey, Toshiro Kubota, Nana Appiah-padi, George C. Shields
+  J. Chem. Info. Model. 2017, 57(5), 1045-1054
+
+</p>
+</details>
+
+## [xyz_to_gauss.py](./xyz_to_gauss.py)
+<details><summary> Program information </summary>
+<p>
+
   A script designed to convert a xyz file to a com input file for the Gaussian suite of programs
 
   You will need to supply the xyz file and keywords. Other options can be added via the command line. Use -h on the script to see the available options.
 
   You can also supply basis sets not implemented in Gaussian, in which case an API to the [Basis Set Exchange](https://www.basissetexchange.org/) is used.
+
 </p>
 </details>
 
-## [xyz_to_mol.py](./xyz/xyz_to_mol.py)
+## [xyz_to_mol.py](./xyz_to_mol.py)
 <details><summary> Program information </summary>
 <p>
+
   A script designed to convert a xyz file to a mol file for the program DALTON
 
   You will need to supply the xyz file
@@ -120,21 +153,25 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   Apart from this, you can also supply a basis set and the charge with the keywords *--basis* and *--charge*
 
   You can also supply basis sets not implemented in DALTON, in which case an API to the [Basis Set Exchange](https://www.basissetexchange.org/) is used.
+
 </p>
 </details>
 
-## [xyz_to_molpro.py](./xyz/xyz_to_molpro.py)
+## [xyz_to_molpro.py](./xyz_to_molpro.py)
 <details><summary> Program information </summary>
 <p>
+
   A script designed to convert a xyz file to a molpro file
 
   You will need to supply the xyz file as well as a keywords nr. to determine the options for the program
+
 </p>
 </details>
 
-## [xyz_to_orca.py](./xyz/xyz_to_orca.py)
+## [xyz_to_orca.py](./xyz_to_orca.py)
 <details><summary> Program information </summary>
 <p>
+
   A script designed to convert a xyz file to a inp file for the program ORCA
 
   You will need to supply the xyz file as well as a keywords nr. to determine the options for the program
@@ -142,13 +179,15 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   Apart from this, you can also supply a charge and memory limits with the keywords *--charge* and *--mem*
 
   If you want extra calculations you can supply either of the keywords *--extra1* and *--extra2*
+
 </p>
 </details>
 
-## [xyz_to_povray.py](./visualization/xyz_to_povray.py)
+## [xyz_to_povray.py](./xyz_to_povray.py)
 <details><summary> Program information </summary>
 <p>
-  A script designed to convert a xyz file to a pov file for the program POV-Ray which can be used ot ake visually pretty graphics
+
+  A script designed to convert a xyz file to a pov file for the program POV-Ray which can be used to make visually pretty graphics
 
   The only argument you have to provide is the xyz file(s)
 
@@ -167,9 +206,10 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 </p>
 </details>
 
-## [pov_editor.py](./visualization/pov_editor.py)
+## [pov_editor.py](./pov_editor.py)
 <details><summary> Program information </summary>
 <p>
+
   A script designed to take the camera position of an existing pov file and update the graphics arguments of said file
 
   You need to supply two arguments. The pov file wherein the camera position is located and the xyz file so the script can generate the updated graphics.
@@ -187,6 +227,38 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   +AG0: Gamma set to 0<br/>
   +R5: Depth set to 5<br/>
   -J: Jitter set to off
+
+</p>
+</details>
+
+# Deprecated scripts
+
+## [getopt_adf.py](./getopt_adf.py)
+<details><summary> Program information </summary>
+<p>
+
+  This script is designed to extract the optimized geometry from a geometry
+  optimization run in ADF. The same functionality can be found in the [collect_data.py](./collect_data.py) script.
+
+</p>
+</details>
+
+## [getopt_gauss.py](./getopt_gauss.py)
+<details><summary> Program information </summary>
+<p>
+
+  This script is designed to extract the optimized geometry from a geometry
+  optimization run in Gaussian. The same functionality can be found in the [collect_data.py](./collect_data.py) script.
+
+</p>
+</details>
+
+## [getopt_orca.py](./getopt_orca.py)
+<details><summary> Program information </summary>
+<p>
+
+  This script is designed to extract the optimized geometry from a geometry
+  optimization run in Orca. The same functionality can be found in the [collect_data.py](./collect_data.py) script.
 
 </p>
 </details>

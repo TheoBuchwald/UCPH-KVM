@@ -5,7 +5,11 @@ import json
 import os
 import sys
 
-sys.path.append('')
+current = os.path.dirname(os.path.realpath(__file__))
+
+parent = os.path.dirname(current)
+
+sys.path.append(parent)
 
 import KurtGroup.Kurt.output_processing as op
 import collect_data as cd

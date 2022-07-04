@@ -2,7 +2,6 @@
 # Loads the re search function
 
 import sys
-import re
 
 # Set global variables
 start = 0

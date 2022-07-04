@@ -30,6 +30,9 @@
 # Ignore pov files
 *.pov
 
+# Ignore dependencies folder
+dependencies/
+
 # Ignore datafiles from collect_data
 */data.npz
 */data.json

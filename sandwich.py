@@ -3,10 +3,6 @@
 import numpy as np
 from collections import Counter #For number of unique elements
 import argparse
-import sys
-
-sys.path.append('')
-
 import KurtGroup.Kurt.structures as struct
 import KurtGroup.Kurt.chemical_information as ci
 
