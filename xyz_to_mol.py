@@ -27,7 +27,7 @@ Atomtypes={len(unique_atoms)} Charge={charge} NoSymmetry Angstrom
     for unique_atom in unique_atoms:
         count = list(XYZ.atoms[:,0]).count(unique_atom)
         if not XYZ.BSE:
-            XYZ.filetext += f'  {ci.AtomicInformation(unique_atom).getAtomnr():.4f}     {count} Bas={XYZ.basis}\n'
+            XYZ.filetext += f'  {ci.AtomicInformation(unique_atom).getAtomnr():.4f}     {count} Bas={XYZ.basis}'
         else:
             BasisSet = ci.BasisSet()
             try:
@@ -45,9 +45,13 @@ The problem may also be that the basis set does not exist for {unique_atom}''')
             Block = f'{blocks}'
             for j in BlockTypes[:blocks]:
                 Block += f' {basis_mol.count(j)}'
-            XYZ.filetext += f'  Charge={ci.AtomicInformation(unique_atom).getAtomnr():.4f}     Atoms={count}     Blocks={Block}\n'
+            XYZ.filetext += f'  Charge={ci.AtomicInformation(unique_atom).getAtomnr():.4f}     Atoms={count}     Blocks={Block}'
             basis_mol = basis_mol.replace('H','').split('\n')[5:-2]
             basis_mol = [i for i in basis_mol if 'functions' not in i]
+        try:
+            XYZ.filetext += f'    Aux={XYZ.RIbasis}\n'
+        except NameError:
+            XYZ.filetext += f'\n'
         for j, atom in enumerate(XYZ.atoms[:,0]):
             if atom == unique_atom:
                 XYZ.filetext += f'{atom: <2} {XYZ.atoms[j,1]: >14.9} {XYZ.atoms[j,2]: >19.9} {XYZ.atoms[j,3]: >19.9}\n'
@@ -70,7 +74,7 @@ def main():
     parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
     parser.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
     parser.add_argument('--basis', default=['pc-1'], nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
-    # parser.add_argument('--RIbasis', nargs=1, type=str, help='Include to specify basis set of the molecular atoms - RI-BASIS if not included')
+    parser.add_argument('--RIbasis', const=['RI-cc-pV5Z'], nargs=1, type=str, help='Include to specify basis set of the molecular atoms - RI-BASIS if not included')
 
     args = parser.parse_args()
 
@@ -78,10 +82,15 @@ def main():
     basis = args.basis[0]
     charge = args.charge[0]
 
+    try:
+        RIbasis = args.RIbasis[0]
+    except NameError: ...
+
     for input_file in input_files:
         A = xyz.xyz_to('Dalton', input_file)
         A.processXYZ()
         A.setBasis(basis)
+        A.setRIBasis(RIbasis)
         filetext = generateDaltonInputFileText(A, charge)
         writeInputfile(A)
 
