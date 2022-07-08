@@ -20,6 +20,7 @@ Exiting program''')
     unique_atoms = set(XYZ.atoms[:,0])
     XYZ.filetext = f'''ATOMBASIS
 ./{XYZ.filename}
+Generated using xyz_to_mol.py from UCPH-KVM
 Atomtypes={len(unique_atoms)} Charge={charge} NoSymmetry Angstrom
 '''
 
