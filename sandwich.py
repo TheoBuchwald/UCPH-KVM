@@ -95,12 +95,13 @@ if __name__ == '__main__':
 
         #The direction vector for the rotation in orthogonal to both v1 and the x-axis. Note that the normalization is crucial.
         dir_vec = np.cross(v1, np.array([1, 0, 0]))
-        dir_vec *= 1/np.sqrt(np.dot(dir_vec, dir_vec))
+        dir_length = np.sqrt(np.dot(dir_vec, dir_vec))
 
-        molxyz.get_rotation_matrix(molxyz.molecule[atom1], dir_vec, theta)
-        molxyz.rotateMolecule(atom1)
+        if dir_length:
+            dir_vec /= dir_length
 
-        molxyz.__len__()
+            molxyz.get_rotation_matrix(molxyz.molecule[atom1], dir_vec, theta)
+            molxyz.rotateMolecule(atom1)
 
         mol_min = molxyz.min()
         mol_max = molxyz.max()

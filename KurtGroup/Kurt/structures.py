@@ -176,7 +176,7 @@ class Molecule():
     def __init__(self, molecule: list) -> None:
         self.molecule = molecule
 
-    def __len__(self) -> float:
+    def __xlen__(self) -> float:
         return self.molecule[:, 0].max() - self.molecule[:, 0].min()
 
     def min(self) -> float:
