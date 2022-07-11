@@ -39,6 +39,7 @@ if __name__ == '__main__':
     AdditionalCommandsGroup.add_argument('--outwards', action='store_false', help='Include to turn the nanoparticles outwards')
     AdditionalCommandsGroup.add_argument('--noxyz', action='store_false', help='Include to TURN OFF creation of .xyz files of the nanoparticle system')
     AdditionalCommandsGroup.add_argument('-l', '--linenumber', action='store_true', help='Include to use the linenumber of the atoms in the xyz file instead')
+    AdditionalCommandsGroup.add_argument('--onesided', action='store_true', help='Include to only place one nanoparticle')
 
     args = parser.parse_args()
 
@@ -67,6 +68,7 @@ if __name__ == '__main__':
     inwards = args.outwards
     linenumber = args.linenumber
     returnxyz = args.noxyz
+    onesided = args.onesided
 
     if linenumber:
         atom1 -=3
@@ -118,22 +120,36 @@ if __name__ == '__main__':
 
             atoms_symbol, atoms_pos = NP.makeNanoparticle(diameter)
 
-            left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol)
+            if onesided:
+                left, _, left_symbols, _ = NP.makeSandwich(molxyz, namesmol)
+            else:
+                left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol)
 
             lines_to_add = []
             if returnxyz:
                 # Build .xyz file
-                lines_to_add.append(str(left[:, 0].size+right[:, 0].size+molxyz.molecule[:, 0].size)+'\n')
+                if onesided:
+                    lines_to_add.append(str(left[:, 0].size+molxyz.molecule[:, 0].size)+'\n')
+                else:
+                    lines_to_add.append(str(left[:, 0].size+right[:, 0].size+molxyz.molecule[:, 0].size)+'\n')
                 lines_to_add.append('\n')
                 for i in range(left[:, 0].size):
                     lines_to_add.append(''.join([f"{atoms_symbol[i]}", ' ', f"{left[i, 0]:.6f}", ' ', f"{left[i, 1]:.6f}", ' ', f"{left[i, 2]:.6f}" , '\n']))
-                for i in range(right[:, 0].size):
-                    lines_to_add.append(''.join([f"{atoms_symbol[i]}", ' ', f"{right[i, 0]:.6f}", ' ', f"{right[i, 1]:.6f}", ' ', f"{right[i, 2]:.6f}" , '\n']))
+                if not onesided:
+                    for i in range(right[:, 0].size):
+                        lines_to_add.append(''.join([f"{atoms_symbol[i]}", ' ', f"{right[i, 0]:.6f}", ' ', f"{right[i, 1]:.6f}", ' ', f"{right[i, 2]:.6f}" , '\n']))
 
                 for i in range(molxyz.molecule[:, 0].size):
                     lines_to_add.append(''.join([namesmol[i], ' ', f"{molxyz.molecule[i, 0]:.6f}", ' ', f"{molxyz.molecule[i, 1]:.6f}", ' ', f"{molxyz.molecule[i, 2]:.6f}" , '\n']))
-                with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.xyz', 'w') as f:
-                    f.writelines(lines_to_add)
+                
+                
+                if not onesided:
+                    with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.xyz', 'w') as f:
+                        f.writelines(lines_to_add)
+                else:
+                    with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}_1side.xyz', 'w') as f:
+                        f.writelines(lines_to_add)
+
 
             lines_mol =[]
 
@@ -152,14 +168,21 @@ if __name__ == '__main__':
                     if namesmol[j] == i:
                         lines_mol.append(''.join([namesmol[j].ljust(2), ' ', f"{molxyz.molecule[j, 0]:.9f}".rjust(14), ' ', f"{molxyz.molecule[j, 1]:.9f}".rjust(19), ' ', f"{molxyz.molecule[j, 2]:.9f}".rjust(19) , '\n']))
 
-            with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.mol', 'w') as f:
-                f.writelines(lines_mol)
+            if not onesided:
+                with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.mol', 'w') as f:
+                    f.writelines(lines_mol)
+            else:
+                with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}_1side.mol', 'w') as f:
+                    f.writelines(lines_mol)
 
             #Build .pol file
             lines_pol = []
 
             lines_pol.append('AA\n')
-            lines_pol.append(str(left[:, 0].size*2)+'   0 1 1\n')
+            if onesided:
+                lines_pol.append(str(left[:, 0].size)+'   0 1 1\n')
+            else:
+                lines_pol.append(str(left[:, 0].size*2)+'   0 1 1\n')
 
             n = 1
 
@@ -172,20 +195,31 @@ if __name__ == '__main__':
                     lines_pol.append(''.join([str(n), f" {left[i, 0]:.6f} ", f"{left[i, 1]:.6f} ", f"{left[i, 2]:.6f} ", "0.000000 ", f"{ci.AtomicInformation(left_symbols[i]).polarizability():.6f}", '\n']))
             n += 1
 
-            for i in range(right[:, 0].size):
-                if right_symbols[i] == 'O':
-                    lines_pol.append(''.join([str(n), f" {right[i, 0]:.6f} ", f"{right[i, 1]:.6f} ", f"{right[i, 2]:.6f} ", "-2.000000 ", f"{ci.AtomicInformation(right_symbols[i]).polarizability():.6f}", '\n']))
-                elif right_symbols[i] == 'Ti':
-                    lines_pol.append(''.join([str(n), f" {right[i, 0]:.6f} ", f"{right[i, 1]:.6f} ", f"{right[i, 2]:.6f} ", "4.000000 ", f"{ci.AtomicInformation(right_symbols[i]).polarizability():.6f}", '\n']))
-                else:
-                    lines_pol.append(''.join([str(n), f" {right[i, 0]:.6f} ", f"{right[i, 1]:.6f} ", f"{right[i, 2]:.6f} ", "0.000000 ", f"{ci.AtomicInformation(right_symbols[i]).polarizability():.6f}", '\n']))
+            if not onesided:
+                for i in range(right[:, 0].size):
+                    if right_symbols[i] == 'O':
+                        lines_pol.append(''.join([str(n), f" {right[i, 0]:.6f} ", f"{right[i, 1]:.6f} ", f"{right[i, 2]:.6f} ", "-2.000000 ", f"{ci.AtomicInformation(right_symbols[i]).polarizability():.6f}", '\n']))
+                    elif right_symbols[i] == 'Ti':
+                        lines_pol.append(''.join([str(n), f" {right[i, 0]:.6f} ", f"{right[i, 1]:.6f} ", f"{right[i, 2]:.6f} ", "4.000000 ", f"{ci.AtomicInformation(right_symbols[i]).polarizability():.6f}", '\n']))
+                    else:
+                        lines_pol.append(''.join([str(n), f" {right[i, 0]:.6f} ", f"{right[i, 1]:.6f} ", f"{right[i, 2]:.6f} ", "0.000000 ", f"{ci.AtomicInformation(right_symbols[i]).polarizability():.6f}", '\n']))
             n += 1
 
-            with open(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot', 'w') as f:
-                f.writelines(lines_pol)
+            if not onesided:
+                with open(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot', 'w') as f:
+                    f.writelines(lines_pol)
+            else:
+                with open(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_1side.pot', 'w') as f:
+                    f.writelines(lines_pol)
 
             print("Outputs:")
-            if returnxyz:
-                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.xyz')
-            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot')
-            print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.mol')
+            if onesided:
+                if returnxyz:
+                    print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_1side.xyz')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_1side.pot')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}_1side.mol')
+            else:
+                if returnxyz:
+                    print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.xyz')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.pot')
+                print(molfile[:-4]+f'_charge_{charge}_{crystal_structure}.mol')

@@ -97,17 +97,18 @@ Exiting program''')
         if self.checkBasis(RIbasis):
             self.RIbasis = RIbasis
         else:
-            print(f'''{RIbasis} was not found in the standard library of {self.program}:
-Checking Basis Set Exchange''')
-            if ci.BasisSet.CheckBasisSet(self.program, RIbasis):
-                self.BSE = True
-                self.RIbasis = RIbasis
-                print('Basis set found on the Basis Set Exchange\n')
-            else:
-                print(f'''{RIbasis} does not seem to be available for {self.program}:
-Upper and lower case characters ARE important, so you may wish to check that they are written correctly
-Exiting program''')
-                exit()
+            print(f'''{RIbasis} was not found in the standard library of {self.program}
+Will still make the requested file''')
+#             if ci.BasisSet.CheckBasisSet(self.program, RIbasis):
+#                 self.BSE = True
+#                 self.RIbasis = RIbasis
+#                 print('Basis set found on the Basis Set Exchange\n')
+#             else:
+#                 print(f'''{RIbasis} does not seem to be available for {self.program}:
+# Upper and lower case characters ARE important, so you may wish to check that they are written correctly
+# Exiting program''')
+#                 exit()
+            self.RIbasis = RIbasis
 
     def checkBasis(self, basis: str) -> bool:
         """Checks if the basis set exists for the given program
