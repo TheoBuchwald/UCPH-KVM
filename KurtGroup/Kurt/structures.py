@@ -112,7 +112,7 @@ class NanoParticle():
         vacuum_dist_left = vdW_left + self.vdw
         vacuum_dist_right = vdW_right + self.vdw
 
-        self.distance = molecule.__len__() + vacuum_dist_left + vacuum_dist_right
+        self.distance = molecule.__xlen__() + vacuum_dist_left + vacuum_dist_right
 
         if isinstance(self.lattice_length, float):
             left, right, left_symbols, right_symbols = self.spherical(molecule.max(), molecule.min(), vacuum_dist_left, vacuum_dist_right)
