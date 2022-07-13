@@ -62,7 +62,6 @@ Exiting program''')
     XYZ.filetext += '\n'
 
     if XYZ.BSE:
-        XYZ.filetext += '****\n'
         XYZ.filetext += f'{basis_mol}\n'
         XYZ.filetext += '\n'
 
