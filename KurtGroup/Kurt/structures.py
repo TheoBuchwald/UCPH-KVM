@@ -194,6 +194,8 @@ class Molecule():
     def get_rotation_matrix(self, point_for_rot, direc_vec, theta) -> None:
         # Takes a point on the rotational axis, the normalized direction vector and the angle
         # The rotation matrix is 4x4 with the fourth dimension translating the origin to (a, b, c) and back
+        #Taken from Glen Murray, PhD
+        #https://sites.google.com/site/glennmurray/glenn-murray-ph-d/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions
         a, b, c = point_for_rot
         u, v, w = direc_vec
         u2, v2, w2 = u*u, v*v, w*w
