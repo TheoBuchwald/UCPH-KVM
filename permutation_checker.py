@@ -286,8 +286,9 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         indicies_used = set(F_perm) | set(L_perm) | set(g_perm) | set(RV_perm) | set(LV_perm) | set(i for j in t_perm for i in j)
 
         vir_used = sorted(list(indicies_used - reserved & set(vir)))
-        vir_unused = sorted([i for i in set(vir) - reserved if i < min(vir_used)])
+        vir_unused = sorted([i for i in set(vir) - reserved if i < max(vir_used) and i not in vir_used])
         vir_used.reverse()
+        print(vir_unused, vir_used)
 
         for unused, used in zip(vir_unused, vir_used[:len(vir_unused)]):
             F_perm = renameIndicies(used, unused, F_perm)
@@ -299,8 +300,9 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
                 t_perm[i] = renameIndicies(used, unused, correction)
 
         occ_used = sorted(list(indicies_used - reserved & set(occ)))
-        occ_unused = sorted([i for i in set(occ) - reserved if i < min(occ_used)])
+        occ_unused = sorted([i for i in set(occ) - reserved if i < max(occ_used) and i not in occ_used])
         occ_used.reverse()
+        print(occ_unused, occ_used)
 
         for unused, used in zip(occ_unused, occ_used[:len(occ_unused)]):
             F_perm = renameIndicies(used, unused, F_perm)
@@ -469,7 +471,7 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
 
 
 if __name__ == '__main__':
-    perms = permutationChecker(P=['be','jm'], L='dbme', E=['ai','dj'], RV='em', LV='aidl', bra=['ai','dl'])
+    perms = permutationChecker(P=['cde','klm'], g='knle', E=['cn','dm'], RV='em', bra=['ai','bj'], t='ckdl')
     
     print("All permutations")
     for i in perms:
@@ -477,6 +479,6 @@ if __name__ == '__main__':
 
     print("\nUnique permutations")
 
-    perms_compared = permutationComparison(perms,'delm')
+    perms_compared = permutationComparison(perms,'cdeklm')
     for i in perms_compared:
         print(i)
