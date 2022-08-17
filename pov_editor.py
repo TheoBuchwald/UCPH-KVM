@@ -91,7 +91,7 @@ def Get_Camera(file):
             Camera.append(line)
         elif 'angle' in line:
             Camera.append(line)
-        elif 'direction' in line:
+        elif 'direction' in line or 'look_at' in line:
             Camera.append(line)
     return Camera
 
@@ -116,9 +116,9 @@ if __name__ == '__main__':
 
     newpovfile = povfile.replace('.pov','') + '_new.pov'
 
-    pos1 = float(Camera[0].split()[1][1:-1])
-    pos2 = float(Camera[0].split()[2][:-1])
-    pos3 = float(Camera[0].split()[3][:-1])
+    pos1 = float(Camera[0].split()[2][:-1])
+    pos2 = float(Camera[0].split()[3][:-1])
+    pos3 = float(Camera[0].split()[4][:-1])
 
     default_settings = f'''#version 3.7;
 global_settings {{ assumed_gamma 1.8 }}
@@ -128,7 +128,7 @@ background {{color rgb <0.744, 0.784, 0.896>}}
 
 camera {{
     location camera_location
-    {Camera[1][1:-1]}
+    {Camera[1][:-1]}
     {Camera[2][1:-2]}
 	up <0, 1, 0>
 	right <1, 0, 0> * 1.33333
@@ -231,5 +231,6 @@ union {{
     # If so generate the picture
     if 'Status: install ok installed' in Check_for_povray[1]:
         subprocess.run(['povray', f'{newpovfile}', '+A0.1', '+AM2', '+AG0', '+R5', '-J'])
+        # +A0.1 +AM2 +AG0 +R5 -J
         # Runs with the settings, +A0.1: Antialliasing set to 0.1 threshold, +AM2: Antialiasing method 2,
         #   +AG0: Gamma set to 0, +R5: Depth set to 5, -J: Jitter set to off
