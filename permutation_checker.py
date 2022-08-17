@@ -288,7 +288,6 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         vir_used = sorted(list(indicies_used - reserved & set(vir)))
         vir_unused = sorted([i for i in set(vir) - reserved if i < max(vir_used) and i not in vir_used])
         vir_used.reverse()
-        print(vir_unused, vir_used)
 
         for unused, used in zip(vir_unused, vir_used[:len(vir_unused)]):
             F_perm = renameIndicies(used, unused, F_perm)
@@ -302,7 +301,6 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         occ_used = sorted(list(indicies_used - reserved & set(occ)))
         occ_unused = sorted([i for i in set(occ) - reserved if i < max(occ_used) and i not in occ_used])
         occ_used.reverse()
-        print(occ_unused, occ_used)
 
         for unused, used in zip(occ_unused, occ_used[:len(occ_unused)]):
             F_perm = renameIndicies(used, unused, F_perm)
