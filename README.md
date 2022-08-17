@@ -67,6 +67,17 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 </p>
 </details>
 
+## [permutation_checker.py](./Permutation_checker.py)
+<details><summary> Program information </summary>
+<p>
+
+  A script designed to check and compare the indicies of equations derived from Box 13.2 in *Molecular Electronic Structure Theory*
+
+  You will need to input the various components of the term in the script itself
+
+</p>
+</details>
+
 ## [sandwich.py](./sandwich.py)
 <details><summary> Program information </summary>
 <p>
