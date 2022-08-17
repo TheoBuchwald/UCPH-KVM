@@ -443,8 +443,6 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
         for nn, perm2 in enumerate(perm_copy[n:]):
             same = 1
             if F and same:
-                F1 = perm1['F']
-                F2 = perm2['F']
                 same *= F_checker(perm1['F'], perm2['F'])
             if L and same:
                 same *= L_checker(perm1['L'], perm2['L'])
