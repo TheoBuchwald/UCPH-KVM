@@ -417,59 +417,71 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
 
     summation = [i for i in summation]
 
-    vir_idx = set(vir) & set(summation)
-    occ_idx = set(occ) & set(summation)
-
-    perm_copy = deepcopy(permutations)
-    for i, perm in enumerate(permutations):
-        for key, lst in perm.items():
-            if key == 't':
-                for n, correction in enumerate(lst):
-                    for nn, idx in enumerate(correction):
-                        if idx in vir_idx:
-                            perm_copy[i][key][n][nn] = 'vir'
-                        elif idx in occ_idx:
-                            perm_copy[i][key][n][nn] = 'occ'
-            else:
-                for n, idx in enumerate(lst):
-                    if idx in vir_idx:
-                        perm_copy[i][key][n] = 'vir'
-                    elif idx in occ_idx:
-                        perm_copy[i][key][n] = 'occ'
+    vir_idx = list(set(vir) & set(summation))
+    occ_idx = list(set(occ) & set(summation))
 
     permutations_compared = np.zeros((len(permutations),len(permutations)))
 
-    for n, perm1 in enumerate(perm_copy):
-        for nn, perm2 in enumerate(perm_copy[n:]):
-            same = 1
-            if F and same:
-                same *= F_checker(perm1['F'], perm2['F'])
-            if L and same:
-                same *= L_checker(perm1['L'], perm2['L'])
-            if g and same:
-                same *= g_checker(perm1['g'], perm2['g'])
-            if t and same:
-                for i, _ in enumerate(perm1['t']):
-                    same *= t_checker(perm1['t'][i], perm2['t'][i])
-            if RV and same:
-                same *= RV_checker(perm1['RV'], perm2['RV'])
-            if LV and same:
-                same *= LV_checker(perm1['LV'], perm2['LV'])
-            permutations_compared[n,n+nn] = same
+    for i, o1 in enumerate(occ_idx):
+        for o2 in occ_idx[i:]:
+            for j, v1 in enumerate(vir_idx):
+                for v2 in vir_idx[j:]:
+                    perm_copy = deepcopy(permutations)
+                    for n, perm1 in enumerate(permutations):
+                        for key, lst in perm1.items():
+                            if key == 't':
+                                for nn, correction in enumerate(lst):
+                                    for nnn, idx in enumerate(correction):
+                                        if idx == o1:
+                                            perm_copy[n][key][nn][nnn] = o2
+                                        elif idx == o2:
+                                            perm_copy[n][key][nn][nnn] = o1
+                                        elif idx == v1:
+                                            perm_copy[n][key][nn][nnn] = v2
+                                        elif idx == v2:
+                                            perm_copy[n][key][nn][nnn] = v1
+                            else:
+                                for nn, idx in enumerate(lst):
+                                    if idx == o1:
+                                        perm_copy[n][key][nn] = o2
+                                    elif idx == o2:
+                                        perm_copy[n][key][nn] = o1
+                                    elif idx == v1:
+                                        perm_copy[n][key][nn] = v2
+                                    elif idx == v2:
+                                        perm_copy[n][key][nn] = v1
+
+                    for n, perm1 in enumerate(perm_copy):
+                        for nn, perm2 in enumerate(permutations[n:]):
+                            same = 1
+                            if F and same:
+                                same *= F_checker(perm1['F'], perm2['F'])
+                            if L and same:
+                                same *= L_checker(perm1['L'], perm2['L'])
+                            if g and same:
+                                same *= g_checker(perm1['g'], perm2['g'])
+                            if t and same:
+                                for i, _ in enumerate(perm1['t']):
+                                    same *= t_checker(perm1['t'][i], perm2['t'][i])
+                            if RV and same:
+                                same *= RV_checker(perm1['RV'], perm2['RV'])
+                            if LV and same:
+                                same *= LV_checker(perm1['LV'], perm2['LV'])
+                            permutations_compared[n,n+nn] += same
 
     idx_same = set()
     remaining_permutations = []
     for i, line in enumerate(permutations_compared):
         if i in idx_same:
             continue
-        idx_same |= set(np.where(line == 1)[0])
+        idx_same |= set(np.where(line >= 1)[0])
         remaining_permutations += [permutations[i]]
 
     return remaining_permutations
 
 
 if __name__ == '__main__':
-    perms = permutationChecker(P=['cde','klm'], g='knle', E=['cn','dm'], RV='em', bra=['ai','bj'], t='ckdl')
+    perms = permutationChecker(P=['def','lmn'], L='melf', E=['dn'], RV='fn', bra=['ck'], LV='ck',t='dlem')
     
     print("All permutations")
     for i in perms:
@@ -477,6 +489,6 @@ if __name__ == '__main__':
 
     print("\nUnique permutations")
 
-    perms_compared = permutationComparison(perms,'cdeklm')
+    perms_compared = permutationComparison(perms,'cdefklmn')
     for i in perms_compared:
         print(i)
