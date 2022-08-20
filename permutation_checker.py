@@ -1,3 +1,4 @@
+import argparse
 from itertools import permutations
 from typing import List, Tuple, Union, Dict
 from copy import deepcopy
@@ -93,7 +94,7 @@ def F_checker(F1: list, F2: list) -> bool:
 
     return F1 == F2
 
-def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = None, RV: str = None, LV: str = None, t: Union[List[str],str] = None, bra: Union[List[str],str] = 'ai', E: Union[List[str],str] = None) -> List[Dict[str, List[str]]]:
+def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = None, RV: str = None, LV: str = None, t: Union[List[str],str] = None, bra: Union[List[str],str] = None, E: Union[List[str],str] = None, **kwargs) -> List[Dict[str, List[str]]]:
     """Generates permutation and automatically elimineates indicies afterwards
 
     Args:
@@ -479,16 +480,87 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
 
     return remaining_permutations
 
+def main() -> None:
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""A script designed to be used to quickly get the results of a permutation operator""", epilog="""For help contact
+    Theo Juncker von Buchwald
+    fnc970@alumni.ku.dk""")
 
-if __name__ == '__main__':
-    perms = permutationChecker(P=['def','lmn'], L='melf', E=['dn'], RV='fn', bra=['ck'], LV='ck',t='dlem')
+    parser.add_argument('-P', type=str, nargs=2,                help='''The permutation operator......................Ex. -P cde klm''')
+    parser.add_argument('-bra', type=str, nargs='+',            help='''Excitations in the bra........................Ex. -bra ai bj''')
+
+    parser.add_argument('-F', default=None, nargs=1, type=str,     help='''The indicies of the F component...............Ex. -F ci''')
+    parser.add_argument('-L', default=None, nargs=1, type=str,     help='''The indicies of the L component...............Ex. -L cile''')
+    parser.add_argument('-g', default=None, nargs=1, type=str,     help='''The indicies of the g component...............Ex. -g cile''')
+    parser.add_argument('-t', default=None, nargs='+', type=str,   help='''The indicies of each individual t component...Ex. -t cile dlem''')
+    parser.add_argument('-E', default=None, nargs='+', type=str,   help='''The indicies of the excitation operators......Ex. -E dn cl''')
+    parser.add_argument('-LV', default=None, nargs=1, type=str,    help='''The indicies of the left excitaiton vector....Ex. -LV ci''')
+    parser.add_argument('-RV', default=None, nargs=1, type=str,    help='''The indicies of the right excitaiton vector...Ex. -RV ck''')
+    parser.add_argument('-sum', default=None, nargs=1, type=str,   help='''The indicies of the summation.................Ex. -sum cdeklm''')
+
+    args = parser.parse_args()
+
+    P = args.P
+    bra = args.bra
+
+    if isinstance(args.F,list):
+        F = args.F[0]
+    else:
+        F = args.F
+
+    if isinstance(args.L,list):
+        L = args.L[0]
+    else:
+        L = args.L
+
+    if isinstance(args.g,list):
+        g = args.g[0]
+    else:
+        g = args.g
+
+    t = args.t
+    E = args.E
+
+    if isinstance(args.LV,list):
+        LV = args.LV[0]
+    else:
+        LV = args.LV
+
+    if isinstance(args.RV,list):
+        RV = args.RV[0]
+    else:
+        RV = args.RV
+
+    if isinstance(args.sum,list):
+        summation = args.sum[0]
+    else:
+        summation = args.sum
+
+    arguments = {
+        'P': args.P,
+        'bra': args.bra,
+        'F': F,
+        'L': L,
+        'g': g,
+        't': t,
+        'E': E,
+        'LV': LV,
+        'RV': RV,
+        'summation': summation
+    }
+
+    perms = permutationChecker(**arguments)
     
     print("All permutations")
     for i in perms:
         print(i)
 
-    print("\nUnique permutations")
+    if summation:
+        perms_compared = permutationComparison(perms, summation)
 
-    perms_compared = permutationComparison(perms,'cdefklmn')
-    for i in perms_compared:
-        print(i)
+        print("\nUnique permutations")
+        
+        for i in perms_compared:
+            print(i)
+
+if __name__ == '__main__':
+    main()
