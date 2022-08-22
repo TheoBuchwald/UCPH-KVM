@@ -475,8 +475,9 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
     for i, line in enumerate(permutations_compared):
         if i in idx_same:
             continue
-        idx_same |= set(np.where(line >= 1)[0])
-        remaining_permutations += [permutations[i]]
+        new_idx_same = set(np.where(line >= 1)[0])
+        idx_same |= new_idx_same
+        remaining_permutations += [permutations[i], f"Remember a factor of {len(new_idx_same)}"]
 
     return remaining_permutations
 
@@ -559,8 +560,8 @@ def main() -> None:
 
         print("\nUnique permutations")
         
-        for i in perms_compared:
-            print(i)
+        for i, j in zip(perms_compared[::2], perms_compared[1::2]):
+            print(i, j)
 
 if __name__ == '__main__':
     main()
