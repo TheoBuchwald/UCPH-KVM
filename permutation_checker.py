@@ -50,20 +50,23 @@ def L_checker(L1: list, L2: list) -> bool:
 
 def t_checker(t1: list, t2: list) -> bool:
     try:
-        assert len(t1) == 4 and len(t2) == 4, f"The length of t1 and t2 has to be the same and 4 - here they were {len(t1)} and {len(t2)}"
+        assert (len(t1) == 4 and len(t1) == 4) or (len(t1) == 2 and len(t1) == 2), f"The length of t1 and t2 has to be the same and either 2 or 4 - here they were {len(t1)} and {len(t2)}"
     except AssertionError as err:
         print(err)
         exit()
 
-    if t1 == t2:
-        return True
-
-    p,q,r,s = t1
-
-    if [r,s,p,q] == t2:
-        return True
+    if len(t1) == 2:
+        return F_checker(t1, t2)
     else:
-        return False
+        if t1 == t2:
+            return True
+
+        p,q,r,s = t1
+
+        if [r,s,p,q] == t2:
+            return True
+        else:
+            return False
 
 def RV_checker(RV1: list, RV2: list) -> bool:
     try:
