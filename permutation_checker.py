@@ -97,7 +97,7 @@ def F_checker(F1: list, F2: list) -> bool:
 
     return F1 == F2
 
-def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = None, RV: str = None, LV: str = None, t: Union[List[str],str] = None, bra: Union[List[str],str] = None, E: Union[List[str],str] = None, **kwargs) -> List[Dict[str, List[str]]]:
+def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = None, RV: str = None, LV: str = None, t: Union[List[str],str] = None, bra: Union[List[str],str] = None, E: Union[List[str],str] = None, reserved: List[str] = ['aibj'], **kwargs) -> List[Dict[str, List[str]]]:
     """Generates permutation and automatically elimineates indicies afterwards
 
     Args:
@@ -125,6 +125,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         assert isinstance(t, list) or isinstance(t, str) or t == None, f"t must be of type string or list; here it was {type(t)}"
         assert isinstance(E, list) or isinstance(E, str) or E == None, f"E must be of type string or list; here it was {type(E)}"
         assert isinstance(bra, list) or isinstance(bra, str), f"bra must be of type string or list; here it was {type(bra)}"
+        assert isinstance(reserved, list), f"reserved must be of type list; here it was {type(reserved)}"
     except AssertionError as err:
         print(err)
         exit()
@@ -141,10 +142,9 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
     vir = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
     occ = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p')
 
-    # Collecting all indicies used which are not reserved - (a, i, b, j) being reserved
+    # Collecting all indicies used which are not reserved - (a, i, b, j) being reserved by default
     vir_occ_used = set()
-    reserved = {'a', 'i', 'b', 'j'}
-    # reserved = set()
+    reserved = set(reserved)
     
     # Finds vir and occ indicies to permutate
     P_vir = [idx for script in P for idx in script if idx in vir]
@@ -489,22 +489,20 @@ def main() -> None:
     Theo Juncker von Buchwald
     fnc970@alumni.ku.dk""")
 
-    parser.add_argument('-P', type=str, nargs=2,                help='''The permutation operator......................Ex. -P cde klm''')
-    parser.add_argument('-bra', type=str, nargs='+',            help='''Excitations in the bra........................Ex. -bra ai bj''')
-
-    parser.add_argument('-F', default=None, nargs=1, type=str,     help='''The indicies of the F component...............Ex. -F ci''')
-    parser.add_argument('-L', default=None, nargs=1, type=str,     help='''The indicies of the L component...............Ex. -L cile''')
-    parser.add_argument('-g', default=None, nargs=1, type=str,     help='''The indicies of the g component...............Ex. -g cile''')
-    parser.add_argument('-t', default=None, nargs='+', type=str,   help='''The indicies of each individual t component...Ex. -t cile dlem''')
-    parser.add_argument('-E', default=None, nargs='+', type=str,   help='''The indicies of the excitation operators......Ex. -E dn cl''')
-    parser.add_argument('-LV', default=None, nargs=1, type=str,    help='''The indicies of the left excitaiton vector....Ex. -LV ci''')
-    parser.add_argument('-RV', default=None, nargs=1, type=str,    help='''The indicies of the right excitaiton vector...Ex. -RV ck''')
-    parser.add_argument('-sum', default=None, nargs=1, type=str,   help='''The indicies of the summation.................Ex. -sum cdeklm''')
+    parser.add_argument('-P', type=str, nargs=2,                                    help='The permutation operator......................Ex. -P cde klm')
+    parser.add_argument('-bra', type=str, nargs='+',                                help='Excitations in the bra........................Ex. -bra ai bj')
+    
+    parser.add_argument('-F', default=None, nargs=1, type=str,                      help='The indicies of the F component...............Ex. -F ci')
+    parser.add_argument('-L', default=None, nargs=1, type=str,                      help='The indicies of the L component...............Ex. -L cile')
+    parser.add_argument('-g', default=None, nargs=1, type=str,                      help='The indicies of the g component...............Ex. -g cile')
+    parser.add_argument('-t', default=None, nargs='+', type=str,                    help='The indicies of each individual t component...Ex. -t cile dlem')
+    parser.add_argument('-E', default=None, nargs='+', type=str,                    help='The indicies of the excitation operators......Ex. -E dn cl')
+    parser.add_argument('-LV', default=None, nargs=1, type=str,                     help='The indicies of the left excitaiton vector....Ex. -LV ci')
+    parser.add_argument('-RV', default=None, nargs=1, type=str,                     help='The indicies of the right excitaiton vector...Ex. -RV ck')
+    parser.add_argument('-res', '--reserved', default=['aibj'], nargs=1, type=str,  help='The indicies reserved for the outer sum.......Ex. -res aibj')
+    parser.add_argument('-sum', '--summation', default=None, nargs=1, type=str,     help='The indicies of the summation.................Ex. -sum cdeklm')
 
     args = parser.parse_args()
-
-    P = args.P
-    bra = args.bra
 
     if isinstance(args.F,list):
         F = args.F[0]
@@ -534,6 +532,8 @@ def main() -> None:
     else:
         RV = args.RV
 
+    reserved = [i for i in args.res[0]]
+
     if isinstance(args.sum,list):
         summation = args.sum[0]
     else:
@@ -549,6 +549,7 @@ def main() -> None:
         'E': E,
         'LV': LV,
         'RV': RV,
+        'reserved': reserved,
         'summation': summation
     }
 
