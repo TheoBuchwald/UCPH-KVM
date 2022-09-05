@@ -426,52 +426,93 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
 
     permutations_compared = np.zeros((len(permutations),len(permutations)))
 
-    for i, o1 in enumerate(occ_idx):
-        for o2 in occ_idx[i:]:
-            for j, v1 in enumerate(vir_idx):
-                for v2 in vir_idx[j:]:
-                    perm_copy = deepcopy(permutations)
-                    for n, perm1 in enumerate(permutations):
-                        for key, lst in perm1.items():
-                            if key == 't':
-                                for nn, correction in enumerate(lst):
-                                    for nnn, idx in enumerate(correction):
+    if len(vir_idx) > 0 and len(occ_idx) > 0:
+        for i, o1 in enumerate(occ_idx):
+            for o2 in occ_idx[i:]:
+                for j, v1 in enumerate(vir_idx):
+                    for v2 in vir_idx[j:]:
+                        perm_copy = deepcopy(permutations)
+                        for n, perm1 in enumerate(permutations):
+                            for key, lst in perm1.items():
+                                if can_contain_multiple_terms(key):
+                                    for nn, correction in enumerate(lst):
+                                        for nnn, idx in enumerate(correction):
+                                            if idx == o1:
+                                                perm_copy[n][key][nn][nnn] = o2
+                                            elif idx == o2:
+                                                perm_copy[n][key][nn][nnn] = o1
+                                            elif idx == v1:
+                                                perm_copy[n][key][nn][nnn] = v2
+                                            elif idx == v2:
+                                                perm_copy[n][key][nn][nnn] = v1
+                                else:
+                                    for nn, idx in enumerate(lst):
                                         if idx == o1:
-                                            perm_copy[n][key][nn][nnn] = o2
+                                            perm_copy[n][key][nn] = o2
                                         elif idx == o2:
-                                            perm_copy[n][key][nn][nnn] = o1
+                                            perm_copy[n][key][nn] = o1
                                         elif idx == v1:
-                                            perm_copy[n][key][nn][nnn] = v2
+                                            perm_copy[n][key][nn] = v2
                                         elif idx == v2:
-                                            perm_copy[n][key][nn][nnn] = v1
-                            else:
-                                for nn, idx in enumerate(lst):
-                                    if idx == o1:
-                                        perm_copy[n][key][nn] = o2
-                                    elif idx == o2:
-                                        perm_copy[n][key][nn] = o1
-                                    elif idx == v1:
-                                        perm_copy[n][key][nn] = v2
-                                    elif idx == v2:
-                                        perm_copy[n][key][nn] = v1
+                                            perm_copy[n][key][nn] = v1
 
-                    for n, perm1 in enumerate(perm_copy):
-                        for nn, perm2 in enumerate(permutations[n:]):
-                            same = 1
-                            if F and same:
-                                same *= F_checker(perm1['F'], perm2['F'])
-                            if L and same:
-                                same *= L_checker(perm1['L'], perm2['L'])
-                            if g and same:
-                                same *= g_checker(perm1['g'], perm2['g'])
-                            if t and same:
-                                for i, _ in enumerate(perm1['t']):
-                                    same *= t_checker(perm1['t'][i], perm2['t'][i])
-                            if RV and same:
-                                same *= RV_checker(perm1['RV'], perm2['RV'])
-                            if LV and same:
-                                same *= LV_checker(perm1['LV'], perm2['LV'])
-                            permutations_compared[n,n+nn] += same
+                        for n, perm1 in enumerate(perm_copy):
+                            for nn, perm2 in enumerate(permutations[n:]):
+                                permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
+
+    elif len(vir_idx) > 0 and len(occ_idx) == 0:
+        for j, v1 in enumerate(vir_idx):
+            for v2 in vir_idx[j:]:
+                perm_copy = deepcopy(permutations)
+                for n, perm1 in enumerate(permutations):
+                    for key, lst in perm1.items():
+                        if can_contain_multiple_terms(key):
+                            for nn, correction in enumerate(lst):
+                                for nnn, idx in enumerate(correction):
+                                    if idx == v1:
+                                        perm_copy[n][key][nn][nnn] = v2
+                                    elif idx == v2:
+                                        perm_copy[n][key][nn][nnn] = v1
+                        else:
+                            for nn, idx in enumerate(lst):
+                                if idx == v1:
+                                    perm_copy[n][key][nn] = v2
+                                elif idx == v2:
+                                    perm_copy[n][key][nn] = v1
+
+                for n, perm1 in enumerate(perm_copy):
+                    for nn, perm2 in enumerate(permutations[n:]):
+                        same = check_all(F, L, g, t, RV, LV, perm1, perm2)
+                        permutations_compared[n,n+nn] += same
+
+    elif len(vir_idx) == 0 and len(occ_idx) > 0:
+        for i, o1 in enumerate(occ_idx):
+            for o2 in occ_idx[i:]:
+                perm_copy = deepcopy(permutations)
+                for n, perm1 in enumerate(permutations):
+                    for key, lst in perm1.items():
+                        if can_contain_multiple_terms(key):
+                            for nn, correction in enumerate(lst):
+                                for nnn, idx in enumerate(correction):
+                                    if idx == o1:
+                                        perm_copy[n][key][nn][nnn] = o2
+                                    elif idx == o2:
+                                        perm_copy[n][key][nn][nnn] = o1
+                        else:
+                            for nn, idx in enumerate(lst):
+                                if idx == o1:
+                                    perm_copy[n][key][nn] = o2
+                                elif idx == o2:
+                                    perm_copy[n][key][nn] = o1
+
+                for n, perm1 in enumerate(perm_copy):
+                    for nn, perm2 in enumerate(permutations[n:]):
+                        permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
+
+    elif len(vir_idx) == 0 and len(occ_idx) == 0:
+        for n, perm1 in enumerate(permutations):
+            for nn, perm2 in enumerate(permutations[n:]):
+                permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
 
     idx_same = set()
     remaining_permutations = []
@@ -483,6 +524,26 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
         remaining_permutations += [permutations[i], f"Remember a factor of {len(new_idx_same)}"]
 
     return remaining_permutations
+
+def can_contain_multiple_terms(key: str) -> bool:
+    return key in ('t')
+
+def check_all(F: bool, L: bool, g: bool, t: bool, RV: bool, LV: bool, perm1: List[str], perm2: List[str]) -> bool:
+    same = True
+    if F and same:
+        same *= F_checker(perm1['F'], perm2['F'])
+    if L and same:
+        same *= L_checker(perm1['L'], perm2['L'])
+    if g and same:
+        same *= g_checker(perm1['g'], perm2['g'])
+    if t and same:
+        for i, _ in enumerate(perm1['t']):
+            same *= t_checker(perm1['t'][i], perm2['t'][i])
+    if RV and same:
+        same *= RV_checker(perm1['RV'], perm2['RV'])
+    if LV and same:
+        same *= LV_checker(perm1['LV'], perm2['LV'])
+    return same
 
 def main() -> None:
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""A script designed to be used to quickly get the results of a permutation operator""", epilog="""For help contact
@@ -500,7 +561,7 @@ def main() -> None:
     parser.add_argument('-LV', default=None, nargs=1, type=str,                     help='The indicies of the left excitaiton vector....Ex. -LV ci')
     parser.add_argument('-RV', default=None, nargs=1, type=str,                     help='The indicies of the right excitaiton vector...Ex. -RV ck')
     parser.add_argument('-res', '--reserved', default=['aibj'], nargs=1, type=str,  help='The indicies reserved for the outer sum.......Ex. -res aibj')
-    parser.add_argument('-sum', '--summation', default=None, nargs=1, type=str,     help='The indicies of the summation.................Ex. -sum cdeklm')
+    parser.add_argument('-sum', '--summation', default='', nargs=1, type=str,       help='The indicies of the summation.................Ex. -sum cdeklm')
 
     args = parser.parse_args()
 
@@ -532,12 +593,12 @@ def main() -> None:
     else:
         RV = args.RV
 
-    reserved = [i for i in args.res[0]]
+    reserved = [i for i in args.reserved[0]]
 
-    if isinstance(args.sum,list):
-        summation = args.sum[0]
+    if isinstance(args.summation,list):
+        summation = args.summation[0]
     else:
-        summation = args.sum
+        summation = args.summation
 
     arguments = {
         'P': args.P,
@@ -562,7 +623,14 @@ def main() -> None:
     if summation:
         perms_compared = permutationComparison(perms, summation)
 
-        print("\nUnique permutations")
+        print("\nUnique permutations while checking index renaming according to summation")
+        
+        for i, j in zip(perms_compared[::2], perms_compared[1::2]):
+            print(i, j)
+    else:
+        perms_compared = permutationComparison(perms, summation)
+
+        print("\nUnique permutations without checking index renaming according to summation")
         
         for i, j in zip(perms_compared[::2], perms_compared[1::2]):
             print(i, j)
