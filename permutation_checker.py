@@ -139,16 +139,16 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         bra = [bra]
 
     # Indicies recognised by function
-    vir = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
-    occ = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p')
+    global VIR
+    global OCC
 
     # Collecting all indicies used which are not reserved - (a, i, b, j) being reserved by default
     vir_occ_used = set()
     reserved = set(reserved)
     
     # Finds vir and occ indicies to permutate
-    P_vir = [idx for script in P for idx in script if idx in vir]
-    P_occ = [idx for script in P for idx in script if idx in occ]
+    P_vir = [idx for script in P for idx in script if idx in VIR]
+    P_occ = [idx for script in P for idx in script if idx in OCC]
 
     # Permutating vir and occ indicies
     perm1 = permutations(P_vir)
@@ -156,15 +156,15 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
 
     # Storing index of indicies for use when permutating
     if F:
-        F_indexing = indexing(F, vir, occ, P_vir, P_occ)
+        F_indexing = indexing(F, VIR, OCC, P_vir, P_occ)
         vir_occ_used |= set(i for i in F)
     
     if L:
-        L_indexing = indexing(L, vir, occ, P_vir, P_occ)
+        L_indexing = indexing(L, VIR, OCC, P_vir, P_occ)
         vir_occ_used |= set(i for i in L)
 
     if g:
-        g_indexing = indexing(g, vir, occ, P_vir, P_occ)
+        g_indexing = indexing(g, VIR, OCC, P_vir, P_occ)
         vir_occ_used |= set(i for i in g)
 
     if RV:
@@ -181,13 +181,13 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
     if bra:
         for excitation in bra:
             for idx in excitation:
-                if idx in vir:
+                if idx in VIR:
                     bra_vir += idx
-                elif idx in occ:
+                elif idx in OCC:
                     bra_occ += idx
                 else:
                     print("Something went wrong")
-                    print(f"Index {idx} was not found in {occ=} or {vir=}")
+                    print(f"Index {idx} was not found in {OCC=} or {VIR=}")
                     exit()
         vir_occ_used |= set(i for j in bra for i in j)
 
@@ -209,29 +209,29 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
                     continue
                 except ValueError: ...
                 try:
-                    index = vir.index(idx)
+                    index = VIR.index(idx)
                     operator_indexing += [f'x{idx}']
-                    if vir[index] in bra_vir:
+                    if VIR[index] in bra_vir:
                         reserved_vir_in_E += 1  
                     continue
                 except ValueError: ...
                 try:
-                    index = occ.index(idx)
+                    index = OCC.index(idx)
                     operator_indexing += [f'x{idx}']
-                    if occ[index] in bra_occ:
+                    if OCC[index] in bra_occ:
                         reserved_occ_in_E += 1
                     continue
                 except ValueError: ...
                 print("Something went wrong")
-                print(f"Index {idx} was not found in {P_occ=}, {P_vir=}, {occ=} or {vir=}")
+                print(f"Index {idx} was not found in {P_occ=}, {P_vir=}, {OCC=} or {VIR=}")
                 exit()
             E_indexing += [operator_indexing]
 
         len_E = len(E)
         vir_occ_used |= set(i for j in E for i in j)
     
-        vir_avail = sorted([i for i in vir_occ_used if i in vir])[:-len_E + reserved_vir_in_E]
-        occ_avail = sorted([i for i in vir_occ_used if i in occ])[:-len_E + reserved_occ_in_E]
+        vir_avail = sorted([i for i in vir_occ_used if i in VIR])[:-len_E + reserved_vir_in_E]
+        occ_avail = sorted([i for i in vir_occ_used if i in OCC])[:-len_E + reserved_occ_in_E]
 
     vir_avail = sorted(list(set(vir_avail) - reserved))
     occ_avail = sorted(list(set(occ_avail) - reserved))
@@ -289,8 +289,8 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
 
         indicies_used = set(F_perm) | set(L_perm) | set(g_perm) | set(RV_perm) | set(LV_perm) | set(i for j in t_perm for i in j)
 
-        vir_used = sorted(list(indicies_used - reserved & set(vir)))
-        vir_unused = sorted([i for i in set(vir) - reserved if i < max(vir_used) and i not in vir_used])
+        vir_used = sorted(list(indicies_used - reserved & set(VIR)))
+        vir_unused = sorted([i for i in set(VIR) - reserved if i < max(vir_used) and i not in vir_used])
         vir_used.reverse()
 
         for unused, used in zip(vir_unused, vir_used[:len(vir_unused)]):
@@ -302,8 +302,8 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
             for i, correction in enumerate(t_perm):
                 t_perm[i] = renameIndicies(used, unused, correction)
 
-        occ_used = sorted(list(indicies_used - reserved & set(occ)))
-        occ_unused = sorted([i for i in set(occ) - reserved if i < max(occ_used) and i not in occ_used])
+        occ_used = sorted(list(indicies_used - reserved & set(OCC)))
+        occ_unused = sorted([i for i in set(OCC) - reserved if i < max(occ_used) and i not in occ_used])
         occ_used.reverse()
 
         for unused, used in zip(occ_unused, occ_used[:len(occ_unused)]):
@@ -416,13 +416,13 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
     RV = 'RV' in permutation_keys
     LV = 'LV' in permutation_keys
 
-    vir = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
-    occ = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p')
+    global VIR
+    global OCC
 
     summation = [i for i in summation]
 
-    vir_idx = list(set(vir) & set(summation))
-    occ_idx = list(set(occ) & set(summation))
+    vir_idx = list(set(VIR) & set(summation))
+    occ_idx = list(set(OCC) & set(summation))
 
     permutations_compared = np.zeros((len(permutations),len(permutations)))
 
@@ -545,7 +545,20 @@ def check_all(F: bool, L: bool, g: bool, t: bool, RV: bool, LV: bool, perm1: Lis
         same *= LV_checker(perm1['LV'], perm2['LV'])
     return same
 
+def init_global_variables() -> None:
+
+    global VIR
+    global OCC
+
+    VIR = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
+    OCC = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p')
+
+
+
 def main() -> None:
+
+    init_global_variables()
+
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""A script designed to be used to quickly get the results of a permutation operator""", epilog="""For help contact
     Theo Juncker von Buchwald
     fnc970@alumni.ku.dk""")
