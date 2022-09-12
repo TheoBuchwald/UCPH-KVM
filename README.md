@@ -75,16 +75,16 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 
   #### Keywords
 
-  The keywords -P and -bra are required arguments and must be given as in the examples:
+  The keywords -P, -bra, and -E are required arguments and must be given as in the examples:
     -P cde klm or -P cd kl ...
     -bra ai bj or -bra -ai ...
+    -E dn or -E dn cl ...
 
-  The keywords -F, -L, -g, -t, -E, -LV, -RV, and -sum are optional and must be given as in the examples:
+  The keywords -F, -L, -g, -t, -LV, -RV, and -sum are optional and must be given as in the examples:
     -F ci
     -L cile
     -g cile
     -t cile or -t cile dlem ...
-    -E dn or -E dn cl ...
     -LV ci
     -RV ck
     -sum cdeklm or -sum -clmedk ...

@@ -292,8 +292,16 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         vir_used = sorted(list(indicies_used - reserved & set(VIR)))
         vir_unused = sorted([i for i in set(VIR) - reserved if i < max(vir_used) and i not in vir_used])
         vir_used.reverse()
+        
+        vir_replace = []
+        for idx_used in vir_used:
+            for idx_vir in VIR:
+                if idx_vir in vir_unused and idx_vir < idx_used:
+                    vir_replace += [idx_vir]
+                    vir_unused.remove(idx_vir)
+                    break
 
-        for unused, used in zip(vir_unused, vir_used[:len(vir_unused)]):
+        for unused, used in zip(vir_replace, vir_used[:len(vir_replace)]):
             F_perm = renameIndicies(used, unused, F_perm)
             L_perm = renameIndicies(used, unused, L_perm)
             g_perm = renameIndicies(used, unused, g_perm)
@@ -306,7 +314,15 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         occ_unused = sorted([i for i in set(OCC) - reserved if i < max(occ_used) and i not in occ_used])
         occ_used.reverse()
 
-        for unused, used in zip(occ_unused, occ_used[:len(occ_unused)]):
+        occ_replace = []
+        for idx_used in occ_used:
+            for idx_occ in OCC:
+                if idx_occ in occ_unused and idx_occ < idx_used:
+                    occ_replace += [idx_occ]
+                    occ_unused.remove(idx_occ)
+                    break
+
+        for unused, used in zip(occ_replace, occ_used[:len(occ_replace)]):
             F_perm = renameIndicies(used, unused, F_perm)
             L_perm = renameIndicies(used, unused, L_perm)
             g_perm = renameIndicies(used, unused, g_perm)
@@ -314,6 +330,9 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
             LV_perm = renameIndicies(used, unused, LV_perm)
             for i, correction in enumerate(t_perm):
                 t_perm[i] = renameIndicies(used, unused, correction)
+
+        # print(f"{indicies_used=}")
+        print("used/unsused",occ_used,occ_unused,occ_replace,vir_used,vir_unused,vir_replace)
 
         current_perm = dict()
         if LV:
@@ -565,12 +584,12 @@ def main() -> None:
 
     parser.add_argument('-P', type=str, nargs=2,                                    help='The permutation operator......................Ex. -P cde klm')
     parser.add_argument('-bra', type=str, nargs='+',                                help='Excitations in the bra........................Ex. -bra ai bj')
+    parser.add_argument('-E', type=str, nargs='+',                                  help='The indicies of the excitation operators......Ex. -E dn cl')
     
     parser.add_argument('-F', default=None, nargs=1, type=str,                      help='The indicies of the F component...............Ex. -F ci')
     parser.add_argument('-L', default=None, nargs=1, type=str,                      help='The indicies of the L component...............Ex. -L cile')
     parser.add_argument('-g', default=None, nargs=1, type=str,                      help='The indicies of the g component...............Ex. -g cile')
     parser.add_argument('-t', default=None, nargs='+', type=str,                    help='The indicies of each individual t component...Ex. -t cile dlem')
-    parser.add_argument('-E', default=None, nargs='+', type=str,                    help='The indicies of the excitation operators......Ex. -E dn cl')
     parser.add_argument('-LV', default=None, nargs=1, type=str,                     help='The indicies of the left excitaiton vector....Ex. -LV ci')
     parser.add_argument('-RV', default=None, nargs=1, type=str,                     help='The indicies of the right excitaiton vector...Ex. -RV ck')
     parser.add_argument('-res', '--reserved', default=['aibj'], nargs=1, type=str,  help='The indicies reserved for the outer sum.......Ex. -res aibj')
@@ -648,5 +667,23 @@ def main() -> None:
         for i, j in zip(perms_compared[::2], perms_compared[1::2]):
             print(i, j)
 
+def main_test() -> None:
+
+    init_global_variables()
+
+    perms = permutationChecker(P=['cde','klm'],bra=['ai','bj'],g='ndke',E=['fl','cm'],RV='ckdl',t='emfn')
+    
+    print("All permutations")
+    for i in perms:
+        print(i)
+
+    perms_compared = permutationComparison(perms, summation='cdefklmn')
+
+    print("\nUnique permutations while checking index renaming according to summation")
+    
+    for i, j in zip(perms_compared[::2], perms_compared[1::2]):
+        print(i, j)
+
+
 if __name__ == '__main__':
-    main()
+    main_test()
