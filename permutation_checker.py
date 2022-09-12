@@ -1,6 +1,6 @@
 import argparse
 from itertools import permutations
-from typing import List, Tuple, Union, Dict
+from typing import List, Set, Tuple, Union, Dict
 from copy import deepcopy
 import numpy as np
 
@@ -97,7 +97,7 @@ def F_checker(F1: list, F2: list) -> bool:
 
     return F1 == F2
 
-def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = None, RV: str = None, LV: str = None, t: Union[List[str],str] = None, bra: Union[List[str],str] = None, E: Union[List[str],str] = None, reserved: List[str] = ['aibj'], **kwargs) -> List[Dict[str, List[str]]]:
+def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = None, RV: str = None, LV: str = None, t: Union[List[str],str] = None, bra: Union[List[str],str] = None, E: Union[List[str],str] = None, reserved: List[str] = ['aibj'], **kwargs) -> Tuple[List[Dict[str, List[str]]], Set[str]]:
     """Generates permutation and automatically elimineates indicies afterwards
 
     Args:
@@ -139,8 +139,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         bra = [bra]
 
     # Indicies recognised by function
-    global VIR
-    global OCC
+    global VIR, OCC
 
     # Collecting all indicies used which are not reserved - (a, i, b, j) being reserved by default
     vir_occ_used = set()
@@ -331,8 +330,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
             for i, correction in enumerate(t_perm):
                 t_perm[i] = renameIndicies(used, unused, correction)
 
-        # print(f"{indicies_used=}")
-        print("used/unsused",occ_used,occ_unused,occ_replace,vir_used,vir_unused,vir_replace)
+        indicies_used = set(F_perm) | set(L_perm) | set(g_perm) | set(RV_perm) | set(LV_perm) | set(i for j in t_perm for i in j)
 
         current_perm = dict()
         if LV:
@@ -349,7 +347,8 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
             current_perm['RV'] = RV_perm
 
         permutation_collector.append(current_perm)
-    return permutation_collector
+
+    return permutation_collector, indicies_used
 
 def eliminate_E_component(reserved: set, bra_vir: List[str], bra_occ: List[str], permutaton_indicies: List[str], n: int, v: str, o: str) -> List[str]:
     perm = deepcopy(permutaton_indicies)
@@ -419,15 +418,15 @@ def permute_indicies(indexing: List[str], vir_perm: Tuple[str], occ_perm: Tuple[
 def renameIndicies(letter_to_replace: str, letter_to_replace_with: str, lst: List[str]) -> List[str]:
     return [i if i != letter_to_replace else letter_to_replace_with for i in lst]
 
-def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]]]], summation: str) -> np.array:
+def permutationComparison(perms: List[Dict[str, List[Union[List[str],str]]]], summation: str, indicies_used: Set[str]) -> np.array:
     try:
-        assert isinstance(permutations, list), f"permutations must be of type string or list; here it was {type(permutations)}"
+        assert isinstance(perms, list), f"permutations must be of type string or list; here it was {type(perms)}"
         assert isinstance(summation, str), f"summation must be of type string; here it was {type(summation)}"
     except AssertionError as err:
         print(err)
         exit()
 
-    permutation_keys = permutations[0].keys()
+    permutation_keys = perms[0].keys()
     F = 'F' in permutation_keys
     L = 'L' in permutation_keys
     g = 'g' in permutation_keys
@@ -435,103 +434,33 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
     RV = 'RV' in permutation_keys
     LV = 'LV' in permutation_keys
 
-    global VIR
-    global OCC
-
+    global VIR, OCC
+    
     summation = [i for i in summation]
 
-    vir_idx = list(set(VIR) & set(summation))
-    occ_idx = list(set(OCC) & set(summation))
+    vir_idx = list(set(VIR) & set(summation) & indicies_used)
+    occ_idx = list(set(OCC) & set(summation) & indicies_used)
 
-    permutations_compared = np.zeros((len(permutations),len(permutations)))
+    permutations_compared = np.zeros((len(perms),len(perms)))
 
-    if len(vir_idx) > 0 and len(occ_idx) > 0:
-        for i, o1 in enumerate(occ_idx):
-            for o2 in occ_idx[i:]:
-                for j, v1 in enumerate(vir_idx):
-                    for v2 in vir_idx[j:]:
-                        perm_copy = deepcopy(permutations)
-                        for n, perm1 in enumerate(permutations):
-                            for key, lst in perm1.items():
-                                if can_contain_multiple_terms(key):
-                                    for nn, correction in enumerate(lst):
-                                        for nnn, idx in enumerate(correction):
-                                            if idx == o1:
-                                                perm_copy[n][key][nn][nnn] = o2
-                                            elif idx == o2:
-                                                perm_copy[n][key][nn][nnn] = o1
-                                            elif idx == v1:
-                                                perm_copy[n][key][nn][nnn] = v2
-                                            elif idx == v2:
-                                                perm_copy[n][key][nn][nnn] = v1
-                                else:
-                                    for nn, idx in enumerate(lst):
-                                        if idx == o1:
-                                            perm_copy[n][key][nn] = o2
-                                        elif idx == o2:
-                                            perm_copy[n][key][nn] = o1
-                                        elif idx == v1:
-                                            perm_copy[n][key][nn] = v2
-                                        elif idx == v2:
-                                            perm_copy[n][key][nn] = v1
+    vir_idx_perm = [i for i in permutations(vir_idx)]
+    occ_idx_perm = [i for i in permutations(occ_idx)]
 
-                        for n, perm1 in enumerate(perm_copy):
-                            for nn, perm2 in enumerate(permutations[n:]):
-                                permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
 
-    elif len(vir_idx) > 0 and len(occ_idx) == 0:
-        for j, v1 in enumerate(vir_idx):
-            for v2 in vir_idx[j:]:
-                perm_copy = deepcopy(permutations)
-                for n, perm1 in enumerate(permutations):
-                    for key, lst in perm1.items():
-                        if can_contain_multiple_terms(key):
-                            for nn, correction in enumerate(lst):
-                                for nnn, idx in enumerate(correction):
-                                    if idx == v1:
-                                        perm_copy[n][key][nn][nnn] = v2
-                                    elif idx == v2:
-                                        perm_copy[n][key][nn][nnn] = v1
-                        else:
-                            for nn, idx in enumerate(lst):
-                                if idx == v1:
-                                    perm_copy[n][key][nn] = v2
-                                elif idx == v2:
-                                    perm_copy[n][key][nn] = v1
+    for vir_perm in vir_idx_perm:
+        for occ_perm in occ_idx_perm:
+            perm_copy = deepcopy(perms)
+            for n, perm1 in enumerate(perms):
+                for key, lst in perm1.items():
+                    if can_contain_multiple_terms(key):
+                        for nn, correction in enumerate(lst):
+                            perm_copy[n][key][nn] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else i for i in perm_copy[n][key][nn]]
+                    else:
+                        perm_copy[n][key] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else i for i in perm_copy[n][key]]
 
-                for n, perm1 in enumerate(perm_copy):
-                    for nn, perm2 in enumerate(permutations[n:]):
-                        same = check_all(F, L, g, t, RV, LV, perm1, perm2)
-                        permutations_compared[n,n+nn] += same
-
-    elif len(vir_idx) == 0 and len(occ_idx) > 0:
-        for i, o1 in enumerate(occ_idx):
-            for o2 in occ_idx[i:]:
-                perm_copy = deepcopy(permutations)
-                for n, perm1 in enumerate(permutations):
-                    for key, lst in perm1.items():
-                        if can_contain_multiple_terms(key):
-                            for nn, correction in enumerate(lst):
-                                for nnn, idx in enumerate(correction):
-                                    if idx == o1:
-                                        perm_copy[n][key][nn][nnn] = o2
-                                    elif idx == o2:
-                                        perm_copy[n][key][nn][nnn] = o1
-                        else:
-                            for nn, idx in enumerate(lst):
-                                if idx == o1:
-                                    perm_copy[n][key][nn] = o2
-                                elif idx == o2:
-                                    perm_copy[n][key][nn] = o1
-
-                for n, perm1 in enumerate(perm_copy):
-                    for nn, perm2 in enumerate(permutations[n:]):
-                        permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
-
-    elif len(vir_idx) == 0 and len(occ_idx) == 0:
-        for n, perm1 in enumerate(permutations):
-            for nn, perm2 in enumerate(permutations[n:]):
-                permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
+            for n, perm1 in enumerate(perm_copy):
+                for nn, perm2 in enumerate(perms[n:]):
+                    permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
 
     idx_same = set()
     remaining_permutations = []
@@ -540,7 +469,7 @@ def permutationComparison(permutations: List[Dict[str, List[Union[List[str],str]
             continue
         new_idx_same = set(np.where(line >= 1)[0])
         idx_same |= new_idx_same
-        remaining_permutations += [permutations[i], f"Remember a factor of {len(new_idx_same)}"]
+        remaining_permutations += [perms[i], f"Remember a factor of {len(new_idx_same)}"]
 
     return remaining_permutations
 
@@ -566,8 +495,7 @@ def check_all(F: bool, L: bool, g: bool, t: bool, RV: bool, LV: bool, perm1: Lis
 
 def init_global_variables() -> None:
 
-    global VIR
-    global OCC
+    global VIR, OCC
 
     VIR = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
     OCC = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p')
@@ -646,21 +574,21 @@ def main() -> None:
         'summation': summation
     }
 
-    perms = permutationChecker(**arguments)
+    perms, idx_used = permutationChecker(**arguments)
     
     print("All permutations")
     for i in perms:
         print(i)
 
     if summation:
-        perms_compared = permutationComparison(perms, summation)
+        perms_compared = permutationComparison(perms, summation, idx_used)
 
         print("\nUnique permutations while checking index renaming according to summation")
         
         for i, j in zip(perms_compared[::2], perms_compared[1::2]):
             print(i, j)
     else:
-        perms_compared = permutationComparison(perms, summation)
+        perms_compared = permutationComparison(perms, summation, idx_used)
 
         print("\nUnique permutations without checking index renaming according to summation")
         
@@ -671,13 +599,13 @@ def main_test() -> None:
 
     init_global_variables()
 
-    perms = permutationChecker(P=['cde','klm'],bra=['ai','bj'],g='ndke',E=['fl','cm'],RV='ckdl',t='emfn')
+    perms, idx_used = permutationChecker(P=['cde','klm'],bra=['ai','bj'],g='ndke',E=['fl','cm'],RV='ckdl',t='emfn')
     
     print("All permutations")
     for i in perms:
         print(i)
 
-    perms_compared = permutationComparison(perms, summation='cdefklmn')
+    perms_compared = permutationComparison(perms, summation='cdefklmn', indicies_used=idx_used)
 
     print("\nUnique permutations while checking index renaming according to summation")
     
@@ -686,4 +614,4 @@ def main_test() -> None:
 
 
 if __name__ == '__main__':
-    main_test()
+    main()
