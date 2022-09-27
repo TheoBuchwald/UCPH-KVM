@@ -1331,6 +1331,13 @@ Please contact a maintainer of the script ot have this updated\n''')
                 if len(self.lines[i].split()) < 1:
                     break
                 self.exc_energies.append(float(self.lines[i].split()[0]))
+        else:
+            linenumber = Forward_search_last(self.filename, 'excitation energies', 'excitation energies', quiet=self.quiet)
+            if isinstance(linenumber, int):
+                for i in range(linenumber+4,self.end):
+                    if len(self.lines[i].split()) < 1:
+                        break
+                    self.exc_energies.append(float(self.lines[i].split()[1]))
         if len(self.exc_energies) == 0:
             self.exc_energies = ['NaN']
 
