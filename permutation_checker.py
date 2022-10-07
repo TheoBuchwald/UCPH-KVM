@@ -287,50 +287,50 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
                     t_perm[nn] = eliminate_E_component(reserved, bra_vir, bra_occ, correction, n, v, o)
 
         indicies_used = set(F_perm) | set(L_perm) | set(g_perm) | set(RV_perm) | set(LV_perm) | set(i for j in t_perm for i in j)
+        if kwargs['reduce']:
+            vir_used = sorted(list(indicies_used - reserved & set(VIR)))
+            vir_unused = sorted([i for i in set(VIR) - reserved if i < max(vir_used) and i not in vir_used])
+            vir_used.reverse()
+            
+            vir_replace = []
+            for idx_used in vir_used:
+                for idx_vir in VIR:
+                    if idx_vir in vir_unused and idx_vir < idx_used:
+                        vir_replace += [idx_vir]
+                        vir_unused.remove(idx_vir)
+                        break
 
-        vir_used = sorted(list(indicies_used - reserved & set(VIR)))
-        vir_unused = sorted([i for i in set(VIR) - reserved if i < max(vir_used) and i not in vir_used])
-        vir_used.reverse()
-        
-        vir_replace = []
-        for idx_used in vir_used:
-            for idx_vir in VIR:
-                if idx_vir in vir_unused and idx_vir < idx_used:
-                    vir_replace += [idx_vir]
-                    vir_unused.remove(idx_vir)
-                    break
+            for unused, used in zip(vir_replace, vir_used[:len(vir_replace)]):
+                F_perm = renameIndicies(used, unused, F_perm)
+                L_perm = renameIndicies(used, unused, L_perm)
+                g_perm = renameIndicies(used, unused, g_perm)
+                RV_perm = renameIndicies(used, unused, RV_perm)
+                LV_perm = renameIndicies(used, unused, LV_perm)
+                for i, correction in enumerate(t_perm):
+                    t_perm[i] = renameIndicies(used, unused, correction)
 
-        for unused, used in zip(vir_replace, vir_used[:len(vir_replace)]):
-            F_perm = renameIndicies(used, unused, F_perm)
-            L_perm = renameIndicies(used, unused, L_perm)
-            g_perm = renameIndicies(used, unused, g_perm)
-            RV_perm = renameIndicies(used, unused, RV_perm)
-            LV_perm = renameIndicies(used, unused, LV_perm)
-            for i, correction in enumerate(t_perm):
-                t_perm[i] = renameIndicies(used, unused, correction)
+            occ_used = sorted(list(indicies_used - reserved & set(OCC)))
+            occ_unused = sorted([i for i in set(OCC) - reserved if i < max(occ_used) and i not in occ_used])
+            occ_used.reverse()
 
-        occ_used = sorted(list(indicies_used - reserved & set(OCC)))
-        occ_unused = sorted([i for i in set(OCC) - reserved if i < max(occ_used) and i not in occ_used])
-        occ_used.reverse()
+            occ_replace = []
+            for idx_used in occ_used:
+                for idx_occ in OCC:
+                    if idx_occ in occ_unused and idx_occ < idx_used:
+                        occ_replace += [idx_occ]
+                        occ_unused.remove(idx_occ)
+                        break
 
-        occ_replace = []
-        for idx_used in occ_used:
-            for idx_occ in OCC:
-                if idx_occ in occ_unused and idx_occ < idx_used:
-                    occ_replace += [idx_occ]
-                    occ_unused.remove(idx_occ)
-                    break
+            for unused, used in zip(occ_replace, occ_used[:len(occ_replace)]):
+                F_perm = renameIndicies(used, unused, F_perm)
+                L_perm = renameIndicies(used, unused, L_perm)
+                g_perm = renameIndicies(used, unused, g_perm)
+                RV_perm = renameIndicies(used, unused, RV_perm)
+                LV_perm = renameIndicies(used, unused, LV_perm)
+                for i, correction in enumerate(t_perm):
+                    t_perm[i] = renameIndicies(used, unused, correction)
 
-        for unused, used in zip(occ_replace, occ_used[:len(occ_replace)]):
-            F_perm = renameIndicies(used, unused, F_perm)
-            L_perm = renameIndicies(used, unused, L_perm)
-            g_perm = renameIndicies(used, unused, g_perm)
-            RV_perm = renameIndicies(used, unused, RV_perm)
-            LV_perm = renameIndicies(used, unused, LV_perm)
-            for i, correction in enumerate(t_perm):
-                t_perm[i] = renameIndicies(used, unused, correction)
-
-        indicies_used = set(F_perm) | set(L_perm) | set(g_perm) | set(RV_perm) | set(LV_perm) | set(i for j in t_perm for i in j)
+            indicies_used = set(F_perm) | set(L_perm) | set(g_perm) | set(RV_perm) | set(LV_perm) | set(i for j in t_perm for i in j)
 
         current_perm = dict()
         if LV:
@@ -522,6 +522,7 @@ def main() -> None:
     parser.add_argument('-RV', default=None, nargs=1, type=str,                     help='The indicies of the right excitaiton vector...Ex. -RV ck')
     parser.add_argument('-res', '--reserved', default=['aibj'], nargs=1, type=str,  help='The indicies reserved for the outer sum.......Ex. -res aibj')
     parser.add_argument('-sum', '--summation', default='', nargs=1, type=str,       help='The indicies of the summation.................Ex. -sum cdeklm')
+    parser.add_argument('-no-reduce', action='store_false',                         help='Whether to reduce indicies after excitations', dest='reduce')
 
     args = parser.parse_args()
 
@@ -571,7 +572,8 @@ def main() -> None:
         'LV': LV,
         'RV': RV,
         'reserved': reserved,
-        'summation': summation
+        'summation': summation,
+        'reduce': args.reduce
     }
 
     perms, idx_used = permutationChecker(**arguments)
