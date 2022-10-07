@@ -138,6 +138,14 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
     if isinstance(bra, str):
         bra = [bra]
 
+    # Sanity check
+    if (len(E) != len(bra)):
+        print("The amount of excitation operators do not match the excitation of the bra")
+        print("The script is therefore stopping")
+        print("Please check that you have entered all excitation operators")
+        print("If you have then this term must be zero")
+        exit()
+
     # Indicies recognised by function
     global VIR, OCC
 
