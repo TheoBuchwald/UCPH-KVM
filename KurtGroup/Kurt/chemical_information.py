@@ -80,9 +80,9 @@ class AtomicInformation():
     def polarizability(self) -> None:
         dic = {'H': 4.50114, 'C': 8.465, 'O': 16.15551282, 'Cu': 33.742,
                'Ag': 49.9843, 'Au': 31.04, 'Ti': 1.254517, 'Pt': 42.515}
-               # Au - J. Phys. Chem. C, 114 (48) (2010), pp. 20870-20876
+               # Au - Phys. Rev. A 74, 023202, Dipole polarizabilities of medium-sized gold clusters
                # Ag - M. Pereiro, D. Baldomir, Structure and static response of small silver clusters to an external electric field, arXiv preprint physics, 2007, 0702238.
-               # Cu - Phys. Rev. A, 99 (1) (2019), p. 012503, J. Chem. Phys., 117 (7) (2002), pp. 3208-3218, J. Chem. Phys., 120 (22) (2004), pp. 10450-10454
+               # Cu - Phys. Rev. A, 99 (1) (2019), p. 012503; J. Chem. Phys., 117 (7) (2002), pp. 3208-3218; J. Chem. Phys., 120 (22) (2004), pp. 10450-10454
                # Ti - Phys. Rev. B 71, 085418
                # O  - Phys. Rev. B 71, 085418
 

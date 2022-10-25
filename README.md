@@ -67,6 +67,34 @@ When you wish to push an update, to ensure that it works, you may want to use ./
 </p>
 </details>
 
+## [permutation_checker.py](./permutation_checker.py)
+<details><summary> Program information </summary>
+<p>
+
+  A script designed to check and compare the indicies of equations derived from Box 13.2 in *Molecular Electronic Structure Theory*
+
+  #### Keywords
+
+  The keywords -P, -bra, and -E are required arguments and must be given as in the examples:
+    -P cde klm or -P cd kl ...
+    -bra ai bj or -bra -ai ...
+    -E dn or -E dn cl ...
+
+  The keywords -F, -L, -g, -t, -LV, -RV, and -sum are optional and must be given as in the examples:
+    -F ci
+    -L cile
+    -g cile
+    -t cile or -t cile dlem ...
+    -LV ci
+    -RV ck
+    -sum cdeklm or -sum -clmedk ...
+
+  If -sum is not provided the unique permutations will not be found
+
+
+</p>
+</details>
+
 ## [sandwich.py](./sandwich.py)
 <details><summary> Program information </summary>
 <p>

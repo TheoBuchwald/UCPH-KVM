@@ -5,7 +5,7 @@ import argparse
 import KurtGroup.Kurt.chemical_information as ci
 import KurtGroup.Kurt.xyz as xyz
 
-def generateGaussianInputFileText(XYZ: xyz.xyz_to, charge: int) -> str:
+def generateGaussianInputFileText(XYZ: xyz.xyz_to, charge: int, multiplicity: int) -> str:
     """Makes the text for a Gaussian input file
 
     Args:
@@ -33,11 +33,6 @@ Exiting program''')
     filename_no_ext = XYZ.filename.replace('.xyz', '')
     XYZ.input_filename = f'{filename_no_ext}.com'
 
-    if charge % 2 == 0:
-        multiplicity = 1
-    else:
-        multiplicity = 2
-
     if XYZ.method.upper() == 'DFT':
         method = XYZ.functional
     else:
@@ -62,7 +57,6 @@ Exiting program''')
     XYZ.filetext += '\n'
 
     if XYZ.BSE:
-        XYZ.filetext += '****\n'
         XYZ.filetext += f'{basis_mol}\n'
         XYZ.filetext += '\n'
 
@@ -95,6 +89,9 @@ Stars can still be used, however.''', epilog='''For help contact
     CalculationGroup.add_argument('--method', default=['cam-b3lyp'], nargs=1, type=str, help='Include to specify method for calculation - CAM-B3LYP if not included')
     CalculationGroup.add_argument('--cpu', default=[8], nargs=1, type=int, help='Include to specify the amount of cpu cores - 8 if not included')
     CalculationGroup.add_argument('--mem', default=[8], nargs=1, type=int, help='Include to specify the amount of memory in GB - 8 if not included')
+    CalculationGroup.add_argument('--mult', default=[1], nargs=1, type=int, help='Include to specify the multiplicity - 1 if not included')
+
+
 
     args = parser.parse_args()
 
@@ -102,6 +99,7 @@ Stars can still be used, however.''', epilog='''For help contact
     calc = args.calc[0]
 
     charge = args.charge[0]
+    multiplicity = args.mult[0]
     basis = args.basis[0]
     method = args.method[0]
     ncpus = args.cpu[0]
@@ -117,7 +115,7 @@ Stars can still be used, however.''', epilog='''For help contact
     else:
         A.setMethod(method)
     A.setBasis(basis)
-    filetext = generateGaussianInputFileText(A, charge)
+    filetext = generateGaussianInputFileText(A, charge,multiplicity)
     writeInputfile(A)
 
 if __name__ == '__main__':

@@ -112,7 +112,7 @@ class NanoParticle():
         vacuum_dist_left = vdW_left + self.vdw
         vacuum_dist_right = vdW_right + self.vdw
 
-        self.distance = molecule.__len__() + vacuum_dist_left + vacuum_dist_right
+        self.distance = molecule.__xlen__() + vacuum_dist_left + vacuum_dist_right
 
         if isinstance(self.lattice_length, float):
             left, right, left_symbols, right_symbols = self.spherical(molecule.max(), molecule.min(), vacuum_dist_left, vacuum_dist_right)
@@ -176,7 +176,7 @@ class Molecule():
     def __init__(self, molecule: list) -> None:
         self.molecule = molecule
 
-    def __len__(self) -> float:
+    def __xlen__(self) -> float:
         return self.molecule[:, 0].max() - self.molecule[:, 0].min()
 
     def min(self) -> float:
@@ -194,6 +194,8 @@ class Molecule():
     def get_rotation_matrix(self, point_for_rot, direc_vec, theta) -> None:
         # Takes a point on the rotational axis, the normalized direction vector and the angle
         # The rotation matrix is 4x4 with the fourth dimension translating the origin to (a, b, c) and back
+        #Taken from Glen Murray, PhD
+        #https://sites.google.com/site/glennmurray/glenn-murray-ph-d/rotation-matrices-and-formulas/rotation-about-an-arbitrary-axis-in-3-dimensions
         a, b, c = point_for_rot
         u, v, w = direc_vec
         u2, v2, w2 = u*u, v*v, w*w

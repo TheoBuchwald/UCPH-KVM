@@ -1,6 +1,7 @@
 
 import argparse
 import os
+import sys
 import time
 import numpy as np
 from KurtGroup.Kurt import output_processing as op
@@ -19,7 +20,10 @@ import copy
 class TerminalInformation():
 
     def __init__(self, total_nr: int, max_filename_length: int = None):
-        self.full_bar = "▇"
+        if sys.stdout.encoding == "UTF-8":
+            self.full_bar = "▇"
+        else:
+            self.full_bar = "#"
         self.empty_bar = " "
         self.total_nr = total_nr
         self.max_filename_length = max_filename_length
