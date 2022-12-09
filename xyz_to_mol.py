@@ -74,7 +74,7 @@ def main():
     parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
     parser.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
     parser.add_argument('--basis', default=['pc-1'], nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
-    parser.add_argument('--RIbasis', const=['cc-pV5Z-RI'], nargs='?', type=str, help='Include to specify basis set of the molecular atoms - RI-BASIS if not included')
+    parser.add_argument('--RIbasis', nargs=1, type=str, help='Include to specify basis set of the molecular atoms - RI-BASIS if not included')
 
     args = parser.parse_args()
 
@@ -83,14 +83,17 @@ def main():
     charge = args.charge[0]
 
     try:
-        RIbasis = args.RIbasis[0]
-    except NameError: ...
+        RIbasis = args.RIbasis
+        RI = True
+    except NameError:
+        RI = False
 
     for input_file in input_files:
         A = xyz.xyz_to('Dalton', input_file)
         A.processXYZ()
         A.setBasis(basis)
-        A.setRIBasis(RIbasis)
+        if RI:
+            A.setRIBasis(RIbasis)
         filetext = generateDaltonInputFileText(A, charge)
         writeInputfile(A)
 

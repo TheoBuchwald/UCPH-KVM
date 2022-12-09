@@ -246,3 +246,4 @@ union {{
             subprocess.run(['povray', f'{file_no_ext}.pov', '+A0.1', '+AM2', '+AG0', '+R5', '-J'])
             # Runs with the settings, +A0.1: Antialliasing set to 0.1 threshold, +AM2: Antialiasing method 2,
             #   +AG0: Gamma set to 0, +R5: Depth set to 5, -J: Jitter set to off
+            #   +A0.1 +AM2 +AG0 +R5 -J
