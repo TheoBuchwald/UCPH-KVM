@@ -176,4 +176,4 @@ Exiting program''')
         self.atoms = np.empty((len(self.xyz_file[2:]), 4), dtype=object)
 
         for linenumber, line in enumerate(self.xyz_file[2:]):
-            self.atoms[linenumber] = np.array(line.split())
+            self.atoms[linenumber] = np.array(line.split()[:4])
