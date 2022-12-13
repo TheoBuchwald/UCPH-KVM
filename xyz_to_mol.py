@@ -16,14 +16,14 @@ Exiting program''')
         exit()
 
     XYZ.input_filename = XYZ.filename.replace('.xyz', '.mol')
-    XYZ.input_filename = XYZ.filename.split('/')[-1]
+    XYZ.input_filename = XYZ.input_filename.split('/')[-1]
 
     if symmetry:
         sym = "Symmetry"
     else:
         sym = "NoSymmetry"
 
-    unique_atoms = set(XYZ.atoms[:,0])
+    unique_atoms = sorted(set(XYZ.atoms[:,0]))
     XYZ.filetext = f'''ATOMBASIS
 ./{XYZ.filename}
 Generated using xyz_to_mol.py from UCPH-KVM
@@ -56,7 +56,7 @@ The problem may also be that the basis set does not exist for {unique_atom}''')
             basis_mol = [i for i in basis_mol if 'functions' not in i]
         try:
             XYZ.filetext += f'    Aux={XYZ.RIbasis}\n'
-        except NameError:
+        except AttributeError:
             XYZ.filetext += f'\n'
         for j, atom in enumerate(XYZ.atoms[:,0]):
             if atom == unique_atom:
@@ -93,7 +93,7 @@ def main():
     try:
         RIbasis = args.RIbasis[0]
         RI = True
-    except NameError:
+    except TypeError:
         RI = False
 
     for input_file in input_files:
