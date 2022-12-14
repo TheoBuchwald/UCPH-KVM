@@ -37,6 +37,8 @@ def main() -> None:
     else:
         outfile = f"{filename}-exact-RI"
 
+    lines_to_write[0] = lines_to_write[0].replace(filename, outfile)
+
     with open(outfile,'w') as f:
         f.writelines(lines_to_write)
 

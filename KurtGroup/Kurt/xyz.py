@@ -173,7 +173,20 @@ Exiting program''')
             print('''xyz file has not been loaded (read):
 Exiting program''')
             exit()
-        self.atoms = np.empty((len(self.xyz_file[2:]), 4), dtype=object)
 
-        for linenumber, line in enumerate(self.xyz_file[2:]):
-            self.atoms[linenumber] = np.array(line.split())
+        EOF = self.check_for_blank_lines()
+        self.atoms = np.empty((len(self.xyz_file[2:EOF]), 4), dtype=object)
+
+        for linenumber, line in enumerate(self.xyz_file[2:EOF]):
+            self.atoms[linenumber] = np.array(line.split()[:4])
+
+    def check_for_blank_lines(self) -> int:
+        """Read through the xyz file and check for blank lines in the end of the file
+        """
+        if not self.xyz_file:
+            print('''xyz file has not been loaded (read):
+Exiting program''')
+            exit()
+        for i, line in enumerate(self.xyz_file[::-1]):
+            if len(line) > 1:
+                return len(self.xyz_file) - i

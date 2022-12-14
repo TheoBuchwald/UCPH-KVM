@@ -143,31 +143,47 @@ end'''
         # Read xyz coordinates
         # -------------------
 
-        for xyzfile in input_files:
-            token = []
-            x = []
-            y = []
-            z = []
+        token = []
+        x = []
+        y = []
+        z = []
 
-            c = 1
-            for line in content:
-                if c > 2:
-                    line = line.strip().split()
-                    token.append(line[0])
-                    x.append(float(line[1]))
-                    y.append(float(line[2]))
-                    z.append(float(line[3]))
-                c += 1
+        c = 1
+        for line in content:
+            if c > 2:
+                line = line.strip().split()
+                token.append(line[0])
+                x.append(float(line[1]))
+                y.append(float(line[2]))
+                z.append(float(line[3]))
+            c += 1
 
-            with open(name + '.inp', 'w') as slutfil:
-            # Writing orca input file
-            # -------------------------
+        with open(name + '.inp', 'w') as slutfil:
+        # Writing orca input file
+        # -------------------------
 
-            #Add more jobtypes if needed
+        #Add more jobtypes if needed
 
-                slutfil.write(keyword_string[jobtype] + '\n')
+            slutfil.write(keyword_string[jobtype] + '\n')
 
-                slutfil.write('%maxcore '+memory+'\n')
+            slutfil.write('%maxcore '+memory+'\n')
+            slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
+
+            for i in range(len(x)):
+                slutfil.write(token[i])
+                slutfil.write('  ')
+                slutfil.write('%f' % x[i])
+                slutfil.write('  ')
+                slutfil.write('%f' % y[i])
+                slutfil.write('  ')
+                slutfil.write('%f' % z[i] + '\n')
+
+            slutfil.write('*'+'\n'+'\n')
+
+            if extra:
+                slutfil.write(extra_calc+'\n')
+            if extra2:
+                slutfil.write(extra_calc2+'\n')
                 slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
 
                 for i in range(len(x)):
@@ -178,21 +194,4 @@ end'''
                     slutfil.write('%f' % y[i])
                     slutfil.write('  ')
                     slutfil.write('%f' % z[i] + '\n')
-
                 slutfil.write('*'+'\n'+'\n')
-
-                if extra:
-                    slutfil.write(extra_calc+'\n')
-                if extra2:
-                    slutfil.write(extra_calc2+'\n')
-                    slutfil.write('* xyz '+str(charge)+' '+str(multiplicity)+'\n')
-
-                    for i in range(len(x)):
-                        slutfil.write(token[i])
-                        slutfil.write('  ')
-                        slutfil.write('%f' % x[i])
-                        slutfil.write('  ')
-                        slutfil.write('%f' % y[i])
-                        slutfil.write('  ')
-                        slutfil.write('%f' % z[i] + '\n')
-                    slutfil.write('*'+'\n'+'\n')
