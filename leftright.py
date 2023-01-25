@@ -36,7 +36,7 @@ if __name__ == '__main__':
     CalculationGroup.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
     CalculationGroup.add_argument('--basis', default=['pc-1'], nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
     CalculationGroup.add_argument('--NPbasis', default=['LANL2DZ'], nargs=1, type=str, help='Include to specify basis set of the nanoparticle atoms - LANL2DZ if not included')
-    CalculationGroup.add_argument('--ECPbasis', default=['LANL2'], nargs=1, type=str, help='Include to specify electronic core potential basis set for nanoparticle atoms - LANL2 if not included')
+    CalculationGroup.add_argument('--ECPbasis', default=['LANL2DZ ECP'], nargs=1, type=str, help='Include to specify electronic core potential basis set for nanoparticle atoms - LANL2 if not included')
     CalculationGroup.add_argument('--method', default=['cam-b3lyp'], nargs=1, type=str, help='Include to specify method for calculation - CAM-B3LYP if not included')
     CalculationGroup.add_argument('--cpu', default=[16], nargs=1, type=int, help='Include to specify the amount of cpu cores - 16 if not included')
     CalculationGroup.add_argument('--mem', default=[16], nargs=1, type=int, help='Include to specify the amount of memory in GB - 16 if not included')
@@ -130,7 +130,7 @@ if __name__ == '__main__':
         molxyz.get_rotation_matrix(molxyz.molecule[atom1], dir_vec, theta)
         molxyz.rotateMolecule(atom1)
 
-        molxyz.__len__()
+        molxyz.__xlen__()
 
         mol_min = molxyz.min()
         mol_max = molxyz.max()
