@@ -16,14 +16,22 @@ def checkBasis(program: str, basis: str) -> bool:
         bool: Returns true or false
     """
     BASE_DIR = os.path.dirname(__file__)
+    with open(f'{BASE_DIR}/Info.json') as inf:
+        info = json.load(inf)
+    return basis.upper() in info[program.upper()]['BASIS SETS']
 
-    with open(f'{BASE_DIR}/Info.json') as info:
-        info = json.load(info)
-    if basis in info[program]['basis sets']:
-        return True
-    elif ci.BasisSet.CheckBasisSet(basis):
-        return True
-    return False
+def checkBasisSetExchange(program: str, basis: str) -> bool:
+    """Checks whether a basis set exits for a given program
+
+    Args:
+        program (str): Program to check
+        functional (str): Basis set to check
+
+    Returns:
+        bool: Returns true or false
+    """
+
+    return ci.BasisSet.CheckBasisSet(program, basis)
 
 def checkFunctional(program: str, functional: str) -> bool:
     """Checks whether a functional exits for a given program
