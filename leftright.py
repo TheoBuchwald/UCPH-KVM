@@ -5,6 +5,7 @@ import numpy as np
 import argparse
 import KurtGroup.Kurt.structures as struct
 import KurtGroup.Kurt.chemical_information as ci
+import KurtGroup.Kurt.xyz as xyz
 
 #INPUTS HERE
 #------------------------------
@@ -36,7 +37,7 @@ if __name__ == '__main__':
     CalculationGroup.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
     CalculationGroup.add_argument('--basis', default=['pc-1'], nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
     CalculationGroup.add_argument('--NPbasis', default=['LANL2DZ'], nargs=1, type=str, help='Include to specify basis set of the nanoparticle atoms - LANL2DZ if not included')
-    CalculationGroup.add_argument('--ECPbasis', default=['LANL2DZ ECP'], nargs=1, type=str, help='Include to specify electronic core potential basis set for nanoparticle atoms - LANL2 if not included')
+    CalculationGroup.add_argument('--ECPbasis', default=['LANL2'], nargs=1, type=str, help='Include to specify electronic core potential basis set for nanoparticle atoms - LANL2 if not included')
     CalculationGroup.add_argument('--method', default=['cam-b3lyp'], nargs=1, type=str, help='Include to specify method for calculation - CAM-B3LYP if not included')
     CalculationGroup.add_argument('--cpu', default=[16], nargs=1, type=int, help='Include to specify the amount of cpu cores - 16 if not included')
     CalculationGroup.add_argument('--mem', default=[16], nargs=1, type=int, help='Include to specify the amount of memory in GB - 16 if not included')
@@ -91,12 +92,13 @@ if __name__ == '__main__':
     BSE_NP = True
     BSE_ECP = True
 
-    if ci.BasisSet.CheckBasisSet('Gaussian94', basis_mol):
-        BSE_mol = False
-    if ci.BasisSet.CheckBasisSet('Gaussian94', basis_NP):
-        BSE_NP = False
-    if ci.BasisSet.CheckBasisSet('Gaussian94', basis_ECP):
-        BSE_ECP = False
+    BSE_mol = ci.BasisSet.CheckBasisSet('Gaussian94', basis_mol)
+    BSE_NP = ci.BasisSet.CheckBasisSet('Gaussian94', basis_NP)
+    BSE_ECP = ci.BasisSet.CheckBasisSet('Gaussian94', basis_ECP)
+
+    basis_mol_exists = xyz.checkBasis('Gaussian94', basis_mol)
+    basis_NP_exists = xyz.checkBasis('Gaussian94', basis_NP)
+    basis_ECP_exists = xyz.checkBasis('Gaussian94', basis_ECP)
 
     # Getting basis set from Basis set exchange
     BasisSet = ci.BasisSet()
@@ -111,7 +113,7 @@ if __name__ == '__main__':
                 namesmol = np.append(namesmol, x[0])
                 molxyz.molecule = np.vstack([molxyz.molecule, np.array([float(x[1]), float(x[2]), float(x[3])])])
 
-        if BSE_mol:
+        if BSE_mol and not basis_mol_exists:
             basis_mol = BasisSet.GenerateBasisSet('gaussian94', basis_mol, namesmol)
 
 
@@ -154,9 +156,9 @@ if __name__ == '__main__':
 
             atmtype = NP.atomtypes
 
-            if BSE_NP:
+            if BSE_NP and not basis_NP_exists:
                 basis_NP = BasisSet.GenerateBasisSet('gaussian94', basis_NP, atmtype)
-            if BSE_ECP:
+            if BSE_ECP and not basis_ECP_exists:
                 basis_ECP = BasisSet.GenerateBasisSet('gaussian94', basis_ECP, atmtype)
 
             if returnxyz:
@@ -189,10 +191,23 @@ if __name__ == '__main__':
                 lines_com.append('\n')
                 lines_com.append(f"Hej Theo - {molfile}-{j}\n")
                 lines_com.append('\n')
-                if charge == 0 or abs(charge) == 2:
-                    lines_com.append(f"{charge} 1 {charge} 1 0 1\n")
+
+                nr_of_electrons = 0
+                if j == 'left':
+                    for i in range(len(left[:,0])):
+                        nr_of_electrons += ci.getAtomnr(atoms_symbol[i])
                 else:
-                    lines_com.append(f"{charge} 2 {charge} 2 0 1\n")
+                    for i in range(len(right[:,0])):
+                        nr_of_electrons += ci.getAtomnr(atoms_symbol[i])
+                if nr_of_electrons % 2:
+                    multiplicity = 2
+                else:
+                    multiplicity = 1
+
+                if charge == 0 or abs(charge) == 2:
+                    lines_com.append(f"{charge} {multiplicity} {charge} 1 0 1\n")
+                else:
+                    lines_com.append(f"{charge} {multiplicity} {charge} 2 0 1\n")
                 for i in range(len(namesmol)):
                     lines_com.append(''.join([namesmol[i],'(Fragment=1)',' ',f"{molxyz.molecule[i,0]:.9f}",' ', f"{molxyz.molecule[i,1]:.9f}", ' ',f"{molxyz.molecule[i,2]:.9f}" ,'\n']))
                 if j == 'left':
@@ -203,18 +218,30 @@ if __name__ == '__main__':
                         lines_com.append(''.join([atoms_symbol[i],'(Fragment=2)',' ',f"{right[i,0]:.9f}",' ', f"{right[i,1]:.9f}", ' ',f"{right[i,2]:.9f}" ,'\n']))
                 lines_com.append('\n')
                 for i in atmtype:
-                    if i in set(namesmol):
-                        lines_com.append(i+'\n')
-                        lines_com.append(basis_mol+'\n')
+                    if i not in set(namesmol):
+                        if basis_NP_exists:
+                            lines_com.append(i+'\n')
+                            lines_com.append(basis_NP+'\n')
+                            lines_com.append('****'+'\n')
+                        else:
+                            lines_com.append(basis_NP+'\n')
+                            break
+                for i in set(namesmol):
+                    if i not in atmtype:
+                        if basis_mol_exists:
+                            lines_com.append(i+'\n')
+                            lines_com.append(basis_mol+'\n')
+                            lines_com.append('****'+'\n')
+                        else:
+                            lines_com.append(basis_mol)
+                            break
+                for i in atmtype:
+                    if basis_ECP_exists:
+                        lines_com.append(i+' 0\n')
+                        lines_com.append(basis_ECP+'\n')
                         lines_com.append('\n')
                     else:
-                        lines_com.append(i+'\n')
-                        lines_com.append(basis_NP+'\n')
-                        lines_com.append('****'+'\n')
-                for i in atmtype:
-                    lines_com.append(i+' 0\n')
-                    lines_com.append(basis_ECP+'\n')
-                    lines_com.append('\n')
+                        lines_com.append(basis_ECP+'\n')
                 lines_com.append('\n')
                 with open(filename+'.com','w') as f:
                     f.writelines(lines_com)
