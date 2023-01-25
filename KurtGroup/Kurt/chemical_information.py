@@ -108,8 +108,9 @@ class BasisSet:
         Returns:
             bool: Returns true or false
         """
+        Bas = BasisSet.replace(' ','%20')
         try:
-            response = requests.get(f'https://www.basissetexchange.org/api/basis/{BasisSet}/format/{Program}') # Request data from BSE
+            response = requests.get(f'https://www.basissetexchange.org/api/basis/{Bas}/format/{Program}') # Request data from BSE
         except Exception:
             raise ConnectionError("Could not connect to Basis Set Exchange: Please check your internet connection") from None
 

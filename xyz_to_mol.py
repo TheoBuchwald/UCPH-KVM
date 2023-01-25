@@ -3,7 +3,7 @@ import argparse
 import KurtGroup.Kurt.chemical_information as ci
 import KurtGroup.Kurt.xyz as xyz
 
-def generateDaltonInputFileText(XYZ: xyz.xyz_to, charge: int) -> str:
+def generateDaltonInputFileText(XYZ: xyz.xyz_to, charge: int, symmetry: bool) -> str:
     """Makes the text for a Dalton input file
     Args:
         charge (int): The charge of the molecule
@@ -16,12 +16,18 @@ Exiting program''')
         exit()
 
     XYZ.input_filename = XYZ.filename.replace('.xyz', '.mol')
+    XYZ.input_filename = XYZ.input_filename.split('/')[-1]
 
-    unique_atoms = set(XYZ.atoms[:,0])
+    if symmetry:
+        sym = "Symmetry"
+    else:
+        sym = "NoSymmetry"
+
+    unique_atoms = sorted(set(XYZ.atoms[:,0]))
     XYZ.filetext = f'''ATOMBASIS
 ./{XYZ.filename}
 Generated using xyz_to_mol.py from UCPH-KVM
-Atomtypes={len(unique_atoms)} Charge={charge} NoSymmetry Angstrom
+Atomtypes={len(unique_atoms)} Charge={charge} {sym} Angstrom
 '''
 
     for unique_atom in unique_atoms:
@@ -50,7 +56,7 @@ The problem may also be that the basis set does not exist for {unique_atom}''')
             basis_mol = [i for i in basis_mol if 'functions' not in i]
         try:
             XYZ.filetext += f'    Aux={XYZ.RIbasis}\n'
-        except NameError:
+        except AttributeError:
             XYZ.filetext += f'\n'
         for j, atom in enumerate(XYZ.atoms[:,0]):
             if atom == unique_atom:
@@ -74,24 +80,29 @@ def main():
     parser.add_argument('infile', type=str, nargs='+', help='The file(s) to extract data from', metavar='.xyz file')
     parser.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
     parser.add_argument('--basis', default=['pc-1'], nargs=1, type=str, help='Include to specify basis set of the molecular atoms - pc-1 if not included')
-    parser.add_argument('--RIbasis', const=['cc-pV5Z-RI'], nargs='?', type=str, help='Include to specify basis set of the molecular atoms - RI-BASIS if not included')
+    parser.add_argument('--RIbasis', nargs=1, type=str, help='Include to specify basis set of the molecular atoms - RI-BASIS if not included')
+    parser.add_argument('-s','--symmetry', action='store_true', help='Include to run with symmetry - NoSymmetry is the default')
 
     args = parser.parse_args()
 
     input_files = args.infile
     basis = args.basis[0]
     charge = args.charge[0]
+    symmetry = args.symmetry
 
     try:
         RIbasis = args.RIbasis[0]
-    except NameError: ...
+        RI = True
+    except TypeError:
+        RI = False
 
     for input_file in input_files:
         A = xyz.xyz_to('Dalton', input_file)
         A.processXYZ()
         A.setBasis(basis)
-        A.setRIBasis(RIbasis)
-        filetext = generateDaltonInputFileText(A, charge)
+        if RI:
+            A.setRIBasis(RIbasis)
+        filetext = generateDaltonInputFileText(A, charge, symmetry)
         writeInputfile(A)
 
 if __name__ == '__main__':
