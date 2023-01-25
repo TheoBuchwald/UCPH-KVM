@@ -204,13 +204,13 @@ if __name__ == '__main__':
                 lines_com.append('\n')
                 for i in atmtype:
                     if i in set(namesmol):
-                        pass
+                        lines_com.append(i+'\n')
+                        lines_com.append(basis_mol+'\n')
+                        lines_com.append('\n')
                     else:
                         lines_com.append(i+'\n')
                         lines_com.append(basis_NP+'\n')
                         lines_com.append('****'+'\n')
-                lines_com.append(basis_mol+'\n')
-                lines_com.append('\n')
                 for i in atmtype:
                     lines_com.append(i+' 0\n')
                     lines_com.append(basis_ECP+'\n')
