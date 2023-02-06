@@ -32,6 +32,7 @@ if __name__ == '__main__':
     CrystalGroup.add_argument('-pd', action='store_true', help='Include to make palladium nanoparticles')
     CrystalGroup.add_argument('-pt', action='store_true', help='Include to make platinum nanoparticles')
     CrystalGroup.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
+    CrystalGroup.add_argument('--dist', default=[-100.0], nargs=1, type=float, help='Include to change distance between molecule and nanoparticle (By default van der Waal radii are used)')
 
     CalculationGroup = parser.add_argument_group('Calculation options')
     CalculationGroup.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
@@ -79,6 +80,17 @@ if __name__ == '__main__':
     inwards = args.outwards
     returnxyz = args.noxyz
     linenumber = args.linenumber
+
+    user_dist = False
+
+    if args.dist[0] >= 0:
+        user_dist = True
+        dist_mol_nano = args.dist[0]
+        print(f"The distance between molecule and nanoparticle has been set to {dist_mol_nano} Å")
+    elif args.dist[0] != -100:
+        print("A negative distance between molecule and nanoparticle does not make sense! Defaulting to van der Waal radii.")
+
+
 
     if linenumber:
         atom1 -=3
@@ -152,7 +164,10 @@ if __name__ == '__main__':
 
             atoms_symbol, atoms_pos = NP.makeNanoparticle(diameter)
 
-            left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol)
+            if user_dist:
+                left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol,input_dist=dist_mol_nano)
+            else:
+                left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol)
 
             atmtype = NP.atomtypes
 
@@ -189,7 +204,10 @@ if __name__ == '__main__':
                 lines_com.append(f"%chk={filename}.chk\n")
                 lines_com.append(f"# {method}/GEN PSEUDO=READ scf=qc pop=full iop(3/33=1)\n")
                 lines_com.append('\n')
-                lines_com.append(f"Hej Theo - {molfile}-{j}\n")
+                if user_dist:
+                    lines_com.append(f"Hej Magnus - {molfile}-{j} - Distance has been set as {dist_mol_nano} Å by the user\n")
+                else:
+                    lines_com.append(f"Hej Theo - {molfile}-{j}\n")
                 lines_com.append('\n')
 
                 nr_of_electrons = 0
