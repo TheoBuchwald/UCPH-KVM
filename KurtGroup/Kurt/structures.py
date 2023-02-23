@@ -104,13 +104,17 @@ class NanoParticle():
 
         return self.atoms_symbols, self.atoms_pos
 
-    def makeSandwich(self, molecule: list, molecule_symbols: list) -> None:
+    def makeSandwich(self, molecule: list, molecule_symbols: list, input_dist : float = 0.0) -> None:
 
         vdW_left = ci.AtomicInformation(molecule_symbols[molecule.index_min()]).VdW()
         vdW_right = ci.AtomicInformation(molecule_symbols[molecule.index_max()]).VdW()
 
-        vacuum_dist_left = vdW_left + self.vdw
-        vacuum_dist_right = vdW_right + self.vdw
+        if input_dist > 0:
+            vacuum_dist_left = input_dist
+            vacuum_dist_right = input_dist
+        else:
+            vacuum_dist_left = vdW_left + self.vdw + input_dist
+            vacuum_dist_right = vdW_right + self.vdw + input_dist
 
         self.distance = molecule.__xlen__() + vacuum_dist_left + vacuum_dist_right
 
