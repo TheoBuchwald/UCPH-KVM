@@ -86,7 +86,7 @@ if __name__ == '__main__':
     if args.dist[0] >= 0:
         user_dist = True
         dist_mol_nano = args.dist[0]
-        print(f"The distance between molecule and nanoparticle has been set to {dist_mol_nano} Å")
+        print(f"The distance between molecule and nanoparticle has been set to {dist_mol_nano} AA")
     elif args.dist[0] != -100:
         print("A negative distance between molecule and nanoparticle does not make sense! Defaulting to van der Waal radii.")
 
@@ -205,7 +205,7 @@ if __name__ == '__main__':
                 lines_com.append(f"# {method}/GEN PSEUDO=READ scf=qc pop=full iop(3/33=1)\n")
                 lines_com.append('\n')
                 if user_dist:
-                    lines_com.append(f"Hej Magnus - {molfile}-{j} - Distance has been set as {dist_mol_nano} Å by the user\n")
+                    lines_com.append(f"Hej Magnus - {molfile}-{j} - Distance has been set as {dist_mol_nano} AA by the user\n")
                 else:
                     lines_com.append(f"Hej Theo - {molfile}-{j}\n")
                 lines_com.append('\n')
