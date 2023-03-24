@@ -165,7 +165,7 @@ if __name__ == '__main__':
             lines_mol.append('ATOMBASIS\n')
             lines_mol.append('./'+molfile+'\n')
             if user_dist:
-                lines_mol.append(f"Hej - {molfile} - Distance has been set as {dist_mol_nano} AA by the user\n")
+                lines_mol.append(f"Hej - Distance has been set as {dist_mol_nano} AA by the user\n")
             else:
                 lines_mol.append(f'Hej - The distance between NPs is {NP.distance:.4f} AA\n')
             lines_mol.append('Atomtypes='+str(len(set(namesmol)))+f' Charge={charge} NoSymmetry Angstrom\n')
