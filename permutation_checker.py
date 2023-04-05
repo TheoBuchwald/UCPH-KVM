@@ -10,10 +10,10 @@ def g_checker(g1: list, g2: list) -> bool:
     except AssertionError as err:
         print(err)
         exit()
-    
+
     if g1 == g2:
         return True
-    
+
     p,q,r,s = g1
 
     if [q,p,r,s] == g2:
@@ -39,13 +39,13 @@ def L_checker(L1: list, L2: list) -> bool:
     except AssertionError as err:
         print(err)
         exit()
-    
+
     if L1 == L2:
         return True
-    
+
     p1,q1,r1,s1 = L1
     p2,q2,r2,s2 = L2
-    
+
     return g_checker([p1,q1,r1,s1],[p2,q2,r2,s2]) and g_checker([p1,s1,r1,q1],[p2,s2,r2,q2])
 
 def t_checker(t1: list, t2: list) -> bool:
@@ -170,7 +170,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
     # Collecting all indicies used which are not reserved - (a, i, b, j) being reserved by default
     vir_occ_used = set()
     reserved = set(reserved)
-    
+
     # Finds vir and occ indicies to permutate
     P_vir = [idx for script in P for idx in script if idx in VIR]
     P_occ = [idx for script in P for idx in script if idx in OCC]
@@ -183,7 +183,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
     if F:
         F_indexing = indexing(F, VIR, OCC, P_vir, P_occ)
         vir_occ_used |= set(i for i in F)
-    
+
     if L:
         L_indexing = indexing(L, VIR, OCC, P_vir, P_occ)
         vir_occ_used |= set(i for i in L)
@@ -237,7 +237,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
                     index = VIR.index(idx)
                     operator_indexing += [f'x{idx}']
                     if VIR[index] in bra_vir:
-                        reserved_vir_in_E += 1  
+                        reserved_vir_in_E += 1
                     continue
                 except ValueError: ...
                 try:
@@ -254,13 +254,13 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
 
         len_E = len(E)
         vir_occ_used |= set(i for j in E for i in j)
-    
+
         vir_avail = sorted([i for i in vir_occ_used if i in VIR])[:-len_E + reserved_vir_in_E]
         occ_avail = sorted([i for i in vir_occ_used if i in OCC])[:-len_E + reserved_occ_in_E]
 
     vir_avail = sorted(list(set(vir_avail) - reserved))
     occ_avail = sorted(list(set(occ_avail) - reserved))
-    
+
     permutation_collector = []
 
     # Looping over permutations
@@ -269,11 +269,11 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         RV_perm = []
         if RV:
             RV_perm = [idx for idx in RV]
-        
+
         LV_perm = []
         if LV:
             LV_perm = [idx for idx in LV]
-        
+
         t_perm = []
         if t:
             for correction in t:
@@ -287,11 +287,11 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         L_perm = []
         if L:
             L_perm = permute_indicies(L_indexing, vir_perm, occ_perm)
-        
+
         g_perm = []
         if g:
             g_perm = permute_indicies(g_indexing, vir_perm, occ_perm)
-        
+
         E_perm = []
         if E:
             for operator in E_indexing:
@@ -317,7 +317,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
             vir_used = sorted(list(indicies_used - reserved & set(VIR)))
             vir_unused = sorted([i for i in set(VIR) - reserved if i < max(vir_used) and i not in vir_used])
             vir_used.reverse()
-            
+
             vir_replace = []
             for idx_used in vir_used:
                 for idx_vir in VIR:
@@ -461,7 +461,7 @@ def permutationComparison(perms: List[Dict[str, List[Union[List[str],str]]]], su
     LV = 'LV' in permutation_keys
 
     global VIR, OCC
-    
+
     summation = [i for i in summation]
 
     vir_idx = list(set(VIR) & set(summation) & indicies_used)
@@ -539,7 +539,7 @@ def main() -> None:
     parser.add_argument('-P', type=str, nargs=2,                                    help='The permutation operator......................Ex. -P cde klm')
     parser.add_argument('-bra', type=str, nargs='+',                                help='Excitations in the bra........................Ex. -bra ai bj')
     parser.add_argument('-E', type=str, nargs='+',                                  help='The indicies of the excitation operators......Ex. -E dn cl')
-    
+
     parser.add_argument('-F', default=None, nargs=1, type=str,                      help='The indicies of the F component...............Ex. -F ci')
     parser.add_argument('-L', default=None, nargs=1, type=str,                      help='The indicies of the L component...............Ex. -L cile')
     parser.add_argument('-g', default=None, nargs=1, type=str,                      help='The indicies of the g component...............Ex. -g cile')
@@ -603,7 +603,15 @@ def main() -> None:
     }
 
     perms, idx_used = permutationChecker(**arguments)
-    
+
+    if len(args.bra) >= 2:
+        vir_bra = ''
+        occ_bra = ''
+        for i, j in enumerate(len(args.bra)):
+            vir_bra += j.split()[0]
+            occ_bra += j.split()[1]
+        print(f"Remember a P^{vir_bra}_{occ_bra} in front due to the braket overlap normalization\n")
+
     print("All permutations")
     for i in perms:
         print(i)
@@ -612,14 +620,14 @@ def main() -> None:
         perms_compared = permutationComparison(perms, summation, idx_used)
 
         print("\nUnique permutations while checking index renaming according to summation")
-        
+
         for i, j in zip(perms_compared[::2], perms_compared[1::2]):
             print(i, j)
     else:
         perms_compared = permutationComparison(perms, summation, idx_used)
 
         print("\nUnique permutations without checking index renaming according to summation")
-        
+
         for i, j in zip(perms_compared[::2], perms_compared[1::2]):
             print(i, j)
 
@@ -627,8 +635,24 @@ def main_test() -> None:
 
     init_global_variables()
 
-    perms, idx_used = permutationChecker(P=['cde','klm'],bra=['ai','bj'],g='ndke',E=['fl','cm'],RV='ckdl',t='emfn')
-    
+    P=['cde','klm']
+    bra=['ai','bj']
+    g='ndke'
+    E=['fl','cm']
+    RV='ckdl'
+    t='emfn'
+    reduce=True
+
+    perms, idx_used = permutationChecker(P=P,bra=bra,g=g,E=E,RV=RV,t=t,reduce=reduce)
+
+    if len(bra) <= 2:
+        vir_bra = ''
+        occ_bra = ''
+        for i, j in enumerate(bra):
+            vir_bra += j[0]
+            occ_bra += j[1]
+        print(f"Remember a P^{vir_bra}_{occ_bra} in front due to the braket overlap normalization\n")
+
     print("All permutations")
     for i in perms:
         print(i)
@@ -636,10 +660,9 @@ def main_test() -> None:
     perms_compared = permutationComparison(perms, summation='cdefklmn', indicies_used=idx_used)
 
     print("\nUnique permutations while checking index renaming according to summation")
-    
+
     for i, j in zip(perms_compared[::2], perms_compared[1::2]):
         print(i, j)
 
-
 if __name__ == '__main__':
-    main()
+    main_test()
