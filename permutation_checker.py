@@ -665,4 +665,4 @@ def main_test() -> None:
         print(i, j)
 
 if __name__ == '__main__':
-    main_test()
+    main()
