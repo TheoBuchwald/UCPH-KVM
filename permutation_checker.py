@@ -553,41 +553,42 @@ def main() -> None:
     args = parser.parse_args()
 
     if isinstance(args.F,list):
-        F = args.F[0]
+        F: List[str] = args.F[0]
     else:
-        F = args.F
+        F: str = args.F
 
     if isinstance(args.L,list):
-        L = args.L[0]
+        L: List[str] = args.L[0]
     else:
-        L = args.L
+        L: str = args.L
 
     if isinstance(args.g,list):
-        g = args.g[0]
+        g: List[str] = args.g[0]
     else:
-        g = args.g
+        g: str = args.g
 
-    t = args.t
-    E = args.E
+    t: List[str] = args.t
+    E: List[str] = args.E
 
     if isinstance(args.LV,list):
-        LV = args.LV[0]
+        LV: List[str] = args.LV[0]
     else:
-        LV = args.LV
+        LV: str = args.LV
 
     if isinstance(args.RV,list):
-        RV = args.RV[0]
+        RV: List[str] = args.RV[0]
     else:
-        RV = args.RV
-
-    reserved = [i for i in args.reserved[0]]
+        RV: str = args.RV
 
     if isinstance(args.summation,list):
-        summation = args.summation[0]
+        summation: List[str] = args.summation[0]
     else:
-        summation = args.summation
+        summation: str = args.summation
 
-    arguments = {
+    reserved: List[str] = [i for i in args.reserved[0]]
+    reserved = [set(reserved).difference(set(summation))]
+
+    arguments: Dict[str, Union(List[str],str)] = {
         'P': args.P,
         'bra': args.bra,
         'F': F,
