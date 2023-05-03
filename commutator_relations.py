@@ -115,11 +115,9 @@ def main() -> None:
     parser.add_argument('commutator', type=str, nargs=1, help='The commutator to expand...Ex. [[X,ai,bj,ck],dl,em] - Please only replace X with single charcters')
 
     # Parses the arguments
-    # args = parser.parse_args()
+    args = parser.parse_args()
 
-    # commutator = args.commutator[0]
-
-    commutator = "[[X,ai,bj,ck],dl,em]"
+    commutator = args.commutator[0]
 
     # Expands commutator
     commutator_expanded_terms = commutator_expansion(commutator)
