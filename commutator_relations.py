@@ -13,7 +13,7 @@ def relation_unpack(E: list) -> tuple[str]:
 
     return com1, com2, com3, bef2, bef3
 
-def relation(after: list[str], before: str) -> Union[list[str],bool]:
+def relation(after: list[str], before: str, operator: str) -> Union[list[str],bool]:
 
     # Loop over nested commutators
     for n, i in enumerate(after):
@@ -44,13 +44,19 @@ def relation(after: list[str], before: str) -> Union[list[str],bool]:
             term2 = bef2 + "," + before + bef_com2 + inner + "," + com2 + "]".join(after[n+1:]) + (len(after[n+1:]) > 0)*"]"
             term3 = bef3 + "," + before + bef_com3 + inner + "," + com3 + "]".join(after[n+1:]) + (len(after[n+1:]) > 0)*"]"
 
-            # Add terms to output only if the commutator is less than four deep (Slater-Condon rules)
+            # Add terms to output only if the commutator is non-zero due to particle rank
+
+            if operator == 'H' or operator == 'P':
+                max_com = 4
+            elif operator == 'F' or operator == 'X':
+                max_com = 2
+
             output = []
-            if len(bef_com1) <= 4:
+            if len(bef_com1) <= max_com:
                 output.append(term1)
-            if len(bef_com2) <= 4:
+            if len(bef_com2) <= max_com:
                 output.append(term2)
-            if len(bef_com3) <= 4:
+            if len(bef_com3) <= max_com:
                 output.append(term3)
 
             return output
@@ -58,7 +64,7 @@ def relation(after: list[str], before: str) -> Union[list[str],bool]:
     # If no terms can be expanded return False
     return False
 
-def commutator_expansion(commutator: str) -> list[str]:
+def commutator_expansion(commutator: str, operator : str) -> list[str]:
 
     # Put the input commutator in a list for future processing
     terms = [commutator]
@@ -86,7 +92,7 @@ def commutator_expansion(commutator: str) -> list[str]:
             before = term.split("[")[0]
 
             # Handle commutator based on the commutator relation [X,AB] = [[X,A],B] + B[X,A] + A[X,B]
-            relation_out = relation(after,before)
+            relation_out = relation(after,before,operator)
 
             # If new terms are returned add these to the new terms
             if relation_out:
@@ -112,15 +118,33 @@ def main() -> None:
     Theo Juncker von Buchwald
     fnc970@alumni.ku.dk""")
 
-    parser.add_argument('commutator', type=str, nargs=1, help='The commutator to expand...Ex. [[X,ai,bj,ck],dl,em] - Please only replace X with single charcters')
+    parser.add_argument('commutator', type=str, nargs=1, help='The commutator to expand...Ex. [[X,ai,bj,ck],dl,em] - Accepted operators are H and P for two-electron operators and F and X for one-electron operators')
 
     # Parses the arguments
     args = parser.parse_args()
 
     commutator = args.commutator[0]
+    operator = commutator.split("[")[-1][0]
+    start_brackets = commutator.count("[")
+    end_brackets = commutator.count("]")
+    
+    if operator == 'H' or operator == 'P':
+        max_com = 4
+    elif operator == 'F' or operator == 'X':
+        max_com = 2 
+    else:
+        print(f"ERROR! Operator {operator} not recognized! Please put either H, P, F, X")
+        quit()
+
+    if start_brackets != end_brackets:
+        print("Check your brackets, idiot!")
+        quit()
+    elif start_brackets > max_com:
+        print("This is zero, you nimrod!")
+        quit()
 
     # Expands commutator
-    commutator_expanded_terms = commutator_expansion(commutator)
+    commutator_expanded_terms = commutator_expansion(commutator,operator)
 
     # Prints terms to terminal
     for term in sorted(commutator_expanded_terms,key=len,reverse=True):
