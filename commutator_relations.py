@@ -1,6 +1,7 @@
 
 import argparse
 from typing import Union
+from itertools import permutations
 
 def relation_unpack(E: list) -> tuple[str]:
 
@@ -112,6 +113,54 @@ def commutator_expansion(commutator: str, operator : str) -> list[str]:
 
     return terms
 
+def get_occ_and_vir_indices(term):
+
+    vir_indices = [*term.split("[")[0][::3]]
+    occ_indices = [*term.split("[")[0][1::3]]
+   
+    for com in term.split("[")[-1].split("]"):
+        vir_indices += [i[0] for i in com.split(',')[1:]]
+        occ_indices += [i[1] for i in com.split(',')[1:]]
+    
+    return vir_indices, occ_indices
+
+def check_symmetry_weights(expanded_terms):
+
+    weights = [1 for i in expanded_terms]
+
+    no_of_terms = len(expanded_terms)
+
+    for i in range(no_of_terms):
+        term1 = expanded_terms[i]
+        vir_indices_1, occ_indices_1 = get_occ_and_vir_indices(term1)
+
+        #Check if this has been shown to be the same as a previous term, if so skip
+        if weights[i] == 0:
+                continue
+
+        for j in range(i+1,no_of_terms):
+            term2 = expanded_terms[j]
+
+            #Check if different type of commutator, if so skip
+            if term1.count("[") != term2.count("["):
+                continue
+            #Check if this has been shown to be the same as a previous term, if so skip
+            if weights[j] == 0:
+                continue
+
+            vir_indices_2, occ_indices_2 = get_occ_and_vir_indices(term2)
+            
+            perm_occ = permutations(occ_indices_2)
+            perm_vir = permutations(vir_indices_2)
+            for o2, v2 in zip(perm_occ,perm_vir):
+                if list(o2)==occ_indices_1 and list(v2) == vir_indices_1:
+                    weights[i] += 1
+                    weights[j] = 0
+                    break
+    
+    return weights
+
+
 def main() -> None:
 
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""A script designed to be used to quickly expand a commutator using commutator relations""", epilog="""For help contact
@@ -119,6 +168,7 @@ def main() -> None:
     fnc970@alumni.ku.dk""")
 
     parser.add_argument('commutator', type=str, nargs=1, help='The commutator to expand...Ex. [[X,ai,bj,ck],dl,em] - Accepted operators are H and P for two-electron operators and F and X for one-electron operators')
+    parser.add_argument('-no-reduce', action='store_false',                         help='Whether to reduce indicies in the final terms', dest='reduce')
 
     # Parses the arguments
     args = parser.parse_args()
@@ -127,7 +177,8 @@ def main() -> None:
     operator = commutator.split("[")[-1][0]
     start_brackets = commutator.count("[")
     end_brackets = commutator.count("]")
-    
+    reduce = args.reduce
+
     if operator == 'H' or operator == 'P':
         max_com = 4
     elif operator == 'F' or operator == 'X':
@@ -145,10 +196,25 @@ def main() -> None:
 
     # Expands commutator
     commutator_expanded_terms = commutator_expansion(commutator,operator)
+    # Sort the terms here, mostly for debugging
+    commutator_expanded_terms = sorted(commutator_expanded_terms,key=len,reverse=True)
+    
+    # Symmetry checker
+    # Assumes that all indices are interchangeable and does not yet reduce indices
+    if reduce:
+        weights = check_symmetry_weights(commutator_expanded_terms)
+    else:
+        weights = [1 for i in commutator_expanded_terms]
 
     # Prints terms to terminal
-    for term in sorted(commutator_expanded_terms,key=len,reverse=True):
-        print(term)
+    for term, weight in zip(sorted(commutator_expanded_terms,key=len,reverse=True),weights):
+        # Only prints unique terms with the associated weight
+        if weight == 0:
+            continue
+        elif weight > 1:
+            print(f"{weight} {term}")
+        else:
+            print(term)
 
 if __name__ == '__main__':
     main()
