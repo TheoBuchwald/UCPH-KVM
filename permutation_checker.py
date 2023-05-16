@@ -522,8 +522,8 @@ def init_global_variables() -> None:
 
     global VIR, OCC
 
-    VIR = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
-    OCC = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p')
+    VIR = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'q', 'r')
+    OCC = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 's', 'u')
 
 
 
