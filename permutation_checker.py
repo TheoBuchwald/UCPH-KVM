@@ -608,7 +608,6 @@ def main() -> None:
         vir_bra = ''
         occ_bra = ''
         for i, j in enumerate(args.bra):
-            print(i,j)
             vir_bra += j[0]
             occ_bra += j[1]
         print(f"Remember a P^{vir_bra}_{occ_bra} in front due to the braket overlap normalization\n")
