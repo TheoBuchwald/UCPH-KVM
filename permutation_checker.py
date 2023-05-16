@@ -115,7 +115,7 @@ def F_checker(F1: list, F2: list) -> bool:
 
     return F1 == F2
 
-def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = None, RV: str = None, LV: str = None, t: Union[List[str],str] = None, bra: Union[List[str],str] = None, E: Union[List[str],str] = None, reserved: List[str] = ['aibj'], **kwargs) -> Tuple[List[Dict[str, List[str]]], Set[str]]:
+def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = None, RV: str = None, LV: str = None, t: Union[List[str],str] = None, bra: Union[List[str],str] = None, E: Union[List[str],str] = None, reserved: Set[str] = ['aibj'], **kwargs) -> Tuple[List[Dict[str, List[str]]], Set[str]]:
     """Generates permutation and automatically elimineates indicies afterwards
 
     Args:
@@ -143,7 +143,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
         assert isinstance(t, list) or isinstance(t, str) or t == None, f"t must be of type string or list; here it was {type(t)}"
         assert isinstance(E, list) or isinstance(E, str) or E == None, f"E must be of type string or list; here it was {type(E)}"
         assert isinstance(bra, list) or isinstance(bra, str), f"bra must be of type string or list; here it was {type(bra)}"
-        assert isinstance(reserved, list), f"reserved must be of type list; here it was {type(reserved)}"
+        assert isinstance(reserved, set), f"reserved must be of type set; here it was {type(reserved)}"
     except AssertionError as err:
         print(err)
         exit()
@@ -169,7 +169,6 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
 
     # Collecting all indicies used which are not reserved - (a, i, b, j) being reserved by default
     vir_occ_used = set()
-    reserved = set(reserved)
 
     # Finds vir and occ indicies to permutate
     P_vir = [idx for script in P for idx in script if idx in VIR]
@@ -586,7 +585,7 @@ def main() -> None:
         summation: str = args.summation
 
     reserved: List[str] = [i for i in args.reserved[0]]
-    reserved = [set(reserved).difference(set(summation))]
+    reserved = set(reserved).difference(set(summation))
 
     arguments: Dict[str, Union(List[str],str)] = {
         'P': args.P,
@@ -608,9 +607,10 @@ def main() -> None:
     if len(args.bra) >= 2:
         vir_bra = ''
         occ_bra = ''
-        for i, j in enumerate(len(args.bra)):
-            vir_bra += j.split()[0]
-            occ_bra += j.split()[1]
+        for i, j in enumerate(args.bra):
+            print(i,j)
+            vir_bra += j[0]
+            occ_bra += j[1]
         print(f"Remember a P^{vir_bra}_{occ_bra} in front due to the braket overlap normalization\n")
 
     print("All permutations")
@@ -636,17 +636,17 @@ def main_test() -> None:
 
     init_global_variables()
 
-    P=['cde','klm']
-    bra=['ai','bj']
-    g='ndke'
-    E=['fl','cm']
-    RV='ckdl'
-    t='emfn'
+    P=['def','lmn']
+    bra=['ai','bj','ck']
+    g='lpmf'
+    E=['go','dp','en']
+    t=['dlem','fngo']
+    res=['aibjck']
     reduce=True
 
-    perms, idx_used = permutationChecker(P=P,bra=bra,g=g,E=E,RV=RV,t=t,reduce=reduce)
+    perms, idx_used = permutationChecker(P=P,bra=bra,g=g,E=E,t=t,reduce=reduce,reserved=res)
 
-    if len(bra) <= 2:
+    if len(bra) >= 2:
         vir_bra = ''
         occ_bra = ''
         for i, j in enumerate(bra):
@@ -658,7 +658,7 @@ def main_test() -> None:
     for i in perms:
         print(i)
 
-    perms_compared = permutationComparison(perms, summation='cdefklmn', indicies_used=idx_used)
+    perms_compared = permutationComparison(perms, summation='dlemfngohp', indicies_used=idx_used)
 
     print("\nUnique permutations while checking index renaming according to summation")
 
