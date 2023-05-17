@@ -556,13 +556,13 @@ def Extract(args):
     # then the calculation from minutes to the requested unit is done here
     if RequestedArguments['_CPUS'] == 's':
         for file in InputFiles:
-            if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
+            if ExtractedValues[file]['total_cpu_time'] == ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] == ['Nan']:
                 continue
             ExtractedValues[file]['total_cpu_time'] *= 60
             ExtractedValues[file]['wall_cpu_time'] *= 60
     elif NeededArguments['_CPUS'] == 'h':
         for file in InputFiles:
-            if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
+            if ExtractedValues[file]['total_cpu_time'] == ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] == ['Nan']:
                 continue
             ExtractedValues[file]['total_cpu_time'] /= 60
             ExtractedValues[file]['wall_cpu_time'] /= 60
