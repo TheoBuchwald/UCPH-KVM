@@ -443,7 +443,7 @@ def permute_indicies(indexing: List[str], vir_perm: Tuple[str], occ_perm: Tuple[
 def renameIndicies(letter_to_replace: str, letter_to_replace_with: str, lst: List[str]) -> List[str]:
     return [i if i != letter_to_replace else letter_to_replace_with for i in lst]
 
-def permutationComparison(perms: List[Dict[str, List[Union[List[str],str]]]], summation: str, indicies_used: Set[str]) -> np.array:
+def permutationComparison(perms: List[Dict[str, List[Union[List[str],str]]]], summation: str, indicies_used: Set[str], vir_reserved: List[str], occ_reserved: List[str]) -> np.array:
     try:
         assert isinstance(perms, list), f"permutations must be of type string or list; here it was {type(perms)}"
         assert isinstance(summation, str), f"summation must be of type string; here it was {type(summation)}"
@@ -471,21 +471,25 @@ def permutationComparison(perms: List[Dict[str, List[Union[List[str],str]]]], su
     vir_idx_perm = [i for i in permutations(vir_idx)]
     occ_idx_perm = [i for i in permutations(occ_idx)]
 
+    vir_res_perm = [i for i in permutations(vir_reserved)]
+    occ_res_perm = [i for i in permutations(occ_reserved)]
 
-    for vir_perm in vir_idx_perm:
-        for occ_perm in occ_idx_perm:
-            perm_copy = deepcopy(perms)
-            for n, perm1 in enumerate(perms):
-                for key, lst in perm1.items():
-                    if can_contain_multiple_terms(key):
-                        for nn, correction in enumerate(lst):
-                            perm_copy[n][key][nn] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else i for i in perm_copy[n][key][nn]]
-                    else:
-                        perm_copy[n][key] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else i for i in perm_copy[n][key]]
+    for ores_perm, vres_perm in zip(occ_res_perm,vir_res_perm):
+        for vir_perm in vir_idx_perm:
+            for occ_perm in occ_idx_perm:
+                perm_copy = deepcopy(perms)
+                for n, perm1 in enumerate(perms):
+                    for key, lst in perm1.items():
+                        if can_contain_multiple_terms(key):
+                            for nn, correction in enumerate(lst):
+                                perm_copy[n][key][nn] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else vres_perm[vir_reserved.index(i)] if i in vir_reserved else ores_perm[occ_reserved.index(i)] if i in occ_reserved else i for i in perm_copy[n][key][nn]]
+                        else:
+                            perm_copy[n][key] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else vres_perm[vir_reserved.index(i)] if i in vir_reserved else ores_perm[occ_reserved.index(i)] if i in occ_reserved else i for i in perm_copy[n][key]]
 
-            for n, perm1 in enumerate(perm_copy):
-                for nn, perm2 in enumerate(perms[n:]):
-                    permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
+
+                for n, perm1 in enumerate(perm_copy):
+                    for nn, perm2 in enumerate(perms[n:]):
+                        permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
 
     idx_same = set()
     remaining_permutations = []
@@ -604,27 +608,26 @@ def main() -> None:
 
     perms, idx_used = permutationChecker(**arguments)
 
-    if len(args.bra) >= 2:
-        vir_bra = ''
-        occ_bra = ''
-        for i, j in enumerate(args.bra):
-            vir_bra += j[0]
-            occ_bra += j[1]
-        print(f"Remember a P^{vir_bra}_{occ_bra} in front due to the braket overlap normalization\n")
+    res_used = idx_used & reserved
+    vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
+    occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
+
+    if len(vir_res) >= 2 and len(vir_res) == len(occ_res):
+        print(f"Remember a P^{vir_res}_{occ_res} in front due to the braket overlap normalization\n")
 
     print("All permutations")
     for i in perms:
         print(i)
 
     if summation:
-        perms_compared = permutationComparison(perms, summation, idx_used)
+        perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
         print("\nUnique permutations while checking index renaming according to summation")
 
         for i, j in zip(perms_compared[::2], perms_compared[1::2]):
             print(i, j)
     else:
-        perms_compared = permutationComparison(perms, summation, idx_used)
+        perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
         print("\nUnique permutations without checking index renaming according to summation")
 
