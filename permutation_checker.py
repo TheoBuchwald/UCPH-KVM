@@ -612,8 +612,10 @@ def main() -> None:
     vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
     occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
 
-    if len(vir_res) >= 2 and len(vir_res) == len(occ_res):
-        print(f"Remember a P^{vir_res}_{occ_res} in front due to the braket overlap normalization\n")
+    if len(vir_res) >= 2 and len(vir_res) == len(args.bra) and len(vir_res) == len(occ_res):
+        print(f"Remember a P^{vir_res}_{occ_res} operator in front due to the braket overlap normalization\n")
+    elif len(args.bra) >= 2:
+        print(f"Remember a permutation operator in front due to the braket overlap normalization\n")
 
     print("All permutations")
     for i in perms:
