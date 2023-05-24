@@ -529,7 +529,54 @@ def init_global_variables() -> None:
     VIR = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'q', 'r')
     OCC = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 's', 'u')
 
+def to_latex(terms: dict[str,List], comment: str) -> str:
 
+    terms_in_latex = []
+    for key, val in terms.items():
+        if can_contain_multiple_terms(key):
+            for t in val:
+                terms_in_latex.append(f"{key}_{{{''.join(t)}}}")
+        else:
+            terms_in_latex.append(f"{key}_{{{''.join(val)}}}")
+
+    terms_in_latex = ' '.join(terms_in_latex)
+
+    if comment != None:
+        terms_in_latex += f" % {comment}"
+
+    return terms_in_latex
+
+def print_info(bra, summation, reserved, perms, idx_used):
+    res_used = idx_used & reserved
+    vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
+    occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
+
+    if len(vir_res) >= 2 and len(vir_res) == len(bra) and len(vir_res) == len(occ_res):
+        print(f"Remember a P^{vir_res}_{occ_res} operator in front due to the braket overlap normalization\n")
+    elif len(bra) >= 2:
+        print(f"Remember a permutation operator in front due to the braket overlap normalization\n")
+
+    print("All permutations")
+    for i in perms:
+        perm_in_latex = to_latex(i,None)
+        print(perm_in_latex)
+
+    if summation:
+        perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
+
+        print("\nUnique permutations while checking index renaming according to summation")
+
+        for i, j in zip(perms_compared[::2], perms_compared[1::2]):
+            perm_in_latex = to_latex(i,j)
+            print(perm_in_latex)
+    else:
+        perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
+
+        print("\nUnique permutations without checking index renaming according to summation")
+
+        for i, j in zip(perms_compared[::2], perms_compared[1::2]):
+            perm_in_latex = to_latex(i,j)
+            print(perm_in_latex)
 
 def main() -> None:
 
@@ -608,33 +655,7 @@ def main() -> None:
 
     perms, idx_used = permutationChecker(**arguments)
 
-    res_used = idx_used & reserved
-    vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
-    occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
-
-    if len(vir_res) >= 2 and len(vir_res) == len(args.bra) and len(vir_res) == len(occ_res):
-        print(f"Remember a P^{vir_res}_{occ_res} operator in front due to the braket overlap normalization\n")
-    elif len(args.bra) >= 2:
-        print(f"Remember a permutation operator in front due to the braket overlap normalization\n")
-
-    print("All permutations")
-    for i in perms:
-        print(i)
-
-    if summation:
-        perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
-
-        print("\nUnique permutations while checking index renaming according to summation")
-
-        for i, j in zip(perms_compared[::2], perms_compared[1::2]):
-            print(i, j)
-    else:
-        perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
-
-        print("\nUnique permutations without checking index renaming according to summation")
-
-        for i, j in zip(perms_compared[::2], perms_compared[1::2]):
-            print(i, j)
+    print_info(args.bra, summation, reserved, perms, idx_used)
 
 def main_test() -> None:
 
@@ -647,27 +668,11 @@ def main_test() -> None:
     t=['dlem','fngo']
     res=['aibjck']
     reduce=True
+    sum=''
 
     perms, idx_used = permutationChecker(P=P,bra=bra,g=g,E=E,t=t,reduce=reduce,reserved=res)
 
-    if len(bra) >= 2:
-        vir_bra = ''
-        occ_bra = ''
-        for i, j in enumerate(bra):
-            vir_bra += j[0]
-            occ_bra += j[1]
-        print(f"Remember a P^{vir_bra}_{occ_bra} in front due to the braket overlap normalization\n")
-
-    print("All permutations")
-    for i in perms:
-        print(i)
-
-    perms_compared = permutationComparison(perms, summation='dlemfngohp', indicies_used=idx_used)
-
-    print("\nUnique permutations while checking index renaming according to summation")
-
-    for i, j in zip(perms_compared[::2], perms_compared[1::2]):
-        print(i, j)
+    print_info(bra,sum,res,perms,idx_used)
 
 if __name__ == '__main__':
     main()
