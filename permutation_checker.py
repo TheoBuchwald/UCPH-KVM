@@ -546,10 +546,7 @@ def to_latex(terms: dict[str,List], comment: str) -> str:
 
     return terms_in_latex
 
-def print_info(bra, summation, reserved, perms, idx_used):
-    res_used = idx_used & reserved
-    vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
-    occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
+def print_check(bra, summation, perms, idx_used, vir_res, occ_res):
 
     if len(vir_res) >= 2 and len(vir_res) == len(bra) and len(vir_res) == len(occ_res):
         print(f"Remember a P^{vir_res}_{occ_res} operator in front due to the braket overlap normalization\n")
@@ -561,8 +558,8 @@ def print_info(bra, summation, reserved, perms, idx_used):
         perm_in_latex = to_latex(i,None)
         print(perm_in_latex)
 
+def print_compared(perms_compared, summation, perms, idx_used, vir_res, occ_res):
     if summation:
-        perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
         print("\nUnique permutations while checking index renaming according to summation")
 
@@ -655,7 +652,20 @@ def main() -> None:
 
     perms, idx_used = permutationChecker(**arguments)
 
-    print_info(args.bra, summation, reserved, perms, idx_used)
+    res_used = idx_used & reserved
+    vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
+    occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
+
+    print_check(args.bra,summation,perms,idx_used,vir_res,occ_res)
+
+    perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
+
+    print_compared(perms_compared, summation, perms, idx_used, vir_res, occ_res)
+
+    perms = perms_compared[::2]
+    scalar = [int(i[-1]) for i in perms_compared[1::2]]
+
+    return perms, scalar
 
 def main_test() -> None:
 
@@ -668,11 +678,19 @@ def main_test() -> None:
     t=['dlem','fngo']
     res=['aibjck']
     reduce=True
-    sum=''
+    summation=''
 
     perms, idx_used = permutationChecker(P=P,bra=bra,g=g,E=E,t=t,reduce=reduce,reserved=res)
 
-    print_info(bra,sum,res,perms,idx_used)
+    res_used = idx_used & res
+    vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
+    occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
+
+    print_check(bra,summation,perms,idx_used)
+
+    perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
+
+    print_compared(perms_compared, summation, perms, idx_used, vir_res, occ_res)
 
 if __name__ == '__main__':
     main()
