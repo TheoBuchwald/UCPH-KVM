@@ -559,16 +559,14 @@ def print_check(bra, summation, perms, idx_used, vir_res, occ_res):
         print(perm_in_latex)
 
 def print_compared(perms_compared, summation, perms, idx_used, vir_res, occ_res):
-    if summation:
 
+    if summation:
         print("\nUnique permutations while checking index renaming according to summation")
 
         for i, j in zip(perms_compared[::2], perms_compared[1::2]):
             perm_in_latex = to_latex(i,j)
             print(perm_in_latex)
     else:
-        perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
-
         print("\nUnique permutations without checking index renaming according to summation")
 
         for i, j in zip(perms_compared[::2], perms_compared[1::2]):
