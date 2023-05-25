@@ -546,7 +546,7 @@ def to_latex(terms: dict[str,List], comment: str) -> str:
 
     return terms_in_latex
 
-def print_check(bra, summation, perms, idx_used, vir_res, occ_res):
+def print_check(bra, perms, vir_res, occ_res):
 
     if len(vir_res) >= 2 and len(vir_res) == len(bra) and len(vir_res) == len(occ_res):
         print(f"Remember a P^{vir_res}_{occ_res} operator in front due to the braket overlap normalization\n")
@@ -558,7 +558,7 @@ def print_check(bra, summation, perms, idx_used, vir_res, occ_res):
         perm_in_latex = to_latex(i,None)
         print(perm_in_latex)
 
-def print_compared(perms_compared, summation, perms, idx_used, vir_res, occ_res):
+def print_compared(perms_compared, summation):
 
     if summation:
         print("\nUnique permutations while checking index renaming according to summation")
@@ -654,11 +654,11 @@ def main() -> None:
     vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
     occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
 
-    print_check(args.bra,summation,perms,idx_used,vir_res,occ_res)
+    print_check(args.bra,perms,vir_res,occ_res)
 
     perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
-    print_compared(perms_compared, summation, perms, idx_used, vir_res, occ_res)
+    print_compared(perms_compared, summation)
 
     perms = perms_compared[::2]
     scalar = [int(i[-1]) for i in perms_compared[1::2]]
