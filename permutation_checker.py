@@ -213,6 +213,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
                     print("Something went wrong")
                     print(f"Index {idx} was not found in {OCC=} or {VIR=}")
                     exit()
+        bra_str = [i for i in ''.join(bra)]
         vir_occ_used |= set(i for j in bra for i in j)
 
     if E:
@@ -296,6 +297,10 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
             for operator in E_indexing:
                 E_perm += [permute_indicies(operator, vir_perm, occ_perm)]
 
+        bra_perm = []
+        if bra:
+            bra_perm = deepcopy(bra_str)
+
         for n, (v, o) in enumerate(E_perm):
             if F:
                 F_perm = eliminate_E_component(reserved, bra_vir, bra_occ, F_perm, n, v, o)
@@ -312,9 +317,10 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
                     t_perm[nn] = eliminate_E_component(reserved, bra_vir, bra_occ, correction, n, v, o)
 
         indicies_used = set(F_perm) | set(L_perm) | set(g_perm) | set(RV_perm) | set(LV_perm) | set(i for j in t_perm for i in j)
+
         if kwargs['reduce']:
             vir_used = sorted(list(indicies_used - reserved & set(VIR)))
-            vir_unused = sorted([i for i in set(VIR) - reserved if i < max(vir_used) and i not in vir_used])
+            vir_unused = sorted([i for i in set(VIR) - reserved if i < max(vir_used,default='') and i not in vir_used])
             vir_used.reverse()
 
             vir_replace = []
@@ -333,9 +339,10 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
                 LV_perm = renameIndicies(used, unused, LV_perm)
                 for i, correction in enumerate(t_perm):
                     t_perm[i] = renameIndicies(used, unused, correction)
+                bra_perm = renameIndicies(used, unused, bra_str)
 
             occ_used = sorted(list(indicies_used - reserved & set(OCC)))
-            occ_unused = sorted([i for i in set(OCC) - reserved if i < max(occ_used) and i not in occ_used])
+            occ_unused = sorted([i for i in set(OCC) - reserved if i < max(occ_used,default='') and i not in occ_used])
             occ_used.reverse()
 
             occ_replace = []
@@ -354,6 +361,7 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
                 LV_perm = renameIndicies(used, unused, LV_perm)
                 for i, correction in enumerate(t_perm):
                     t_perm[i] = renameIndicies(used, unused, correction)
+                bra_perm = renameIndicies(used, unused, bra_str)
 
             indicies_used = set(F_perm) | set(L_perm) | set(g_perm) | set(RV_perm) | set(LV_perm) | set(i for j in t_perm for i in j)
 
@@ -370,6 +378,8 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
             current_perm['t'] = t_perm
         if RV:
             current_perm['RV'] = RV_perm
+        if bra:
+            current_perm['bra'] = bra_perm
 
         permutation_collector.append(current_perm)
 
@@ -471,25 +481,40 @@ def permutationComparison(perms: List[Dict[str, List[Union[List[str],str]]]], su
     vir_idx_perm = [i for i in permutations(vir_idx)]
     occ_idx_perm = [i for i in permutations(occ_idx)]
 
-    vir_res_perm = [i for i in permutations(vir_reserved)]
-    occ_res_perm = [i for i in permutations(occ_reserved)]
+    # vir_res_perm = [i for i in permutations(vir_reserved)]
+    # occ_res_perm = [i for i in permutations(occ_reserved)]
 
-    for ores_perm, vres_perm in zip(occ_res_perm,vir_res_perm):
-        for vir_perm in vir_idx_perm:
-            for occ_perm in occ_idx_perm:
-                perm_copy = deepcopy(perms)
-                for n, perm1 in enumerate(perms):
-                    for key, lst in perm1.items():
-                        if can_contain_multiple_terms(key):
-                            for nn, correction in enumerate(lst):
-                                perm_copy[n][key][nn] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else vres_perm[vir_reserved.index(i)] if i in vir_reserved else ores_perm[occ_reserved.index(i)] if i in occ_reserved else i for i in perm_copy[n][key][nn]]
-                        else:
-                            perm_copy[n][key] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else vres_perm[vir_reserved.index(i)] if i in vir_reserved else ores_perm[occ_reserved.index(i)] if i in occ_reserved else i for i in perm_copy[n][key]]
+    # for ores_perm, vres_perm in zip(occ_res_perm,vir_res_perm):
+    #     for vir_perm in vir_idx_perm:
+    #         for occ_perm in occ_idx_perm:
+    #             perm_copy = deepcopy(perms)
+    #             for n, perm1 in enumerate(perms):
+    #                 for key, lst in perm1.items():
+    #                     if can_contain_multiple_terms(key):
+    #                         for nn, correction in enumerate(lst):
+    #                             perm_copy[n][key][nn] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else vres_perm[vir_reserved.index(i)] if i in vir_reserved else ores_perm[occ_reserved.index(i)] if i in occ_reserved else i for i in perm_copy[n][key][nn]]
+    #                     else:
+    #                         perm_copy[n][key] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else vres_perm[vir_reserved.index(i)] if i in vir_reserved else ores_perm[occ_reserved.index(i)] if i in occ_reserved else i for i in perm_copy[n][key]]
 
 
-                for n, perm1 in enumerate(perm_copy):
-                    for nn, perm2 in enumerate(perms[n:]):
-                        permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
+    #             for n, perm1 in enumerate(perm_copy):
+    #                 for nn, perm2 in enumerate(perms[n:]):
+    #                     permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
+
+    for vir_perm in vir_idx_perm:
+        for occ_perm in occ_idx_perm:
+            perm_copy = deepcopy(perms)
+            for n, perm1 in enumerate(perms):
+                for key, lst in perm1.items():
+                    if can_contain_multiple_terms(key):
+                        for nn, correction in enumerate(lst):
+                            perm_copy[n][key][nn] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else i for i in perm_copy[n][key][nn]]
+                    else:
+                        perm_copy[n][key] = [vir_perm[vir_idx.index(i)] if i in vir_idx else occ_perm[occ_idx.index(i)] if i in occ_idx else i for i in perm_copy[n][key]]
+
+            for n, perm1 in enumerate(perm_copy):
+                for nn, perm2 in enumerate(perms[n:]):
+                    permutations_compared[n,n+nn] += check_all(F, L, g, t, RV, LV, perm1, perm2)
 
     idx_same = set()
     remaining_permutations = []
@@ -548,30 +573,47 @@ def to_latex(terms: dict[str,List], comment: str) -> str:
 
 def print_check(bra, perms, vir_res, occ_res):
 
-    if len(vir_res) >= 2 and len(vir_res) == len(bra) and len(vir_res) == len(occ_res):
-        print(f"Remember a P^{vir_res}_{occ_res} operator in front due to the braket overlap normalization\n")
-    elif len(bra) >= 2:
-        print(f"Remember a permutation operator in front due to the braket overlap normalization\n")
+    # if len(vir_res) >= 2 and len(vir_res) == len(bra) and len(vir_res) == len(occ_res):
+    #     print(f"Remember a P^{vir_res}_{occ_res} operator in front due to the braket overlap normalization\n")
+    # elif len(bra) >= 2:
+    #     print(f"Remember a permutation operator in front due to the braket overlap normalization\n")
 
     print("All permutations")
-    for i in perms:
-        perm_in_latex = to_latex(i,None)
+    for i,j in zip(perms,bra):
+        bra_vir = []
+        bra_occ = []
+        for idx in j:
+            if idx in VIR:
+                bra_vir += idx
+            elif idx in OCC:
+                bra_occ += idx
+        bra_vir = ''.join(bra_vir)
+        bra_occ = ''.join(bra_occ)
+        permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
+        perm_in_latex = permutation_operator + to_latex(i,None)
         print(perm_in_latex)
 
-def print_compared(perms_compared, summation):
+def print_compared(bra, perms_compared, summation):
 
     if summation:
         print("\nUnique permutations while checking index renaming according to summation")
 
-        for i, j in zip(perms_compared[::2], perms_compared[1::2]):
-            perm_in_latex = to_latex(i,j)
-            print(perm_in_latex)
     else:
         print("\nUnique permutations without checking index renaming according to summation")
 
-        for i, j in zip(perms_compared[::2], perms_compared[1::2]):
-            perm_in_latex = to_latex(i,j)
-            print(perm_in_latex)
+    for i, j, k in zip(perms_compared[::2], perms_compared[1::2], bra):
+        bra_vir = []
+        bra_occ = []
+        for idx in k:
+            if idx in VIR:
+                bra_vir += idx
+            elif idx in OCC:
+                bra_occ += idx
+        bra_vir = ''.join(bra_vir)
+        bra_occ = ''.join(bra_occ)
+        permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
+        perm_in_latex = permutation_operator + to_latex(i,j)
+        print(perm_in_latex)
 
 def main() -> None:
 
@@ -654,11 +696,13 @@ def main() -> None:
     vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
     occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
 
-    print_check(args.bra,perms,vir_res,occ_res)
+    bra_out = [i.pop("bra") for i in perms]
+
+    print_check(bra_out,perms,vir_res,occ_res)
 
     perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
-    print_compared(perms_compared, summation)
+    print_compared(bra_out,perms_compared, summation)
 
     perms = perms_compared[::2]
     scalar = [int(i[-1]) for i in perms_compared[1::2]]
