@@ -591,7 +591,7 @@ def main() -> None:
     parser.add_argument('-t', default=None, nargs='+', type=str,                    help='The indicies of each individual t component...Ex. -t cile dlem')
     parser.add_argument('-LV', default=None, nargs=1, type=str,                     help='The indicies of the left excitaiton vector....Ex. -LV ci')
     parser.add_argument('-RV', default=None, nargs=1, type=str,                     help='The indicies of the right excitaiton vector...Ex. -RV ck')
-    parser.add_argument('-res', '--reserved', default=['aibj'], nargs=1, type=str,  help='The indicies reserved for the outer sum.......Ex. -res aibj')
+    parser.add_argument('-res', '--reserved', nargs=1, type=str,  help='The indicies reserved for the outer sum.......Ex. -res aibj')
     parser.add_argument('-sum', '--summation', default='', nargs=1, type=str,       help='The indicies of the summation.................Ex. -sum cdeklm')
     parser.add_argument('-no-reduce', action='store_false',                         help='Whether to reduce indicies after excitations', dest='reduce')
 
@@ -684,11 +684,11 @@ def main_test() -> None:
     vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
     occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
 
-    print_check(bra,summation,perms,idx_used)
+    print_check(bra,perms,vir_res,occ_res)
 
     perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
-    print_compared(perms_compared, summation, perms, idx_used, vir_res, occ_res)
+    print_compared(perms_compared, summation)
 
 if __name__ == '__main__':
     main()
