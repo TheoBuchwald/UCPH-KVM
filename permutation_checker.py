@@ -571,12 +571,7 @@ def to_latex(terms: dict[str,List], comment: str) -> str:
 
     return terms_in_latex
 
-def print_check(bra, perms, vir_res, occ_res):
-
-    # if len(vir_res) >= 2 and len(vir_res) == len(bra) and len(vir_res) == len(occ_res):
-    #     print(f"Remember a P^{vir_res}_{occ_res} operator in front due to the braket overlap normalization\n")
-    # elif len(bra) >= 2:
-    #     print(f"Remember a permutation operator in front due to the braket overlap normalization\n")
+def print_check(bra, perms):
 
     print("All permutations")
     for i,j in zip(perms,bra):
@@ -698,7 +693,7 @@ def main() -> None:
 
     bra_out = [i.pop("bra") for i in perms]
 
-    print_check(bra_out,perms,vir_res,occ_res)
+    print_check(bra_out,perms)
 
     perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
