@@ -148,12 +148,18 @@ def check_symmetry_weights(expanded_terms):
             if weights[j] == 0:
                 continue
 
+            # print(term1,term2)
             vir_indices_2, occ_indices_2 = get_occ_and_vir_indices(term2)
-            
+            # print(vir_indices_1,vir_indices_2)
+            # for v1,v2 in zip(vir_indices_1,vir_indices_2):
+            #     if v1 != v2:
+            #         print(f"element at index {vir_indices_1.index(v1)} is at {vir_indices_2.index(v1)}")
+
+
             perm_occ = permutations(occ_indices_2)
             perm_vir = permutations(vir_indices_2)
             for o2, v2 in zip(perm_occ,perm_vir):
-                if list(o2)==occ_indices_1 and list(v2) == vir_indices_1:
+                if list(o2) == occ_indices_1 and list(v2) == vir_indices_1:
                     weights[i] += 1
                     weights[j] = 0
                     break
@@ -168,7 +174,7 @@ def main() -> None:
     fnc970@alumni.ku.dk""")
 
     parser.add_argument('commutator', type=str, nargs=1, help='The commutator to expand...Ex. [[X,ai,bj,ck],dl,em] - Accepted operators are H and P for two-electron operators and F and X for one-electron operators')
-    parser.add_argument('-no-reduce', action='store_false',                         help='Whether to reduce indicies in the final terms', dest='reduce')
+    parser.add_argument('-no-reduce', action='store_false',                         help='Whether to reduce indices in the final terms', dest='reduce')
 
     # Parses the arguments
     args = parser.parse_args()
