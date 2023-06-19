@@ -62,8 +62,7 @@ plus  -O3 v1o1x1y1 -E v1o1"""
         elif bra_minus_before == 2:
             # sum_bjc g_bjca E_bj E_ci - sum_bjk g_bjik E_bj E_ak
             result = """plus -O2 v1o1v2y1 -E v1o1 v2x1
-minus -O2 v1o1x1o2 -E v1o1 y1o2
-            """
+minus -O2 v1o1x1o2 -E v1o1 y1o2"""
     elif commutator == 2: 
         # Third line in box [[H,ai],bj]
         if bra_minus_before == 0:
@@ -73,15 +72,13 @@ minus -O2 v1o1x1o2 -E v1o1 y1o2
             # - P_ij^ab (F_ib E_aj + sum_k L_ikjb E_ak - L_cajb E_ci)
             result="""minus -P y1y2 x1x2 -O1 x1y2 -E y1x2
 minus -P y1y2 x1x2 -O3 x1o1x2y2 -E y1o1
-plus -P y1y2 x1x2 -O3 v1y1x2y2 -E v1x1
-            """
+plus -P y1y2 x1x2 -O3 v1y1x2y2 -E v1x1"""
         elif bra_minus_before == 2:
             # -P_ij^ab (sum_ck g_ibck E_aj E_ck + sum_ck g_ikcb E_ak E_cj) + sum_kl g_ikjl E_ak E_bl + sum_cd g_cabd E_ci E_dj
             result="""minus -P y1y2 x1x2 -O2 x1y2v1o1 -E y1x2 v1o1
 minus -P y1y2 x1x2 -O2 x1o1v1y2 -E y1o1 v1x2
 plus -O2 x1o1x2o2 -E y1o1 y2o2
-plus -O2 v1y1v2y2 -E v1x1 v2x2
-            """
+plus -O2 v1y1v2y2 -E v1x1 v2x2"""
     elif commutator == 3:
         # Fourth line in box [[[H,ai],bj],ck]
         if bra_minus_before == 1:
@@ -90,8 +87,7 @@ plus -O2 v1y1v2y2 -E v1x1 v2x2
         elif bra_minus_before == 2:
             # P_ijk^abc (sum_l g_iljc E_ak E_bk - sum_d g_ibdc E_aj E_dk)
             result="""plus -P y1y2y3 x1x2x3 -O2 x1o1x2y3 -E y1o1 y2x3
-minus -P y1x1 y2x2 y3x3 -O2 x1y2v1y3 -E y1x2 v1x3
-            """
+minus -P y1x1 y2x2 y3x3 -O2 x1y2v1y3 -E y1x2 v1x3"""
     elif commutator == 4:
         # Fifth line in box [[[[H,ai],bj],ck],dl]
         if bra_minus_before == 2:
@@ -142,11 +138,6 @@ def main() -> None:
 
     if output is not None:
 
-        if before and 'E' not in output:
-            output += ' -E ' + ' '.join(before)
-        elif before:
-            output += ' '+' '.join(before)
-
         output = output.replace('O1','F')
         output = output.replace('O2','g')
         output = output.replace('O3','L')
@@ -170,7 +161,16 @@ def main() -> None:
             output = output.replace('x4',o_in[3])
             output = output.replace('y4',v_in[3])
         
-        print(output)
+        if before and 'E' not in output:
+            output = output.splitlines()
+            for i in range(len(output)):
+               output[i] += ' -E ' + ' '.join(before)
+        elif before:
+            output = output.splitlines()
+            for i in range(len(output)):
+                output[i] += ' '+' '.join(before)
+        for line in output:
+            print(line)
     else:
         print("This term does not give anything")
 
