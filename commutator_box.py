@@ -98,7 +98,7 @@ plus -O2 v1y1v2y2 -E v1x1 v2x2"""
         elif bra_minus_before == 2:
             # P_ijk^abc (sum_l g_iljc E_ak E_bk - sum_d g_ibdc E_aj E_dk)
             result="""plus -P y1y2y3 x1x2x3 -O2 x1o1x2y3 -E y1o1 y2x3
-minus -P y1x1 y2x2 y3x3 -O2 x1y2v1y3 -E y1x2 v1x3"""
+minus -P y1y2y3 x1x2x3 -O2 x1y2v1y3 -E y1x2 v1x3"""
     elif commutator == 4:
         # Fifth line in box [[[[H,ai],bj],ck],dl]
         if bra_minus_before == 2:
