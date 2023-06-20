@@ -178,7 +178,8 @@ def get_box_terms(term : str, bra : list, transform : bool) -> list:
 
     # Determine whether a term should be kept/removed due to
     # the operator or a one-index transformation
-    output = check_output(output,operator, transform)
+    if output is not None:
+        output = check_output(output,operator, transform)
 
     if output is not None:
 
