@@ -584,7 +584,9 @@ def print_check(bra, perms):
                 bra_occ += idx
         bra_vir = ''.join(bra_vir)
         bra_occ = ''.join(bra_occ)
-        permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
+        permutation_operator = ""
+        if len(bra_vir) > 1:
+            permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
         perm_in_latex = permutation_operator + to_latex(i,None)
         print(perm_in_latex)
 
@@ -606,7 +608,9 @@ def print_compared(bra, perms_compared, summation):
                 bra_occ += idx
         bra_vir = ''.join(bra_vir)
         bra_occ = ''.join(bra_occ)
-        permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
+        permutation_operator = ""
+        if len(bra_vir) > 1:
+            permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
         perm_in_latex = permutation_operator + to_latex(i,j)
         print(perm_in_latex)
 
