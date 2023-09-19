@@ -170,6 +170,8 @@ def permutationChecker(*, P: List[str], F: str = None, L: str = None, g: str = N
     # Collecting all indicies used which are not reserved - (a, i, b, j) being reserved by default
     vir_occ_used = set()
 
+    init_global_variables()
+
     # Finds vir and occ indicies to permutate
     P_vir = [idx for script in P for idx in script if idx in VIR]
     P_occ = [idx for script in P for idx in script if idx in OCC]

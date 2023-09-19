@@ -133,7 +133,8 @@ def check_output(output : str, operator : str, transformed : bool):
             elif transformed:
                 # For transformed P, remove the oo and vv Fock matrices
                 if '-O1 v1y1' in output[i] or '-O1 x1o1' in output[i]:
-                    terms_to_remove.append(i)
+                    #terms_to_remove.append(i)
+                    pass
     
     terms_to_remove = sorted(terms_to_remove,reverse=True)
 
@@ -158,6 +159,8 @@ def check_output(output : str, operator : str, transformed : bool):
     return output
 
 def get_box_terms(term : str, bra : list, transform : bool) -> list:
+
+    init_global_variables()
     
     # Determine the operator
     operator = term.split("[")[-1][0]
@@ -181,6 +184,7 @@ def get_box_terms(term : str, bra : list, transform : bool) -> list:
     if output is not None:
         output = check_output(output,operator, transform)
 
+    # Have to check again as all the terms may have been removed
     if output is not None:
 
         # Insert two-electron terms
