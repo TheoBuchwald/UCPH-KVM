@@ -120,21 +120,21 @@ def check_output(output : str, operator : str, transformed : bool):
             if 'O2' in output[i] or 'O3' in output[i]:
                 terms_to_remove.append(i)
 
-        # For canonical H and F, remove the off-diagonal Fock matrices
-        if operator in ['H','F'] and not transformed:
-            if '-O1 x1y1' in output[i] or '-O1 x1y2' in output[i] or '-O1 v1o1' in output[i]:
-                terms_to_remove.append(i)
+        # # For canonical H and F, remove the off-diagonal Fock matrices
+        # if operator in ['H','F'] and not transformed:
+        #     if '-O1 x1y1' in output[i] or '-O1 x1y2' in output[i] or '-O1 v1o1' in output[i]:
+        #         terms_to_remove.append(i)
         
-        if operator == 'P':
-            if not transformed:
-                # For canonical P, remove all Fock terms
-                if '-O1' in output[i]:
-                    terms_to_remove.append(i)
-            elif transformed:
-                # For transformed P, remove the oo and vv Fock matrices
-                if '-O1 v1y1' in output[i] or '-O1 x1o1' in output[i]:
-                    #terms_to_remove.append(i)
-                    pass
+        # if operator == 'P':
+        #     if not transformed:
+        #         # For canonical P, remove all Fock terms
+        #         if '-O1' in output[i]:
+        #             terms_to_remove.append(i)
+        #     elif transformed:
+        #         # For transformed P, remove the oo and vv Fock matrices
+        #         if '-O1 v1y1' in output[i] or '-O1 x1o1' in output[i]:
+        #             #terms_to_remove.append(i)
+        #             pass
     
     terms_to_remove = sorted(terms_to_remove,reverse=True)
 
@@ -232,8 +232,8 @@ def init_global_variables() -> None:
 
     global VIR, OCC
 
-    VIR = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
-    OCC = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p')
+    VIR = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'q', 'r')
+    OCC = ('i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 's', 'u')
 
 def main() -> None:
 

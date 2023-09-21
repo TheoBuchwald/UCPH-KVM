@@ -16,22 +16,27 @@ def g_checker(g1: list, g2: list) -> bool:
 
     p,q,r,s = g1
 
-    if [q,p,r,s] == g2:
-        return True
-    elif [p,q,s,r] == g2:
-        return True
-    elif [q,p,s,r] == g2:
-        return True
-    elif [r,s,p,q] == g2:
-        return True
-    elif [s,r,p,q] == g2:
-        return True
-    elif [r,s,q,p] == g2:
-        return True
-    elif [s,r,q,p] == g2:
+    if [r,s,p,q] == g2:
         return True
     else:
         return False
+
+    # if [q,p,r,s] == g2:
+    #     return True
+    # elif [p,q,s,r] == g2:
+    #     return True
+    # elif [q,p,s,r] == g2:
+    #     return True
+    # elif [r,s,p,q] == g2:
+    #     return True
+    # elif [s,r,p,q] == g2:
+    #     return True
+    # elif [r,s,q,p] == g2:
+    #     return True
+    # elif [s,r,q,p] == g2:
+    #     return True
+    # else:
+    #     return False
 
 def L_checker(L1: list, L2: list) -> bool:
     try:
@@ -50,7 +55,7 @@ def L_checker(L1: list, L2: list) -> bool:
 
 def t_checker(t1: list, t2: list) -> bool:
     try:
-        assert (len(t1) == 4 and len(t2) == 4) or (len(t1) == 2 and len(t2) == 2) or (len(t1) == 6 and len(t2) == 6), f"The length of t1 and t2 has to be the same and either 2 or 4 - here they were {len(t1)} and {len(t2)}"
+        assert (len(t1) == 4 and len(t2) == 4) or (len(t1) == 2 and len(t2) == 2) or (len(t1) == 6 and len(t2) == 6), f"The length of t1 and t2 has to be the same and either 2, 4 or 6 - here they were {len(t1)} and {len(t2)}"
     except AssertionError as err:
         print(err)
         exit()
@@ -576,10 +581,12 @@ def to_latex(terms: dict[str,List], comment: str) -> str:
 def print_check(bra, perms):
 
     print("All permutations")
-    for i,j in zip(perms,bra):
+    print(bra)
+    for i in perms:
+        print(i)
         bra_vir = []
         bra_occ = []
-        for idx in j:
+        for idx in bra:
             if idx in VIR:
                 bra_vir += idx
             elif idx in OCC:
@@ -600,10 +607,10 @@ def print_compared(bra, perms_compared, summation):
     else:
         print("\nUnique permutations without checking index renaming according to summation")
 
-    for i, j, k in zip(perms_compared[::2], perms_compared[1::2], bra):
+    for i, j in zip(perms_compared[::2], perms_compared[1::2]):
         bra_vir = []
         bra_occ = []
-        for idx in k:
+        for idx in bra:
             if idx in VIR:
                 bra_vir += idx
             elif idx in OCC:

@@ -1,6 +1,7 @@
 import argparse
+import numpy as np
 from typing import List, Set, Tuple, Union, Dict
-from permutation_checker import permutationChecker, print_check, print_compared,permutationComparison
+from permutation_checker import permutationChecker,permutationComparison,to_latex,check_all
 from commutator_relations import commutator_expansion
 from commutator_box import get_box_terms
 
@@ -57,10 +58,6 @@ def commutator_relations(commutator, operator, start_brackets, end_brackets):
     # Sort the terms here, mostly for debugging
     commutator_expanded_terms = sorted(commutator_expanded_terms,key=len,reverse=True)
 
-    for term in sorted(commutator_expanded_terms,key=len,reverse=True):
-        # Only prints unique terms with the associated weight
-        print(term)
-
     return commutator_expanded_terms
 
 
@@ -86,6 +83,37 @@ def commutator_box(term,bra,transform=False):
     #     print("This term does not give anything")
 
     return output
+
+
+def check_if_same_terms(term1,term2):
+    same = True
+    permutation_keys = term1.keys()
+    F = 'F' in permutation_keys
+    L = 'L' in permutation_keys
+    g = 'g' in permutation_keys
+    permutation_keys = term2.keys()
+    F2 = 'F' in permutation_keys
+    L2 = 'L' in permutation_keys
+    g2 = 'g' in permutation_keys
+    return (F==F2) and (L==L2) and (g==g2)
+
+def print_result(bra, perms_compared,prefactor):
+
+    for i, j in zip(perms_compared, prefactor):
+        bra_vir = []
+        bra_occ = []
+        for idx in bra:
+            if idx in VIR:
+                bra_vir += idx
+            elif idx in OCC:
+                bra_occ += idx
+        bra_vir = ''.join(bra_vir)
+        bra_occ = ''.join(bra_occ)
+        permutation_operator = ""
+        if len(bra_vir) > 1:
+            permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
+        perm_in_latex = permutation_operator + str(j) + " " + to_latex(i,None)
+        print(perm_in_latex)
 
 def main():
 
@@ -132,9 +160,31 @@ def main():
     else:
         summation: str = args.summation
 
+    prefactor = 1
+
+    if LV is not None:
+        if isinstance(LV,list):
+            for param in LV:
+                prefactor /= np.math.factorial(len(param) // 2)
+        else:
+            prefactor /= np.math.factorial(len(LV) // 2)
+
+    if RV is not None:
+        if isinstance(RV,list):
+            for param in RV:
+                prefactor /= np.math.factorial(len(param) // 2)
+        else:
+            prefactor /= np.math.factorial(len(RV) // 2)
+    
+    if t is not None:
+        if isinstance(t,list):
+            for param in t:
+                prefactor /= np.math.factorial(len(param) // 2)
+        else:
+            prefactor /= np.math.factorial(len(t) // 2)
+
     reserved: List[str] = [i for i in args.reserved[0]]
     reserved = set(reserved).difference(set(summation))
-    print(bra)
 
     arguments: Dict[str, Union(List[str],str)] = {
         'bra': args.bra,
@@ -152,16 +202,20 @@ def main():
 
     output_1 = commutator_relations(commutator,operator,start_brackets,end_brackets)
 
+    prefactor_list = []
+    final_term_list = []
+
     for term in output_1:
         output2 = commutator_box(term,bra)
         if output2 is not None:
+            print(output2)
             for term2 in output2:
                 # Get sign and prefactors, if any
                 total_pre = term2.split('-')[0]
-                prefactor = 1
-                if len(total_pre.split()) == 2: prefactor *= convert_to_float(total_pre.split()[1])
+                local_prefactor = np.copy(prefactor)
+                if len(total_pre.split()) == 2: local_prefactor *= convert_to_float(total_pre.split()[1])
                 if "minus" in total_pre :
-                    prefactor *= -1
+                    local_prefactor *= -1
 
                 # Get the excitation operators, if any
                 if "E" in term2:
@@ -175,7 +229,7 @@ def main():
                 if "P" in term2:
                     P: List[str] = term2.split("P")[1].split("-")[0].split()
                 else:
-                    P: List[str] = ["ai"] # PATCHWORK, PLEASE CHANGE
+                    P: List[str] = ["ai"] # PATCHWORK, ONLY WORKS IF AI IS INCLUDED
                 
                 arguments["P"] = P
 
@@ -188,14 +242,14 @@ def main():
                 arguments["F"] = F 
 
                 # Get the two-electron integrals
-                if "g" in term2:
-                    g: str = term2.split("g")[1].split("-")[0].strip()
+                if "-g" in term2:
+                    g: str = term2.split("-g")[1].split("-")[0].strip()
                 else:
                     g: str = None
                 
                 arguments["g"] = g
 
-                # Get the L terms integrals
+                # Get the L integrals
                 if "L" in term2:
                     L: str = term2.split("L")[1].split("-")[0].strip()
                 else:
@@ -203,19 +257,49 @@ def main():
                 
                 arguments["L"] = L
 
-                perms, idx_used = permutationChecker(**arguments)
+                perms, idx_used = permutationChecker(**arguments)       
 
                 res_used = idx_used & reserved
                 vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
                 occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
 
+                # Need to remove bra from perms
                 bra_out = [i.pop("bra") for i in perms]
-
-                print_check(bra_out,perms)
 
                 perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
-                print_compared(bra_out,perms_compared, summation)
+                for i, j in zip(perms_compared[::2], perms_compared[1::2]):
+                    final_term_list.append(i)
+                    prefactor_list.append(float(j.split()[-1])*local_prefactor)
+    
+    reduced_final_term_list = []
+    reduced_prefactor_list = []
+    for i,term in enumerate(final_term_list):
+        if prefactor_list[i] != 0:
+            terms_to_compare = [term]
+            for j, term2 in enumerate(final_term_list[i:]):
+                if prefactor_list[j+i] != 0 and j != 0:
+                    if check_if_same_terms(term,term2):
+                        terms_to_compare.append(term2)
+            perms_compared = permutationComparison(terms_to_compare, summation, set(i for i in summation), vir_res, occ_res)
+            perms_to_keep = perms_compared[::2]
+            perms_to_remove = [x for x in terms_to_compare if x not in perms_to_keep]
+            for elem, string in zip(perms_compared[::2],perms_compared[1::2]):
+                idx = final_term_list.index(elem)
+                reduced_prefactor_list.append(prefactor_list[idx]*float(string.split()[-1]))
+                reduced_final_term_list.append(elem)
+                prefactor_list[idx] = 0
+            for elem in perms_to_remove:
+                idx = final_term_list.index(elem)
+                prefactor_list[idx] = 0
+
+    bra_list = []
+                
+    if args.bra:
+        for entry in args.bra:
+            for character in entry:
+                bra_list.append(character)
+    print_result(bra_list,reduced_final_term_list,reduced_prefactor_list)
 
 if __name__ == '__main__':
     main()
