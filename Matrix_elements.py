@@ -208,11 +208,10 @@ def main():
     for term in output_1:
         output2 = commutator_box(term,bra)
         if output2 is not None:
-            print(output2)
             for term2 in output2:
                 # Get sign and prefactors, if any
                 total_pre = term2.split('-')[0]
-                local_prefactor = np.copy(prefactor)
+                local_prefactor = float(np.copy(prefactor))
                 if len(total_pre.split()) == 2: local_prefactor *= convert_to_float(total_pre.split()[1])
                 if "minus" in total_pre :
                     local_prefactor *= -1
@@ -256,42 +255,57 @@ def main():
                     L: str = None
                 
                 arguments["L"] = L
+                
+                if args.bra == None:
+                    perm = {}
+                    if 'L' in term2 : perm['L'] = arguments['L']
+                    if '-g' in term2: perm['g'] = arguments['g']
+                    if 'F' in term2: perm['F'] = arguments['F']
+                    if LV is not None: perm['RV'] = arguments['RV']
+                    if RV is not None: perm['LV'] = arguments['LV']
+                    if t is not None:perm['t'] = arguments['t']
+                    final_term_list.append(perm)
+                    prefactor_list.append(local_prefactor)
+                else:
+                    perms, idx_used = permutationChecker(**arguments)       
 
-                perms, idx_used = permutationChecker(**arguments)       
+                    res_used = idx_used & reserved
+                    vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
+                    occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
 
-                res_used = idx_used & reserved
-                vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
-                occ_res = ''.join(i for i in sorted(res_used) if i in OCC)
+                    # Need to remove bra from perms
+                    bra_out = [i.pop("bra") for i in perms]
 
-                # Need to remove bra from perms
-                bra_out = [i.pop("bra") for i in perms]
+                    perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
 
-                perms_compared = permutationComparison(perms, summation, idx_used, vir_res, occ_res)
-
-                for i, j in zip(perms_compared[::2], perms_compared[1::2]):
-                    final_term_list.append(i)
-                    prefactor_list.append(float(j.split()[-1])*local_prefactor)
+                    for i, j in zip(perms_compared[::2], perms_compared[1::2]):
+                        final_term_list.append(i)
+                        prefactor_list.append(float(j.split()[-1])*local_prefactor)
     
-    reduced_final_term_list = []
-    reduced_prefactor_list = []
-    for i,term in enumerate(final_term_list):
-        if prefactor_list[i] != 0:
-            terms_to_compare = [term]
-            for j, term2 in enumerate(final_term_list[i:]):
-                if prefactor_list[j+i] != 0 and j != 0:
-                    if check_if_same_terms(term,term2):
-                        terms_to_compare.append(term2)
-            perms_compared = permutationComparison(terms_to_compare, summation, set(i for i in summation), vir_res, occ_res)
-            perms_to_keep = perms_compared[::2]
-            perms_to_remove = [x for x in terms_to_compare if x not in perms_to_keep]
-            for elem, string in zip(perms_compared[::2],perms_compared[1::2]):
-                idx = final_term_list.index(elem)
-                reduced_prefactor_list.append(prefactor_list[idx]*float(string.split()[-1]))
-                reduced_final_term_list.append(elem)
-                prefactor_list[idx] = 0
-            for elem in perms_to_remove:
-                idx = final_term_list.index(elem)
-                prefactor_list[idx] = 0
+    if len(final_term_list) > 1:
+        reduced_final_term_list = []
+        reduced_prefactor_list = []
+        for i,term in enumerate(final_term_list):
+            if prefactor_list[i] != 0:
+                terms_to_compare = [term]
+                for j, term2 in enumerate(final_term_list[i:]):
+                    if prefactor_list[j+i] != 0 and j != 0:
+                        if check_if_same_terms(term,term2):
+                            terms_to_compare.append(term2)
+                perms_compared = permutationComparison(terms_to_compare, summation, set(i for i in summation), vir_res, occ_res)
+                perms_to_keep = perms_compared[::2]
+                perms_to_remove = [x for x in terms_to_compare if x not in perms_to_keep]
+                for elem, string in zip(perms_compared[::2],perms_compared[1::2]):
+                    idx = final_term_list.index(elem)
+                    reduced_prefactor_list.append(prefactor_list[idx]*float(string.split()[-1]))
+                    reduced_final_term_list.append(elem)
+                    prefactor_list[idx] = 0
+                for elem in perms_to_remove:
+                    idx = final_term_list.index(elem)
+                    prefactor_list[idx] = 0
+    else:
+        reduced_final_term_list = final_term_list
+        reduced_prefactor_list = prefactor_list
 
     bra_list = []
                 
