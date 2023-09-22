@@ -115,6 +115,9 @@ def print_result(bra, perms_compared,prefactor,X_terms):
             perm_in_latex = perm_in_latex.replace('F','X')
         print(perm_in_latex)
 
+    if perms_compared == []:
+        print("The matrix element is zero")
+
 def to_contracts(terms: dict[str,List],prefactor,reserved,first) -> str:
     
     reserved = sort_vir_and_occ(reserved)
@@ -147,7 +150,7 @@ def to_contracts(terms: dict[str,List],prefactor,reserved,first) -> str:
         else:
             output_string = "output -= "
             prefactor *= -1
-    output_string += str(prefactor) + " * mem.contract("
+    output_string += str(prefactor) + ' * mem.contract("'
     output_string += ''.join(indices_for_contract)
     #remove trailing comma
     output_string = output_string[:-1] + "->" + ''.join(reserved) + '",'
@@ -294,6 +297,7 @@ def main():
 
     for term in output_1:
         output2 = commutator_box(term,bra)
+        X_terms = False
         if output2 is not None:
             for term2 in output2:
                 # Get sign and prefactors, if any
@@ -327,7 +331,6 @@ def main():
 
                 # Get X terms as F terms, rename later
                 # If X is used as the operator, only X terms are included
-                X_terms = False
                 if "X" in term2:
                     F: str = term2.split("X")[1].split("-")[0].strip()
                     X_terms = True
