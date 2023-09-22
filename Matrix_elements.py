@@ -116,6 +116,8 @@ def print_result(bra, perms_compared,prefactor,X_terms):
         print(perm_in_latex)
 
 def to_contracts(terms: dict[str,List],prefactor,reserved,first) -> str:
+    
+    reserved = sort_vir_and_occ(reserved)
 
     indices_for_contract = []
     terms_for_contract = []
@@ -154,6 +156,25 @@ def to_contracts(terms: dict[str,List],prefactor,reserved,first) -> str:
     output_string = output_string[:-1] + ")"
 
     return output_string
+
+def sort_vir_and_occ(s):
+    term = list(s)
+    term_vir = []
+    term_occ = []
+    for idx in term:
+        if idx in VIR:
+            term_vir.append(idx)
+        elif idx in OCC:
+            term_occ.append(idx)
+    term_vir.sort()
+    term_occ.sort()
+    
+    output = []
+    for i,j in zip(term_vir,term_occ):
+        output.append(i)
+        output.append(j)
+   
+    return output
 
 
 def print_code(perms,prefactor,reserved,bra,X_terms):
