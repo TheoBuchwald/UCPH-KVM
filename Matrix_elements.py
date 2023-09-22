@@ -1,7 +1,7 @@
 import argparse
 import numpy as np
 from typing import List, Set, Tuple, Union, Dict
-from permutation_checker import permutationChecker,permutationComparison,to_latex,check_all
+from permutation_checker import permutationChecker,permutationComparison,to_latex,can_contain_multiple_terms
 from commutator_relations import commutator_expansion
 from commutator_box import get_box_terms
 
@@ -84,9 +84,7 @@ def commutator_box(term,bra,transform=False):
 
     return output
 
-
 def check_if_same_terms(term1,term2):
-    same = True
     permutation_keys = term1.keys()
     F = 'F' in permutation_keys
     L = 'L' in permutation_keys
@@ -97,7 +95,7 @@ def check_if_same_terms(term1,term2):
     g2 = 'g' in permutation_keys
     return (F==F2) and (L==L2) and (g==g2)
 
-def print_result(bra, perms_compared,prefactor):
+def print_result(bra, perms_compared,prefactor,X_terms):
 
     for i, j in zip(perms_compared, prefactor):
         bra_vir = []
@@ -113,7 +111,78 @@ def print_result(bra, perms_compared,prefactor):
         if len(bra_vir) > 1:
             permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
         perm_in_latex = permutation_operator + str(j) + " " + to_latex(i,None)
+        if X_terms:
+            perm_in_latex = perm_in_latex.replace('F','X')
         print(perm_in_latex)
+
+def to_contracts(terms: dict[str,List],prefactor,reserved,first) -> str:
+
+    indices_for_contract = []
+    terms_for_contract = []
+    counter_t = 1
+    for key, val in terms.items():
+        if can_contain_multiple_terms(key):
+            for t in val:
+                indices_for_contract.append(''.join(t)+',')
+                string = 't' + str(counter_t) + "_" + str(len(t) // 2)
+                counter_t += 1
+                terms_for_contract.append(string+',')
+        else:
+            indices_for_contract.append(''.join(val)+',')
+            if key == "RV":
+                string = 'r_' + str(len(val) // 2)
+            elif key == "LV":
+                string = 'l_' + str(len(val) // 2)
+            else:
+                string = key
+            terms_for_contract.append(string+',')
+    
+    if first:
+        output_string = "output  = "
+    else:
+        if prefactor > 0:
+            output_string = "output += "
+        else:
+            output_string = "output -= "
+            prefactor *= -1
+    output_string += str(prefactor) + " * mem.contract("
+    output_string += ''.join(indices_for_contract)
+    #remove trailing comma
+    output_string = output_string[:-1] + "->" + ''.join(reserved) + '",'
+    output_string += ''.join(terms_for_contract)
+    #remove trailing comma
+    output_string = output_string[:-1] + ")"
+
+    return output_string
+
+
+def print_code(perms,prefactor,reserved,bra,X_terms):
+
+    first = True
+
+    for i, j in zip(perms, prefactor):
+        bra_vir = []
+        bra_occ = []
+        for idx in bra:
+            if idx in VIR:
+                bra_vir += idx
+            elif idx in OCC:
+                bra_occ += idx
+        bra_vir = ''.join(bra_vir)
+        bra_occ = ''.join(bra_occ)
+        contract_output = to_contracts(i,j,reserved,first)
+
+        if first:
+            print("")
+            print("THE FOLLOWING CODE IS ONLY A TEMPLATE! PLEASE CHECK THAT THE OUTPUT MAKES SENSE!")
+            print("REMEMBER TO ADD EXPLICIT PERMUTATIONS, IF NECESSARY!")
+            print("")
+            first = False
+
+        if X_terms:
+            contract_output = contract_output.replace('F','X')
+
+        print(contract_output)
 
 def main():
 
@@ -126,9 +195,6 @@ def main():
 
     parser.add_argument('commutator', type=str, nargs=1, help='The commutator to expand...Ex. [[X,ai,bj,ck],dl,em] - Accepted operators are H and P for two-electron operators and F and X for one-electron operators')
     parser.add_argument('-bra', type=str, nargs='+',                                help='Excitations in the bra........................Ex. -bra ai bj. If not included the HF state is assumed.')
-    parser.add_argument('-F', default=None, nargs=1, type=str,                      help='The indicies of the F component...............Ex. -F ci')
-    parser.add_argument('-L', default=None, nargs=1, type=str,                      help='The indicies of the L component...............Ex. -L cile')
-    parser.add_argument('-g', default=None, nargs=1, type=str,                      help='The indicies of the g component...............Ex. -g cile')
     parser.add_argument('-t', default=None, nargs='+', type=str,                    help='The indicies of each individual t component...Ex. -t cile dlem')
     parser.add_argument('-LV', default=None, nargs=1, type=str,                     help='The indicies of the left excitaiton vector....Ex. -LV ci')
     parser.add_argument('-RV', default=None, nargs=1, type=str,                     help='The indicies of the right excitaiton vector...Ex. -RV ck')
@@ -237,7 +303,14 @@ def main():
                     F: str = term2.split("F")[1].split("-")[0].strip()
                 else:
                     F: str = None
-                
+
+                # Get X terms as F terms, rename later
+                # If X is used as the operator, only X terms are included
+                X_terms = False
+                if "X" in term2:
+                    F: str = term2.split("X")[1].split("-")[0].strip()
+                    X_terms = True
+
                 arguments["F"] = F 
 
                 # Get the two-electron integrals
@@ -292,6 +365,9 @@ def main():
                     if prefactor_list[j+i] != 0 and j != 0:
                         if check_if_same_terms(term,term2):
                             terms_to_compare.append(term2)
+                # WARNING! This generates permutations of all the indices in the summation, potentially leading to massive slowdown!
+                # Could be mitigated by only considering those that are left after eliminating indices, but still causes problems for
+                # larger orbital spaces
                 perms_compared = permutationComparison(terms_to_compare, summation, set(i for i in summation), vir_res, occ_res)
                 perms_to_keep = perms_compared[::2]
                 perms_to_remove = [x for x in terms_to_compare if x not in perms_to_keep]
@@ -313,7 +389,8 @@ def main():
         for entry in args.bra:
             for character in entry:
                 bra_list.append(character)
-    print_result(bra_list,reduced_final_term_list,reduced_prefactor_list)
+    print_result(bra_list,reduced_final_term_list,reduced_prefactor_list,X_terms)
+    print_code(reduced_final_term_list,reduced_prefactor_list,reserved,bra_list,X_terms)
 
 if __name__ == '__main__':
     main()
