@@ -139,7 +139,13 @@ def to_contracts(terms: dict[str,List],prefactor,reserved,first) -> str:
             elif key == "LV":
                 string = 'l_' + str(len(val) // 2)
             else:
-                string = key
+                string = key + "_"
+                for char in val:
+                    if char in OCC:
+                        string += 'o'
+                    elif char in VIR:
+                        string += 'v'
+
             terms_for_contract.append(string+',')
     
     if first:
