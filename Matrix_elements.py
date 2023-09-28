@@ -414,6 +414,17 @@ def main():
             for character in entry:
                 bra_list.append(character)
     print_result(bra_list,reduced_final_term_list,reduced_prefactor_list,X_terms)
+
+    # Check if we are summing over the bra
+    # If so, compensate with an extra factor of n! where n is
+    # the size of the excitation space of the bra
+    if set(bra_list).issubset(set(summation)) and len(bra_list) > 2:
+        reduced_prefactor_list = [np.math.factorial(len(bra_list) // 2) * i for i in reduced_prefactor_list]
+        print("")
+        print("ALL INDICES OF THE BRA ARE SUMMED OVER!")
+        print("THUS THE PERMUTATION OPERATOR FROM IT IS REDUNDANT!")
+        print(f"IN THE CODE, WE INCLUDE A FACTOR OF {np.math.factorial(len(bra_list) // 2):d} TO ACCOUNT FOR THIS!")
+
     print_code(reduced_final_term_list,reduced_prefactor_list,reserved,bra_list,X_terms)
 
 if __name__ == '__main__':
