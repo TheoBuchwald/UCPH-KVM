@@ -274,7 +274,7 @@ def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
         lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
     return lambda_tot
 
-def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True) -> None:
+def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True, unit: str = None) -> None:
     # A LOT OF PLOT SETUP
     rc('text', usetex=True)
     xlabel_font = ylabel_font = title_font = 16
@@ -288,7 +288,8 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
     epsvac=8.8541878176*10**(-12)
     sigmacm=0.4*8065.544
     k=(NA*e**2)/(np.log(10)*2*me*c**2*epsvac)*np.sqrt(np.log(2)/pi)*10**(-1)
-    inv_cm_to_au = 1/219474.63068
+    au_to_inv_cm = 219474.63068
+    au_to_eV = 27.2107
     Save_Dict = dict()
         # PLOT SETUP DONE
     for file in input_file:
@@ -316,15 +317,34 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
         elif len(oscillations) > len(excitations):
             oscillations = oscillations[0:len(excitations)]
 
-        excitations = 1E7/(excitations/ inv_cm_to_au)   # From a.u. to cm^-1 to nm
-        span = np.linspace(min(excitations)-20, max(excitations)+20, N, endpoint=True) # exctinction coefficient (wavelength range)
+        if unit == 'nm' or unit == None:
+            excitations = 1E7 / (excitations * au_to_inv_cm)   # From a.u. to cm^-1 to nm
+        elif unit == 'eV':
+            excitations *= au_to_eV             # From a.u. to eV
+        if unit == 'cm-1':
+            excitations = (excitations * au_to_inv_cm)   # From a.u. to cm^-1
 
-        graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
+        span = np.linspace(min(excitations)*0.99, max(excitations)*1.01, N, endpoint=True) # exctinction coefficient (wavelength range)
+
+        if unit == 'nm' or unit == None:
+            graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
+        elif unit == 'eV':
+            graph = UVVIS_Spectrum(span / au_to_eV / 1E7 * au_to_inv_cm, excitations / au_to_eV / 1E7 * au_to_inv_cm, oscillations, k, sigmacm)
+        if unit == 'cm-1':
+            graph = UVVIS_Spectrum(1E7 / span, 1E7 / excitations, oscillations, k, sigmacm)
+
         plt.title(title)
         plt.plot(span, graph)
         plt.ylim((0,max(graph)*1.2))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-        plt.xlabel('Wavelength $(nm)$', fontsize=xlabel_font)
+
+        if unit == 'nm' or unit == None:
+            plt.xlabel('Wavelength (nm)', fontsize=xlabel_font)
+        elif unit == 'eV':
+            plt.xlabel('Wavelength (eV)', fontsize=xlabel_font)
+        if unit == 'cm-1':
+            plt.xlabel('Wavelength (cm$^{-1}$)', fontsize=xlabel_font)
+
         plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
@@ -346,6 +366,7 @@ def Spectra(args):
     ComplexPropagator = args.complex_propagator
     Format = args.format
     Save = args.save
+    Unit = args.unit
     Quiet = args.quiet
     Multiprocessing = args.multiprocessing
 
@@ -369,7 +390,7 @@ def Spectra(args):
                 if not isinstance(Value, list):
                     ExtractedValues[OuterKey][InnerKey] = [Value]
 
-        Make_uvvis_spectrum(InputFiles, Quiet, UVVIS_Spectrum, Format, ExtractedValues, Save)
+        Make_uvvis_spectrum(InputFiles, Quiet, UVVIS_Spectrum, Format, ExtractedValues, Save, Unit)
         return
 
     elif ComplexPropagator:
@@ -671,6 +692,7 @@ def main():
                 -  LSDALTON
                 -  VELOXCHEM
                 -  AMSTERDAM MODELING SUITE
+                -  Q-Chem
 ''', epilog=f'''
 For help contact
     Theo Juncker von Buchwald
@@ -697,6 +719,7 @@ For help contact
                 -  LSDALTON
                 -  VELOXCHEM
                 -  AMSTERDAM MODELING SUITE
+                -  Q-Chem
 
     It is currently possible to make UVVIS spectra using excitation energies and complex propagator theory
 
@@ -716,6 +739,9 @@ For help contact
     The following is not implemented for AMSTERDAM MODELING SUITE
     -  UVVIS based on excitation energies
     -  UVVIS based on complex propagator theory
+
+    The following is not implemented for Q-Chem
+    -  UVVIS based on complex propagator theory
 ''', help='Use to make spectra such as UVVIS from excitation energies or complex propagator theory')
 
     # Setting the Spectra function to be run if spectra is used
@@ -731,6 +757,7 @@ For help contact
     SpectraDataProcessingGroup = SpectraSubparser.add_argument_group('Data processing commands')
     SpectraDataProcessingGroup.add_argument('--format', default='png', const='png', type=str, help='Include this to change the picture format. Will use png as default. If \'--save\' is used together with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
     SpectraDataProcessingGroup.add_argument('-s', '--save', action='store_true', help='Saves extracted and processed data in a npz file')
+    SpectraDataProcessingGroup.add_argument('-u', '--unit', default='nm', const='nm', type=str, help='Include the to change the unit of the x-axis when plotting (not implemented for complex propagator theory)', nargs='?', choices=['nm', 'eV', 'cm-1'])
 
     SpectraAdditionalCommandsGroup = SpectraSubparser.add_argument_group('Additional commands')
     SpectraAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
@@ -795,6 +822,16 @@ For help contact
     -  Frequencies
     -  Partition functions at a given temperature
     -  CPU time used
+
+    The following is not implemented for Q-Chem
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Dipole moments
+    -  Polarizability
+    -  Frequencies
+    -  Partition functions at a given temperature
 '''
     , help='Use to extract data from output files')
 

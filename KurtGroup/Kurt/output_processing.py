@@ -211,13 +211,15 @@ class OutputType:
             self.extract = VeloxExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'VELOXCHEM'
 
-
-
         # File type = AMS
         elif AMS:
             self.extract = AMSExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'Amsterdam Modeling Suite'
 
+        # File type = Q-Chem
+        elif 'Welcome to Q-Chem' in lines[0]:
+            self.extract = QChemExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
+            self.input = 'Q-Chem'
 
         # File type not implemented
         else:
@@ -1394,3 +1396,64 @@ Please contact a maintainer of the script ot have this updated\n''')
             if not(self.quiet):
                 with open("collect_data.log", "a") as logfile:
                     logfile.write("Final geometry has been saved to " + OptGeomFilename + "\n")
+
+
+class QChemExtract:
+    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
+        self.filename = filename
+        self.NeededArguments = NeededArguments
+        self.quiet = Quiet
+        self.T = Temperature
+        self.constants = Constants()
+
+        self.ReadFile()
+
+        self.end = len(self.lines)
+
+    def ReadFile(self) -> None:
+        with open(self.filename, "r") as file:
+            self.lines = file.readlines()
+
+    def _CPUS(self) -> None:
+        linenumber = Backward_search_last(self.filename, 'Total job time:', self.end, 'CPU time', quiet=self.quiet)
+        if isinstance(linenumber, int):
+            self.total_cpu_time = float(self.lines[linenumber].split()[4].split('s')[0])/60
+            self.wall_cpu_time = float(self.lines[linenumber].split()[3].split('s')[0])/60
+            return
+        self.total_cpu_time = 'NaN'
+        self.wall_cpu_time = 'NaN'
+
+    def _Energy(self) -> None:
+        linenumber = Forward_search_last(self.filename, 'total energy:', 'final energy', quiet=True)
+        if isinstance(linenumber, int):
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
+        linenumber = Forward_search_last(self.filename, 'MP2 energy:', 'final energy', quiet=True)
+        if isinstance(linenumber, int):
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
+        linenumber = Forward_search_last(self.filename, 'SCF energy:', 'final energy', quiet=True)
+        if isinstance(linenumber, int):
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
+        self.tot_energy = 'NaN'
+
+    def _Excitation_energies(self) -> None:
+        self.exc_energies = []
+        linenumbers = Forward_search_all(self.filename, 'Energy GAP', 'excitation energies', quiet=self.quiet)
+        if isinstance(linenumbers, list):
+            for i in linenumbers:
+                self.exc_energies.append(float(self.lines[i].split()[3]))
+        if len(self.exc_energies) == 0:
+            self.exc_energies = ['NaN']
+
+    def _Oscillator_strengths(self) -> None:
+        self.osc_strengths = []
+        linenumbers = Forward_search_all(self.filename, 'Oscillator strength', 'oscillator strengths', quiet=self.quiet)
+        if isinstance(linenumbers, list):
+            for i in linenumbers:
+                self.osc_strengths.append(float(self.lines[i].split()[-1]))
+        if len(self.osc_strengths) == 0:
+            self.osc_strengths = ['NaN']
+
+
