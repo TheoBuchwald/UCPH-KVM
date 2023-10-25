@@ -274,6 +274,16 @@ def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
         lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
     return lambda_tot
 
+def UVVIS_Spectrum_eV(x: np.ndarray, exc: np.ndarray, osc: np.ndarray, broadening_factor: float) -> np.ndarray:
+    lambda_tot = np.zeros(len(x))
+    prefactor = 6628.460563431657 / (2 * np.pi)
+
+    for x0, o0 in zip(exc, osc):
+        normalize_factor = np.sqrt((np.log(2) / broadening_factor**2) / np.pi)
+        _lambda = normalize_factor * np.exp(-np.log(2) * ((x-x0) / broadening_factor)**2)
+        lambda_tot += prefactor * o0 * x / x0 * _lambda
+    return lambda_tot
+
 def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True, unit: str = None) -> None:
     # A LOT OF PLOT SETUP
     rc('text', usetex=True)
@@ -329,7 +339,7 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
         if unit == 'nm' or unit == None:
             graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
         elif unit == 'eV':
-            graph = UVVIS_Spectrum(span / au_to_eV / 1E7 * au_to_inv_cm, excitations / au_to_eV / 1E7 * au_to_inv_cm, oscillations, k, sigmacm)
+            graph = UVVIS_Spectrum(span, excitations, oscillations, 0.4)
         if unit == 'cm-1':
             graph = UVVIS_Spectrum(1E7 / span, 1E7 / excitations, oscillations, k, sigmacm)
 
@@ -390,7 +400,12 @@ def Spectra(args):
                 if not isinstance(Value, list):
                     ExtractedValues[OuterKey][InnerKey] = [Value]
 
-        Make_uvvis_spectrum(InputFiles, Quiet, UVVIS_Spectrum, Format, ExtractedValues, Save, Unit)
+        if Unit == "eV":
+            spectrumFunction = UVVIS_Spectrum_eV
+        else:
+            spectrumFunction = UVVIS_Spectrum
+
+        Make_uvvis_spectrum(InputFiles, Quiet, spectrumFunction, Format, ExtractedValues, Save, Unit)
         return
 
     elif ComplexPropagator:
