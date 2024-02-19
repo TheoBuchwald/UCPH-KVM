@@ -22,7 +22,7 @@ def convert_to_float(frac_str):
         try:
             leading, num = num.split(' ')
         except ValueError:
-            return float(num) / float(denom)        
+            return float(num) / float(denom)
         if float(leading) < 0:
             sign_mult = -1
         else:
@@ -41,7 +41,7 @@ def commutator_relations(commutator, operator, start_brackets, end_brackets):
     if operator == 'H' or operator == 'P':
         max_com = 4
     elif operator == 'F' or operator == 'X':
-        max_com = 2 
+        max_com = 2
     else:
         print(f"ERROR! Operator {operator} not recognized! Please put either H, P, F, X")
         quit()
@@ -75,7 +75,7 @@ def commutator_box(term,bra,transform=False):
 
     output = get_box_terms(term,bra,transform)
 
-    # if output is not None:   
+    # if output is not None:
     #     # Print final result
     #     for line in output:
     #         print(line)
@@ -110,7 +110,12 @@ def print_result(bra, perms_compared,prefactor,X_terms):
         permutation_operator = ""
         if len(bra_vir) > 1:
             permutation_operator = f"P^{{{bra_vir}}}_{{{bra_occ}}} "
-        perm_in_latex = permutation_operator + str(j) + " " + to_latex(i,None)
+        if j == 1:
+            perm_in_latex = permutation_operator + to_latex(i,None)
+        elif j == -1:
+            perm_in_latex = permutation_operator + "- " + to_latex(i,None)
+        else:
+            perm_in_latex = permutation_operator + str(j) + " " + to_latex(i,None)
         if X_terms:
             perm_in_latex = perm_in_latex.replace('F','X')
         print(perm_in_latex)
@@ -119,7 +124,7 @@ def print_result(bra, perms_compared,prefactor,X_terms):
         print("The matrix element is zero")
 
 def to_contracts(terms: dict[str,List],prefactor,reserved,first) -> str:
-    
+
     reserved = sort_vir_and_occ(reserved)
 
     indices_for_contract = []
@@ -147,16 +152,21 @@ def to_contracts(terms: dict[str,List],prefactor,reserved,first) -> str:
                         string += 'v'
 
             terms_for_contract.append(string+',')
-    
+
     if first:
         output_string = "output  = "
+        if prefactor == -1:
+            output_string += "- "
     else:
         if prefactor > 0:
             output_string = "output += "
         else:
             output_string = "output -= "
             prefactor *= -1
-    output_string += str(prefactor) + ' * mem.contract("'
+    if abs(prefactor) == 1:
+        output_string += 'mem.contract("'
+    else:
+        output_string += str(prefactor) + ' * mem.contract("'
     output_string += ''.join(indices_for_contract)
     #remove trailing comma
     output_string = output_string[:-1] + "->" + ''.join(reserved) + '",'
@@ -177,12 +187,12 @@ def sort_vir_and_occ(s):
             term_occ.append(idx)
     term_vir.sort()
     term_occ.sort()
-    
+
     output = []
     for i,j in zip(term_vir,term_occ):
         output.append(i)
         output.append(j)
-   
+
     return output
 
 
@@ -271,7 +281,7 @@ def main():
                 prefactor /= np.math.factorial(len(param) // 2)
         else:
             prefactor /= np.math.factorial(len(RV) // 2)
-    
+
     if t is not None:
         if isinstance(t,list):
             for param in t:
@@ -318,15 +328,15 @@ def main():
                     E: List[str] = term2.split("E")[1].split("-")[0].split()
                 else:
                     E: List[str] = []
-                
-                arguments["E"] = E 
+
+                arguments["E"] = E
 
                 # Get the permutation operator, if any
                 if "P" in term2:
                     P: List[str] = term2.split("P")[1].split("-")[0].split()
                 else:
                     P: List[str] = ["ai"] # PATCHWORK, ONLY WORKS IF AI IS INCLUDED
-                
+
                 arguments["P"] = P
 
                 # Get the Fock matrix terms
@@ -341,14 +351,14 @@ def main():
                     F: str = term2.split("X")[1].split("-")[0].strip()
                     X_terms = True
 
-                arguments["F"] = F 
+                arguments["F"] = F
 
                 # Get the two-electron integrals
                 if "-g" in term2:
                     g: str = term2.split("-g")[1].split("-")[0].strip()
                 else:
                     g: str = None
-                
+
                 arguments["g"] = g
 
                 # Get the L integrals
@@ -356,9 +366,9 @@ def main():
                     L: str = term2.split("L")[1].split("-")[0].strip()
                 else:
                     L: str = None
-                
+
                 arguments["L"] = L
-                
+
                 if args.bra == None:
                     perm = {}
                     if 'L' in term2 : perm['L'] = arguments['L']
@@ -370,7 +380,7 @@ def main():
                     final_term_list.append(perm)
                     prefactor_list.append(local_prefactor)
                 else:
-                    perms, idx_used = permutationChecker(**arguments)       
+                    perms, idx_used = permutationChecker(**arguments)
 
                     res_used = idx_used & reserved
                     vir_res = ''.join(i for i in sorted(res_used) if i in VIR)
@@ -384,7 +394,7 @@ def main():
                     for i, j in zip(perms_compared[::2], perms_compared[1::2]):
                         final_term_list.append(i)
                         prefactor_list.append(float(j.split()[-1])*local_prefactor)
-    
+
     if len(final_term_list) > 1:
         reduced_final_term_list = []
         reduced_prefactor_list = []
@@ -398,7 +408,14 @@ def main():
                 # WARNING! This generates permutations of all the indices in the summation, potentially leading to massive slowdown!
                 # Could be mitigated by only considering those that are left after eliminating indices, but still causes problems for
                 # larger orbital spaces
-                perms_compared = permutationComparison(terms_to_compare, summation, set(i for i in summation), vir_res, occ_res)
+                indices_to_permute = set()
+                for term_to_compare in terms_to_compare:
+                    for key, indices in term_to_compare.items():
+                        if can_contain_multiple_terms(key):
+                            indices_to_permute |= set(np.array(indices).flatten())
+                        else:
+                            indices_to_permute |= set(indices)
+                perms_compared = permutationComparison(terms_to_compare, summation, indices_to_permute, vir_res, occ_res)
                 perms_to_keep = perms_compared[::2]
                 perms_to_remove = [x for x in terms_to_compare if x not in perms_to_keep]
                 for elem, string in zip(perms_compared[::2],perms_compared[1::2]):
@@ -414,7 +431,7 @@ def main():
         reduced_prefactor_list = prefactor_list
 
     bra_list = []
-                
+
     if args.bra:
         for entry in args.bra:
             for character in entry:
