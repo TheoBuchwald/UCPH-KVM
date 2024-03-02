@@ -686,7 +686,7 @@ def Extract(args):
 
         return
 
-    print(OutputArray)
+    print(repr(OutputArray))
 
 
 def main():
