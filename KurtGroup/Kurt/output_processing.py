@@ -180,9 +180,12 @@ class OutputType:
             lines = read.readlines()[:100]
 
         AMS = False
+        GAUSS = False
         for line in lines:
             if "Amsterdam Modeling Suite (AMS)" in line:
                 AMS = True
+            if "Gaussian, Inc.  All Rights Reserved." in line:
+                GAUSS = True
 
         # The output file is determined to be of one of the following types
 
@@ -196,8 +199,13 @@ class OutputType:
             self.extract = DaltonExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'DALTON'
 
+        # File type = DIRAC
+        elif 'DIRAC' in lines[0]:
+            self.extract = DiracExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
+            self.input = 'DIRAC'
+
         # File type = GAUSSIAN
-        elif 'Gaussian, Inc.  All Rights Reserved.' in lines[6]:
+        elif GAUSS:
             self.extract = GaussianExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'GAUSSIAN'
 
@@ -1048,12 +1056,22 @@ Please contact a maintainer of the script ot have this updated\n''')
     def _Excitation_energies(self) -> None:
         self.exc_energies = []
         self.exc_type = None
-        linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'excitation energies', quiet=True)
+        linenumber = Forward_search_last(self.filename, '@  Oscillator strengths are dimensionless.', 'excitation energies', quiet=self.quiet)
         if isinstance(linenumber, int):
             self.exc_type = '.EXCITA'
             for i in self.lines[linenumber+5: self.end]:
                 if "@ "in i:
                     self.exc_energies.append(float(i.split()[3])* self.constants.ev_to_au)
+                else:
+                    break
+        linenumber = Forward_search_last(self.filename, '|  sym. | Exci.  |        CCSD       Excitation energies            | ||T1||  |', 'excitation energies', quiet=self.quiet)
+        if isinstance(linenumber, int):
+            self.exc_type = '.EXCITA_sym'
+            for i in self.lines[linenumber+4: self.end]:
+                if '------' in i:
+                    continue
+                elif len(i.split()) > 1:
+                    self.exc_energies.append(float(i.split()[5]))
                 else:
                     break
         linenumbers = Forward_search_all(self.filename, '@ Excitation energy', 'excitation energies', quiet=self.quiet)
@@ -1072,6 +1090,16 @@ Please contact a maintainer of the script ot have this updated\n''')
                 for i in self.lines[linenumber+5: self.end]:
                     if "@ " in i:
                         self.osc_strengths.append(float(i.split()[-1]))
+                    else:
+                        break
+        elif self.exc_type == ".EXCITA_sym":
+            linenumber = Forward_search_last(self.filename, '|  sym. | Exci.  |        CCSD       Length   Gauge Oscillator Strength       |', 'excitation energies', quiet=self.quiet)
+            if isinstance(linenumber, int):
+                for i in self.lines[linenumber+4: self.end]:
+                    if '------' in i:
+                        continue
+                    elif len(i.split()) > 1:
+                        self.osc_strengths.append(float(i.split()[-4]))
                     else:
                         break
         elif self.exc_type == 'MCTDHF':
@@ -1225,6 +1253,63 @@ Please contact a maintainer of the script ot have this updated\n''')
                 if not(self.quiet):
                     with open("collect_data.log", "a") as logfile:
                         logfile.write("Initial geometry has been saved to " + OptGeomFilename + "\n")
+
+
+class DiracExtract:
+    def __init__(self, filename: str, NeededArguments: dict = None, Quiet: bool = False, Temperature: float = 298.15) -> None:
+        self.filename = filename
+        self.NeededArguments = NeededArguments
+        self.quiet = Quiet
+        self.T = Temperature
+        self.constants = Constants()
+
+        self.ReadFile()
+
+        self.end = len(self.lines)
+
+    def ReadFile(self) -> None:
+        with open(self.filename, "r") as file:
+            self.lines = file.readlines()
+
+    def _Energy(self) -> None:
+        linenumber = Forward_search_last(self.filename, '@ Total .*  energy:', 'final energy', quiet=True)
+        if isinstance(linenumber, int):
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
+        linenumber = Forward_search_last(self.filename, 'SCF energy:', 'final energy', quiet=True)
+        if isinstance(linenumber, int):
+            self.tot_energy = float(self.lines[linenumber].split()[-1])
+            return
+        self.tot_energy = 'NaN'
+
+    def _Excitation_energies(self) -> None:
+        self.exc_energies = []
+        self.exc_type = None
+        linenumbers = Forward_search_all(self.filename, 'Full light-matter interaction: Isotropic case', 'excitation energies', quiet=True)
+        if isinstance(linenumbers, list):
+            self.exc_type = '.EXCITA'
+            for linenumber in linenumbers:
+                for i in self.lines[linenumber+13: self.end]:
+                    if len(i.split()) > 0:
+                        self.exc_energies.append(float(i.split()[1]))
+                    else:
+                        break
+        if len(self.exc_energies) == 0:
+            self.exc_energies = ['NaN']
+
+    def _Oscillator_strengths(self) -> None:
+        self.osc_strengths = []
+        if self.exc_type == '.EXCITA':
+            linenumbers = Forward_search_all(self.filename, 'Full light-matter interaction: Isotropic case', 'excitation energies', quiet=True)
+            if isinstance(linenumbers, list):
+                for linenumber in linenumbers:
+                    for i in self.lines[linenumber+13: self.end]:
+                        if len(i.split()) > 0:
+                            self.osc_strengths.append(float(i.split()[-1]))
+                        else:
+                            break
+        if len(self.osc_strengths) == 0:
+            self.osc_strengths = ['NaN']
 
 
 class LSDaltonExtract:

@@ -33,21 +33,21 @@ When you wish to push an update, to ensure that it works, you may want to use ./
   A script designed to make it easier to extract data from output files
 
   Currently the following has been implemented:<br/>
-  | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |        AMS       |      Q-Chem      |
-  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
-  | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |
-  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |
-  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |
-  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |
-  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
-  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
-  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |:heavy_check_mark:|
-  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |:heavy_check_mark:|
-  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |
-  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |
-  | CPU time used                   |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |:heavy_check_mark:|
-  | Optimized geometries            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |
+  | Data types                      |       ORCA       |     GAUSSIAN     |      DALTON      |     LSDALTON     |     VeloxChem    |        AMS       |      Q-Chem      |      DIRAC       |
+  |:--------------------------------|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|:----------------:|
+  | Total energies                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+  | Zero-Point Vibrational energies |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |        :x:       |
+  | Enthalpies                      |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |        :x:       |
+  | Entropies                       |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |        :x:       |
+  | Gibbs Free energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |        :x:       |
+  | Dipole moments                  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
+  | Polarizabilities                |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |        :x:       |
+  | Excitation energies             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |:heavy_check_mark:|:heavy_check_mark:|
+  | Oscillator strengths            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |:heavy_check_mark:|:heavy_check_mark:|
+  | Frequencies                     |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |        :x:       |
+  | Partition functions             |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        N/A       |        :x:       |        :x:       |        :x:       |        :x:       |
+  | CPU time used                   |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |:heavy_check_mark:|        :x:       |
+  | Optimized geometries            |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|        :x:       |        :x:       |
 
   **N/A means not applicable*
 
