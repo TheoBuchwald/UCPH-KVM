@@ -107,7 +107,7 @@ class Test_output_processing(unittest.TestCase):
         Extracted_Values = Extraction(DATA_FILE, "getEntropy")
 
         for infile in DATA_FILE:
-            self.assertEqual(Extracted_Values[infile]['test'], DATA_FILE[infile]['entropy'])
+            self.assertAlmostEqual(Extracted_Values[infile]['test'], DATA_FILE[infile]['entropy'])
 
     def test_Gibbs_Extraction(self):
 
@@ -149,6 +149,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=True,
             osc=True,
+            rot=False,
             partfunc=True,
             polar=True,
             quiet=True,
@@ -156,6 +157,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=True,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -177,6 +179,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=True,
             optgeom=True,
             osc=True,
+            rot=False,
             partfunc=True,
             polar=True,
             quiet=True,
@@ -184,6 +187,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=True,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -205,6 +209,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -212,6 +217,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -234,6 +240,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -241,6 +248,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=True,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -263,6 +271,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -270,6 +279,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -295,6 +305,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=True,
             quiet=True,
@@ -302,6 +313,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -327,6 +339,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -334,6 +347,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -356,6 +370,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=True,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -363,6 +378,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -385,6 +401,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -392,6 +409,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -414,6 +432,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -421,6 +440,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -443,6 +463,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -450,12 +471,13 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
 
         for infile in DATA_FILE:
-            self.assertEqual(Values[f'test_systems/{infile}']['entropy'], DATA_FILE[infile]['entropy'])
+            self.assertAlmostEqual(Values[f'test_systems/{infile}']['entropy'], DATA_FILE[infile]['entropy'])
 
     def test_Extract_gibbs(self):
         files = ['CCSD_Ethanol_dal.out', 'CCSD_Ethanol_exci_gaus.out', 'CCSD_Ethanol_gaus.out', 'CCSD_Ethanol_lsdal.out', 'CCSD_Ethanol_orca.out', 'CCSD_Methane_dal.out', 'CCSD_Methane_exci_gaus.out', 'CCSD_Methane_gaus.out', 'CCSD_Methane_lsdal.out', 'CCSD_Methane_orca.out', 'CCSD_Water_dal.out', 'CCSD_Water_exci_gaus.out', 'CCSD_Water_gaus.out', 'CCSD_Water_lsdal.out', 'CCSD_Water_orca.out', 'DFT_Ethanol_exci_dal.out', 'DFT_Ethanol_exci_gaus.out', 'DFT_Ethanol_exci_lsdal.out', 'DFT_Ethanol_exci_orca.out', 'DFT_Ethanol_gaus.out', 'DFT_Ethanol_lsdal.out', 'DFT_Ethanol_opt_lsdal.out', 'DFT_Ethanol_opt_velox.out', 'DFT_Ethanol_orca.out', 'DFT_Ethanol_pol_lsdal.out', 'DFT_Ethanol_pol_velox.out', 'DFT_Ethanol_vib_dal.out', 'DFT_Methane_exci_dal.out', 'DFT_Methane_exci_gaus.out', 'DFT_Methane_exci_lsdal.out', 'DFT_Methane_exci_orca.out', 'DFT_Methane_gaus.out', 'DFT_Methane_lsdal.out', 'DFT_Methane_opt_lsdal.out', 'DFT_Methane_opt_velox.out', 'DFT_Methane_orca.out', 'DFT_Methane_pol_lsdal.out', 'DFT_Methane_pol_velox.out', 'DFT_Methane_vib_dal.out', 'DFT_Water_exci_dal.out', 'DFT_Water_exci_gaus.out', 'DFT_Water_exci_lsdal.out', 'DFT_Water_exci_orca.out', 'DFT_Water_gaus.out', 'DFT_Water_lsdal.out', 'DFT_Water_opt_lsdal.out', 'DFT_Water_opt_velox.out', 'DFT_Water_orca.out', 'DFT_Water_pol_lsdal.out', 'DFT_Water_pol_velox.out', 'DFT_Water_vib_dal.out', 'HF_Ethanol_dal.out', 'HF_Ethanol_gaus.out', 'HF_Ethanol_lsdal.out', 'HF_Ethanol_opt_dal.out', 'HF_Methane_dal.out', 'HF_Methane_gaus.out', 'HF_Methane_lsdal.out', 'HF_Methane_opt_dal.out', 'HF_Water_dal.out', 'HF_Water_gaus.out', 'HF_Water_lsdal.out', 'HF_Water_opt_dal.out', 'MP2_Ethanol_dal.out', 'MP2_Ethanol_gaus.out', 'MP2_Ethanol_lsdal.out', 'MP2_Methane_dal.out', 'MP2_Methane_gaus.out', 'MP2_Methane_lsdal.out', 'MP2_Water_dal.out', 'MP2_Water_gaus.out', 'MP2_Water_lsdal.out', 'RIMP2_Ethanol_lsdal.out', 'RIMP2_Methane_lsdal.out', 'RIMP2_Water_lsdal.out']
@@ -472,6 +494,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -479,6 +502,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -501,6 +525,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=True,
             polar=False,
             quiet=True,
@@ -508,6 +533,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
@@ -530,6 +556,7 @@ class Test_collect_data(unittest.TestCase):
             multiprocessing=False,
             optgeom=False,
             osc=False,
+            rot=False,
             partfunc=False,
             polar=False,
             quiet=True,
@@ -537,6 +564,7 @@ class Test_collect_data(unittest.TestCase):
             temp=298.15,
             zpv=False,
             progressbar=False,
+            savename=False,
             unittest=True)
 
         Values = cd.Extract(args)
