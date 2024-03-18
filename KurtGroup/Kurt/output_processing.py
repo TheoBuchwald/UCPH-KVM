@@ -366,6 +366,21 @@ class OutputType:
                 return self.extract.osc_strengths
             except AttributeError: ...
 
+    def getRotationalStrengths(self) -> List[float]:
+        try:
+            return self.extract.rot_strengths
+        except AttributeError:
+            try:
+                self.extract.exc_energies
+            except AttributeError:
+                try:
+                    self.extract._Excitation_energies()
+                except AttributeError: return
+            try:
+                self.extract._Rotational_strengths()
+                return self.extract.rot_strengths
+            except AttributeError: ...
+
     def getFrequencies(self) -> List[float]:
         try:
             return self.extract.freq
@@ -1074,6 +1089,14 @@ Please contact a maintainer of the script ot have this updated\n''')
                     self.exc_energies.append(float(i.split()[5]))
                 else:
                     break
+        linenumber = Forward_search_last(self.filename, '@                  Oscillator and Scalar Rotational Strengths', 'excitation energies', quiet=self.quiet)
+        if isinstance(linenumber, int) and self.exc_type != '.EXCITA':
+            self.exc_type = '.ECD'
+            for i in self.lines[linenumber+9: self.end]:
+                if "@  " in i:
+                    self.exc_energies.append(float(i.split()[3])* self.constants.ev_to_au)
+                else:
+                    break
         linenumbers = Forward_search_all(self.filename, '@ Excitation energy', 'excitation energies', quiet=self.quiet)
         if isinstance(linenumbers, list):
             self.exc_type = 'MCTDHF'
@@ -1113,6 +1136,19 @@ Please contact a maintainer of the script ot have this updated\n''')
                     self.osc_strengths.append(osc**0.5)
         if len(self.osc_strengths) == 0:
             self.osc_strengths = ['NaN']
+
+    def _Rotational_strengths(self) -> None:
+        self.rot_strengths = []
+        if self.exc_type in ('.EXCITA', '.ECD'):
+            linenumber = Forward_search_last(self.filename, '@                  Oscillator and Scalar Rotational Strengths', 'rotational strengths', quiet=self.quiet)
+            if isinstance(linenumber, int):
+                for i in self.lines[linenumber+9: self.end]:
+                    if "@  " in i:
+                        self.rot_strengths.append(float(i.split()[-2]))
+                    else:
+                        break
+        if len(self.rot_strengths) == 0:
+            self.rot_strengths = ['NaN']
 
     def _Frequencies(self) -> None:
         self.freq = []

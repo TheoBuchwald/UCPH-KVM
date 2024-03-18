@@ -452,6 +452,7 @@ def Extract(args):
         '_Polarizabilities': args.polar,
         '_Excitation_energies': args.exc,
         '_Oscillator_strengths': args.osc,
+        '_Rotational_strengths': args.rot,
         '_Frequencies': args.freq,
         '_Enthalpy': args.enthalpy,
         '_Entropy': args.entropy,
@@ -473,6 +474,7 @@ def Extract(args):
         '_Polarizabilities': ['polx', 'poly', 'polz', 'iso_polar'],
         '_Excitation_energies': ['exc_energies'],
         '_Oscillator_strengths': ['osc_strengths'],
+        '_Rotational_strengths': ['rot_strengths'],
         '_Frequencies': ['freq'],
         '_PartitionFunctions': ['qTotal'],
         '_CPUS': ['total_cpu_time', 'wall_cpu_time'],
@@ -497,6 +499,7 @@ def Extract(args):
         'iso_polar': 'Isotropic Polarizability',
         'exc_energies': 'Exc. energy',
         'osc_strengths': 'Osc. strength',
+        'rot_strengths': 'Rot. strength',
         'freq': 'Frequency',
         'qTotal': 'Total molar partition function',
         'total_cpu_time': f'Total CPU time ({args.cpu_time})',
@@ -522,6 +525,12 @@ def Extract(args):
     elif NeededArguments['_Oscillator_strengths']:
         NeededArguments['_Oscillator_strengths'] = NeededArguments['_Excitation_energies']
 
+    # Ensuring that excitation energies are calculated when rotational strengths are
+    if NeededArguments['_Rotational_strengths'] and NeededArguments['_Excitation_energies'] == None:
+        NeededArguments['_Rotational_strengths'] = NeededArguments['_Excitation_energies'] = -1
+    elif NeededArguments['_Rotational_strengths']:
+        NeededArguments['_Rotational_strengths'] = NeededArguments['_Excitation_energies']
+
     # Ensuring that enthalpies and entropies are calculated as these are needed to calculate the Gibbs free energy
     if NeededArguments['_Gibbs']:
         NeededArguments['_Enthalpy'] = True
@@ -542,7 +551,7 @@ def Extract(args):
 
     # Dictionary of data where the amount of values printed can be changed
     # Examples of this are the Excitation energies and the Frequencies
-    VariableArrays = dict([item for item in RequestedArguments.items() if type(item[1]) == int])
+    VariableArrays = dict([item for item in NeededArguments.items() if type(item[1]) == int])
 
     # List of arguments that have been requested
     WantedValues = [key for key, val in RequestedArguments.items() if not(val == None or val == False)]
@@ -795,6 +804,7 @@ For help contact
                 -  Polarizability
                 -  Excitation energies
                 -  Oscillator strengths
+                -  Rotational strengths
                 -  Frequencies
                 -  Partition functions at a given temperature
                 -  CPU time used
@@ -809,6 +819,7 @@ For help contact
     -  Enthalpies
     -  Entropies
     -  Gibbs Free energies
+    -  Rotational strengths
     -  Frequencies
     -  Partition functions
 
@@ -821,6 +832,7 @@ For help contact
     -  Polarizability
     -  Excitation energies
     -  Oscillator strengths
+    -  Rotational strengths
     -  Frequencies
     -  Partition functions at a given temperature
     -  CPU time used
@@ -834,6 +846,7 @@ For help contact
     -  Polarizability
     -  Excitation energies
     -  Oscillator strengths
+    -  Rotational strengths
     -  Frequencies
     -  Partition functions at a given temperature
     -  CPU time used
@@ -843,10 +856,23 @@ For help contact
     -  Enthalpies
     -  Entropies
     -  Gibbs Free energies
+    -  Rotational strengths
     -  Dipole moments
     -  Polarizability
     -  Frequencies
     -  Partition functions at a given temperature
+
+    The following is not implemented for DIRAC
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Dipole moments
+    -  Polarizability
+    -  Rotational strengths
+    -  Frequencies
+    -  Partition functions at a given temperature
+    -  CPU time used
 '''
     , help='Use to extract data from output files')
 
@@ -866,6 +892,7 @@ For help contact
     ExtractionGroup.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
     ExtractionGroup.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
     ExtractionGroup.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
+    ExtractionGroup.add_argument('-R', '--rot', action='store_true', help='Include to extract the Rotational Strengths')
     ExtractionGroup.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
     ExtractionGroup.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
     ExtractionGroup.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
