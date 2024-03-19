@@ -1115,6 +1115,16 @@ Please contact a maintainer of the script ot have this updated\n''')
                         self.osc_strengths.append(float(i.split()[-1]))
                     else:
                         break
+        elif self.exc_type == '.ECD':
+            linenumber = Forward_search_last(self.filename, '@               Electric transition dipole moments (au)', 'oscillator strengths', quiet=self.quiet)
+            if isinstance(linenumber, int):
+                for i in self.lines[linenumber+6: self.end]:
+                    if "@ " in i:
+                        self.osc_strengths.append(
+                            float(i.split()[-3])**2 + float(i.split()[-2])**2 + float(i.split()[-1])**2
+                        )
+                    else:
+                        break
         elif self.exc_type == ".EXCITA_sym":
             linenumber = Forward_search_last(self.filename, '|  sym. | Exci.  |        CCSD       Length   Gauge Oscillator Strength       |', 'excitation energies', quiet=self.quiet)
             if isinstance(linenumber, int):
