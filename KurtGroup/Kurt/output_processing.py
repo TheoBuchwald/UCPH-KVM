@@ -1116,12 +1116,12 @@ Please contact a maintainer of the script ot have this updated\n''')
                     else:
                         break
         elif self.exc_type == '.ECD':
-            linenumber = Forward_search_last(self.filename, '@               Electric transition dipole moments (au)', 'oscillator strengths', quiet=self.quiet)
+            linenumber = Forward_search_last(self.filename, '@                  Oscillator and Scalar Rotational Strengths', 'oscillator strengths', quiet=self.quiet)
             if isinstance(linenumber, int):
-                for i in self.lines[linenumber+6: self.end]:
-                    if "@ " in i:
+                for i in self.lines[linenumber+9: self.end]:
+                    if "@  " in i:
                         self.osc_strengths.append(
-                            float(i.split()[-3])**2 + float(i.split()[-2])**2 + float(i.split()[-1])**2
+                            float(i.split()[-4])
                         )
                     else:
                         break
