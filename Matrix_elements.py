@@ -29,7 +29,7 @@ def convert_to_float(frac_str):
         else:
             sign_mult = 1
         return float(leading) + sign_mult * (float(num) / float(denom))
-    
+
 def split_list(lst, chunk_size):
     """Stolen from https://www.altcademy.com/blog/how-to-split-a-list-in-python/"""
     return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
@@ -297,7 +297,7 @@ def main():
     reserved: List[str] = [i for i in args.reserved[0]]
     reserved = set(reserved).difference(set(summation))
 
-    arguments: Dict[str, Union(List[str],str)] = {
+    arguments = {
         'bra': args.bra,
         't': t,
         'LV': LV,
