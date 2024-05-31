@@ -55,8 +55,8 @@ def L_checker(L1: list, L2: list) -> bool:
 
 def t_checker(t1: list, t2: list) -> bool:
     try:
-        assert (len(t1) == len(t2), f"The length of t1 and t2 has to be the same - here they were {len(t1)} and {len(t2)}")
-        assert (len(t1) % 2 == 0, f"The length of t1 and t2 has to be an een number - here they were {len(t1)}")
+        assert len(t1) == len(t2), f"The length of t1 and t2 has to be the same - here they were {len(t1)} and {len(t2)}"
+        assert len(t1) % 2 == 0, f"The length of t1 and t2 has to be an een number - here they were {len(t1)}"
     except AssertionError as err:
         print(err)
         exit()
