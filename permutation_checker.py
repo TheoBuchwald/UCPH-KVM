@@ -55,41 +55,20 @@ def L_checker(L1: list, L2: list) -> bool:
 
 def t_checker(t1: list, t2: list) -> bool:
     try:
-        assert (len(t1) == 4 and len(t2) == 4) or (len(t1) == 2 and len(t2) == 2) or (len(t1) == 6 and len(t2) == 6), f"The length of t1 and t2 has to be the same and either 2, 4 or 6 - here they were {len(t1)} and {len(t2)}"
+        assert (len(t1) == len(t2), f"The length of t1 and t2 has to be the same - here they were {len(t1)} and {len(t2)}")
+        assert (len(t1) % 2 == 0, f"The length of t1 and t2 has to be an een number - here they were {len(t1)}")
     except AssertionError as err:
         print(err)
         exit()
 
-    if len(t1) == 2:
-        return F_checker(t1, t2)
-    elif len(t1) == 4:
-        if t1 == t2:
-            return True
+    vir_idx_perms = permutations(t1[::2])
+    occ_idx_perms = permutations(t1[1::2])
 
-        p,q,r,s = t1
+    for vir_idx, occ_idx in zip(vir_idx_perms, occ_idx_perms):
+        if vir_idx == t2[::2] and occ_idx == t2[1::2]:
+            return True
+    return False
 
-        if [r,s,p,q] == t2:
-            return True
-        else:
-            return False
-    else:
-        if t1 == t2:
-            return True
-
-        p,q,r,s,t,u = t1
-
-        if [p,q,t,u,r,s] == t2:
-            return True
-        elif [r,s,p,q,t,u] == t2:
-            return True
-        elif [t,u,p,q,r,s] == t2:
-            return True
-        elif [r,s,t,u,p,q] == t2:
-            return True
-        elif [t,u,r,s,p,q] == t2:
-            return True
-        else:
-            return False
 
 def F_checker(F1: list, F2: list) -> bool:
     assert len(F1) == 2 and len(F2) == 2, f"The length of F1 and F2 has to be the same and 2 - here they were {len(F1)} and {len(F2)}"
