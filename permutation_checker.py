@@ -65,7 +65,7 @@ def t_checker(t1: list, t2: list) -> bool:
     occ_idx_perms = permutations(t1[1::2])
 
     for vir_idx, occ_idx in zip(vir_idx_perms, occ_idx_perms):
-        if vir_idx == t2[::2] and occ_idx == t2[1::2]:
+        if vir_idx == tuple(t2[::2]) and occ_idx == tuple(t2[1::2]):
             return True
     return False
 
