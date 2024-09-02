@@ -181,11 +181,14 @@ class OutputType:
 
         AMS = False
         GAUSS = False
+        QCHEM = False
         for line in lines:
             if "Amsterdam Modeling Suite (AMS)" in line:
                 AMS = True
             if "Gaussian, Inc.  All Rights Reserved." in line:
                 GAUSS = True
+            if "Welcome to Q-Chem" in line:
+                QCHEM = True
 
         # The output file is determined to be of one of the following types
 
@@ -225,7 +228,7 @@ class OutputType:
             self.input = 'Amsterdam Modeling Suite'
 
         # File type = Q-Chem
-        elif 'Welcome to Q-Chem' in lines[0]:
+        elif QCHEM:
             self.extract = QChemExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'Q-Chem'
 
