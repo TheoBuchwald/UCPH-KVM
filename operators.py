@@ -1,6 +1,8 @@
+
 from collections.abc import Generator
 from itertools import permutations
 from copy import deepcopy
+from math import factorial
 
 VIR = {"a", "b", "c", "d", "e", "f", "g", "h", "q", "r", "t", "w", "y"}
 OCC = {"i", "j", "k", "l", "m", "n", "o", "p", "s", "u", "v", "x", "z"}
@@ -385,3 +387,28 @@ class BRA(amplitude):
         return BRA(indices, self.left_excitation_vector)
 
 
+class P:
+    def __init__(self, indices: list[str]) -> None:
+        """Permutation operator class."""
+        self.virtual_indices = indices[::2]
+        self.occupied_indices = indices[1::2]
+
+    def __iter__(self) -> Generator[list[str], list[str]]:
+        """Permutation generator."""
+        for permuted_virtual, permuted_occupied in zip(permutations(self.virtual_indices), permutations(self.occupied_indices)):
+            yield self.virtual_indices + self.occupied_indices, permuted_virtual + permuted_occupied
+
+    def __str__(self) -> str:
+        """String representation of permutation operator."""
+        string = "P^{"
+        for a in self.virtual_indices:
+            string += a
+        string += "}_{"
+        for i in self.occupied_indices:
+            string += i
+        string += "}"
+        return string
+
+    def __len__(self) -> int:
+        """Length of permutation operator."""
+        return factorial(len(self.virtual_indices))
