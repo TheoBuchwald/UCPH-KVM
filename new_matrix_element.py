@@ -480,6 +480,37 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
         perm_check += check(permutation_group)
     return perm_check
 
+def translate_to_normal_indices(terms: list[dict]) -> list[dict]:
+    """Translate the v0... and o0... indices to a, i, b, j, and so on.
+
+    args:
+        List of terms with arbitrary indices.
+
+    return:
+        List of terms with normal indices.
+    """
+    translation_dict = {
+        "v0": "a", "v1": "b", "v2": "c", "v3": "d", "v4": "e", "v5": "f", "v6": "g", "v7": "h", "v8": "q", "v9": "r", "v10": "t", "v11": "w", "v12": "y",
+        "o0": "i", "o1": "j", "o2": "k", "o3": "l", "o4": "m", "o5": "n", "o6": "o", "o7": "p", "o8": "s", "o9": "u", "o10": "v", "o11": "x", "o12": "z",
+        "v13": "A", "v14": "B", "v15": "C", "v16": "D", "v17": "E", "v18": "F", "v19": "G", "v20": "H", "v21": "Q", "v22": "R", "v23": "T", "v24": "W", "v25": "Y",
+        "o13": "I", "o14": "J", "o15": "K", "o16": "L", "o17": "M", "o18": "N", "o19": "O", "o20": "P", "o21": "S", "o22": "U", "o23": "V", "o24": "X", "o25": "Z",
+    }
+    translated_terms = []
+    for term in terms:
+        used_indices = term["t"].indices + term["integrals"].indices + term["E"].indices + term["bra"].indices
+        new_indices = [translation_dict[i] for i in used_indices]
+        summation = [translation_dict[i] for i in term["summation"]]
+        translated_terms.append({
+            "factor": term["factor"],
+            "summation": summation,
+            "bra": term["bra"].update_indices(used_indices, new_indices, translate=True),
+            "t": term["t"].update_indices(used_indices, new_indices, translate=True),
+            "integrals": term["integrals"].update_indices(used_indices, new_indices, translate=True),
+            "ket": term["ket"],
+            "E": term["E"].update_indices(used_indices, new_indices, translate=True),
+        })
+    return translated_terms
+
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -504,6 +535,7 @@ def main():
         permutation_checked = permutation_check(reduced_permuted_expressions)
     else:
         permutation_checked = sum(reduced_permuted_expressions, [])
+    normal_indices = translate_to_normal_indices(permutation_checked)
 
 if __name__ == "__main__":
     main()
