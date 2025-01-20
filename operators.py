@@ -345,3 +345,43 @@ class E(amplitude):
             indices[replace] = n
         return E(indices)
 
+
+class BRA(amplitude):
+    def __init__(self, indices: list[str], is_excitation_vector: bool) -> None:
+        """Bra class."""
+        super().__init__(indices)
+        self.left_excitation_vector = is_excitation_vector
+        self.is_HF = self.indices == []
+
+    def __str__(self) -> str:
+        """String representation of bra."""
+        if self.indices == []:
+            return "<HF|"
+        string = "<{}^{"
+        for a in self.indices[::2]:
+            string += a
+        string += "}_{"
+        for i in self.indices[1::2]:
+            string += i
+        string += "}|"
+        return string
+
+    def update_indices(self, old_indices: list[str], new_indices: list[str], translate=False):
+        if not translate:
+            for old, new in zip(old_indices, new_indices):
+                assert old[0] == new[0], f"Old and new index must both be of the same type - here they were {old[0]} and {new[0]}."
+        old = []
+        new = []
+        for o, n in zip(old_indices, new_indices):
+            if o in self.indices:
+                old.append(o)
+                new.append(n)
+        replace_indices = []
+        for o in old:
+            replace_indices.append(self.indices.index(o))
+        indices = deepcopy(self.indices)
+        for replace, n in zip(replace_indices, new):
+            indices[replace] = n
+        return BRA(indices, self.left_excitation_vector)
+
+
