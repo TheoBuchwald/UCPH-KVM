@@ -283,3 +283,32 @@ def n4o2(t1_transformed: bool, one_electron: bool) -> Callable[[dict, int, int],
         return [new_matrix_element]
     return translater
 
+def get_translater(nesting: int, order: int, t1_transformed: bool, one_electron: bool, restricted: bool) -> Callable[[dict, int, int], list[dict]]:
+    """Find the correct translater in the restricted case."""
+    if nesting == 1:
+        # [H,E_ai]|HF>
+        if order == 0:
+            return n1o0(t1_transformed, restricted)
+        elif order == 1:
+            return n1o1(t1_transformed, one_electron)
+        elif order == 2:
+            return n1o2(t1_transformed, one_electron)
+    elif nesting == 2:
+        # [[H,E_ai],E_bj]|HF>
+        if order == 0:
+            return n2o0(t1_transformed, one_electron, restricted)
+        elif order == 1:
+            return n2o1(t1_transformed, one_electron)
+        elif order == 2:
+            return n2o2(t1_transformed, one_electron)
+    elif nesting == 3:
+        # [[[H,E_ai],E_bj],E_ck]|HF>
+        if order == 1:
+            return n3o1(t1_transformed, one_electron)
+        if order == 2:
+            return n3o2(t1_transformed, one_electron)
+    elif nesting == 4:
+        # [[[[H,E_ai],E_bj],E_ck],E_dl]|HF>
+        if order == 2:
+            return n4o2(t1_transformed, one_electron)
+    raise ValueError(f"get_translater recieved a nesting ({nesting}) and order ({order}) input that was not recognized.")
