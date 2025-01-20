@@ -255,3 +255,31 @@ def n3o2(t1_transformed: bool, one_electron: bool) -> Callable[[dict, int, int],
         return [new_matrix_element_1, new_matrix_element_2]
     return translater
 
+def n4o2(t1_transformed: bool, one_electron: bool) -> Callable[[dict, int, int], list[dict]]:
+    def translater(matrix_element: dict, _virtual_index_counter: int, _occupied_index_counter: int) -> list[dict]:
+        if one_electron:
+            return []
+        commutator = matrix_element["commutator"]
+        a = commutator[0][0]
+        i = commutator[0][1]
+        b = commutator[1][0]
+        j = commutator[1][1]
+        c = commutator[2][0]
+        k = commutator[2][1]
+        d = commutator[3][0]
+        l = commutator[3][1]
+        new_matrix_element = {
+            "bra": matrix_element["bra"],
+            "t": matrix_element["t"],
+            "E": matrix_element["E"],
+            "ket": matrix_element["ket"],
+            "pre_string": matrix_element["pre_string"],
+        }
+        new_matrix_element["factor"] = 0.5 * matrix_element["factor"]
+        new_matrix_element["summation"] = matrix_element["summation"]
+        new_matrix_element["permutation"] = P([a,i,b,j,c,k,d,l])
+        new_matrix_element["integrals"] = g([i,d,j,c], t1_transformed)
+        new_matrix_element["box_E"] = E([a,l,b,k])
+        return [new_matrix_element]
+    return translater
+
