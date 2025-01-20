@@ -526,6 +526,44 @@ def print_expression(terms: list[dict], one_electron_type: str) -> None:
         print(expression)
     print("")
 
+def print_code(terms: list[dict], one_electron_type: str) -> None:
+    """Print all terms as Python code.
+
+    args:
+        List of terms.
+    """
+    for t, term in enumerate(terms):
+        # Start with the indices
+        if term["bra"].left_excitation_vector or term["bra"].is_HF:
+            left_side = "".join(term["bra"].indices) + ","
+            right_side = "".join(term["E"].indices)
+        else:
+            left_side = ""
+            right_side = "".join(term["bra"].indices)
+        for amp in term["t"].amplitudes:
+            left_side += "".join(amp.indices) + ","
+        left_side += "".join(term["integrals"].indices)
+        # Then each component
+        component = ""
+        if term["bra"].left_excitation_vector:
+            component += f"l{len(term['bra'])},"
+        t_counter = dict()
+        for amp in term["t"].amplitudes:
+            nr = t_counter.get(len(amp), 1)
+            component += f"t{len(amp)}_{nr},"
+            if nr == 1:
+                t_counter[len(amp)] = 2
+            else:
+                t_counter[len(amp)] += 1
+        component += f"{term['integrals'].type.replace('F', one_electron_type)}_{''.join(term['integrals'].dims)}"
+        sign = "+"
+        if term['factor'] < 0:
+            sign = "-"
+        if t == 0:
+            print(f"output = {term['factor']} * mem.contract(\"{left_side}->{right_side}\",{component})")
+        else:
+            print(f"output {sign}= {abs(term['factor'])} * mem.contract(\"{left_side}->{right_side}\",{component})")
+
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -552,6 +590,7 @@ def main():
         permutation_checked = sum(reduced_permuted_expressions, [])
     normal_indices = translate_to_normal_indices(permutation_checked)
     print_expression(normal_indices, one_electron_type)
+    print_code(normal_indices, one_electron_type)
 
 if __name__ == "__main__":
     main()
