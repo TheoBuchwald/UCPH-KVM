@@ -1,4 +1,5 @@
 import argparse
+from copy import deepcopy
 import box_13_2
 from operators import E, BRA, t, amplitude
 from math import factorial
@@ -328,6 +329,99 @@ def perform_permutations(mathematical_expressions: list[dict]) -> list[list[dict
         permuted_expressions.append(permutation_list)
     return permuted_expressions
 
+def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[dict]]:
+    """Match and reduce indices in each mathematical expression separately.
+
+    args:
+        List of permuted mathematical expressions.
+
+    return:
+        List of expressions where indicies have been matched and reduced:
+            factor: The prefactor for the expression.
+            summation: The indices that are summed over.
+            bra: The bra.
+            ket: The ket.
+            integrals: The integrals resulting from using Box 13.2.
+            t: The amplitudes.
+            E: The original excitation operator.
+    """
+    # Start by matching indices in the excitation operators to the bra
+    matched_permuted_expressions = []
+    for permutation_list in permuted_expressions:
+        matched_permutation_list = []
+        for expression in permutation_list:
+            summation: list[str] = deepcopy(expression["summation"])
+            E_indices = expression["E"].indices
+            bra_indices = expression["bra"].indices
+            bra_virtual = [i for i in bra_indices if i[0] == "v"]
+            bra_occupied = [i for i in bra_indices if i[0] == "o"]
+            match_from = []
+            match_to = []
+            for a, i in expression["pre_string"]:
+                if a in E_indices:
+                    old_index = bra_virtual.pop(0)
+                    match_from.append(old_index)
+                    match_to.append(a)
+                    summation.remove(old_index)
+                else:
+                    new_index = bra_virtual.pop(0)
+                    match_from.append(a)
+                    match_to.append(new_index)
+                    summation.remove(a)
+                if i in E_indices:
+                    old_index = bra_occupied.pop(0)
+                    match_from.append(old_index)
+                    match_to.append(i)
+                    summation.remove(old_index)
+                else:
+                    new_index = bra_occupied.pop(0)
+                    match_from.append(i)
+                    match_to.append(new_index)
+                    summation.remove(i)
+            matched_permutation_list.append({
+                "bra": expression["bra"].update_indices(match_from, match_to),
+                "ket": expression["ket"],
+                "factor": expression["factor"],
+                "summation": summation,
+                "t": expression["t"].update_indices(match_from, match_to),
+                "integrals": expression["integrals"].update_indices(match_from, match_to),
+                "E": expression["E"]
+            })
+        matched_permuted_expressions.append(matched_permutation_list)
+    # Then reduce the indices
+    reduced_permuted_expressions = []
+    for permutation_list in matched_permuted_expressions:
+        reduced_permutation_list = []
+        for expression in permutation_list:
+            summation: list[str] = deepcopy(expression["summation"])
+            used_indices = []
+            used_indices += expression["t"].indices
+            used_indices += expression["integrals"].indices
+            used_indices += expression["bra"].indices
+            used_virtual_indices = list({i for i in used_indices if i[0] == "v"})
+            used_occupied_indices = list({i for i in used_indices if i[0] == "o"})
+            used_virtual_indices.sort(key=lambda numerical: int(numerical[1:]))
+            used_occupied_indices.sort(key=lambda numerical: int(numerical[1:]))
+            number_virtual = len(used_virtual_indices)
+            number_occupied = len(used_occupied_indices)
+            reduce_from = used_virtual_indices + used_occupied_indices
+            reduce_to = [f"v{i}" for i in range(number_virtual)] + [f"o{i}" for i in range(number_occupied)]
+            for old, new in zip(reduce_from, reduce_to):
+                if old not in summation:
+                    continue
+                summation.remove(old)
+                summation.append(new)
+            reduced_permutation_list.append({
+                "bra": expression["bra"].update_indices(reduce_from, reduce_to),
+                "ket": expression["ket"],
+                "factor": expression["factor"],
+                "summation": summation,
+                "t": expression["t"].update_indices(reduce_from, reduce_to),
+                "integrals": expression["integrals"].update_indices(reduce_from, reduce_to),
+                "E": expression["E"]
+            })
+        reduced_permuted_expressions.append(reduced_permutation_list)
+    return reduced_permuted_expressions
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -347,6 +441,7 @@ def main():
     expanded_matrix_element = commutator_expansion(matrix_element)
     mathematical_expressions = commutator_box(expanded_matrix_element, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron)
     permuted_expressions = perform_permutations(mathematical_expressions)
+    reduced_permuted_expressions = match_reduce_indices(permuted_expressions)
 
 if __name__ == "__main__":
     main()
