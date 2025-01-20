@@ -250,3 +250,56 @@ class amplitude:
         return amplitude(indices)
 
 
+class t:
+    def __init__(self, indices: list[list[str]]) -> None:
+        """t class."""
+        self.amplitudes: list[amplitude] = []
+        for idx in indices:
+            self.amplitudes.append(
+                amplitude(idx)
+            )
+
+    def __str__(self) -> str:
+        """String representation of t."""
+        string = ""
+        for amp in self.amplitudes:
+            string += f"{str(amp)}"
+        return string
+
+    def __eq__(self, __value: object) -> bool:
+        """Check if T is equal to other T."""
+        if type(__value) != type(self):
+            return False
+        for amp1, amp2 in zip(self.amplitudes, __value.amplitudes):
+            if amp1 != amp2:
+                return False
+        return True
+
+    @property
+    def indices(self):
+        _indices = []
+        for amp in self.amplitudes:
+            _indices += amp.indices
+        return _indices
+
+    def update_indices(self, old_indices: list[str], new_indices: list[str], translate=False):
+        if not translate:
+            for old, new in zip(old_indices, new_indices):
+                assert old[0] == new[0], f"Old and new index must both be of the same type - here they were {old[0]} and {new[0]}."
+        t_indices = []
+        for amp in self.amplitudes:
+            old = []
+            new = []
+            for o, n in zip(old_indices, new_indices):
+                if o in amp.indices:
+                    old.append(o)
+                    new.append(n)
+            replace_indices = []
+            for o in old:
+                replace_indices.append(amp.indices.index(o))
+            indices = deepcopy(amp.indices)
+            for replace, n in zip(replace_indices, new):
+                indices[replace] = n
+            t_indices.append(indices)
+        return t(t_indices)
+
