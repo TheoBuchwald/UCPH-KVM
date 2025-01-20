@@ -20,6 +20,14 @@ def parse_arguments() -> argparse.Namespace:
 
     return parser.parse_args()
 
+def zip_merge_arrays(arr1: list, arr2: list) -> list:
+    """Zip merge two arrays."""
+    merged_arr = []
+    for i, j in zip(arr1, arr2):
+        merged_arr.append(i)
+        merged_arr.append(j)
+    return merged_arr
+
 
 def main():
     """Main function."""
