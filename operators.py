@@ -1,3 +1,4 @@
+from collections.abc import Generator
 from itertools import permutations
 from copy import deepcopy
 
@@ -302,4 +303,45 @@ class t:
                 indices[replace] = n
             t_indices.append(indices)
         return t(t_indices)
+
+
+class E(amplitude):
+    def __init__(self, indices: list[str]) -> None:
+        """Excitation operator class."""
+        super().__init__(indices)
+
+    def __str__(self) -> str:
+        """String representation of E."""
+        string = ""
+        for a, i in zip(self.indices[::2], self.indices[1::2]):
+            string += f"E_{{{a}{i}}} "
+        return string
+
+    def __add__(self, __value):
+        """Addition of excitation operators."""
+        assert type(__value) is E, "Excitation operators can only be added to other excitation operators"
+        return E(self.indices + __value.indices)
+
+    def __iter__(self) -> Generator[str, str]:
+        """Iterate over excitation operators."""
+        for a, i in zip(self.indices[::2], self.indices[1::2]):
+            yield a, i
+
+    def update_indices(self, old_indices: list[str], new_indices: list[str], translate=False):
+        if not translate:
+            for old, new in zip(old_indices, new_indices):
+                assert old[0] == new[0], f"Old and new index must both be of the same type - here they were {old[0]} and {new[0]}."
+        old = []
+        new = []
+        for o, n in zip(old_indices, new_indices):
+            if o in self.indices:
+                old.append(o)
+                new.append(n)
+        replace_indices = []
+        for o in old:
+            replace_indices.append(self.indices.index(o))
+        indices = deepcopy(self.indices)
+        for replace, n in zip(replace_indices, new):
+            indices[replace] = n
+        return E(indices)
 
