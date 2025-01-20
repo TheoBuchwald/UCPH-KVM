@@ -136,3 +136,61 @@ class g:
         return _dims
 
 
+class L:
+    def __init__(self, indices: list[str], t1_transformed: bool) -> None:
+        """L integral class."""
+        assert len(indices) == 4, f"The number of indices in a L must be equal to four. Here it was {len(indices)=}."
+        p,q,r,s = indices
+        self.g1 = g([p,q,r,s],t1_transformed)
+        self.g2 = g([p,s,r,q],t1_transformed)
+        self.type = "L"
+
+    def __eq__(self, __value: object) -> bool:
+        """Check if L integral is equal to other operator/amplitude."""
+        if type(__value) != type(self):
+            return False
+        return (
+            self.g1 == __value.g1
+            and self.g2 == __value.g2
+        )
+
+    def __str__(self) -> str:
+        """String representation of L."""
+        p,q,r,s = self.g1.indices
+        return f"L_{{{p}{q}{r}{s}}} "
+
+    def update_indices(self, old_indices: list[str], new_indices: list[str], translate=False):
+        if not translate:
+            for o, n in zip(old_indices, new_indices):
+                assert o[0] == n[0], f"Old and new index must both be of the same type - here they were {o[0]} and {n[0]}."
+        old = []
+        new = []
+        for o, n in zip(old_indices, new_indices):
+            if o in self.g1.indices:
+                old.append(o)
+                new.append(n)
+        replace_indices = []
+        for o in old:
+            replace_indices.append(self.g1.indices.index(o))
+        indices = deepcopy(self.g1.indices)
+        for replace, n in zip(replace_indices, new):
+            indices[replace] = n
+        t1_transformed = self.g1.t1_transformed
+        return L(indices, t1_transformed)
+
+    @property
+    def indices(self):
+        return self.g1.indices
+
+    @property
+    def dims(self):
+        _dims = ""
+        for idx in self.indices:
+            if idx.lower() in VIR:
+                _dims += "v"
+            elif idx.lower() in OCC:
+                _dims += "o"
+            else:
+                _dims += idx[0]
+        return _dims
+
