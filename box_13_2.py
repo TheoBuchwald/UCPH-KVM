@@ -87,3 +87,111 @@ def n1o2(t1_transformed: bool, one_electron: bool) -> Callable[[dict, int, int],
         return [new_matrix_element_1, new_matrix_element_2]
     return translater
 
+def n2o0(t1_transformed: bool, one_electron: bool, restricted: bool) -> Callable[[dict, int, int], list[dict]]:
+    def translater(matrix_element: dict, _virtual_index_counter: int, _occupied_index_counter: int) -> list[dict]:
+        if one_electron:
+            return []
+        commutator = matrix_element["commutator"]
+        a = commutator[0][0]
+        i = commutator[0][1]
+        b = commutator[1][0]
+        j = commutator[1][1]
+        new_matrix_element = {
+            "bra": matrix_element["bra"],
+            "t": matrix_element["t"],
+            "E": matrix_element["E"],
+            "ket": matrix_element["ket"],
+            "pre_string": matrix_element["pre_string"]
+        }
+        if restricted:
+            new_matrix_element["factor"] = 2 * matrix_element["factor"]
+        else:
+            new_matrix_element["factor"] = matrix_element["factor"]
+        new_matrix_element["summation"] = matrix_element["summation"]
+        new_matrix_element["integrals"] = L([i,a,j,b], t1_transformed)
+        new_matrix_element["box_E"] = E([])
+        return [new_matrix_element]
+    return translater
+
+def n2o1(t1_transformed: bool, one_electron: bool) -> Callable[[dict, int, int], list[dict]]:
+    def translater(matrix_element: dict, virtual_index_counter: int, occupied_index_counter: int) -> list[dict]:
+        commutator = matrix_element["commutator"]
+        a = commutator[0][0]
+        i = commutator[0][1]
+        b = commutator[1][0]
+        j = commutator[1][1]
+        c = f"v{virtual_index_counter}"
+        k = f"o{occupied_index_counter}"
+        new_matrix_element_1 = {
+            "bra": matrix_element["bra"],
+            "t": matrix_element["t"],
+            "E": matrix_element["E"],
+            "ket": matrix_element["ket"],
+            "pre_string": matrix_element["pre_string"]
+        }
+        new_matrix_element_1["factor"] = -matrix_element["factor"]
+        new_matrix_element_1["summation"] = matrix_element["summation"]
+        new_matrix_element_1["permutation"] = P([a,i,b,j])
+        new_matrix_element_1["integrals"] = F([i,b], t1_transformed)
+        new_matrix_element_1["box_E"] = E([a,j])
+        if not one_electron:
+            new_matrix_element_2 = deepcopy(new_matrix_element_1)
+            new_matrix_element_2["factor"] = -matrix_element["factor"]
+            new_matrix_element_2["summation"] = matrix_element["summation"] + [k]
+            new_matrix_element_2["permutation"] = P([a,i,b,j])
+            new_matrix_element_2["integrals"] = L([i,k,j,b], t1_transformed)
+            new_matrix_element_2["box_E"] = E([a,k])
+            new_matrix_element_3 = deepcopy(new_matrix_element_1)
+            new_matrix_element_3["factor"] = matrix_element["factor"]
+            new_matrix_element_3["summation"] = matrix_element["summation"] + [c]
+            new_matrix_element_3["permutation"] = P([a,i,b,j])
+            new_matrix_element_3["integrals"] = L([c,a,j,b], t1_transformed)
+            new_matrix_element_3["box_E"] = E([c,i])
+            return [new_matrix_element_1, new_matrix_element_2, new_matrix_element_3]
+        return [new_matrix_element_1]
+    return translater
+
+def n2o2(t1_transformed: bool, one_electron: bool) -> Callable[[dict, int, int], list[dict]]:
+    def translater(matrix_element: dict, virtual_index_counter: int, occupied_index_counter: int) -> list[dict]:
+        if one_electron:
+            return []
+        commutator = matrix_element["commutator"]
+        a = commutator[0][0]
+        i = commutator[0][1]
+        b = commutator[1][0]
+        j = commutator[1][1]
+        c = f"v{virtual_index_counter}"
+        k = f"o{occupied_index_counter}"
+        d = f"v{virtual_index_counter + 1}"
+        l = f"o{occupied_index_counter + 1}"
+        new_matrix_element_1 = {
+            "bra": matrix_element["bra"],
+            "t": matrix_element["t"],
+            "E": matrix_element["E"],
+            "ket": matrix_element["ket"],
+            "pre_string": matrix_element["pre_string"]
+        }
+        new_matrix_element_1["factor"] = -matrix_element["factor"]
+        new_matrix_element_1["summation"] = matrix_element["summation"] + [c,k]
+        new_matrix_element_1["permutation"] = P([a,i,b,j])
+        new_matrix_element_1["integrals"] = g([i,b,c,k], t1_transformed)
+        new_matrix_element_1["box_E"] = E([a,j,c,k])
+        new_matrix_element_2 = deepcopy(new_matrix_element_1)
+        new_matrix_element_2["factor"] = -matrix_element["factor"]
+        new_matrix_element_2["summation"] = matrix_element["summation"] + [c,k]
+        new_matrix_element_2["permutation"] = P([a,i,b,j])
+        new_matrix_element_2["integrals"] = g([i,k,c,b], t1_transformed)
+        new_matrix_element_2["box_E"] = E([a,k,c,j])
+        new_matrix_element_3 = deepcopy(new_matrix_element_1)
+        new_matrix_element_3["factor"] = matrix_element["factor"]
+        new_matrix_element_3["summation"] = matrix_element["summation"] + [k,l]
+        new_matrix_element_3["integrals"] = g([i,k,j,l], t1_transformed)
+        new_matrix_element_3["box_E"] = E([a,k,b,l])
+        new_matrix_element_4 = deepcopy(new_matrix_element_1)
+        new_matrix_element_4["factor"] = matrix_element["factor"]
+        new_matrix_element_4["summation"] = matrix_element["summation"] + [c,d]
+        new_matrix_element_4["integrals"] = g([c,a,d,b], t1_transformed)
+        new_matrix_element_4["box_E"] = E([c,i,d,j])
+        return [new_matrix_element_1, new_matrix_element_2, new_matrix_element_3, new_matrix_element_4]
+    return translater
+
