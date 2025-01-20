@@ -511,6 +511,21 @@ def translate_to_normal_indices(terms: list[dict]) -> list[dict]:
         })
     return translated_terms
 
+def print_expression(terms: list[dict], one_electron_type: str) -> None:
+    """Print all terms in latex format.
+
+    args:
+        List of terms.
+    """
+    for term in terms:
+        summation = "".join(term["summation"])
+        left_vector = ''
+        if term["bra"].left_excitation_vector:
+            left_vector += f'\\bar{{t}}_{{{"".join(term["bra"].indices)}}} '
+        expression = f'{term["factor"]} \sum_{{{summation}}} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
+        print(expression)
+    print("")
+
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -536,6 +551,7 @@ def main():
     else:
         permutation_checked = sum(reduced_permuted_expressions, [])
     normal_indices = translate_to_normal_indices(permutation_checked)
+    print_expression(normal_indices, one_electron_type)
 
 if __name__ == "__main__":
     main()
