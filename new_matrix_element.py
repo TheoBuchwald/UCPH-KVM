@@ -1,4 +1,5 @@
 import argparse
+import box_13_2
 from operators import E, BRA, t, amplitude
 from math import factorial
 
@@ -243,6 +244,50 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
 
     return new_matrix_elements
 
+def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occupied_index_counter: int, restricted: bool, t1_transformed: bool, one_electron: bool) -> list[dict]:
+    """Translate an expanded commutator using Box 13.2 and the (unreleased) Unrestricted Box.
+
+    args:
+        matrix_elements: The commutator expanded matrix_elements.
+        virtual_index_counter: The value of the next virtual index should one be needed.
+        occupied_index_counter: The value of the next occupied index should one be needed.
+        restricted: Whether the calculation is restricted or not.
+        t1_transformed: Whether the one- and two-electron operators are T1-transformed or not.
+        one_electron: Whether the first operator in the commutator is a one-electron operator.
+
+    return:
+        Non reduced mathematical expressions for each matrix element by using Box 13.2 and the (unreleased) unrestricted box:
+            factor: The prefactor for the expression.
+            summation: The indices that are summed over.
+            bra: The bra.
+            pre_string: The excitation operators left over from the commutator expansion.
+            permutation: The permutation operator.
+            box_E: The excitation operators resulting from using Box 13.2.
+            ket: The ket.
+            integrals: The integrals resulting from using Box 13.2.
+            t: The amplitudes.
+            E: The original excitation operator.
+    """
+    mathematical_expressions: list[dict] = []
+    for element in matrix_elements:
+        commutator = element["commutator"]
+        pre_string = element["pre_string"]
+        bra: BRA = element["bra"]
+        nesting = len(commutator)
+        minus_shift = len(pre_string)
+        bra_rank = len(bra)
+        order = bra_rank - minus_shift
+        # Skip element if there are to few or to many excitation operators
+        if order > 2:
+            continue
+        if order < 0:
+            continue
+        if abs(nesting - order) > 2:
+            continue
+        translater = box_13_2.get_translater(nesting, order, t1_transformed, one_electron, restricted)
+        mathematical_expressions += translater(element, virtual_index_counter, occupied_index_counter)
+    return mathematical_expressions
+
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -260,6 +305,7 @@ def main():
         one_electron_type = "X"
     matrix_element, virtual_index_counter, occupied_index_counter = commutator_indexing(bra, commutator, "HF")
     expanded_matrix_element = commutator_expansion(matrix_element)
+    mathematical_expressions = commutator_box(expanded_matrix_element, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron)
 
 if __name__ == "__main__":
     main()
