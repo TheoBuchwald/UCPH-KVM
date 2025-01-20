@@ -288,6 +288,46 @@ def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occu
         mathematical_expressions += translater(element, virtual_index_counter, occupied_index_counter)
     return mathematical_expressions
 
+def perform_permutations(mathematical_expressions: list[dict]) -> list[list[dict]]:
+    """Perform the permutation operators in the mathematical expressions.
+
+    args:
+        mathematical_expressions: Non reduced mathematical expressions.
+
+    return:
+        All expressions after the permutation operators have been applied:
+            factor: The prefactor for the expression.
+            summation: The indices that are summed over.
+            bra: The bra.
+            pre_string: The excitation operators left over from the commutator expansion.
+            ket: The ket.
+            integrals: The integrals resulting from using Box 13.2.
+            t: The amplitudes.
+            E: The original excitation operator.
+    """
+    permuted_expressions: list[list[dict]] = []
+    for expression in mathematical_expressions:
+        # Skip elements without permutation operators
+        if "permutation" not in expression.keys():
+            permuted_expressions.append([expression])
+            continue
+        permutation_list = []
+        # Do permutations
+        for old_indices, new_indices in expression["permutation"]:
+            perm_express = {
+                "bra": expression["bra"],
+                "ket": expression["ket"],
+                "factor": expression["factor"],
+                "summation": expression["summation"],
+            }
+            perm_express["t"] = expression["t"]
+            perm_express["pre_string"] = expression["pre_string"] + expression["box_E"].update_indices(old_indices, new_indices)
+            perm_express["E"] = expression["E"]
+            perm_express["integrals"] = expression["integrals"].update_indices(old_indices, new_indices)
+            permutation_list.append(perm_express)
+        permuted_expressions.append(permutation_list)
+    return permuted_expressions
+
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -306,6 +346,7 @@ def main():
     matrix_element, virtual_index_counter, occupied_index_counter = commutator_indexing(bra, commutator, "HF")
     expanded_matrix_element = commutator_expansion(matrix_element)
     mathematical_expressions = commutator_box(expanded_matrix_element, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron)
+    permuted_expressions = perform_permutations(mathematical_expressions)
 
 if __name__ == "__main__":
     main()
