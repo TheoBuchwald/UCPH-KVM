@@ -1,3 +1,4 @@
+from itertools import permutations
 from copy import deepcopy
 
 VIR = {"a", "b", "c", "d", "e", "f", "g", "h", "q", "r", "t", "w", "y"}
@@ -193,4 +194,59 @@ class L:
             else:
                 _dims += idx[0]
         return _dims
+
+
+class amplitude:
+    def __init__(self, indices: list[str]) -> None:
+        """Amplitude class."""
+        assert len(indices) % 2 == 0, f"The number of indices in an amplitude must be even. Here it was {len(indices)=}."
+        self.indices = indices
+
+    def __eq__(self, __value: object) -> bool:
+        """Check if amplitude is equal to other amplitude/integral."""
+        if type(__value) != type(self):
+            return False
+        if len(self.indices) != len(__value.indices):
+            return False
+
+        vir_index_permutations = permutations(self.indices[::2])
+        occ_index_permutations = permutations(self.indices[1::2])
+
+        for vir_idx, occ_idx in zip(vir_index_permutations, occ_index_permutations):
+            if (
+                vir_idx == tuple(__value.indices[::2])
+                and occ_idx == tuple(__value.indices[1::2])
+            ):
+                return True
+        return False
+
+    def __len__(self) -> int:
+        return len(self.indices) // 2
+
+    def __str__(self) -> str:
+        """String representation of amplitude."""
+        string = "t_{"
+        for p in self.indices:
+            string += p
+        string += "} "
+        return string
+
+    def update_indices(self, old_indices: list[str], new_indices: list[str], translate=False):
+        if not translate:
+            for o, n in zip(old_indices, new_indices):
+                assert o[0] == n[0], f"Old and new index must both be of the same type - here they were {o[0]} and {n[0]}."
+        old = []
+        new = []
+        for o, n in zip(old_indices, new_indices):
+            if o in self.indices:
+                old.append(o)
+                new.append(n)
+        replace_indices = []
+        for o in old:
+            replace_indices.append(self.indices.index(o))
+        indices = deepcopy(self.indices)
+        for replace, n in zip(replace_indices, new):
+            indices[replace] = n
+        return amplitude(indices)
+
 
