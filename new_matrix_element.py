@@ -137,6 +137,112 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     }
     return matrix_element, virtual_index_counter, occupied_index_counter
 
+def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]]) -> list[dict]:
+    """Expand commutator after indexing.
+
+    args:
+        matrix_element: Dictionary containing the bra, ket, summation and any amplitudes, and excitation operators.
+
+    return:
+        All commutators resulting from the commutator expanded matrix_element. Each commutator contains:
+            The summation.
+            The bra.
+            The amplitudes.
+            The excitation operators.
+            The ket.
+            The commutator_factor, pre_string, and commutator_string defined as seen below.
+
+                        2 * E_ai [H, E_bj]
+                        ^   ^    ^commutator_string
+                        ^   ^pre_string
+                        ^commutator_factor
+        """
+    assert "t" in matrix_element.keys() or "E" in matrix_element.keys(), "Commutator expansion needs either a T or an E in the commutator."
+    commutator_string: list[list] = []
+    commutator_factor = [matrix_element["factor"]]
+    pre_string = [E([])]
+
+    amplitudes: list[amplitude] = matrix_element["t"].amplitudes
+    E_indices: list[str] = matrix_element["E"].indices
+    for amp in amplitudes:
+        commutator_string.append(amp.indices)
+    if E_indices != []:
+        commutator_string.append(E_indices)
+    commutator_string = [commutator_string]
+    for nr in range(4):
+        new_commutator_string: list[list] = []
+        new_commutator_factor: list[int] = []
+        new_pre_string: list[list] = []
+        for commutator, factor, string in zip(commutator_string, commutator_factor, pre_string):
+            # If we have run over all components of the commutator it is done
+            if len(commutator) < nr+1:
+                new_commutator_string.append(commutator)
+                new_commutator_factor.append(factor)
+                new_pre_string.append(string)
+                continue
+            component = commutator[nr]
+            # If there is only one excitation operator in the current component it is (so far) done
+            if len(component) == 2:
+                new_commutator_string.append(commutator)
+                new_commutator_factor.append(factor)
+                new_pre_string.append(string)
+                continue
+            # Start with the expansion of an amplitude
+            # This commutator expansion is the one where excitation operators are added in front of the commutator (to the pre_string)
+            if component[0] not in E_indices:
+                new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
+                new_pre_string.append(string + E(component[2:]))
+                new_commutator_factor.append(factor * (len(component) // 2))
+                # This commutator expansion is the one where the commutator is increased in size
+                if len(commutator) < 4:
+                    new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
+                    new_commutator_string[-1].append(component[2:])
+                    new_pre_string.append(string)
+                    new_commutator_factor.append(factor)
+                continue
+            # Then the expansion of an excitation operator
+            # This commutator expansion is the one where excitation operators are added in front of the commutator (to the pre_string)
+            for pair_index in range(0, len(component)-1, 2):
+                new_commutator_string.append([comp if i != nr else comp[pair_index:pair_index+2] for i, comp in enumerate(commutator)])
+                if pair_index == 0:
+                    new_pre_string.append(string + E(component[2:]))
+                elif pair_index == len(component)-2:
+                    new_pre_string.append(string + E(component[:-2]))
+                else:
+                    new_pre_string.append(string + E(component[:pair_index]) + E(component[pair_index+2:]))
+                new_commutator_factor.append(factor)
+                # This commutator expansion is the one where the commutator is increased in size
+                if len(commutator) < 4:
+                    new_commutator_string.append([comp if i != nr else comp[pair_index:pair_index+2] for i, comp in enumerate(commutator)])
+                    if pair_index == 0:
+                        new_commutator_string[-1].append(component[2:])
+                        new_pre_string.append(string)
+                    elif pair_index == len(component)-2:
+                        new_commutator_string.pop(-1)
+                        continue
+                    else:
+                        new_commutator_string[-1].append(component[pair_index+2:])
+                        new_pre_string.append(E(component[:pair_index]))
+                    new_commutator_factor.append(factor)
+        commutator_string = new_commutator_string
+        commutator_factor = new_commutator_factor
+        pre_string = new_pre_string
+
+    new_matrix_elements = []
+    for commutator, factor, string in zip(commutator_string, commutator_factor, pre_string):
+        new_matrix_elements.append({
+            'summation': matrix_element["summation"],
+            'bra': matrix_element["bra"],
+            't': matrix_element["t"],
+            'E': matrix_element["E"],
+            'ket': matrix_element["ket"],
+            'factor': factor,
+            'pre_string': string,
+            'commutator': commutator,
+        })
+
+    return new_matrix_elements
+
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -153,6 +259,7 @@ def main():
         one_electron = True
         one_electron_type = "X"
     matrix_element, virtual_index_counter, occupied_index_counter = commutator_indexing(bra, commutator, "HF")
+    expanded_matrix_element = commutator_expansion(matrix_element)
 
 if __name__ == "__main__":
     main()
