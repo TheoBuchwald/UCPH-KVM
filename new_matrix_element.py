@@ -3,6 +3,7 @@ from copy import deepcopy
 import box_13_2
 from operators import E, BRA, t, amplitude
 from math import factorial
+from itertools import permutations
 
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
@@ -422,6 +423,63 @@ def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[di
             })
         reduced_permuted_expressions.append(reduced_permutation_list)
     return reduced_permuted_expressions
+
+def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[dict]:
+    """Perform permutation check on the expressions resulting from each individual permutation operator.
+
+    args:
+        reduced_permuted_expressions: A list containg groups of permuted expressions.
+
+    return:
+        A list of all permutationally unique terms:
+            factor: The prefactor for the expression.
+            summation: The indices that are summed over.
+            bra: The bra.
+            ket: The ket.
+            integrals: The integrals resulting from using Box 13.2.
+            t: The amplitudes.
+            E: The original excitation operator.
+    """
+    # Define a function that check permutations
+    def check(permutation_list: list[dict]) -> list[dict]:
+        check_list = []
+        for e, element in enumerate(permutation_list[::-1], 1):
+            summation = element["summation"]
+            permutable_virtual = [i for i in summation if i[0] == "v"]
+            permutable_occupied = [i for i in summation if i[0] == "o"]
+            found_match = False
+            for comparison in permutation_list[:-e]:
+                if type(element["integrals"]) != type(comparison["integrals"]):
+                    continue
+                if found_match:
+                    break
+                for virtual_permutation in permutations(permutable_virtual):
+                    if found_match:
+                        break
+                    for occupied_permutation in permutations(permutable_occupied):
+                        old_indices = permutable_virtual + permutable_occupied
+                        new_indices = list(virtual_permutation) + list(occupied_permutation)
+                        if element["bra"].update_indices(old_indices, new_indices) != comparison["bra"]:
+                            continue
+                        if element["t"].update_indices(old_indices, new_indices) != comparison["t"]:
+                            continue
+                        if element["integrals"].update_indices(old_indices, new_indices) != comparison["integrals"]:
+                            continue
+                        found_match = True
+                        comparison["factor"] += element["factor"]
+                        break
+            if not found_match:
+                check_list.append(element)
+        return check_list
+    # Do a check over permutations from each permutation operator seperately
+    perm_check = []
+    for permutation_group in reduced_permuted_expressions:
+        if len(permutation_group) == 1:
+            perm_check.append(permutation_group[0])
+            continue
+        perm_check += check(permutation_group)
+    return perm_check
+
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -442,6 +500,10 @@ def main():
     mathematical_expressions = commutator_box(expanded_matrix_element, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron)
     permuted_expressions = perform_permutations(mathematical_expressions)
     reduced_permuted_expressions = match_reduce_indices(permuted_expressions)
+    if perm_check:
+        permutation_checked = permutation_check(reduced_permuted_expressions)
+    else:
+        permutation_checked = sum(reduced_permuted_expressions, [])
 
 if __name__ == "__main__":
     main()
