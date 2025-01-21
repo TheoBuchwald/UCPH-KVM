@@ -7,15 +7,19 @@ from itertools import permutations
 
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""A script designed to quickly get the code necessary to calculate a Coupled Cluster matrix element.""", epilog="""For help contact
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""A script designed to quickly get the code necessary to calculate a Coupled Cluster matrix element.
+The input must contain a bra and a commutator. Examples being:
+    L2 [[HT2]T2]
+    E3 [FT3]
+    HF [HE2]""", epilog="""For help contact
     Theo Juncker von Buchwald
     tjvbu@kemi.dtu.dk""")
 
-    parser.add_argument("bra", type=str, nargs=1, help="""The excitation level of the bra.
+    parser.add_argument("bra", type=str, nargs=1, help="""The excitation level of the bra. Example: L4
     For a left excitation vector write LI where I is the excitation level.
     For a left transformation write EI where I is the excitation level.
     Use HF for a Hartree-Fock state.""")
-    parser.add_argument("commutator", type=str, nargs=1, help="""The commutator to expand...Ex. [[XT3]E2]
+    parser.add_argument("commutator", type=str, nargs=1, help="""The commutator to expand. Example: [[XT3]E2]
     For one-electron operators use F or X.
     For all types of amplitudes use TI where I is the excitation level.
     For a right transformation use EI where I is the excitation level.""")
