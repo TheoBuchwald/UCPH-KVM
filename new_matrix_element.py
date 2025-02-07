@@ -21,6 +21,8 @@ The input must contain a bra and a commutator. Examples being:
     Use HF for a Hartree-Fock state.""")
     parser.add_argument("commutator", type=str, nargs=1, help="""The commutator to expand. Example: [[XT3]E2]
     For one-electron operators use F or X.
+    For two-electron operators use P.
+    For both one- and two-electron operators use H.
     For all types of amplitudes use TI where I is the excitation level.
     For a right transformation use EI where I is the excitation level.""")
     parser.add_argument('--no_t1', action='store_false', help='Include if t1-transformed.', dest='t1_transformed')
@@ -47,7 +49,8 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
                 EI is an excited bra of order I.
                 HF is the Hartree Fock state.
         commutator: String representation of commutator.
-                    H and P are accepted two-electron operators.
+                    H is accepted as one- + two- electron operator.
+                    P is accepted two-electron operator.
                     F and X are accepted one-electron operators.
                     EI is an excitation operator of order I.
                     TI is an amplitude of order I.
@@ -250,7 +253,7 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
 
     return new_matrix_elements
 
-def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occupied_index_counter: int, restricted: bool, t1_transformed: bool, one_electron: bool) -> list[dict]:
+def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occupied_index_counter: int, restricted: bool, t1_transformed: bool, one_electron: bool, two_electron: bool) -> list[dict]:
     """Translate an expanded commutator using Box 13.2 and the (unreleased) Unrestricted Box.
 
     args:
@@ -260,6 +263,7 @@ def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occu
         restricted: Whether the calculation is restricted or not.
         t1_transformed: Whether the one- and two-electron operators are T1-transformed or not.
         one_electron: Whether the first operator in the commutator is a one-electron operator.
+        two_eelectron: Whether the first operator in the commutator is a two-electron operator.
 
     return:
         Non reduced mathematical expressions for each matrix element by using Box 13.2 and the (unreleased) unrestricted box:
@@ -290,7 +294,7 @@ def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occu
             continue
         if abs(nesting - order) > 2:
             continue
-        translater = box_13_2.get_translater(nesting, order, t1_transformed, one_electron, restricted)
+        translater = box_13_2.get_translater(nesting, order, t1_transformed, one_electron, two_electron, restricted)
         mathematical_expressions += translater(element, virtual_index_counter, occupied_index_counter)
     return mathematical_expressions
 
@@ -530,7 +534,7 @@ def print_expression(terms: list[dict], one_electron_type: str) -> None:
         print(expression)
     print("")
 
-def print_code(terms: list[dict], one_electron_type: str) -> None:
+def print_python_code(terms: list[dict], one_electron_type: str) -> None:
     """Print all terms as Python code.
 
     args:
@@ -577,15 +581,21 @@ def main():
     restricted = arguments.restricted
     perm_check = arguments.perm_check
     one_electron = False
+    two_electron = False
     one_electron_type = "F"
     if "F" in commutator:
         one_electron = True
     if "X" in commutator:
         one_electron = True
         one_electron_type = "X"
+    if "P" in commutator:
+        two_electron = True
+    if "H" in commutator:
+        one_electron = True
+        two_electron = True
     matrix_element, virtual_index_counter, occupied_index_counter = commutator_indexing(bra, commutator, "HF")
     expanded_matrix_element = commutator_expansion(matrix_element)
-    mathematical_expressions = commutator_box(expanded_matrix_element, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron)
+    mathematical_expressions = commutator_box(expanded_matrix_element, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron, two_electron)
     permuted_expressions = perform_permutations(mathematical_expressions)
     reduced_permuted_expressions = match_reduce_indices(permuted_expressions)
     if perm_check:
@@ -594,7 +604,7 @@ def main():
         permutation_checked = sum(reduced_permuted_expressions, [])
     normal_indices = translate_to_normal_indices(permutation_checked)
     print_expression(normal_indices, one_electron_type)
-    print_code(normal_indices, one_electron_type)
+    print_python_code(normal_indices, one_electron_type)
 
 if __name__ == "__main__":
     main()
