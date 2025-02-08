@@ -631,6 +631,15 @@ def Extract(args):
     # Some values in the Extracted_Values dictionary may not have been requested, so these are removed here
     FinalArrays = Collect_and_sort_data(InputFiles, ArgumentsToValues, ExtractedValues)
 
+    if ProgressBar:
+        print("")
+
+    if Save == 'npz':
+        SaveDict = {i[0]: i[1:] for i in FinalArrays}
+        np.savez(f'{SaveName}.npz', **SaveDict)
+        print(f'Data has been saved in {SaveName}.npz')
+        return
+
     # Resizing arrays
     # An example is Excitation energies where there may be more of them in one output file than another
     # By doing this it fits properly in what is printed to the terminal
@@ -653,9 +662,6 @@ def Extract(args):
 
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
-
-    if ProgressBar:
-        print("")
 
     # If this statement is true, then only the filenames have been written to the Output_Array
     if len(OutputArray) == OutputArray.size:

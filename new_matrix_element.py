@@ -126,16 +126,17 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     # Now we label all amplitudes
     t_indices = []
     for c, component in enumerate(commutator_terms):
-        order = int(component.split("T")[-1])
-        factor *= 1 / factorial(order)
-        virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
-        occupied_indices = [f"o{i}" for i in range(occupied_index_counter, occupied_index_counter + order)]
-        summation += virtual_indices
-        summation += occupied_indices
-        indices = zip_merge_arrays(virtual_indices, occupied_indices)
-        t_indices.append(indices)
-        virtual_index_counter += order
-        occupied_index_counter += order
+        if "T" in component:
+            order = int(component.split("T")[-1])
+            factor *= 1 / factorial(order)
+            virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
+            occupied_indices = [f"o{i}" for i in range(occupied_index_counter, occupied_index_counter + order)]
+            summation += virtual_indices
+            summation += occupied_indices
+            indices = zip_merge_arrays(virtual_indices, occupied_indices)
+            t_indices.append(indices)
+            virtual_index_counter += order
+            occupied_index_counter += order
     indexed_t = t(t_indices)
     matrix_element = {
         'factor': factor,
@@ -319,7 +320,9 @@ def perform_permutations(mathematical_expressions: list[dict]) -> list[list[dict
     for expression in mathematical_expressions:
         # Skip elements without permutation operators
         if "permutation" not in expression.keys():
-            permuted_expressions.append([expression])
+            perm_express = deepcopy(expression)
+            perm_express["pre_string"] += expression.pop("box_E")
+            permuted_expressions.append([perm_express])
             continue
         permutation_list = []
         # Do permutations

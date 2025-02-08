@@ -2,7 +2,60 @@ from collections.abc import Callable
 from operators import F, g, L, E, P
 from copy import deepcopy
 
-def n1o0(t1_transformed: bool, one_electron, restricted: bool) -> Callable[[dict, int, int], list[dict]]:
+def n0o0(one_electron: bool) -> Callable[[dict, int, int], list[dict]]:
+    def translater(_matrix_element: dict, _virtual_index_counter: int, occupied_index_counter):
+        output = []
+        if one_electron:
+            print("This term is very strange. If this is correct, it would be best to do this by hand.")
+            quit()
+        return output
+    return translater
+
+def n0o1(t1_transformed: bool, one_electron: bool) -> Callable[[dict, int, int], list[dict]]:
+    def translater(matrix_element: dict, virtual_index_counter: int, occupied_index_counter):
+        output = []
+        a = f"v{virtual_index_counter}"
+        i = f"o{occupied_index_counter}"
+        new_matrix_element = {
+            "bra": matrix_element["bra"],
+            "t": matrix_element["t"],
+            "E": matrix_element["E"],
+            "ket": matrix_element["ket"],
+            "pre_string": matrix_element["pre_string"]
+        }
+        if one_electron:
+            new_matrix_element["factor"] = matrix_element["factor"]
+            new_matrix_element["summation"] = matrix_element["summation"] + [a, i]
+            new_matrix_element["integrals"] = F([a, i], t1_transformed)
+            new_matrix_element["box_E"] = E([a, i])
+            output.append(new_matrix_element)
+        return output
+    return translater
+
+def n0o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int], list[dict]]:
+    def translater(matrix_element: dict, virtual_index_counter: int, occupied_index_counter):
+        output = []
+        a = f"v{virtual_index_counter}"
+        i = f"o{occupied_index_counter}"
+        b = f"v{virtual_index_counter + 1}"
+        j = f"o{occupied_index_counter + 1}"
+        new_matrix_element = {
+            "bra": matrix_element["bra"],
+            "t": matrix_element["t"],
+            "E": matrix_element["E"],
+            "ket": matrix_element["ket"],
+            "pre_string": matrix_element["pre_string"]
+        }
+        if two_electron:
+            new_matrix_element["factor"] = 0.5 * matrix_element["factor"]
+            new_matrix_element["summation"] = matrix_element["summation"] + [a, i, b, j]
+            new_matrix_element["integrals"] = g([a, i, b, j], t1_transformed)
+            new_matrix_element["box_E"] = E([a, i, b, j])
+            output.append(new_matrix_element)
+        return output
+    return translater
+
+def n1o0(t1_transformed: bool, one_electron: bool, restricted: bool) -> Callable[[dict, int, int], list[dict]]:
     def translater(matrix_element: dict, _virtual_index_counter: int, _occupied_index_counter: int) -> list[dict]:
         output = []
         commutator = matrix_element["commutator"]
@@ -306,6 +359,13 @@ def n4o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
 
 def get_translater(nesting: int, order: int, t1_transformed: bool, one_electron: bool, two_electron: bool, restricted: bool) -> Callable[[dict, int, int], list[dict]]:
     """Find the correct translater in the restricted case."""
+    if nesting == 0:
+        if order == 0:
+            return n0o0(one_electron)
+        if order == 1:
+            return n0o1(t1_transformed, one_electron)
+        if order == 2:
+            return n0o2(t1_transformed, two_electron)
     if nesting == 1:
         # [H,E_ai]|HF>
         if order == 0:
