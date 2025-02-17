@@ -181,11 +181,14 @@ class OutputType:
 
         AMS = False
         GAUSS = False
+        QCHEM = False
         for line in lines:
             if "Amsterdam Modeling Suite (AMS)" in line:
                 AMS = True
             if "Gaussian, Inc.  All Rights Reserved." in line:
                 GAUSS = True
+            if "Welcome to Q-Chem" in line:
+                QCHEM = True
 
         # The output file is determined to be of one of the following types
 
@@ -225,7 +228,7 @@ class OutputType:
             self.input = 'Amsterdam Modeling Suite'
 
         # File type = Q-Chem
-        elif 'Welcome to Q-Chem' in lines[0]:
+        elif QCHEM:
             self.extract = QChemExtract(self.filename, Quiet=Quiet, Temperature=Temperature)
             self.input = 'Q-Chem'
 
@@ -1116,12 +1119,12 @@ Please contact a maintainer of the script ot have this updated\n''')
                     else:
                         break
         elif self.exc_type == '.ECD':
-            linenumber = Forward_search_last(self.filename, '@               Electric transition dipole moments (au)', 'oscillator strengths', quiet=self.quiet)
+            linenumber = Forward_search_last(self.filename, '@                  Oscillator and Scalar Rotational Strengths', 'oscillator strengths', quiet=self.quiet)
             if isinstance(linenumber, int):
-                for i in self.lines[linenumber+6: self.end]:
-                    if "@ " in i:
+                for i in self.lines[linenumber+9: self.end]:
+                    if "@  " in i:
                         self.osc_strengths.append(
-                            float(i.split()[-3])**2 + float(i.split()[-2])**2 + float(i.split()[-1])**2
+                            float(i.split()[-4])
                         )
                     else:
                         break

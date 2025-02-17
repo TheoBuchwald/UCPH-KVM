@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import math
 from typing import List, Set, Tuple, Union, Dict
 from permutation_checker import permutationChecker,permutationComparison,to_latex,can_contain_multiple_terms
 from commutator_relations import commutator_expansion
@@ -28,6 +29,10 @@ def convert_to_float(frac_str):
         else:
             sign_mult = 1
         return float(leading) + sign_mult * (float(num) / float(denom))
+
+def split_list(lst, chunk_size):
+    """Stolen from https://www.altcademy.com/blog/how-to-split-a-list-in-python/"""
+    return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
 
 def init_global_variables() -> None:
 
@@ -271,28 +276,28 @@ def main():
     if LV is not None:
         if isinstance(LV,list):
             for param in LV:
-                prefactor /= np.math.factorial(len(param) // 2)
+                prefactor /= math.factorial(len(param) // 2)
         else:
-            prefactor /= np.math.factorial(len(LV) // 2)
+            prefactor /= math.factorial(len(LV) // 2)
 
     if RV is not None:
         if isinstance(RV,list):
             for param in RV:
-                prefactor /= np.math.factorial(len(param) // 2)
+                prefactor /= math.factorial(len(param) // 2)
         else:
-            prefactor /= np.math.factorial(len(RV) // 2)
+            prefactor /= math.factorial(len(RV) // 2)
 
     if t is not None:
         if isinstance(t,list):
             for param in t:
-                prefactor /= np.math.factorial(len(param) // 2)
+                prefactor /= math.factorial(len(param) // 2)
         else:
-            prefactor /= np.math.factorial(len(t) // 2)
+            prefactor /= math.factorial(len(t) // 2)
 
     reserved: List[str] = [i for i in args.reserved[0]]
     reserved = set(reserved).difference(set(summation))
 
-    arguments: Dict[str, Union(List[str],str)] = {
+    arguments = {
         'bra': args.bra,
         't': t,
         'LV': LV,
@@ -412,7 +417,16 @@ def main():
                 for term_to_compare in terms_to_compare:
                     for key, indices in term_to_compare.items():
                         if can_contain_multiple_terms(key):
-                            indices_to_permute |= set(np.array(indices).flatten())
+                            min_length = min([len(x) for x in indices])
+                            for index in indices:
+                                new_list = []
+                                if len(index) > min_length:
+                                    chunks = split_list(index,min_length)
+                                    for x in chunks:
+                                        new_list.append(x)
+                                else:
+                                    new_list.append(index)
+                            indices_to_permute |= set(np.array(new_list).flatten())
                         else:
                             indices_to_permute |= set(indices)
                 perms_compared = permutationComparison(terms_to_compare, summation, indices_to_permute, vir_res, occ_res)
@@ -442,11 +456,11 @@ def main():
     # If so, compensate with an extra factor of n! where n is
     # the size of the excitation space of the bra
     if set(bra_list).issubset(set(summation)) and len(bra_list) > 2:
-        reduced_prefactor_list = [np.math.factorial(len(bra_list) // 2) * i for i in reduced_prefactor_list]
+        reduced_prefactor_list = [math.factorial(len(bra_list) // 2) * i for i in reduced_prefactor_list]
         print("")
         print("ALL INDICES OF THE BRA ARE SUMMED OVER!")
         print("THUS THE PERMUTATION OPERATOR FROM IT IS REDUNDANT!")
-        print(f"IN THE CODE, WE INCLUDE A FACTOR OF {np.math.factorial(len(bra_list) // 2):d} TO ACCOUNT FOR THIS!")
+        print(f"IN THE CODE, WE INCLUDE A FACTOR OF {math.factorial(len(bra_list) // 2):d} TO ACCOUNT FOR THIS!")
 
     print_code(reduced_final_term_list,reduced_prefactor_list,reserved,bra_list,X_terms)
 

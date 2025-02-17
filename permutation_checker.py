@@ -55,65 +55,20 @@ def L_checker(L1: list, L2: list) -> bool:
 
 def t_checker(t1: list, t2: list) -> bool:
     try:
-        assert (len(t1) == 4 and len(t2) == 4) or (len(t1) == 2 and len(t2) == 2) or (len(t1) == 6 and len(t2) == 6), f"The length of t1 and t2 has to be the same and either 2, 4 or 6 - here they were {len(t1)} and {len(t2)}"
+        assert len(t1) == len(t2), f"The length of t1 and t2 has to be the same - here they were {len(t1)} and {len(t2)}"
+        assert len(t1) % 2 == 0, f"The length of t1 and t2 has to be an een number - here they were {len(t1)}"
     except AssertionError as err:
         print(err)
         exit()
 
-    if len(t1) == 2:
-        return F_checker(t1, t2)
-    elif len(t1) == 4:
-        if t1 == t2:
-            return True
+    vir_idx_perms = permutations(t1[::2])
+    occ_idx_perms = permutations(t1[1::2])
 
-        p,q,r,s = t1
-
-        if [r,s,p,q] == t2:
+    for vir_idx, occ_idx in zip(vir_idx_perms, occ_idx_perms):
+        if vir_idx == tuple(t2[::2]) and occ_idx == tuple(t2[1::2]):
             return True
-        else:
-            return False
-    else:
-        if t1 == t2:
-            return True
+    return False
 
-        p,q,r,s,t,u = t1
-
-        if [p,q,t,u,r,s] == t2:
-            return True
-        elif [r,s,p,q,t,u] == t2:
-            return True
-        elif [t,u,p,q,r,s] == t2:
-            return True
-        elif [r,s,t,u,p,q] == t2:
-            return True
-        elif [t,u,r,s,p,q] == t2:
-            return True
-        else:
-            return False
-
-def RV_checker(RV1: list, RV2: list) -> bool:
-    try:
-        assert (len(RV1) == 4 and len(RV2) == 4) or (len(RV1) == 2 and len(RV2) == 2), f"The length of RV1 and RV2 has to be the same and either 2 or 4 - here they were {len(RV1)} and {len(RV2)}"
-    except AssertionError as err:
-        print(err)
-        exit()
-
-    if len(RV1) == 2:
-        return F_checker(RV1, RV2)
-    elif len(RV2) == 4:
-        return t_checker(RV1, RV2)
-
-def LV_checker(LV1: list, LV2: list) -> bool:
-    try:
-        assert (len(LV1) == 4 and len(LV2) == 4) or (len(LV1) == 2 and len(LV2) == 2), f"The length of LV1 and LV2 has to be the same and either 2 or 4 - here they were {len(LV1)} and {len(LV2)}"
-    except AssertionError as err:
-        print(err)
-        exit()
-
-    if len(LV1) == 2:
-        return F_checker(LV1, LV2)
-    elif len(LV2) == 4:
-        return t_checker(LV1, LV2)
 
 def F_checker(F1: list, F2: list) -> bool:
     assert len(F1) == 2 and len(F2) == 2, f"The length of F1 and F2 has to be the same and 2 - here they were {len(F1)} and {len(F2)}"
@@ -549,9 +504,9 @@ def check_all(F: bool, L: bool, g: bool, t: bool, RV: bool, LV: bool, perm1: Lis
         for i, _ in enumerate(perm1['t']):
             same *= t_checker(perm1['t'][i], perm2['t'][i])
     if RV and same:
-        same *= RV_checker(perm1['RV'], perm2['RV'])
+        same *= t_checker(perm1['RV'], perm2['RV'])
     if LV and same:
-        same *= LV_checker(perm1['LV'], perm2['LV'])
+        same *= t_checker(perm1['LV'], perm2['LV'])
     return same
 
 def init_global_variables() -> None:
@@ -683,7 +638,7 @@ def main() -> None:
     reserved: List[str] = [i for i in args.reserved[0]]
     reserved = set(reserved).difference(set(summation))
 
-    arguments: Dict[str, Union(List[str],str)] = {
+    arguments = {
         'P': args.P,
         'bra': args.bra,
         'F': F,
