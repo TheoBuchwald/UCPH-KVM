@@ -631,6 +631,19 @@ def Extract(args):
     # Some values in the Extracted_Values dictionary may not have been requested, so these are removed here
     FinalArrays = Collect_and_sort_data(InputFiles, ArgumentsToValues, ExtractedValues)
 
+    if ProgressBar:
+        print("")
+
+    if Save == 'npz':
+        SaveDict = dict()
+        for i, file in enumerate(InputFiles):
+            SaveDict[file] = dict()
+            for key, val in FinalArrays.items():
+                SaveDict[file][key] = val[i]
+        np.savez(f'{SaveName}.npz', **SaveDict)
+        print(f'Data has been saved in {SaveName}.npz')
+        return
+
     # Resizing arrays
     # An example is Excitation energies where there may be more of them in one output file than another
     # By doing this it fits properly in what is printed to the terminal
@@ -654,9 +667,6 @@ def Extract(args):
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
 
-    if ProgressBar:
-        print("")
-
     # If this statement is true, then only the filenames have been written to the Output_Array
     if len(OutputArray) == OutputArray.size:
        print("No data was extracted, therefore nothing more will be printed")
@@ -670,18 +680,12 @@ def Extract(args):
                     SaveDict[key_outer].pop(key_inner)
         return SaveDict
 
-    elif Save == 'csv':
+    if Save == 'csv':
         np.savetxt(f'{SaveName}.csv', OutputArray, delimiter=',', fmt='%s')
         print(f'Data has been saved in {SaveName}.csv')
         return
 
-    elif Save == 'npz':
-        SaveDict = {i[0]: i[1:] for i in OutputArray}
-        np.savez(f'{SaveName}.npz', **SaveDict)
-        print(f'Data has been saved in {SaveName}.npz')
-        return
-
-    elif Save == 'json':
+    if Save == 'json':
         SaveDict = copy.deepcopy(ExtractedValues)
         for key_outer, dictionary in ExtractedValues.items():
             for key_inner in dictionary:
