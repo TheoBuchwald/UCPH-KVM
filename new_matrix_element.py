@@ -201,24 +201,10 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
                 new_commutator_factor.append(factor)
                 new_pre_string.append(string)
                 continue
-            # Start with the expansion of an amplitude
-            # This commutator expansion is the one where excitation operators are added in front of the commutator (to the pre_string)
-            if component[0] not in E_indices:
-                new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
-                new_pre_string.append(string + E(component[2:]))
-                new_commutator_factor.append(factor * (len(component) // 2))
-                # This commutator expansion is the one where the commutator is increased in size
-                if len(commutator) < 4:
-                    new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
-                    new_commutator_string[-1].append(component[2:])
-                    new_pre_string.append(string)
-                    new_commutator_factor.append(factor)
-                continue
-            # Then the expansion of an excitation operator
             # This commutator expansion is the one where excitation operators are added in front of the commutator (to the pre_string)
             new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
             new_pre_string.append(string + E(component[2:]))
-            new_commutator_factor.append(factor)
+            new_commutator_factor.append(factor * (len(component) // 2))
             # This commutator expansion is the one where the commutator is increased in size
             if len(commutator) < 4:
                 new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
