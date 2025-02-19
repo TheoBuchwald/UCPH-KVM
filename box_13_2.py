@@ -91,7 +91,7 @@ def n1o1(t1_transformed: bool, one_electron: bool, two_electron) -> Callable[[di
         i = commutator[0][1]
         b = f"v{virtual_index_counter}"
         j = f"o{occupied_index_counter}"
-        new_matrix_element = {
+        matrix_element_temp = {
             "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
@@ -100,19 +100,20 @@ def n1o1(t1_transformed: bool, one_electron: bool, two_electron) -> Callable[[di
             "pre_string": matrix_element["pre_string"],
         }
         if one_electron:
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [b]
             new_matrix_element["integrals"] = F([b,a], t1_transformed)
             new_matrix_element["box_E"] = E([b,i])
             output.append(new_matrix_element)
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = -matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [j]
             new_matrix_element["integrals"] = F([i,j], t1_transformed)
             new_matrix_element["box_E"] = E([a,j])
             output.append(new_matrix_element)
         if two_electron:
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [b, j]
             new_matrix_element["integrals"] = L([b,j,i,a], t1_transformed)
@@ -131,7 +132,7 @@ def n1o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         j = f"o{occupied_index_counter}"
         c = f"v{virtual_index_counter + 1}"
         k = f"o{occupied_index_counter + 1}"
-        new_matrix_element = {
+        matrix_element_temp = {
             "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
@@ -140,12 +141,13 @@ def n1o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
             "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [b,j,c]
             new_matrix_element["integrals"] = g([b,j,c,a], t1_transformed)
             new_matrix_element["box_E"] = E([b,j,c,i])
             output.append(new_matrix_element)
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = -matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [b,j,k]
             new_matrix_element["integrals"] = g([b,j,i,k], t1_transformed)
@@ -192,7 +194,7 @@ def n2o1(t1_transformed: bool, one_electron: bool, two_electron: bool) -> Callab
         j = commutator[1][1]
         c = f"v{virtual_index_counter}"
         k = f"o{occupied_index_counter}"
-        new_matrix_element = {
+        matrix_element_temp = {
             "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
@@ -201,6 +203,7 @@ def n2o1(t1_transformed: bool, one_electron: bool, two_electron: bool) -> Callab
             "pre_string": matrix_element["pre_string"],
         }
         if one_electron:
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = -matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"]
             new_matrix_element["permutation"] = P([a,i,b,j])
@@ -208,14 +211,14 @@ def n2o1(t1_transformed: bool, one_electron: bool, two_electron: bool) -> Callab
             new_matrix_element["box_E"] = E([a,j])
             output.append(new_matrix_element)
         if two_electron:
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = -matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [k]
             new_matrix_element["permutation"] = P([a,i,b,j])
             new_matrix_element["integrals"] = L([i,k,j,b], t1_transformed)
             new_matrix_element["box_E"] = E([a,k])
             output.append(new_matrix_element)
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [c]
             new_matrix_element["permutation"] = P([a,i,b,j])
@@ -237,7 +240,7 @@ def n2o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         k = f"o{occupied_index_counter}"
         d = f"v{virtual_index_counter + 1}"
         l = f"o{occupied_index_counter + 1}"
-        new_matrix_element = {
+        matrix_element_temp = {
             "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
@@ -246,26 +249,27 @@ def n2o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
             "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = -matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [c,k]
             new_matrix_element["permutation"] = P([a,i,b,j])
             new_matrix_element["integrals"] = g([i,b,c,k], t1_transformed)
             new_matrix_element["box_E"] = E([a,j,c,k])
             output.append(new_matrix_element)
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = -matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [c,k]
             new_matrix_element["permutation"] = P([a,i,b,j])
             new_matrix_element["integrals"] = g([i,k,c,b], t1_transformed)
             new_matrix_element["box_E"] = E([a,k,c,j])
             output.append(new_matrix_element)
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [k,l]
             new_matrix_element["integrals"] = g([i,k,j,l], t1_transformed)
             new_matrix_element["box_E"] = E([a,k,b,l])
             output.append(new_matrix_element)
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [c,d]
             new_matrix_element["integrals"] = g([c,a,d,b], t1_transformed)
@@ -314,7 +318,7 @@ def n3o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         k = commutator[2][1]
         d = f"v{virtual_index_counter}"
         l = f"o{occupied_index_counter}"
-        new_matrix_element = {
+        matrix_element_temp = {
             "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
@@ -323,13 +327,14 @@ def n3o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
             "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [l]
             new_matrix_element["permutation"] = P([a,i,b,j,c,k])
             new_matrix_element["integrals"] = g([i,l,j,c], t1_transformed)
             new_matrix_element["box_E"] = E([a,l,b,k])
             output.append(new_matrix_element)
-            new_matrix_element = deepcopy(new_matrix_element)
+            new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = -matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [d]
             new_matrix_element["permutation"] = P([a,i,b,j,c,k])
