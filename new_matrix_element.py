@@ -28,6 +28,7 @@ The input must contain a bra and a commutator. Examples being:
     parser.add_argument('--no_t1', action='store_false', help='Disable t1-transformation.', dest='t1_transformed')
     parser.add_argument('--unrestricted', action='store_false', help='Include to use unrestricted box.', dest='restricted')
     parser.add_argument('--no-perm', action='store_false', help='Disable permutation check.', dest='perm_check')
+    parser.add_argument('--explicit-sym', action='store_true', help='Do explicit symmetrization.', dest='explicit_sym')
 
     return parser.parse_args()
 
@@ -478,6 +479,33 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
         perm_check += check(permutation_group)
     return perm_check
 
+def perform_explicit_symmetrization(terms: list[dict]) -> list[dict]:
+    """Perform explicit symmetrization.
+
+    args:
+        List of terms with arbitrary indices.
+
+    return:
+        List of terms with arbitrary indices.
+    """
+    symmetrized_elements = []
+    for term in terms:
+        symmetrization_operator: P = term["symmetry_operator"]
+        assert isinstance(symmetrization_operator, P)
+        for old_indices, new_indices in symmetrization_operator:
+            symmetrized_elements.append({
+                "symmetry_operator": P([]),
+                "factor": term["factor"],
+                "summation": term["summation"],
+                "bra": term["bra"].update_indices(old_indices, new_indices),
+                "t": term["t"].update_indices(old_indices, new_indices),
+                "integrals": term["integrals"].update_indices(old_indices, new_indices),
+                "ket": term["ket"],
+                "E": term["E"].update_indices(old_indices, new_indices),
+            })
+    return symmetrized_elements
+
+
 def translate_to_normal_indices(terms: list[dict]) -> list[dict]:
     """Translate the v0... and o0... indices to a, i, b, j, and so on.
 
@@ -585,6 +613,7 @@ def main():
     t1_transformed = arguments.t1_transformed
     restricted = arguments.restricted
     perm_check = arguments.perm_check
+    explicit_sym = arguments.explicit_sym
     one_electron = False
     two_electron = False
     one_electron_type = "F"
@@ -607,6 +636,8 @@ def main():
         permutation_checked = permutation_check(reduced_permuted_expressions)
     else:
         permutation_checked = sum(reduced_permuted_expressions, [])
+    if explicit_sym:
+        permutation_checked = perform_explicit_symmetrization(permutation_checked)
     normal_indices = translate_to_normal_indices(permutation_checked)
     print_expression(normal_indices, one_electron_type)
     print_python_code(normal_indices, one_electron_type)
