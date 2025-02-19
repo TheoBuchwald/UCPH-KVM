@@ -114,6 +114,7 @@ def n1o1(t1_transformed: bool, one_electron: bool, two_electron) -> Callable[[di
             new_matrix_element["integrals"] = L([b,j,i,a], t1_transformed)
             new_matrix_element["box_E"] = E([b,j])
             output.append(new_matrix_element)
+        return output
     return translater
 
 def n1o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int], list[dict]]:
