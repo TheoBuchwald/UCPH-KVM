@@ -439,26 +439,33 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
             permutable_virtual = [i for i in summation if i[0] == "v"]
             permutable_occupied = [i for i in summation if i[0] == "o"]
             found_match = False
-            for comparison in permutation_list[:-e]:
-                if type(element["integrals"]) != type(comparison["integrals"]):
-                    continue
+            for old, new in element["symmetry_operator"]:
                 if found_match:
                     break
-                for virtual_permutation in permutations(permutable_virtual):
+                permuted_element = deepcopy(element)
+                permuted_element["bra"] = permuted_element["bra"].update_indices(old, new)
+                permuted_element["t"] = permuted_element["t"].update_indices(old, new)
+                permuted_element["integrals"] = permuted_element["integrals"].update_indices(old, new)
+                for comparison in permutation_list[:-e]:
+                    if type(element["integrals"]) != type(comparison["integrals"]):
+                        continue
                     if found_match:
                         break
-                    for occupied_permutation in permutations(permutable_occupied):
-                        old_indices = permutable_virtual + permutable_occupied
-                        new_indices = list(virtual_permutation) + list(occupied_permutation)
-                        if element["bra"].update_indices(old_indices, new_indices) != comparison["bra"]:
-                            continue
-                        if element["t"].update_indices(old_indices, new_indices) != comparison["t"]:
-                            continue
-                        if element["integrals"].update_indices(old_indices, new_indices) != comparison["integrals"]:
-                            continue
-                        found_match = True
-                        comparison["factor"] += element["factor"]
-                        break
+                    for virtual_permutation in permutations(permutable_virtual):
+                        if found_match:
+                            break
+                        for occupied_permutation in permutations(permutable_occupied):
+                            old_indices = permutable_virtual + permutable_occupied
+                            new_indices = list(virtual_permutation) + list(occupied_permutation)
+                            if permuted_element["bra"].update_indices(old_indices, new_indices) != comparison["bra"]:
+                                continue
+                            if permuted_element["t"].update_indices(old_indices, new_indices) != comparison["t"]:
+                                continue
+                            if permuted_element["integrals"].update_indices(old_indices, new_indices) != comparison["integrals"]:
+                                continue
+                            found_match = True
+                            comparison["factor"] += element["factor"]
+                            break
             if not found_match:
                 check_list.append(element)
         return check_list
