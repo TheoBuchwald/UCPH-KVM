@@ -1,7 +1,7 @@
 import argparse
 from copy import deepcopy
 import box_13_2
-from operators import E, BRA, t, amplitude
+from operators import E, BRA, t, amplitude, P
 from math import factorial
 from itertools import permutations
 
@@ -100,12 +100,14 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
             occupied_indices = [f"o{i}" for i in range(occupied_index_counter, occupied_index_counter + order)]
             indices = zip_merge_arrays(virtual_indices, occupied_indices)
             indexed_E = E(indices)
+            symmetrization_operator = P(indices)
             virtual_index_counter += order
             occupied_index_counter += order
             commutator_terms.pop(c)
             break
     else:
         indexed_E = E([])
+        symmetrization_operator = P([])
     # If we start labelling by the bra
     if start_labelling_bra or "L" in bra:
         if "L" in bra:
@@ -139,6 +141,7 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
             occupied_index_counter += order
     indexed_t = t(t_indices)
     matrix_element = {
+        'symmetry_operator': symmetrization_operator,
         'factor': factor,
         'summation': summation,
         'bra': indexed_bra,
@@ -213,28 +216,15 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
                 continue
             # Then the expansion of an excitation operator
             # This commutator expansion is the one where excitation operators are added in front of the commutator (to the pre_string)
-            for pair_index in range(0, len(component)-1, 2):
-                new_commutator_string.append([comp if i != nr else comp[pair_index:pair_index+2] for i, comp in enumerate(commutator)])
-                if pair_index == 0:
-                    new_pre_string.append(string + E(component[2:]))
-                elif pair_index == len(component)-2:
-                    new_pre_string.append(string + E(component[:-2]))
-                else:
-                    new_pre_string.append(string + E(component[:pair_index]) + E(component[pair_index+2:]))
+            new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
+            new_pre_string.append(string + E(component[2:]))
+            new_commutator_factor.append(factor)
+            # This commutator expansion is the one where the commutator is increased in size
+            if len(commutator) < 4:
+                new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
+                new_commutator_string[-1].append(component[2:])
+                new_pre_string.append(string)
                 new_commutator_factor.append(factor)
-                # This commutator expansion is the one where the commutator is increased in size
-                if len(commutator) < 4:
-                    new_commutator_string.append([comp if i != nr else comp[pair_index:pair_index+2] for i, comp in enumerate(commutator)])
-                    if pair_index == 0:
-                        new_commutator_string[-1].append(component[2:])
-                        new_pre_string.append(string)
-                    elif pair_index == len(component)-2:
-                        new_commutator_string.pop(-1)
-                        continue
-                    else:
-                        new_commutator_string[-1].append(component[pair_index+2:])
-                        new_pre_string.append(E(component[:pair_index]))
-                    new_commutator_factor.append(factor)
         commutator_string = new_commutator_string
         commutator_factor = new_commutator_factor
         pre_string = new_pre_string
@@ -242,6 +232,7 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
     new_matrix_elements = []
     for commutator, factor, string in zip(commutator_string, commutator_factor, pre_string):
         new_matrix_elements.append({
+            'symmetry_operator': matrix_element["symmetry_operator"],
             'summation': matrix_element["summation"],
             'bra': matrix_element["bra"],
             't': matrix_element["t"],
@@ -288,7 +279,7 @@ def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occu
         minus_shift = len(pre_string)
         bra_rank = len(bra)
         order = bra_rank - minus_shift
-        # Skip element if there are to few or to many excitation operators
+        # Skip element if there are too few or too many excitation operators
         if order > 2:
             continue
         if order < 0:
@@ -333,6 +324,7 @@ def perform_permutations(mathematical_expressions: list[dict]) -> list[list[dict
                 "factor": expression["factor"],
                 "summation": expression["summation"],
             }
+            perm_express["symmetry_operator"] = expression["symmetry_operator"]
             perm_express["t"] = expression["t"]
             perm_express["pre_string"] = expression["pre_string"] + expression["box_E"].update_indices(old_indices, new_indices)
             perm_express["E"] = expression["E"]
@@ -391,13 +383,14 @@ def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[di
                     match_to.append(new_index)
                     summation.remove(i)
             matched_permutation_list.append({
+                "symmetry_operator": expression["symmetry_operator"],
                 "bra": expression["bra"].update_indices(match_from, match_to),
                 "ket": expression["ket"],
                 "factor": expression["factor"],
                 "summation": summation,
                 "t": expression["t"].update_indices(match_from, match_to),
                 "integrals": expression["integrals"].update_indices(match_from, match_to),
-                "E": expression["E"]
+                "E": expression["E"],
             })
         matched_permuted_expressions.append(matched_permutation_list)
     # Then reduce the indices
@@ -424,13 +417,14 @@ def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[di
                 summation.remove(old)
                 summation.append(new)
             reduced_permutation_list.append({
+                "symmetry_operator": expression["symmetry_operator"],
                 "bra": expression["bra"].update_indices(reduce_from, reduce_to),
                 "ket": expression["ket"],
                 "factor": expression["factor"],
                 "summation": summation,
                 "t": expression["t"].update_indices(reduce_from, reduce_to),
                 "integrals": expression["integrals"].update_indices(reduce_from, reduce_to),
-                "E": expression["E"]
+                "E": expression["E"],
             })
         reduced_permuted_expressions.append(reduced_permutation_list)
     return reduced_permuted_expressions
@@ -512,6 +506,7 @@ def translate_to_normal_indices(terms: list[dict]) -> list[dict]:
         new_indices = [translation_dict[i] for i in used_indices]
         summation = [translation_dict[i] for i in term["summation"]]
         translated_terms.append({
+            "symmetry_operator": term["symmetry_operator"].update_indices(used_indices, new_indices, translate=True),
             "factor": term["factor"],
             "summation": summation,
             "bra": term["bra"].update_indices(used_indices, new_indices, translate=True),
@@ -527,13 +522,15 @@ def print_expression(terms: list[dict], one_electron_type: str) -> None:
 
     args:
         List of terms.
+        The one electron integral string representation.
+        The permutation operator that symmetrizes the E indices.
     """
     for term in terms:
         summation = "".join(term["summation"])
         left_vector = ''
         if term["bra"].left_excitation_vector:
             left_vector += f'\\bar{{t}}_{{{"".join(term["bra"].indices)}}} '
-        expression = f'{term["factor"]} \sum_{{{summation}}} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
+        expression = f'{term["symmetry_operator"]} {term["factor"]} \sum_{{{summation}}} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
         print(expression)
     print("")
 
@@ -542,7 +539,11 @@ def print_python_code(terms: list[dict], one_electron_type: str) -> None:
 
     args:
         List of terms.
+        The one electron integral string representation.
+        The permutation operator that symmetrizes the E indices.
     """
+    if terms == []:
+        return
     for t, term in enumerate(terms):
         # Start with the indices
         if term["bra"].is_HF:
@@ -577,6 +578,11 @@ def print_python_code(terms: list[dict], one_electron_type: str) -> None:
             print(f"output = {term['factor']} * mem.contract(\"{left_side}->{right_side}\",{component})")
         else:
             print(f"output {sign}= {abs(term['factor'])} * mem.contract(\"{left_side}->{right_side}\",{component})")
+    print("")
+    if len(terms[0]["symmetry_operator"]) != 1:
+        print("return symmetrize_index(output)")
+    else:
+        print("return output")
 
 def main():
     """Main function."""

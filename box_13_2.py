@@ -17,11 +17,12 @@ def n0o1(t1_transformed: bool, one_electron: bool) -> Callable[[dict, int, int],
         a = f"v{virtual_index_counter}"
         i = f"o{occupied_index_counter}"
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if one_electron:
             new_matrix_element["factor"] = matrix_element["factor"]
@@ -40,11 +41,12 @@ def n0o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         b = f"v{virtual_index_counter + 1}"
         j = f"o{occupied_index_counter + 1}"
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
             new_matrix_element["factor"] = 0.5 * matrix_element["factor"]
@@ -62,11 +64,12 @@ def n1o0(t1_transformed: bool, one_electron: bool, restricted: bool) -> Callable
         a = commutator[0][0]
         i = commutator[0][1]
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if one_electron:
             if restricted:
@@ -89,11 +92,12 @@ def n1o1(t1_transformed: bool, one_electron: bool, two_electron) -> Callable[[di
         b = f"v{virtual_index_counter}"
         j = f"o{occupied_index_counter}"
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if one_electron:
             new_matrix_element["factor"] = matrix_element["factor"]
@@ -128,11 +132,12 @@ def n1o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         c = f"v{virtual_index_counter + 1}"
         k = f"o{occupied_index_counter + 1}"
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
             new_matrix_element["factor"] = matrix_element["factor"]
@@ -158,11 +163,12 @@ def n2o0(t1_transformed: bool, two_electron: bool, restricted: bool) -> Callable
         b = commutator[1][0]
         j = commutator[1][1]
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if restricted:
             new_matrix_element["factor"] = 2 * matrix_element["factor"]
@@ -187,11 +193,12 @@ def n2o1(t1_transformed: bool, one_electron: bool, two_electron: bool) -> Callab
         c = f"v{virtual_index_counter}"
         k = f"o{occupied_index_counter}"
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if one_electron:
             new_matrix_element["factor"] = -matrix_element["factor"]
@@ -231,11 +238,12 @@ def n2o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         d = f"v{virtual_index_counter + 1}"
         l = f"o{occupied_index_counter + 1}"
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
             new_matrix_element["factor"] = -matrix_element["factor"]
@@ -277,11 +285,12 @@ def n3o1(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         c = commutator[2][0]
         k = commutator[2][1]
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
             new_matrix_element["factor"] = -matrix_element["factor"]
@@ -306,11 +315,12 @@ def n3o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         d = f"v{virtual_index_counter}"
         l = f"o{occupied_index_counter}"
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
             "ket": matrix_element["ket"],
-            "pre_string": matrix_element["pre_string"]
+            "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
             new_matrix_element["factor"] = matrix_element["factor"]
@@ -342,6 +352,7 @@ def n4o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
         d = commutator[3][0]
         l = commutator[3][1]
         new_matrix_element = {
+            "symmetry_operator": matrix_element["symmetry_operator"],
             "bra": matrix_element["bra"],
             "t": matrix_element["t"],
             "E": matrix_element["E"],
