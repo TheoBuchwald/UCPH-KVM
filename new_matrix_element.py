@@ -545,7 +545,10 @@ def print_python_code(terms: list[dict], one_electron_type: str) -> None:
     """
     for t, term in enumerate(terms):
         # Start with the indices
-        if term["bra"].left_excitation_vector or term["bra"].is_HF:
+        if term["bra"].is_HF:
+            left_side = "".join(term["bra"].indices)
+            right_side = "".join(term["E"].indices)
+        if term["bra"].left_excitation_vector:
             left_side = "".join(term["bra"].indices) + ","
             right_side = "".join(term["E"].indices)
         else:
