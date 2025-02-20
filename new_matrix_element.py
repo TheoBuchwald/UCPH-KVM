@@ -53,14 +53,13 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
                 EI is an excited bra of order I.
                 HF is the Hartree Fock state.
         commutator: String representation of commutator.
-                    H is accepted as one- + two- electron operator.
-                    P is accepted two-electron operator.
-                    F and X are accepted one-electron operators.
+                    H is the accepted one- + two-electron operator.
+                    P is the accepted two-electron operator.
+                    F and X are the accepted one-electron operators.
                     EI is an excitation operator of order I.
                     TI is an amplitude of order I.
         ket: String representation of ket.
                 Only HF is accepted.
-        restricted: Whether the commutator should be indexed as if restricted or unrestricted.
 
     return:
         A dictionary containing:
