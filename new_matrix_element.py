@@ -1,6 +1,7 @@
 import argparse
-from copy import deepcopy
 import box_13_2
+
+from copy import deepcopy
 from operators import E, BRA, t, amplitude, P
 from math import factorial
 from itertools import permutations
@@ -42,6 +43,30 @@ def zip_merge_arrays(arr1: list, arr2: list) -> list:
         merged_arr.append(i)
         merged_arr.append(j)
     return merged_arr
+
+def progressbar(iterable, prefix):
+    """Progressbar taken from https://stackoverflow.com/questions/3160699/python-progress-bar.
+
+    args:
+        iterable: Iterable.
+        prefix: Text before the progressbar.
+
+    return:
+        A generator over iterable
+    """
+    count = len(iterable)
+    size = 60
+    def show(j):
+        if j == 0:
+            x = 0
+        else:
+            x = int(size*j/count)
+        print(f"{prefix}[{u'█'*x}{('.'*(size-x))}] {j}/{count}", end='\r', flush=True)
+    show(0) # avoid div/0
+    for i, item in enumerate(iterable):
+        yield item
+        show(i+1)
+    print("", flush=True)
 
 def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int, int]:
     """Assign indices to components in the bra, commutator, and ket.
@@ -210,6 +235,7 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
     commutator_factor = [matrix_element["factor"]]
     pre_string = [E([])]
 
+    print("Expanding commutator expression.")
     amplitudes: list[amplitude] = matrix_element["t"].amplitudes
     E_indices: list[str] = matrix_element["E"].indices
     for amp in amplitudes:
@@ -252,7 +278,7 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
                     new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
                     new_commutator_string[-1].append(component[2:expansion])
                     new_pre_string.append(string + E(component[expansion:]))
-                new_commutator_factor.append(factor)
+                    new_commutator_factor.append(factor)
         commutator_string = new_commutator_string
         commutator_factor = new_commutator_factor
         pre_string = new_pre_string
@@ -283,7 +309,7 @@ def collect_commutator_terms(matrix_elements: list[dict]) -> list[dict]:
         Unique commutator expanded matrix elements.
     """
     collected_elements = []
-    for e, element in enumerate(matrix_elements[::-1], 1):
+    for e, element in enumerate(progressbar(matrix_elements[::-1], f"{'Collecting commutator terms: ':<50}"), 1):
         found_match = False
         for comparison in matrix_elements[:-e]:
             if element["pre_string"] != comparison["pre_string"]:
@@ -324,7 +350,7 @@ def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occu
             E: The original excitation operator.
     """
     mathematical_expressions: list[dict] = []
-    for element in matrix_elements:
+    for element in progressbar(matrix_elements, f"{'Translating matrix elements using Box 13.2: ':<50}"):
         commutator = element["commutator"]
         pre_string = element["pre_string"]
         bra: BRA = element["bra"]
@@ -362,7 +388,7 @@ def perform_permutations(mathematical_expressions: list[dict]) -> list[list[dict
             E: The original excitation operator.
     """
     permuted_expressions: list[list[dict]] = []
-    for expression in mathematical_expressions:
+    for expression in progressbar(mathematical_expressions, f"{'Permuting elements: ':<50}"):
         # Skip elements without permutation operators
         if "permutation" not in expression.keys():
             perm_express = deepcopy(expression)
@@ -406,7 +432,7 @@ def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[di
     """
     # Start by matching indices in the excitation operators to the bra
     matched_permuted_expressions = []
-    for permutation_list in permuted_expressions:
+    for permutation_list in progressbar(permuted_expressions, f"{'Matching indices: ':<50}"):
         matched_permutation_list = []
         for expression in permutation_list:
             summation: list[str] = deepcopy(expression["summation"])
@@ -450,7 +476,7 @@ def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[di
         matched_permuted_expressions.append(matched_permutation_list)
     # Then reduce the indices
     reduced_permuted_expressions = []
-    for permutation_list in matched_permuted_expressions:
+    for permutation_list in progressbar(matched_permuted_expressions, f"{'Reducing indices: ':<50}"):
         reduced_permutation_list = []
         for expression in permutation_list:
             summation: list[str] = deepcopy(expression["summation"])
@@ -502,9 +528,9 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
             E: The original excitation operator.
     """
     # Define a function that check permutations
-    def check(permutation_list: list[dict]) -> list[dict]:
+    def check(permutation_list: list[dict], pg: int, max_pg: int) -> list[dict]:
         check_list = []
-        for e, element in enumerate(permutation_list[::-1], 1):
+        for e, element in enumerate(progressbar(permutation_list[::-1], f"{f'Performing permutation check on group {pg} of {max_pg}: ':<50}"), 1):
             summation = element["summation"]
             permutable_virtual = [i for i in summation if i[0] == "v"]
             permutable_occupied = [i for i in summation if i[0] == "o"]
@@ -541,11 +567,13 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
         return check_list
     # Do a check over permutations from each permutation operator seperately
     perm_check = []
-    for permutation_group in reduced_permuted_expressions:
+    for pg, permutation_group in enumerate(reduced_permuted_expressions):
         if len(permutation_group) == 1:
+            print(f"Only one element in group {pg}, skipping permutation check")
             perm_check.append(permutation_group[0])
             continue
-        perm_check += check(permutation_group)
+        perm_check += check(permutation_group, pg, len(reduced_permuted_expressions))
+    print("")
     return perm_check
 
 def perform_explicit_symmetrization(terms: list[dict]) -> list[dict]:
@@ -592,7 +620,7 @@ def translate_to_normal_indices(terms: list[dict]) -> list[dict]:
     }
     translated_terms = []
     for term in terms:
-        used_indices = term["t"].indices + term["integrals"].indices + term["E"].indices + term["bra"].indices
+        used_indices = term["t"].indices + term.get("integrals", E([])).indices + term["E"].indices + term["bra"].indices
         new_indices = [translation_dict[i] for i in used_indices]
         summation = [translation_dict[i] for i in term["summation"]]
         translated_terms.append({
@@ -601,7 +629,7 @@ def translate_to_normal_indices(terms: list[dict]) -> list[dict]:
             "summation": summation,
             "bra": term["bra"].update_indices(used_indices, new_indices, translate=True),
             "t": term["t"].update_indices(used_indices, new_indices, translate=True),
-            "integrals": term["integrals"].update_indices(used_indices, new_indices, translate=True),
+            "integrals": term.get("integrals", E([])).update_indices(used_indices, new_indices, translate=True),
             "ket": term["ket"],
             "E": term["E"].update_indices(used_indices, new_indices, translate=True),
         })
