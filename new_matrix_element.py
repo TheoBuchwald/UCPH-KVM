@@ -249,6 +249,30 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
 
     return new_matrix_elements
 
+def collect_commutator_terms(matrix_elements: list[dict]) -> list[dict]:
+    """Collect equal commutator terms from the commutator expansion.
+
+    args:
+        matrix_elements: The commutator expanded matrix_elements.
+
+    return:
+        Unique commutator expanded matrix elements.
+    """
+    collected_elements = []
+    for e, element in enumerate(matrix_elements[::-1], 1):
+        found_match = False
+        for comparison in matrix_elements[:-e]:
+            if element["pre_string"] != comparison["pre_string"]:
+                continue
+            if element["commutator"] != comparison["commutator"]:
+                continue
+            found_match = True
+            comparison["factor"] += element["factor"]
+        if not found_match:
+            collected_elements.append(element)
+    return collected_elements
+
+
 def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occupied_index_counter: int, restricted: bool, t1_transformed: bool, one_electron: bool, two_electron: bool) -> list[dict]:
     """Translate an expanded commutator using Box 13.2 and the (unreleased) Unrestricted Box.
 
@@ -650,7 +674,8 @@ def main():
         two_electron = True
     matrix_element, virtual_index_counter, occupied_index_counter = commutator_indexing(bra, commutator, "HF")
     expanded_matrix_element = commutator_expansion(matrix_element)
-    mathematical_expressions = commutator_box(expanded_matrix_element, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron, two_electron)
+    collected_matrix_elements = collect_commutator_terms(expanded_matrix_element)
+    mathematical_expressions = commutator_box(collected_matrix_elements, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron, two_electron)
     permuted_expressions = perform_permutations(mathematical_expressions)
     reduced_permuted_expressions = match_reduce_indices(permuted_expressions)
     if perm_check:
