@@ -273,10 +273,15 @@ class t:
         """Check if T is equal to other T."""
         if type(__value) != type(self):
             return False
+        if len(self) != len(__value):
+            return False
         for amp1, amp2 in zip(self.amplitudes, __value.amplitudes):
             if amp1 != amp2:
                 return False
         return True
+
+    def __len__(self) -> int:
+        return len(self.amplitudes)
 
     @property
     def indices(self):

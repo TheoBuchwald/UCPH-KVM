@@ -158,6 +158,30 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     }
     return matrix_element, virtual_index_counter, occupied_index_counter
 
+def print_matrix_element(matrix_element: dict[str: t | E | BRA | str | list[str]], operator: str) -> None:
+    """Print the matrix element after indexing.
+
+    args:
+        matrix_element: Dictionary containing the bra, ket, summation and any amplitudes, and excitation operators.
+        operator: String representation of the operator used in the commutator.
+    """
+    indexed_matrix_element = translate_to_normal_indices([matrix_element])[0]
+    commutator = "[" * len(indexed_matrix_element["t"])
+    if indexed_matrix_element["E"] != E([]):
+        commutator += "["
+    commutator += operator
+    if indexed_matrix_element["t"] != t([]):
+        for amp in indexed_matrix_element["t"].amplitudes:
+            commutator += f", {str(amp)[:-1]}]"
+    if indexed_matrix_element["E"] != E([]):
+        commutator += f", {str(indexed_matrix_element['E'])[:-1]}]"
+    left_vector = ""
+    if indexed_matrix_element["bra"].left_excitation_vector:
+        left_vector = f" \\bar{{t}}^{{{''.join(indexed_matrix_element['bra'].indices[::2])}}}_{{{''.join(indexed_matrix_element['bra'].indices[1::2])}}}"
+    print("Working on the matrix element")
+    print(f"\sum_{{{''.join(indexed_matrix_element['summation'])}}}{left_vector} {indexed_matrix_element['bra']}{commutator}|HF>")
+    print("")
+
 def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]]) -> list[dict]:
     """Expand commutator after indexing.
 
@@ -664,15 +688,20 @@ def main():
     one_electron_type = "F"
     if "F" in commutator:
         one_electron = True
+        operator = "F"
     if "X" in commutator:
         one_electron = True
         one_electron_type = "X"
+        operator = "X"
     if "P" in commutator:
         two_electron = True
+        operator = "P"
     if "H" in commutator:
         one_electron = True
         two_electron = True
+        operator = "H"
     matrix_element, virtual_index_counter, occupied_index_counter = commutator_indexing(bra, commutator, "HF")
+    print_matrix_element(matrix_element, operator)
     expanded_matrix_element = commutator_expansion(matrix_element)
     collected_matrix_elements = collect_commutator_terms(expanded_matrix_element)
     mathematical_expressions = commutator_box(collected_matrix_elements, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron, two_electron)
