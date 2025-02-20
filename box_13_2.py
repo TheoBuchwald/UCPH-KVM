@@ -144,7 +144,7 @@ def n1o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
             new_matrix_element = deepcopy(matrix_element_temp)
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [b,j,c]
-            new_matrix_element["integrals"] = g([b,j,c,a], t1_transformed)
+            new_matrix_element["integrals"] = g([c,a,b,j], t1_transformed)
             new_matrix_element["box_E"] = E([b,j,c,i])
             output.append(new_matrix_element)
             new_matrix_element = deepcopy(matrix_element_temp)
@@ -222,7 +222,7 @@ def n2o1(t1_transformed: bool, one_electron: bool, two_electron: bool) -> Callab
             new_matrix_element["factor"] = matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [c]
             new_matrix_element["permutation"] = P([a,i,b,j])
-            new_matrix_element["integrals"] = L([c,a,j,b], t1_transformed)
+            new_matrix_element["integrals"] = L([j,b,c,a], t1_transformed)
             new_matrix_element["box_E"] = E([c,i])
             output.append(new_matrix_element)
         return output
@@ -253,7 +253,7 @@ def n2o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
             new_matrix_element["factor"] = -matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [c,k]
             new_matrix_element["permutation"] = P([a,i,b,j])
-            new_matrix_element["integrals"] = g([i,b,c,k], t1_transformed)
+            new_matrix_element["integrals"] = g([c,k,i,b], t1_transformed)
             new_matrix_element["box_E"] = E([a,j,c,k])
             output.append(new_matrix_element)
             new_matrix_element = deepcopy(matrix_element_temp)
