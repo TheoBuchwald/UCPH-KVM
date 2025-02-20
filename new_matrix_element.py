@@ -205,8 +205,9 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
                 new_pre_string.append(string)
                 continue
             component = commutator[nr]
+            component_length = len(component) // 2
             # If there is only one excitation operator in the current component it is (so far) done
-            if len(component) == 2:
+            if component_length == 1:
                 new_commutator_string.append(commutator)
                 new_commutator_factor.append(factor)
                 new_pre_string.append(string)
@@ -214,12 +215,19 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
             # This commutator expansion is the one where excitation operators are added in front of the commutator (to the pre_string)
             new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
             new_pre_string.append(string + E(component[2:]))
-            new_commutator_factor.append(factor * (len(component) // 2))
+            new_commutator_factor.append(factor * component_length)
             # This commutator expansion is the one where the commutator is increased in size
             if len(commutator) < 4:
                 new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
                 new_commutator_string[-1].append(component[2:])
                 new_pre_string.append(string)
+                new_commutator_factor.append(factor)
+                if component_length == 2:
+                    continue
+                for expansion in range(4, 2*component_length, 2):
+                    new_commutator_string.append([comp if i != nr else comp[:2] for i, comp in enumerate(commutator)])
+                    new_commutator_string[-1].append(component[2:expansion])
+                    new_pre_string.append(string + E(component[expansion:]))
                 new_commutator_factor.append(factor)
         commutator_string = new_commutator_string
         commutator_factor = new_commutator_factor
