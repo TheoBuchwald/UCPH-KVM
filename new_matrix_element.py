@@ -7,13 +7,16 @@ from itertools import permutations
 
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""A script designed to quickly get the code necessary to calculate a Coupled Cluster matrix element.
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="""A script designed to quickly get the code necessary to calculate a Coupled Cluster matrix element.
 The input must contain a bra and a commutator. Examples being:
     L2 [[HT2]T2]
     E3 [FT3]
     HF [HE2]""", epilog="""For help contact
     Theo Juncker von Buchwald
-    tjvbu@kemi.dtu.dk""")
+    tjvbu@kemi.dtu.dk"""
+    )
 
     parser.add_argument("bra", type=str, nargs=1, help="""The excitation level of the bra. Example: L4
     For a left excitation vector write LI where I is the excitation level.
@@ -61,6 +64,7 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
 
     return:
         A dictionary containing:
+            A symmetrization operator.
             A factor.
             An indexed bra.
             The indexed amplitudes.
@@ -72,9 +76,9 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
 
     Examples of bra, commutator, and ket:
         - bra='HF', commutator='[[HT2]E1]', ket='HF'
-        - bra='3', commutator='[FT3]', ket='HF'
+        - bra='E3', commutator='[FT3]', ket='HF'
         - bra='L2', commutator='[HT3]', ket='HF'
-        - bra='2', commutator='[XT2]', ket='HF'
+        - bra='E2', commutator='[XT2]', ket='HF'
     """
     assert ket == "HF", "The matrix element script is not set up to have any other ket than the HF state."
     start_labelling_E = "E" in commutator
@@ -92,6 +96,8 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     occupied_index_counter = 0
     summation = []
     factor = 1
+    indexed_E = E([])
+    symmetrization_operator = P([])
     if start_labelling_E:
         for c, component in enumerate(commutator_terms):
             if "E" not in component:
@@ -106,13 +112,12 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
             occupied_index_counter += order
             commutator_terms.pop(c)
             break
-    else:
-        indexed_E = E([])
-        symmetrization_operator = P([])
     # If we start labelling by the bra
     if start_labelling_bra or "L" in bra:
         if "L" in bra:
             order = int(bra.replace("L",""))
+            if start_labelling_E:
+                factor *= 1 / factorial(order)
         else:
             order = int(bra.replace("E",""))
         virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
@@ -121,6 +126,8 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
             summation += virtual_indices
             summation += occupied_indices
         indices = zip_merge_arrays(virtual_indices, occupied_indices)
+        if "E" in bra:
+            symmetrization_operator = P(indices)
         indexed_bra = BRA(indices, "L" in bra)
         virtual_index_counter += order
         occupied_index_counter += order
@@ -160,17 +167,20 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
 
     return:
         All commutators resulting from the commutator expanded matrix_element. Each commutator contains:
+            The symmetrization operator.
+            The factor.
             The summation.
             The bra.
             The amplitudes.
             The excitation operators.
             The ket.
-            The commutator_factor, pre_string, and commutator_string defined as seen below.
 
-                        2 * E_ai [H, E_bj]
-                        ^   ^    ^commutator_string
-                        ^   ^pre_string
-                        ^commutator_factor
+    The commutator_factor, pre_string, and commutator_string defined as below.
+
+                            2 * E_ai [H, E_bj]
+                            ^   ^    ^commutator_string
+                            ^   ^pre_string
+                            ^commutator_factor
         """
     assert "t" in matrix_element.keys() or "E" in matrix_element.keys(), "Commutator expansion needs either a T or an E in the commutator."
     commutator_string: list[list] = []
@@ -246,6 +256,7 @@ def commutator_box(matrix_elements: list[dict], virtual_index_counter: int, occu
 
     return:
         Non reduced mathematical expressions for each matrix element by using Box 13.2 and the (unreleased) unrestricted box:
+            symmetry_operator: The symmetrization operator.
             factor: The prefactor for the expression.
             summation: The indices that are summed over.
             bra: The bra.
@@ -285,6 +296,7 @@ def perform_permutations(mathematical_expressions: list[dict]) -> list[list[dict
 
     return:
         All expressions after the permutation operators have been applied:
+            symmetry_operator: The symmetrization operator.
             factor: The prefactor for the expression.
             summation: The indices that are summed over.
             bra: The bra.
@@ -328,6 +340,7 @@ def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[di
 
     return:
         List of expressions where indicies have been matched and reduced:
+            symmetry_operator: The symmetrization operator.
             factor: The prefactor for the expression.
             summation: The indices that are summed over.
             bra: The bra.
@@ -424,6 +437,7 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
 
     return:
         A list of all permutationally unique terms:
+            symmetry_operator: The symmetrization operator.
             factor: The prefactor for the expression.
             summation: The indices that are summed over.
             bra: The bra.
@@ -551,7 +565,7 @@ def print_expression(terms: list[dict], one_electron_type: str) -> None:
         left_vector = ''
         if term["bra"].left_excitation_vector:
             left_vector += f'\\bar{{t}}_{{{"".join(term["bra"].indices)}}} '
-        expression = f'{term["symmetry_operator"]} {term["factor"]} \sum_{{{summation}}} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
+        expression = f'{term["factor"]} \sum_{{{summation}}} {term["symmetry_operator"]} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
         print(expression)
     print("")
 
