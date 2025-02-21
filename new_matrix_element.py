@@ -127,6 +127,7 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
             if "E" not in component:
                 continue
             order = int(component.split("E")[-1])
+            factor *= 1/ factorial(order)
             virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
             occupied_indices = [f"o{i}" for i in range(occupied_index_counter, occupied_index_counter + order)]
             indices = zip_merge_arrays(virtual_indices, occupied_indices)
@@ -140,8 +141,6 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     if start_labelling_bra or "L" in bra:
         if "L" in bra:
             order = int(bra.replace("L",""))
-            if start_labelling_E:
-                factor *= 1 / factorial(order)
         else:
             order = int(bra.replace("E",""))
         virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
