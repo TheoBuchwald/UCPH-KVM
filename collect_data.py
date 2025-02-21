@@ -635,7 +635,11 @@ def Extract(args):
         print("")
 
     if Save == 'npz':
-        SaveDict = {i[0]: i[1:] for i in FinalArrays}
+        SaveDict = dict()
+        for i, file in enumerate(InputFiles):
+            SaveDict[file] = dict()
+            for key, val in FinalArrays.items():
+                SaveDict[file][key] = val[i]
         np.savez(f'{SaveName}.npz', **SaveDict)
         print(f'Data has been saved in {SaveName}.npz')
         return
@@ -676,18 +680,12 @@ def Extract(args):
                     SaveDict[key_outer].pop(key_inner)
         return SaveDict
 
-    elif Save == 'csv':
+    if Save == 'csv':
         np.savetxt(f'{SaveName}.csv', OutputArray, delimiter=',', fmt='%s')
         print(f'Data has been saved in {SaveName}.csv')
         return
 
-    elif Save == 'npz':
-        SaveDict = {i[0]: i[1:] for i in OutputArray}
-        np.savez(f'{SaveName}.npz', **SaveDict)
-        print(f'Data has been saved in {SaveName}.npz')
-        return
-
-    elif Save == 'json':
+    if Save == 'json':
         SaveDict = copy.deepcopy(ExtractedValues)
         for key_outer, dictionary in ExtractedValues.items():
             for key_inner in dictionary:
