@@ -122,6 +122,8 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     factor = 1
     indexed_E = E([])
     symmetrization_operator = P([])
+    for c, component in enumerate(commutator_terms, 1):
+        assert "E" in component or "T" in component, f"An unknown operator is present in commutator {c}, {component}"
     if start_labelling_E:
         for c, component in enumerate(commutator_terms):
             if "E" not in component:
