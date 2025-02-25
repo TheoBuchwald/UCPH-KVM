@@ -533,10 +533,7 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
             summation = element["summation"]
             permutable_virtual = [i for i in summation if i[0] == "v"]
             permutable_occupied = [i for i in summation if i[0] == "o"]
-            found_match = False
             for old, new in element["symmetry_operator"]:
-                if found_match:
-                    break
                 permuted_element = deepcopy(element)
                 permuted_element["bra"] = permuted_element["bra"].update_indices(old, new)
                 permuted_element["t"] = permuted_element["t"].update_indices(old, new)
@@ -544,11 +541,7 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
                 for comparison in permutation_list[:-e]:
                     if type(element["integrals"]) != type(comparison["integrals"]):
                         continue
-                    if found_match:
-                        break
                     for virtual_permutation in permutations(permutable_virtual):
-                        if found_match:
-                            break
                         for occupied_permutation in permutations(permutable_occupied):
                             old_indices = permutable_virtual + permutable_occupied
                             new_indices = list(virtual_permutation) + list(occupied_permutation)
@@ -558,9 +551,17 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
                                 continue
                             if permuted_element["integrals"].update_indices(old_indices, new_indices) != comparison["integrals"]:
                                 continue
-                            found_match = True
                             comparison["factor"] += element["factor"]
                             break
+                        else:
+                            continue
+                        break
+                    else:
+                        continue
+                    break
+                else:
+                    continue
+                break
             else:
                 check_list.append(element)
         return check_list
