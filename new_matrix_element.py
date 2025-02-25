@@ -312,6 +312,8 @@ def collect_commutator_terms(matrix_elements: list[dict]) -> list[dict]:
     for e, element in enumerate(progressbar(matrix_elements[::-1], f"{'Collecting commutator terms: ':<50}"), 1):
         found_match = False
         for comparison in matrix_elements[:-e]:
+            if found_match:
+                continue
             if element["pre_string"] != comparison["pre_string"]:
                 continue
             if element["commutator"] != comparison["commutator"]:
