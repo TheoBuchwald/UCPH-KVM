@@ -531,7 +531,7 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
     # Define a function that check permutations
     def check(permutation_list: list[dict], pg: int, max_pg: int) -> list[dict]:
         check_list = []
-        for e, element in enumerate(progressbar(permutation_list[::-1], f"{f'Performing permutation check on group {pg} of {max_pg}: ':<50}"), 1):
+        for e, element in enumerate(progressbar(permutation_list[::-1], f"{f'Performing permutation check on group {pg+1} of {max_pg}: ':<50}"), 1):
             summation = element["summation"]
             permutable_virtual = [i for i in summation if i[0] == "v"]
             permutable_occupied = [i for i in summation if i[0] == "o"]
@@ -570,7 +570,7 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
     perm_check = []
     for pg, permutation_group in enumerate(reduced_permuted_expressions):
         if len(permutation_group) == 1:
-            print(f"Only one element in group {pg}, skipping permutation check")
+            print(f"Only one element in group {pg+1}, skipping permutation check")
             perm_check.append(permutation_group[0])
             continue
         perm_check += check(permutation_group, pg, len(reduced_permuted_expressions))
