@@ -310,17 +310,14 @@ def collect_commutator_terms(matrix_elements: list[dict]) -> list[dict]:
     """
     collected_elements = []
     for e, element in enumerate(progressbar(matrix_elements[::-1], f"{'Collecting commutator terms: ':<50}"), 1):
-        found_match = False
         for comparison in matrix_elements[:-e]:
-            if found_match:
-                continue
             if element["pre_string"] != comparison["pre_string"]:
                 continue
             if element["commutator"] != comparison["commutator"]:
                 continue
-            found_match = True
             comparison["factor"] += element["factor"]
-        if not found_match:
+            break
+        else:
             collected_elements.append(element)
     return collected_elements
 
@@ -564,7 +561,7 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
                             found_match = True
                             comparison["factor"] += element["factor"]
                             break
-            if not found_match:
+            else:
                 check_list.append(element)
         return check_list
     # Do a check over permutations from each permutation operator seperately
