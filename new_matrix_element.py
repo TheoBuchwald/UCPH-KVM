@@ -121,7 +121,7 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     virtual_index_counter = 0
     occupied_index_counter = 0
     summation = []
-    factor = 1
+    factor = Fraction(1)
     indexed_E = E([])
     symmetrization_operator = P([])
     for c, component in enumerate(commutator_terms, 1):
