@@ -673,22 +673,24 @@ def print_python_code(terms: list[dict], one_electron_type: str) -> None:
         else:
             left_side = ""
             right_side = "".join(term["bra"].indices)
+        left_side += "".join(term["integrals"].indices) + ","
         for amp in term["t"].amplitudes:
             left_side += "".join(amp.indices) + ","
-        left_side += "".join(term["integrals"].indices)
+        else:
+            left_side = left_side.rstrip(",")
+        # Then the integral
+        component = f"{term['integrals'].type.replace('F', one_electron_type)}_{''.join(term['integrals'].dims)}"
         # Then each component
-        component = ""
         if term["bra"].left_excitation_vector:
-            component += f"l{len(term['bra'])},"
+            component += f"l{len(term['bra'])}"
         t_counter = dict()
         for amp in term["t"].amplitudes:
             nr = t_counter.get(len(amp), 1)
-            component += f"t{len(amp)}_{nr},"
+            component += f",t{len(amp)}_{nr}"
             if nr == 1:
                 t_counter[len(amp)] = 2
             else:
                 t_counter[len(amp)] += 1
-        component += f"{term['integrals'].type.replace('F', one_electron_type)}_{''.join(term['integrals'].dims)}"
         sign = "+"
         if term['factor'] < 0:
             sign = "-"
