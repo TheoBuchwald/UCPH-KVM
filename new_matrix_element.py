@@ -246,7 +246,7 @@ def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]
     commutator_string = [commutator_string]
     for nr in range(4):
         new_commutator_string: list[list] = []
-        new_commutator_factor: list[int] = []
+        new_commutator_factor: list[Fraction] = []
         new_pre_string: list[list] = []
         for commutator, factor, string in zip(commutator_string, commutator_factor, pre_string):
             # If we have run over all components of the commutator it is done
