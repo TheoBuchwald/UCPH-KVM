@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from operators import F, g, L, E, P
 from copy import deepcopy
+from fractions import Fraction
 
 def n0o0(one_electron: bool) -> Callable[[dict, int, int], list[dict]]:
     def translater(_matrix_element: dict, _virtual_index_counter: int, occupied_index_counter):
@@ -49,7 +50,7 @@ def n0o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
             "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
-            new_matrix_element["factor"] = 0.5 * matrix_element["factor"]
+            new_matrix_element["factor"] = Fraction(1, 2) * matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"] + [a, i, b, j]
             new_matrix_element["integrals"] = g([a, i, b, j], t1_transformed)
             new_matrix_element["box_E"] = E([a, i, b, j])
@@ -365,7 +366,7 @@ def n4o2(t1_transformed: bool, two_electron: bool) -> Callable[[dict, int, int],
             "pre_string": matrix_element["pre_string"],
         }
         if two_electron:
-            new_matrix_element["factor"] = 0.5 * matrix_element["factor"]
+            new_matrix_element["factor"] = Fraction(1, 2) * matrix_element["factor"]
             new_matrix_element["summation"] = matrix_element["summation"]
             new_matrix_element["permutation"] = P([a,i,b,j,c,k,d,l])
             new_matrix_element["integrals"] = g([i,d,j,c], t1_transformed)

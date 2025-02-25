@@ -5,6 +5,7 @@ from copy import deepcopy
 from operators import E, BRA, t, amplitude, P
 from math import factorial
 from itertools import permutations
+from fractions import Fraction
 
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
@@ -31,7 +32,7 @@ The input must contain a bra and a commutator. Examples being:
     For a right transformation use EI where I is the excitation level.""")
     parser.add_argument('--no-t1', action='store_false', help='Disable t1-transformation.', dest='t1_transformed')
     parser.add_argument('--unrestricted', action='store_false', help='Include to use unrestricted box.', dest='restricted')
-    parser.add_argument('--no-perm', action='store_false', help='Disable permutation check.', dest='perm_check')
+    parser.add_argument('--no-perm', action='store_false', help='Disable permutation check based on summation indices.', dest='perm_check')
     parser.add_argument('--explicit-sym', action='store_true', help='Do explicit symmetrization.', dest='explicit_sym')
 
     return parser.parse_args()
@@ -130,7 +131,7 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
             if "E" not in component:
                 continue
             order = int(component.split("E")[-1])
-            factor *= 1/ factorial(order)
+            factor *= Fraction(1, factorial(order))
             virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
             occupied_indices = [f"o{i}" for i in range(occupied_index_counter, occupied_index_counter + order)]
             indices = zip_merge_arrays(virtual_indices, occupied_indices)
@@ -163,7 +164,7 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     for c, component in enumerate(commutator_terms):
         if "T" in component:
             order = int(component.split("T")[-1])
-            factor *= 1 / factorial(order)
+            factor *= Fraction(1, factorial(order))
             virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
             occupied_indices = [f"o{i}" for i in range(occupied_index_counter, occupied_index_counter + order)]
             indices = zip_merge_arrays(virtual_indices, occupied_indices)
@@ -509,11 +510,12 @@ def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[di
         reduced_permuted_expressions.append(reduced_permutation_list)
     return reduced_permuted_expressions
 
-def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[dict]:
+def permutation_check(reduced_permuted_expressions: list[list[dict]], permutation_check: bool) -> list[dict]:
     """Perform permutation check on the expressions resulting from each individual permutation operator.
 
     args:
         reduced_permuted_expressions: A list containg groups of permuted expressions.
+        permutation_check: Check permutations of the summation.
 
     return:
         A list of all permutationally unique terms:
@@ -540,6 +542,16 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]]) -> list[di
                 permuted_element["integrals"] = permuted_element["integrals"].update_indices(old, new)
                 for comparison in permutation_list[:-e]:
                     if type(element["integrals"]) != type(comparison["integrals"]):
+                        continue
+                    # Quick check if a simple permutation operator was needed
+                    if (
+                    permuted_element["bra"]  == comparison["bra"]
+                    and permuted_element["t"] == comparison["t"]
+                    and permuted_element["integrals"] == comparison["integrals"]
+                    ):
+                        comparison["factor"] += element["factor"]
+                        break
+                    if not permutation_check:
                         continue
                     for virtual_permutation in permutations(permutable_virtual):
                         for occupied_permutation in permutations(permutable_occupied):
@@ -737,10 +749,7 @@ def main():
     mathematical_expressions = commutator_box(collected_matrix_elements, virtual_index_counter, occupied_index_counter, restricted, t1_transformed, one_electron, two_electron)
     permuted_expressions = perform_permutations(mathematical_expressions)
     reduced_permuted_expressions = match_reduce_indices(permuted_expressions)
-    if perm_check:
-        permutation_checked = permutation_check(reduced_permuted_expressions)
-    else:
-        permutation_checked = sum(reduced_permuted_expressions, [])
+    permutation_checked = permutation_check(reduced_permuted_expressions, perm_check)
     if explicit_sym:
         permutation_checked = perform_explicit_symmetrization(permutation_checked)
     normal_indices = translate_to_normal_indices(permutation_checked)
