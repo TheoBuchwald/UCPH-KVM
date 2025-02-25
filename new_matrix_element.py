@@ -105,6 +105,7 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
         - bra='E2', commutator='[XT2]', ket='HF'
     """
     assert ket == "HF", "The matrix element script is not set up to have any other ket than the HF state."
+    assert commutator.count("E") < 2, f"You can only include one E in the commutator, here there were {commutator.count('E')}"
     start_labelling_E = "E" in commutator
     start_labelling_bra = "E" in bra
     assert not (start_labelling_E and start_labelling_bra), "The bra and commutator cannot both contain an E operator."
