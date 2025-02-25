@@ -148,10 +148,9 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
             order = int(bra.replace("E",""))
         virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
         occupied_indices = [f"o{i}" for i in range(occupied_index_counter, occupied_index_counter + order)]
-        if "L" in bra:
-            summation += virtual_indices
-            summation += occupied_indices
         indices = zip_merge_arrays(virtual_indices, occupied_indices)
+        if "L" in bra:
+            summation += indices
         if "E" in bra:
             symmetrization_operator = P(indices)
         indexed_bra = BRA(indices, "L" in bra)
@@ -167,9 +166,8 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
             factor *= 1 / factorial(order)
             virtual_indices = [f"v{i}" for i in range(virtual_index_counter, virtual_index_counter + order)]
             occupied_indices = [f"o{i}" for i in range(occupied_index_counter, occupied_index_counter + order)]
-            summation += virtual_indices
-            summation += occupied_indices
             indices = zip_merge_arrays(virtual_indices, occupied_indices)
+            summation += indices
             t_indices.append(indices)
             virtual_index_counter += order
             occupied_index_counter += order
