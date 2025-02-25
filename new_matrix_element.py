@@ -29,7 +29,7 @@ The input must contain a bra and a commutator. Examples being:
     For both one- and two-electron operators use H.
     For all types of amplitudes use TI where I is the excitation level.
     For a right transformation use EI where I is the excitation level.""")
-    parser.add_argument('--no_t1', action='store_false', help='Disable t1-transformation.', dest='t1_transformed')
+    parser.add_argument('--no-t1', action='store_false', help='Disable t1-transformation.', dest='t1_transformed')
     parser.add_argument('--unrestricted', action='store_false', help='Include to use unrestricted box.', dest='restricted')
     parser.add_argument('--no-perm', action='store_false', help='Disable permutation check.', dest='perm_check')
     parser.add_argument('--explicit-sym', action='store_true', help='Do explicit symmetrization.', dest='explicit_sym')
