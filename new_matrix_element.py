@@ -660,7 +660,8 @@ def print_expression(terms: list[dict], one_electron_type: str) -> None:
         left_vector = ''
         if term["bra"].left_excitation_vector:
             left_vector += f'\\bar{{t}}_{{{"".join(term["bra"].indices)}}} '
-        expression = f'{term["factor"]} \sum_{{{summation}}} {term["symmetry_operator"]} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
+        factor = f"{term['factor']} ".replace("1 ","")
+        expression = f'{factor}\sum_{{{summation}}} {term["symmetry_operator"]} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
         print(expression)
     print("")
 
@@ -706,10 +707,14 @@ def print_python_code(terms: list[dict], one_electron_type: str) -> None:
         sign = "+"
         if term['factor'] < 0:
             sign = "-"
+
+        factor = ""
+        if abs(term["factor"]) != 1:
+            factor = f" {abs(term['factor'])} *"
         if t == 0:
-            print(f"output = {term['factor']} * mem.contract(\"{left_side}->{right_side}\",{component})")
+            print(f"output = {sign.replace('+','')}{factor.lstrip()} mem.contract(\"{left_side}->{right_side}\",{component})")
         else:
-            print(f"output {sign}= {abs(term['factor'])} * mem.contract(\"{left_side}->{right_side}\",{component})")
+            print(f"output {sign}={factor} mem.contract(\"{left_side}->{right_side}\",{component})")
     print("")
     if len(terms[0]["symmetry_operator"]) != 1:
         print("return symmetrize_index(output)")
