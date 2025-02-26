@@ -510,12 +510,12 @@ def match_reduce_indices(permuted_expressions: list[list[dict]]) -> list[list[di
         reduced_permuted_expressions.append(reduced_permutation_list)
     return reduced_permuted_expressions
 
-def permutation_check(reduced_permuted_expressions: list[list[dict]], permutation_check: bool) -> list[dict]:
+def permutation_check(reduced_permuted_expressions: list[list[dict]], check_permutations: bool) -> list[dict]:
     """Perform permutation check on the expressions resulting from each individual permutation operator.
 
     args:
         reduced_permuted_expressions: A list containg groups of permuted expressions.
-        permutation_check: Check permutations of the summation.
+        check_permutations: Check permutations of the summation.
 
     return:
         A list of all permutationally unique terms:
@@ -529,9 +529,9 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]], permutatio
             E: The original excitation operator.
     """
     # Define a function that check permutations
-    def check(permutation_list: list[dict], pg: int, max_pg: int) -> list[dict]:
+    def check(permutation_list: list[dict]) -> list[dict]:
         check_list = []
-        for e, element in enumerate(progressbar(permutation_list[::-1], f"{f'Performing permutation check on group {pg+1} of {max_pg}: ':<50}"), 1):
+        for e, element in enumerate(progressbar(permutation_list[::-1], f"{f'Performing permutation check on group {pg+1} of {len(reduced_permuted_expressions)}: ':<50}"), 1):
             summation = element["summation"]
             permutable_virtual = [i for i in summation if i[0] == "v"]
             permutable_occupied = [i for i in summation if i[0] == "o"]
@@ -543,15 +543,7 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]], permutatio
                 for comparison in permutation_list[:-e]:
                     if type(element["integrals"]) != type(comparison["integrals"]):
                         continue
-                    # Quick check if a simple permutation operator was needed
-                    if (
-                    permuted_element["bra"]  == comparison["bra"]
-                    and permuted_element["t"] == comparison["t"]
-                    and permuted_element["integrals"] == comparison["integrals"]
-                    ):
-                        comparison["factor"] += element["factor"]
-                        break
-                    if not permutation_check:
+                    if not check_permutations:
                         continue
                     for virtual_permutation in permutations(permutable_virtual):
                         for occupied_permutation in permutations(permutable_occupied):
@@ -584,7 +576,7 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]], permutatio
             print(f"Only one element in group {pg+1}, skipping permutation check")
             perm_check.append(permutation_group[0])
             continue
-        perm_check += check(permutation_group, pg, len(reduced_permuted_expressions))
+        perm_check += check(permutation_group)
     print("")
     return perm_check
 
