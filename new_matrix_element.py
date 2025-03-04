@@ -534,9 +534,11 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]], check_perm
         for e, element in enumerate(progressbar(permutation_list[::-1], f"{f'Performing permutation check on group {pg+1} of {len(reduced_permuted_expressions)}: ':<50}"), 1):
             summation = element["summation"]
             if element["bra"].left_excitation_vector and not element["E"]:
+                # Shorten summation based on bra
                 short_sum = [idx for idx in summation if idx not in element["bra"].indices]
                 bra_sym = P(element["bra"].indices)
             else:
+                # Cannot shorten summation if there is an E in commutator
                 short_sum = summation
                 bra_sym = P([])
             # Remove Bra indices from sum for pairwise permutation
