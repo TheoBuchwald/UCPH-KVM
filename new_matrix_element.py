@@ -533,13 +533,15 @@ def permutation_check(reduced_permuted_expressions: list[list[dict]], check_perm
         check_list = []
         for e, element in enumerate(progressbar(permutation_list[::-1], f"{f'Performing permutation check on group {pg+1} of {len(reduced_permuted_expressions)}: ':<50}"), 1):
             summation = element["summation"]
+            if element["bra"].left_excitation_vector and not element["E"]:
+                short_sum = [idx for idx in summation if idx not in element["bra"].indices]
+                bra_sym = P(element["bra"].indices)
+            else:
+                short_sum = summation
+                bra_sym = P([])
             # Remove Bra indices from sum for pairwise permutation
-            short_sum = [idx for idx in summation if idx not in element["bra"].indices]
             permutable_virtual = [i for i in short_sum if i[0] == "v"]
             permutable_occupied = [i for i in short_sum if i[0] == "o"]
-            bra_sym = P([])
-            if element["bra"].left_excitation_vector:
-                bra_sym = P(element["bra"].indices)
             # Permute over permutation operator from E's
             for old, new in element["symmetry_operator"]:
                 # Pairwise permutation over bra indices
