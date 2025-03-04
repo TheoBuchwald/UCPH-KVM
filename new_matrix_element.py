@@ -683,11 +683,11 @@ def print_python_code(terms: list[dict], one_electron_type: str) -> None:
             left_side += "".join(amp.indices) + ","
         else:
             left_side = left_side.rstrip(",")
-        # Then the integral
-        component = f"{term['integrals'].type.replace('F', one_electron_type)}_{''.join(term['integrals'].dims)}"
         # Then each component
+            component = ""
         if term["bra"].left_excitation_vector:
-            component += f"l{len(term['bra'])}"
+            component += f"l{len(term['bra'])},"
+        component += f"{term['integrals'].type.replace('F', one_electron_type)}_{''.join(term['integrals'].dims)}"
         t_counter = dict()
         for amp in term["t"].amplitudes:
             nr = t_counter.get(len(amp), 1)
