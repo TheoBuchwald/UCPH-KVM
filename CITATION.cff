@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+title: "UCPH-KVM"
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: von Buchwald
+    given-names: Theo Juncker
+  - family-names: Johansen
+    given-names: Magnus Bukhave
+repository-code: 'https://github.com/TheoBuchwald/UCPH-KVM'

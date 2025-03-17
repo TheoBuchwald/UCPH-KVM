@@ -30,6 +30,7 @@ if __name__ == '__main__':
     CrystalGroup.add_argument('-pd', action='store_true', help='Include to make palladium nanoparticles')
     CrystalGroup.add_argument('-pt', action='store_true', help='Include to make platinum nanoparticles')
     CrystalGroup.add_argument('-cosb3', action='store_true', help='Include to make CoSb3 nanoparticles')
+    CrystalGroup.add_argument('--dist', default=[-100.0], nargs=1, type=float, help='Include to change distance between molecule and nanoparticle (By default van der Waal radii are used)')
 
     CalculationGroup = parser.add_argument_group('Calculation options')
     CalculationGroup.add_argument('--charge', default=[0], nargs=1, type=int, help='Include to specify charge - 0 if not included')
@@ -69,6 +70,14 @@ if __name__ == '__main__':
     linenumber = args.linenumber
     returnxyz = args.noxyz
     onesided = args.onesided
+
+    user_dist = False
+    dist_mol_nano = args.dist[0]
+    if dist_mol_nano >= 0:
+        user_dist = True
+        print(f"The distance between molecule and nanoparticle has been set to {dist_mol_nano} AA")
+    elif dist_mol_nano != -100:
+        print("A negative distance between molecule and nanoparticle does not make sense! Defaulting to van der Waal radii.")
 
     if linenumber:
         atom1 -=3
@@ -121,9 +130,9 @@ if __name__ == '__main__':
             atoms_symbol, atoms_pos = NP.makeNanoparticle(diameter)
 
             if onesided:
-                left, _, left_symbols, _ = NP.makeSandwich(molxyz, namesmol)
+                left, _, left_symbols, _ = NP.makeSandwich(molxyz, namesmol, input_dist=dist_mol_nano)
             else:
-                left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol)
+                left, right, left_symbols, right_symbols = NP.makeSandwich(molxyz, namesmol, input_dist=dist_mol_nano)
 
             lines_to_add = []
             if returnxyz:
@@ -141,8 +150,8 @@ if __name__ == '__main__':
 
                 for i in range(molxyz.molecule[:, 0].size):
                     lines_to_add.append(''.join([namesmol[i], ' ', f"{molxyz.molecule[i, 0]:.6f}", ' ', f"{molxyz.molecule[i, 1]:.6f}", ' ', f"{molxyz.molecule[i, 2]:.6f}" , '\n']))
-                
-                
+
+
                 if not onesided:
                     with open(molfile[:-4] + f'_charge_{charge}_{crystal_structure}.xyz', 'w') as f:
                         f.writelines(lines_to_add)
@@ -155,7 +164,10 @@ if __name__ == '__main__':
 
             lines_mol.append('ATOMBASIS\n')
             lines_mol.append('./'+molfile+'\n')
-            lines_mol.append(f'Hej - The distance between NPs is {NP.distance:.4f} AA\n')
+            if user_dist:
+                lines_mol.append(f"Hej - Distance has been set as {dist_mol_nano} AA by the user\n")
+            else:
+                lines_mol.append(f'Hej - The distance between NPs is {NP.distance:.4f} AA\n')
             lines_mol.append('Atomtypes='+str(len(set(namesmol)))+f' Charge={charge} NoSymmetry Angstrom\n')
 
             unique_indices = list(Counter(namesmol).keys())

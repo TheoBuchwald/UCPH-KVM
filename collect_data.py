@@ -274,7 +274,17 @@ def UVVIS_Spectrum(t: list, l: list, f: list, k: float, sigmacm: float):
         lambda_tot[x] = sum((k/sigmacm)*f*np.exp(-4*np.log(2)*((1/t[x]-1/l)/(1E-7*sigmacm))**2))
     return lambda_tot
 
-def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True) -> None:
+def UVVIS_Spectrum_eV(x: np.ndarray, exc: np.ndarray, osc: np.ndarray, broadening_factor: float) -> np.ndarray:
+    lambda_tot = np.zeros(len(x))
+    prefactor = 6628.460563431657 / (2 * np.pi)
+
+    for x0, o0 in zip(exc, osc):
+        normalize_factor = np.sqrt((np.log(2) / broadening_factor**2) / np.pi)
+        _lambda = normalize_factor * np.exp(-np.log(2) * ((x-x0) / broadening_factor)**2)
+        lambda_tot += prefactor * o0 * x / x0 * _lambda
+    return lambda_tot
+
+def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: FunctionType, Format: str, Extracted_Values: dict, SAVE: bool = True, unit: str = None) -> None:
     # A LOT OF PLOT SETUP
     rc('text', usetex=True)
     xlabel_font = ylabel_font = title_font = 16
@@ -288,7 +298,8 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
     epsvac=8.8541878176*10**(-12)
     sigmacm=0.4*8065.544
     k=(NA*e**2)/(np.log(10)*2*me*c**2*epsvac)*np.sqrt(np.log(2)/pi)*10**(-1)
-    inv_cm_to_au = 1/219474.63068
+    au_to_inv_cm = 219474.63068
+    au_to_eV = 27.2107
     Save_Dict = dict()
         # PLOT SETUP DONE
     for file in input_file:
@@ -316,15 +327,34 @@ def Make_uvvis_spectrum(input_file: list, suppressed: bool, UVVIS_Spectrum: Func
         elif len(oscillations) > len(excitations):
             oscillations = oscillations[0:len(excitations)]
 
-        excitations = 1E7/(excitations/ inv_cm_to_au)   # From a.u. to cm^-1 to nm
-        span = np.linspace(min(excitations)-20, max(excitations)+20, N, endpoint=True) # exctinction coefficient (wavelength range)
+        if unit == 'nm' or unit == None:
+            excitations = 1E7 / (excitations * au_to_inv_cm)   # From a.u. to cm^-1 to nm
+        elif unit == 'eV':
+            excitations *= au_to_eV             # From a.u. to eV
+        if unit == 'cm-1':
+            excitations = (excitations * au_to_inv_cm)   # From a.u. to cm^-1
 
-        graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
+        span = np.linspace(min(excitations)*0.99, max(excitations)*1.01, N, endpoint=True) # exctinction coefficient (wavelength range)
+
+        if unit == 'nm' or unit == None:
+            graph = UVVIS_Spectrum(span, excitations, oscillations, k, sigmacm)
+        elif unit == 'eV':
+            graph = UVVIS_Spectrum(span, excitations, oscillations, 0.4)
+        if unit == 'cm-1':
+            graph = UVVIS_Spectrum(1E7 / span, 1E7 / excitations, oscillations, k, sigmacm)
+
         plt.title(title)
         plt.plot(span, graph)
         plt.ylim((0,max(graph)*1.2))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-        plt.xlabel('Wavelength $(nm)$', fontsize=xlabel_font)
+
+        if unit == 'nm' or unit == None:
+            plt.xlabel('Wavelength (nm)', fontsize=xlabel_font)
+        elif unit == 'eV':
+            plt.xlabel('Wavelength (eV)', fontsize=xlabel_font)
+        if unit == 'cm-1':
+            plt.xlabel('Wavelength (cm$^{-1}$)', fontsize=xlabel_font)
+
         plt.ylabel('Extinction coefficient', fontsize=ylabel_font)
         plt.xticks(fontsize=16)
         plt.yticks(fontsize=16)
@@ -346,6 +376,7 @@ def Spectra(args):
     ComplexPropagator = args.complex_propagator
     Format = args.format
     Save = args.save
+    Unit = args.unit
     Quiet = args.quiet
     Multiprocessing = args.multiprocessing
 
@@ -369,7 +400,12 @@ def Spectra(args):
                 if not isinstance(Value, list):
                     ExtractedValues[OuterKey][InnerKey] = [Value]
 
-        Make_uvvis_spectrum(InputFiles, Quiet, UVVIS_Spectrum, Format, ExtractedValues, Save)
+        if Unit == "eV":
+            spectrumFunction = UVVIS_Spectrum_eV
+        else:
+            spectrumFunction = UVVIS_Spectrum
+
+        Make_uvvis_spectrum(InputFiles, Quiet, spectrumFunction, Format, ExtractedValues, Save, Unit)
         return
 
     elif ComplexPropagator:
@@ -416,6 +452,7 @@ def Extract(args):
         '_Polarizabilities': args.polar,
         '_Excitation_energies': args.exc,
         '_Oscillator_strengths': args.osc,
+        '_Rotational_strengths': args.rot,
         '_Frequencies': args.freq,
         '_Enthalpy': args.enthalpy,
         '_Entropy': args.entropy,
@@ -437,6 +474,7 @@ def Extract(args):
         '_Polarizabilities': ['polx', 'poly', 'polz', 'iso_polar'],
         '_Excitation_energies': ['exc_energies'],
         '_Oscillator_strengths': ['osc_strengths'],
+        '_Rotational_strengths': ['rot_strengths'],
         '_Frequencies': ['freq'],
         '_PartitionFunctions': ['qTotal'],
         '_CPUS': ['total_cpu_time', 'wall_cpu_time'],
@@ -461,6 +499,7 @@ def Extract(args):
         'iso_polar': 'Isotropic Polarizability',
         'exc_energies': 'Exc. energy',
         'osc_strengths': 'Osc. strength',
+        'rot_strengths': 'Rot. strength',
         'freq': 'Frequency',
         'qTotal': 'Total molar partition function',
         'total_cpu_time': f'Total CPU time ({args.cpu_time})',
@@ -486,6 +525,12 @@ def Extract(args):
     elif NeededArguments['_Oscillator_strengths']:
         NeededArguments['_Oscillator_strengths'] = NeededArguments['_Excitation_energies']
 
+    # Ensuring that excitation energies are calculated when rotational strengths are
+    if NeededArguments['_Rotational_strengths'] and NeededArguments['_Excitation_energies'] == None:
+        NeededArguments['_Rotational_strengths'] = NeededArguments['_Excitation_energies'] = -1
+    elif NeededArguments['_Rotational_strengths']:
+        NeededArguments['_Rotational_strengths'] = NeededArguments['_Excitation_energies']
+
     # Ensuring that enthalpies and entropies are calculated as these are needed to calculate the Gibbs free energy
     if NeededArguments['_Gibbs']:
         NeededArguments['_Enthalpy'] = True
@@ -506,7 +551,7 @@ def Extract(args):
 
     # Dictionary of data where the amount of values printed can be changed
     # Examples of this are the Excitation energies and the Frequencies
-    VariableArrays = dict([item for item in RequestedArguments.items() if type(item[1]) == int])
+    VariableArrays = dict([item for item in NeededArguments.items() if type(item[1]) == int])
 
     # List of arguments that have been requested
     WantedValues = [key for key, val in RequestedArguments.items() if not(val == None or val == False)]
@@ -556,13 +601,13 @@ def Extract(args):
     # then the calculation from minutes to the requested unit is done here
     if RequestedArguments['_CPUS'] == 's':
         for file in InputFiles:
-            if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
+            if ExtractedValues[file]['total_cpu_time'] == ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] == ['Nan']:
                 continue
             ExtractedValues[file]['total_cpu_time'] *= 60
             ExtractedValues[file]['wall_cpu_time'] *= 60
     elif NeededArguments['_CPUS'] == 'h':
         for file in InputFiles:
-            if ExtractedValues[file]['total_cpu_time'] != ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] != ['Nan']:
+            if ExtractedValues[file]['total_cpu_time'] == ['Not Implemented'] or ExtractedValues[file]['total_cpu_time'] == ['Nan']:
                 continue
             ExtractedValues[file]['total_cpu_time'] /= 60
             ExtractedValues[file]['wall_cpu_time'] /= 60
@@ -585,6 +630,19 @@ def Extract(args):
     # Collecting all values in arrays in a dictionary
     # Some values in the Extracted_Values dictionary may not have been requested, so these are removed here
     FinalArrays = Collect_and_sort_data(InputFiles, ArgumentsToValues, ExtractedValues)
+
+    if ProgressBar:
+        print("")
+
+    if Save == 'npz':
+        SaveDict = dict()
+        for i, file in enumerate(InputFiles):
+            SaveDict[file] = dict()
+            for key, val in FinalArrays.items():
+                SaveDict[file][key] = val[i]
+        np.savez(f'{SaveName}.npz', **SaveDict)
+        print(f'Data has been saved in {SaveName}.npz')
+        return
 
     # Resizing arrays
     # An example is Excitation energies where there may be more of them in one output file than another
@@ -609,9 +667,6 @@ def Extract(args):
 #   ------------ IF CHOSEN PRINTS THE OUTPUT IN A CSV FILE ------------
 #   ---------- ELSE THE RESULTS ARE DUMPED INTO THE TERMINAL ----------
 
-    if ProgressBar:
-        print("")
-
     # If this statement is true, then only the filenames have been written to the Output_Array
     if len(OutputArray) == OutputArray.size:
        print("No data was extracted, therefore nothing more will be printed")
@@ -625,18 +680,12 @@ def Extract(args):
                     SaveDict[key_outer].pop(key_inner)
         return SaveDict
 
-    elif Save == 'csv':
+    if Save == 'csv':
         np.savetxt(f'{SaveName}.csv', OutputArray, delimiter=',', fmt='%s')
         print(f'Data has been saved in {SaveName}.csv')
         return
 
-    elif Save == 'npz':
-        SaveDict = {i[0]: i[1:] for i in OutputArray}
-        np.savez(f'{SaveName}.npz', **SaveDict)
-        print(f'Data has been saved in {SaveName}.npz')
-        return
-
-    elif Save == 'json':
+    if Save == 'json':
         SaveDict = copy.deepcopy(ExtractedValues)
         for key_outer, dictionary in ExtractedValues.items():
             for key_inner in dictionary:
@@ -650,7 +699,7 @@ def Extract(args):
 
         return
 
-    print(OutputArray)
+    print(repr(OutputArray))
 
 
 def main():
@@ -671,6 +720,7 @@ def main():
                 -  LSDALTON
                 -  VELOXCHEM
                 -  AMSTERDAM MODELING SUITE
+                -  Q-Chem
 ''', epilog=f'''
 For help contact
     Theo Juncker von Buchwald
@@ -697,6 +747,7 @@ For help contact
                 -  LSDALTON
                 -  VELOXCHEM
                 -  AMSTERDAM MODELING SUITE
+                -  Q-Chem
 
     It is currently possible to make UVVIS spectra using excitation energies and complex propagator theory
 
@@ -716,6 +767,9 @@ For help contact
     The following is not implemented for AMSTERDAM MODELING SUITE
     -  UVVIS based on excitation energies
     -  UVVIS based on complex propagator theory
+
+    The following is not implemented for Q-Chem
+    -  UVVIS based on complex propagator theory
 ''', help='Use to make spectra such as UVVIS from excitation energies or complex propagator theory')
 
     # Setting the Spectra function to be run if spectra is used
@@ -731,6 +785,7 @@ For help contact
     SpectraDataProcessingGroup = SpectraSubparser.add_argument_group('Data processing commands')
     SpectraDataProcessingGroup.add_argument('--format', default='png', const='png', type=str, help='Include this to change the picture format. Will use png as default. If \'--save\' is used together with this, the processed data will be saved in a .npz file', nargs='?', choices=['png', 'eps', 'pdf', 'svg', 'ps'])
     SpectraDataProcessingGroup.add_argument('-s', '--save', action='store_true', help='Saves extracted and processed data in a npz file')
+    SpectraDataProcessingGroup.add_argument('-u', '--unit', default='nm', const='nm', type=str, help='Include the to change the unit of the x-axis when plotting (not implemented for complex propagator theory)', nargs='?', choices=['nm', 'eV', 'cm-1'])
 
     SpectraAdditionalCommandsGroup = SpectraSubparser.add_argument_group('Additional commands')
     SpectraAdditionalCommandsGroup.add_argument('-q', '--quiet', action='store_true', help='Include for the script to stay silent - This will not remove error messages or the printing of data')
@@ -753,6 +808,7 @@ For help contact
                 -  Polarizability
                 -  Excitation energies
                 -  Oscillator strengths
+                -  Rotational strengths
                 -  Frequencies
                 -  Partition functions at a given temperature
                 -  CPU time used
@@ -767,6 +823,7 @@ For help contact
     -  Enthalpies
     -  Entropies
     -  Gibbs Free energies
+    -  Rotational strengths
     -  Frequencies
     -  Partition functions
 
@@ -779,6 +836,7 @@ For help contact
     -  Polarizability
     -  Excitation energies
     -  Oscillator strengths
+    -  Rotational strengths
     -  Frequencies
     -  Partition functions at a given temperature
     -  CPU time used
@@ -792,6 +850,30 @@ For help contact
     -  Polarizability
     -  Excitation energies
     -  Oscillator strengths
+    -  Rotational strengths
+    -  Frequencies
+    -  Partition functions at a given temperature
+    -  CPU time used
+
+    The following is not implemented for Q-Chem
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Rotational strengths
+    -  Dipole moments
+    -  Polarizability
+    -  Frequencies
+    -  Partition functions at a given temperature
+
+    The following is not implemented for DIRAC
+    -  Zero-Point Vibrational energies
+    -  Enthalpies
+    -  Entropies
+    -  Gibbs Free energies
+    -  Dipole moments
+    -  Polarizability
+    -  Rotational strengths
     -  Frequencies
     -  Partition functions at a given temperature
     -  CPU time used
@@ -814,6 +896,7 @@ For help contact
     ExtractionGroup.add_argument('-P', '--polar', action='store_true', help='Include to extract the Polarizability')
     ExtractionGroup.add_argument('-X', '--exc', const=-1, type=int, help='Include to extract the Excitation Energies. Add a number to extract that amount of Excitation Energies. It will extract all Excitation energies as default',nargs='?')
     ExtractionGroup.add_argument('-O', '--osc', action='store_true', help='Include to extract the Oscillator Strengths')
+    ExtractionGroup.add_argument('-R', '--rot', action='store_true', help='Include to extract the Rotational Strengths')
     ExtractionGroup.add_argument('-F', '--freq', const=-1, type=int, help='Include to extract the Frequencies. Add a number to extract that amount of Frequencies. It will extract all Frequencies as default', nargs='?')
     ExtractionGroup.add_argument('-Q', '--partfunc', action='store_true', help='Include to calculate molar partition functions.')
     ExtractionGroup.add_argument('-T', '--temp', const=298.15, default=298.15, type=float, help='Include to calculate at a different temperature. Default is 298.15 K', nargs='?')
