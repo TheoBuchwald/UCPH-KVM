@@ -697,7 +697,7 @@ def print_python_code(terms: list[dict], one_electron_type: str) -> None:
         if term["bra"].is_HF:
             left_side = "".join(term["bra"].indices)
             right_side = "".join(term["E"].indices)
-        if term["bra"].left_excitation_vector:
+        elif term["bra"].left_excitation_vector:
             left_side = "".join(term["bra"].indices) + ","
             right_side = "".join(term["E"].indices)
         else:
