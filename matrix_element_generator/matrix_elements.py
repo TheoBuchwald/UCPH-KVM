@@ -6,6 +6,7 @@ from operators import E, BRA, t, amplitude, P
 from math import factorial
 from itertools import permutations
 from fractions import Fraction
+from typing import Union
 
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
@@ -34,6 +35,7 @@ The input must contain a bra and a commutator. Examples being:
     parser.add_argument('--unrestricted', action='store_false', help='Include to use unrestricted box.', dest='restricted')
     parser.add_argument('--no-perm', action='store_false', help='Disable permutation check based on summation indices.', dest='perm_check')
     parser.add_argument('--explicit-sym', action='store_true', help='Do explicit symmetrization.', dest='explicit_sym')
+    parser.add_argument('--file', type=str, help="Write the contraction to a file", dest="path_to_file")
 
     return parser.parse_args()
 
@@ -186,7 +188,7 @@ def commutator_indexing(bra: str, commutator: str, ket: str) -> tuple[dict, int,
     }
     return matrix_element, virtual_index_counter, occupied_index_counter
 
-def print_matrix_element(matrix_element: dict[str: t | E | BRA | str | list[str]], operator: str) -> None:
+def print_matrix_element(matrix_element: dict[str, Union[t, E, BRA, str, list[str]]], operator: str) -> None:
     """Print the matrix element after indexing.
 
     args:
@@ -210,7 +212,7 @@ def print_matrix_element(matrix_element: dict[str: t | E | BRA | str | list[str]
     print(f"\sum_{{{''.join(indexed_matrix_element['summation'])}}}{left_vector} {indexed_matrix_element['bra']}{commutator}|HF>")
     print("")
 
-def commutator_expansion(matrix_element: dict[str: t | E | BRA | str | list[str]]) -> list[dict]:
+def commutator_expansion(matrix_element: dict[str, Union[t, E, BRA, str, list[str]]]) -> list[dict]:
     """Expand commutator after indexing.
 
     args:
@@ -738,6 +740,60 @@ def print_python_code(terms: list[dict], one_electron_type: str) -> None:
     else:
         print("return output")
 
+def write_python_code(terms: list[dict], one_electron_type: str, file: str) -> None:
+    """writes a subroutine including all terms.
+
+    args:
+        List of terms.
+        The one electron integral string representation.
+        The permutation operator that symmetrizes the E indices.
+        File to write the result in.
+    """
+    with open(file, 'w') as thefile:
+
+        if terms == []:
+            return
+        for t, term in enumerate(terms):
+            # Start with the indices
+            if term["bra"].is_HF:
+                left_side = "".join(term["bra"].indices)
+                right_side = "".join(term["E"].indices)
+            elif term["bra"].left_excitation_vector:
+                left_side = "".join(term["bra"].indices) + ","
+                right_side = "".join(term["E"].indices)
+            else:
+                left_side = ""
+                right_side = "".join(term["bra"].indices)
+            left_side += "".join(term["integrals"].indices) + ","
+            for amp in term["t"].amplitudes:
+                left_side += "".join(amp.indices) + ","
+            else:
+                left_side = left_side.rstrip(",")
+            # Then each component
+                component = ""
+            if term["bra"].left_excitation_vector:
+                component += f"l{len(term['bra'])},"
+            component += f"{term['integrals'].type.replace('F', one_electron_type)}_{''.join(term['integrals'].dims)}"
+            t_counter = dict()
+            for amp in term["t"].amplitudes:
+                nr = t_counter.get(len(amp), 1)
+                component += f",t{len(amp)}_{nr}"
+                if nr == 1:
+                    t_counter[len(amp)] = 2
+                else:
+                    t_counter[len(amp)] += 1
+            sign = "+"
+            if term['factor'] < 0:
+                sign = "-"
+
+            factor = ""
+            if abs(term["factor"]) != 1:
+                factor = f" {abs(term['factor'])} *"
+            if t == 0:
+                thefile.write(f"output = {sign.replace('+','')}{factor.lstrip()} mem.contract(\"{left_side}->{right_side}\",{component})\n")
+            else:
+                thefile.write(f"output {sign}={factor} mem.contract(\"{left_side}->{right_side}\",{component})\n")
+
 def main():
     """Main function."""
     arguments = parse_arguments()
@@ -747,6 +803,7 @@ def main():
     restricted = arguments.restricted
     perm_check = arguments.perm_check
     explicit_sym = arguments.explicit_sym
+    path_to_file = arguments.path_to_file
     one_electron = False
     two_electron = False
     one_electron_type = "F"
@@ -776,7 +833,10 @@ def main():
         permutation_checked = perform_explicit_symmetrization(permutation_checked)
     normal_indices = translate_to_normal_indices(permutation_checked)
     print_expression(normal_indices, one_electron_type)
-    print_python_code(normal_indices, one_electron_type)
+    if path_to_file is None:
+        print_python_code(normal_indices, one_electron_type)
+    else:
+        write_python_code(normal_indices, one_electron_type, path_to_file)
 
 if __name__ == "__main__":
     main()
