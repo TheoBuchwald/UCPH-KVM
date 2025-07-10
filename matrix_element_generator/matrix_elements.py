@@ -209,7 +209,7 @@ def print_matrix_element(matrix_element: dict[str, Union[t, E, BRA, str, list[st
     if indexed_matrix_element["bra"].left_excitation_vector:
         left_vector = f" \\bar{{t}}^{{{''.join(indexed_matrix_element['bra'].indices[::2])}}}_{{{''.join(indexed_matrix_element['bra'].indices[1::2])}}}"
     print("Working on the matrix element")
-    print(f"\sum_{{{''.join(indexed_matrix_element['summation'])}}}{left_vector} {indexed_matrix_element['bra']}{commutator}|HF>")
+    print(f"\\sum_{{{''.join(indexed_matrix_element['summation'])}}}{left_vector} {indexed_matrix_element['bra']}{commutator}|HF>")
     print("")
 
 def commutator_expansion(matrix_element: dict[str, Union[t, E, BRA, str, list[str]]]) -> list[dict]:
@@ -680,7 +680,7 @@ def print_expression(terms: list[dict], one_electron_type: str) -> None:
         if term["bra"].left_excitation_vector:
             left_vector += f'\\bar{{t}}_{{{"".join(term["bra"].indices)}}} '
         factor = f"{term['factor']} ".replace("1 ","")
-        expression = f'{factor}\sum_{{{summation}}} {term["symmetry_operator"]} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
+        expression = f'{factor}\\sum_{{{summation}}} {term["symmetry_operator"]} {str(term["integrals"]).replace("F", one_electron_type)}{left_vector}{term["t"]}'
         print(expression)
     print("")
 
