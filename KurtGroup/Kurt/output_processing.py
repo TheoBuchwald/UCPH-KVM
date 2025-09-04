@@ -1115,7 +1115,10 @@ Please contact a maintainer of the script ot have this updated\n''')
             if isinstance(linenumber, int):
                 for i in self.lines[linenumber+5: self.end]:
                     if "@ " in i:
-                        self.osc_strengths.append(float(i.split()[-1]))
+                        try:
+                            self.osc_strengths.append(float(i.split()[-1]))
+                        except ValueError:
+                            self.osc_strengths.append(0.0)
                     else:
                         break
         elif self.exc_type == '.ECD':
