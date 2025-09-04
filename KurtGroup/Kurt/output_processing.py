@@ -1578,6 +1578,11 @@ class QChemExtract:
         if isinstance(linenumbers, list):
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[3]))
+        else:
+            linenumbers = Forward_search_all(self.filename, "Excitation energy:", "excitation energies", quiet=self.quiet)
+            if isinstance(linenumbers, list):
+                for i in linenumbers:
+                    self.exc_energies.append(float(self.lines[i].split()[2]))
         if len(self.exc_energies) == 0:
             self.exc_energies = ['NaN']
 
@@ -1587,6 +1592,11 @@ class QChemExtract:
         if isinstance(linenumbers, list):
             for i in linenumbers:
                 self.osc_strengths.append(float(self.lines[i].split()[-1]))
+        else:
+            linenumbers = Forward_search_all(self.filename, "Osc. strength:", "oscillator strength", quiet=self.quiet)
+            if isinstance(linenumbers, list):
+                for i in linenumbers:
+                    self.osc_strengths.append(float(self.lines[i].split()[-1]))
         if len(self.osc_strengths) == 0:
             self.osc_strengths = ['NaN']
 
