@@ -1585,7 +1585,9 @@ class QChemExtract:
             linenumbers = Forward_search_all(self.filename, "Excitation energy:", "excitation energies", quiet=self.quiet)
             if isinstance(linenumbers, list):
                 for i in linenumbers:
-                    self.exc_energies.append(float(self.lines[i].split()[2]))
+                    if "not converged" in self.lines[i-5]:
+                        continue
+                    self.exc_energies.append(float(self.lines[i].split()[2]) / 27.211399538)
         if len(self.exc_energies) == 0:
             self.exc_energies = ['NaN']
 
