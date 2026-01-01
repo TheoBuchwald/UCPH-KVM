@@ -1115,7 +1115,10 @@ Please contact a maintainer of the script ot have this updated\n''')
             if isinstance(linenumber, int):
                 for i in self.lines[linenumber+5: self.end]:
                     if "@ " in i:
-                        self.osc_strengths.append(float(i.split()[-1]))
+                        try:
+                            self.osc_strengths.append(float(i.split()[-1]))
+                        except ValueError:
+                            self.osc_strengths.append(0.0)
                     else:
                         break
         elif self.exc_type == '.ECD':
@@ -1578,6 +1581,13 @@ class QChemExtract:
         if isinstance(linenumbers, list):
             for i in linenumbers:
                 self.exc_energies.append(float(self.lines[i].split()[3]))
+        else:
+            linenumbers = Forward_search_all(self.filename, "Excitation energy:", "excitation energies", quiet=self.quiet)
+            if isinstance(linenumbers, list):
+                for i in linenumbers:
+                    if "not converged" in self.lines[i-5]:
+                        continue
+                    self.exc_energies.append(float(self.lines[i].split()[2]) / 27.211399538)
         if len(self.exc_energies) == 0:
             self.exc_energies = ['NaN']
 
@@ -1587,6 +1597,11 @@ class QChemExtract:
         if isinstance(linenumbers, list):
             for i in linenumbers:
                 self.osc_strengths.append(float(self.lines[i].split()[-1]))
+        else:
+            linenumbers = Forward_search_all(self.filename, "Osc. strength:", "oscillator strength", quiet=self.quiet)
+            if isinstance(linenumbers, list):
+                for i in linenumbers:
+                    self.osc_strengths.append(float(self.lines[i].split()[-1]))
         if len(self.osc_strengths) == 0:
             self.osc_strengths = ['NaN']
 

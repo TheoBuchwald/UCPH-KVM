@@ -80,7 +80,7 @@ class TerminalInformation():
         self.time_differences.append(self.times[-1] - self.times[-2])
 
         minutes = lambda x : x // 60
-        seconds = lambda x : x - x // 60
+        seconds = lambda x : x - 60 * (x // 60)
 
         if len(self.times) > 1:
             time_average = np.mean(self.time_differences)
